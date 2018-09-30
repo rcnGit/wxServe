@@ -6,22 +6,28 @@
             </router-link>
           </div>
           <div class="act_h_right">
-            <input placeholder="活动名称" class='searchInput'/>
-            <img src='./img/search_img@2x.png' class='search_img'/>
+            <input placeholder="活动名称" class='searchInput'ref='name'/>
+            <img src='./img/search_img@2x.png' class='search_img' @click='search()'/>
           </div>
         </div><!--act_head-->
         <div id='active_content'>
-          <div v-for="item in items" class="active_demo">
-              <img src='./img/bg_img@2x.png' width='100%'/>
+           <div v-for="item in items" class="active_demo" @click='en_details($event)' :oaActId='item.oaActId'>
+               <img v-bind:src="item.bulletinPicture" width='100%' style='min-height:100px;max-height:150px;'/>
               <div class='textMain'>
-                <p class='active_title'>{{item.title}}</p>
-                <p class='active_demo_content'>{{item.act_content}}</p>
-              </div>
+                <p class='active_title'>{{item.actName}}</p>
+                <p class='active_demo_content'>{{item.content}}</p>
+              </div> 
               <div class='img_text'>
-                  <p class='img_active_title'>{{item.title}}</p>
-                  <p class='img_active_date'>{{item.date}}</p>
+                  <p class='img_active_title'>{{item.actName}}</p>
+                  <p class='img_active_date'>{{item.beginTime}}</p>
               </div>
-          </div><!--active_demo-->
+          </div> 
+          <div class='loading' style="font-size:18px;color:rgb(59,59,59);line-height:50px;display:none;">
+            加载中，请稍后......
+          </div>
+          <div class='loader'ref='loader' style="font-size:18px;color:rgb(59,59,59);line-height:50px;display:none;">
+            已经到底了
+          </div>
 
             
         </div><!--active_content-->
@@ -30,6 +36,7 @@
 </template>
 <script>
 import provinceList from './provinceList.vue'
+import { Indicator } from 'mint-ui';
 import axios from 'axios'
 var arrData=[];
 export default {
@@ -37,38 +44,129 @@ export default {
   data:function(){
     return {
       msg: '我是活动页面，哈哈哈',
-      items:[
-        {'imgSrc':'./static/img/bg_img@2x.png','title':'我是标题','date':'2018-09-08','act_content':'我是新闻内容我是新闻内容我是新闻内容我是新闻内容'},
-        {'imgSrc':'./static/img/bg_img@2x.png','title':'我是标题','date':'2018-09-08','act_content':'我是新闻内容我是新闻内容我是新闻内容我是新闻内容'},
-        {'imgSrc':'./static/img/bg_img@2x.png','title':'我是标题','date':'2018-09-08','act_content':'我是新闻内容我是新闻内容我是新闻内容我是新闻内容'},
-        {'imgSrc':'./static/img/bg_img@2x.png','title':'我是标题','date':'2018-09-08','act_content':'我是新闻内容我是新闻内容我是新闻内容我是新闻内容'}
-      ]
+      allList:[],
+      load:true,
+      loadObj:{
+        text: '加载中...',
+  spinnerType: 'triple-bounce'
+      },
+      param:{
+          pageNo:1,
+          city:'',
+          actName:'',
+      },
+      items:[]
     }
   },
   methods:{
     openProvincsList:function(){
       alert('打开省市列表');
-    }
-  },
-   mounted:function(){  
-        var that = this;
-        var data="{}";
+    },
+    en_details:function(e){
+       var that=this;
+     // console.log(event.target);
+     // console.log(event.target.getAttribute('oaactid'))//点击到的元素
+       var oaActId=event.currentTarget.getAttribute('oaactid');//绑定事件的元素
+       this.$router.push({
+          path:'/ActiveDetail',
+          name:'ActiveDetail',
+          params:{
+            oaActId : oaActId,
+            ifCard:true
+          }
+        })
+    },
+    search:function(){
+      var that=this;
+       Indicator.open(that.loadObj);
+      var name=that.$refs.name.value;//ref的dom操作
+      that.allList=[];
+      this.param={
+          pageNo:1,
+          city:'',
+          actName:name
+        }
+     this.getData();
+    },
+    getData:function(){
+        let that = this;
+        //console.log(that.param)
         axios({
             method:'get',
             url:'/wei/wxservice/wxservice?opName=getactiveinfo',
             params: {
-              param:data,//系统类别
+              param:that.param,//系统类别
             }
         })
         .then(function(res) {//成功之后
-            console.log(res)
-                //console.log(res.data.data);
-               //that.dataSource =  that.dataSource.concat(res.data.data.advertisementList);
+              var retCode=res.data.retCode;
+              var retMsg=res.data.retMsg;
+              if(retCode!=0){
+                console.log(retMsg);
+              }
+              that.allList=that.allList.concat(res.data.itemList);//把已获取的数据和新获取的数据合并在放入页面
+              that.items=that.allList
+             //console.log(that.items)
+              if(res.data.itemList&&res.data.itemList.length<10){
+                  that.load=false;
+              }
+              Indicator.close();
         });
     }
-}
+    
+  },
+   mounted:function(){
+      let that = this; //这个是钩子函数mounted
+     Indicator.open(that.loadObj);
+     var routerCity = this.$route.params.city;
+     if(routerCity!=''&&routerCity!=undefined){
+         that.allList=[];
+           that.param={
+            pageNo:1,
+            city:routerCity,
+            actName:''
+          }
+          that.getData();
+          this.$route.params.city='';
+          return;
+     }
+     
+     that.getData();
+   },
+   created(){
+     let that = this;
+     window.onscroll = function(){
+       	//变量scrollTop是滚动条滚动时，距离顶部的距离
+        var scrollTop = document.documentElement.scrollTop||document.body.scrollTop;
+        //变量windowHeight是可视区的高度
+        var windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
+        //变量scrollHeight是滚动条的总高度
+        var scrollHeight = document.documentElement.scrollHeight||document.body.scrollHeight;
+        //滚动条到底部的条件
+        if(scrollTop+windowHeight==scrollHeight){
+          //写后台加载数据的函数
+          console.log('到底了')
+         	  if(!that.load){
+              that.$refs.loader.style.display='block';
+               return;
+             }
+          Indicator.open(that.loadObj);
+          var pageNo=that.param.pageNo;
+           pageNo++;
+           that.param.pageNo=pageNo;  
+          that.getData();
+        }   
+      }
+       
+     }
+   }
+        
+
 </script>
 <style>
+.business_card{
+  display:none;
+}
 .act_head{
   height:40px;
   box-sizing: border-box;
@@ -169,5 +267,6 @@ color: #d7d6d6;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 </style>
 

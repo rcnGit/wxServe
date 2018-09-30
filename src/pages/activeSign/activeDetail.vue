@@ -1,6 +1,6 @@
 <template>
     <div class='activeSign'>
-         <div class='business_card'>
+         <div class='business_card' ref="card">
             <div class='bus_L'><img src='./img/man_head_img@2x.png'/></div>
             <div class='bus_C'>
                 <p class='position_name'>职位姓名</p>
@@ -10,27 +10,104 @@
          </div>  <!--business_card-->
         <div class='addressBox'>
           <div class='ad_m'>
-              <p class='ad_tit'>大唐财富某某活动标题</p>
-              <p class='ad_date'>2018.08.08-2018.09.09</p>
-              <p class='ad_address'>北京市朝阳区东三环北路38号安联大厦22层</p>
+              <p class='ad_tit'>{{actName}}</p>
+              <p class='ad_date'>{{beginTime}}——{{endTime}}</p>
+              <p class='ad_address'>{{location}}</p>
           </div>
         </div>
         <div class='actDe'>
-            <div class='nodata'>
+            <div class='nodata' style='display:none;' ref='nodata'>
                  <img src='./img/nodataImg@2x.png'/>
                  <p>暂无活动介绍</p>
             </div>
-           
+           <div>{{content}}</div>
         </div>
-         <mt-button type="danger" size="large" class='toSign'>我要报名</mt-button>
+         <mt-button type="danger" size="large" class='toSign'@click='sign()'>我要报名</mt-button>
 
     </div>
 </template>
 <script>
+
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
+import { Indicator } from 'mint-ui';
+import axios from 'axios'
 export default {
-    name:'ActiveDetail'
+    name:'ActiveDetail',
+    data:function (){
+        return{
+            actName:'',
+            beginTime:'',
+            endTime:'',
+            location:'',
+            content:'',
+             param:{
+                 activeId:'',
+                  pageNo:1
+             },
+            loadObj:{
+                text: '加载中...',
+                spinnerType:'triple-bounce'
+            }
+        }
+       
+    },
+    methods:{
+           getData:function(){
+                let that = this;
+                //console.log(that.param)
+                axios({
+                    method:'get',
+                    url:'/wei/wxservice/wxservice?opName=getactiveinfo',
+                    params: {
+                        param:that.param,//系统类别
+                    }
+                })
+                .then(function(res) {//成功之后
+                    var retCode=res.data.retCode;
+                    var retMsg=res.data.retMsg;
+                    if(retCode!=0){
+                        alert(retCode);
+                    }
+                    if(res.data.itemList.length<=0){
+                        that.$refs.nodata.style.display='block';
+                    }else{
+                        var obj=res.data.itemList[0];
+                       that.actName=obj.actName;
+                       that.beginTime=obj.beginTime;
+                        that.endTime=obj.endTime;
+                        that.location=obj.location;
+                        that.content=obj.content;
+                    }
+                   console.log(res.data.itemList[0]);  
+                    Indicator.close();
+                });
+            },
+            sign:function(){
+                alert('我要报名');
+            }
+    },
+    created(){
+         var oaActId =this.$route.params.oaActId; 
+         console.log(oaActId);
+         let that = this; //这个是钩子函数mounted
+        Indicator.open(that.loadObj);
+        var ifCard=this.$route.params.ifCard;
+        // if(ifCard!=''&&ifCard!=undefined){
+        //     console.log('ifCard==='+ifCard);
+        //     if(ifCard){
+        //         this.$refs.card.style.display='flex';
+        //     }
+        // }
+        if(oaActId!=''&&oaActId!=undefined){
+            that.param.activeId=oaActId;
+            console.log(that.param);
+            that.getData();
+        }
+    } 
+
 }
+
+ 	   
 </script>
 <style>
  .business_card{
@@ -39,6 +116,7 @@ export default {
     height:60px;
     display:flex;
     background-color:rgba(0,0,0,0.4);
+    display: none;
 }
 .business_card .bus_L{
     width:45px;
@@ -76,36 +154,50 @@ export default {
 }
 .addressBox{
     width:100%;
-    height:120px;
+    height:149px;
 }
 .ad_m{
     width:96%;
     margin:10px auto;
-    padding: 0 20px 20px;
+    height:100%;    
+    padding: 0 20px 0px;
     padding-top:20px;
     text-align: left;
     background:url(./img/activeDbg@2x.png)no-repeat;
-    background-size:100%;
+    background-size:cover;
 }
 .ad_tit{
-    font-size: 20px;
+    font-size: 18px;
     color:#000;
     margin-bottom:20px;
+    line-height:23px;
+     overflow:hidden; 
+    text-overflow:ellipsis;
+    display:-webkit-box; 
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2; 
 }
 .ad_date{
     font-size: 14px;
     color:rgb(100, 98, 98);
-    margin-bottom:10px;
+    margin-bottom:7px;
 }
 .ad_address{
     font-size: 14px;
     color:rgb(100, 98, 98);
+    line-height:18px;
+    overflow:hidden; 
+    text-overflow:ellipsis;
+    display:-webkit-box; 
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2; 
 }
 .actDe{
     width:96%;
     height:370px;
     margin:10px auto;
     border:1px solid #efefef;
+    padding: 10px;
 }
 .toSign{
     width:90%;

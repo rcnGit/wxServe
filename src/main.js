@@ -18,7 +18,7 @@ Vue.use(utils);//使用方法this.formatDuring(currentTime);
 new Vue({
   el: '#app_wei',
   router,
-  components: { App },
+  components: { App},
   template: '<App/>'
 })
 /* router.beforeEach((to) => {

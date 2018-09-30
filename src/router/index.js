@@ -8,9 +8,16 @@ import minActive from '@/pages/active/minActive'
 import ActiveDetail from '@/pages/activeSign/ActiveDetail'
 import toSignNewCust from '@/pages/activeSign/toSignNewCust'
 import toSignOldCust from '@/pages/activeSign/toSignOldCust'
+import pushW from '@/pages/activeSign/pushW'//客服报名有财富师的跳转页面
+import kefuSign from '@/pages/activeSign/kefuSign'//客户福利（客服）个人报名
 import signSuc from '@/pages/activeSign/signSuc'
 import propertyList from '@/pages/property/propertyList'
 import propertyListDe from '@/pages/property/propertyListDe'
+import appointW from '@/pages/wealth/appointW'//指定财富师页面
+import getcode from '@/pages/wealth/getcode'//指定财富师页面
+import onlineApply from '@/pages/wealth/onlineApply'//指定财富师页面
+import changephone from '@/pages/wealth/changephone'//修改手机号
+import applysuc from '@/pages/wealth/applysuc'//财富师申请成功
 Vue.use(Router)
 
 export default new Router({
@@ -48,7 +55,7 @@ export default new Router({
       path: '/toSignNewCust',
       name: 'toSignNewCust',
       meta: {
-        title: '新客户活动报名'
+        title: '拉新活动个人报名'
       },
       component: toSignNewCust//使用这个组件
     },
@@ -56,9 +63,24 @@ export default new Router({
       path: '/toSignOldCust',
       name: 'toSignOldCust',
       meta: {
-        title: '活动报名'
+        title: '大唐盛宴活动'
       },
-      component: toSignOldCust//使用这个组件
+      component: toSignOldCust//使用这个组件---客户福利个人报名
+    },{
+      path: '/pushW',
+      name: 'pushW',
+      meta: {
+        title: '大唐盛宴活动'
+      },
+      component: pushW//使用这个组件
+    },
+    {
+      path: '/kefuSign',
+      name: 'kefuSign',
+      meta: {
+        title: '客户福利个人报名'
+      },
+      component: kefuSign//使用这个组件
     },
     {
       path: '/signSuc',
@@ -99,6 +121,47 @@ export default new Router({
         title: '投后消息'
       },
       component: postInfor//使用这个组件
+    },
+    {
+      path: '/appointW',
+      name: 'appointW',
+      meta: {
+        title: '指定财富师'
+      },
+      component: appointW//使用这个组件onlineApply
+    },
+    {
+      path: '/getcode',
+      name: 'getcode',
+      meta: {
+        title: '获取验证码'
+      },
+      component: getcode//使用这个组件
+    },
+    {
+      path: '/onlineApply',
+      name: 'onlineApply',
+      meta: {
+        title: '在线申请'
+      },
+      component: onlineApply//使用这个组件
+    },
+    {
+      path: '/changephone',
+      name: 'changephone',
+      meta: {
+        title: '修改手机号'
+      },
+      component: changephone//使用这个组件
+    },
+    {
+      path: '/applysuc',
+      name: 'applysuc',
+      meta: {
+        title: '申请成功'
+      },
+      component: applysuc//使用这个组件
     }
+  
   ]
 })
