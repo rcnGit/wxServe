@@ -82,6 +82,7 @@
  
  html, body {
      width: 100%;
+     background:#f9f9f9;
  }
  
  body {
@@ -98,15 +99,17 @@
 }
  /* 覆盖min-ui的样式 #cf432e*/
  .mint-button--danger{
-    background-color: #B70005!important;
-    width:80%!important;
-    margin:30px auto 0;
+    background-color: #df1e1d!important;
+    width:86%!important;
+    margin:50px auto 0;
     border-radius: 19px!important;
+    height:40px!important;
+    font-size: 16px!important;
  }
 
  /* 字体颜色 */
  .B7color{
-    color:#B70005!important;
+    color:#ef2727!important;
  }
 
 /* 字体大小 */
@@ -134,4 +137,14 @@
 /* 元素宽 */
 .w50{
     width:50%;
+}
+.warn{
+    position: absolute;
+    bottom: -15px;
+    left:0;
+    color:#df1e1d;
+    z-index: 999;
+    text-align: center;
+    font-size: 13px;
+    width:100%;
 }

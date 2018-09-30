@@ -3,15 +3,16 @@ body{
 }
 .headContent{
     width:100%;
-    height:166px;
-    background:#B70005;
+    height:134px;
+    background:url(./img/property_img@2x.png) no-repeat;
+    background-size: 100%;
 }
 .p1{
-    padding:14px 0  12px 0;
+    padding:20px 0  12px 0;
 }
 .p2{
     font-size: 30px;
-    padding-bottom:12px;
+    padding-bottom:18px;
 }
 .p3{
     padding-bottom: 17px;

@@ -75,7 +75,12 @@ export default {
   name: 'provinceList',
   data () {
     return {
-      msg: '我是活动页面，哈哈哈'
+      msg: '我是活动页面，哈哈哈',
+      src:{
+        path:'/active',
+        name:'Active'
+      }
+
     }
   },
   components: {//本页我要使用这些组件
@@ -84,8 +89,21 @@ export default {
     },
   methods:{
     provFn:function(val){
-        alert(val);
+        this.$router.push({
+          path:this.src.path,
+          name:this.src.name,
+          params:{
+            city : val
+          }
+        })
     }
+  },
+  created:function(){
+     var father = this.$route.params.father;
+     if(father=='onlineApply'){
+        this.src.path='/onlineApply';
+        this.src.name='onlineApply';
+     }
   }
 }
 
