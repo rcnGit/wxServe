@@ -140,11 +140,11 @@
 }
 .warn{
     position: absolute;
-    bottom: -15px;
+    bottom: -16px;
     left:0;
     color:#df1e1d;
     z-index: 999;
     text-align: center;
-    font-size: 13px;
+    font-size: 14px;
     width:100%;
 }
