@@ -43,7 +43,10 @@ export function isValidEmail (email) {
 export function isValidInt (number) {
   return /^[1-9][0-9]*$/.test(number)
 }
-
+// 姓名的校验
+export function isValidName (name) {
+  return /[，\s_'’‘\"”“|\\~#$@￥%^&*!。;\/<>\?？]/.test(name)
+}
 /**
  *  格式化时间
  */
