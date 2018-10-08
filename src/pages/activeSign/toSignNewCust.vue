@@ -6,8 +6,8 @@
               <!-- <img src='./img/left_img@2x.png' class='left_img'/>   -->
             </div>
             <div class='inpBox'>
-                <input type='text' class=''style='padding-right:100px;'maxlength='11' v-model="ipNo" ref='phone'/>
-                <p class='warn' ref='warn'v-show='true'>{{warnPhone}}</p>
+                <input type='text' class=''style='padding-right:100px;'maxlength='11' v-model="ipNo" ref='phone' v-on:input='phoneFn'/>
+                <p class='warn' ref='warnPhone'v-show='true'>{{warnPhone}}</p>
                 <span>联系人电话</span>
                 <mt-button type="danger" size="small" class='sendCodeBtn'@click="getM()" v-bind:disabled='Dsiabled'>{{text}}</mt-button>
              </div> <!--inpBox-->
@@ -32,7 +32,9 @@
 </template>
 <script>
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
+import { Field } from 'mint-ui';
 import getcode from '../wealth/getcode'
+import { isValidMobile, isValidxincode, isValidverifycode } from '@/common/js/extends.js'
 export default {
     name:'toSignNewCust',
     data:function(){
@@ -41,10 +43,20 @@ export default {
             text:'发送验证码',
             Dsiabled:false,
              ipNo:'',
-             warnPhone:''
+             warnPhone:'',
+             p:1,
         }
     },
     methods:{
+        phoneFn:function(){
+            if(!isValidMobile()){
+                this.$refs.warnPhone.style.display='block';
+                this.$refs.phone.style='border-bottom:0.5px solid #df1e1d!important';
+            }else{
+                this.$refs.warnPhone.style.display='none';
+                this.$refs.phone.style='border-bottom:0.5px solid #efefef!important';
+            }
+        },//验证手机号
         getDescribe:function(id){//拼接跳转链接
         console.log(id)
             this.$router.push({
@@ -61,10 +73,10 @@ export default {
         warnCodeFunction:function(warn){
              this.warnPhone=warn;
               if(this.warnPhone!=''){
-               this.$refs.warn.style.display='block';
+               this.$refs.warnPhone.style.display='block';
               this.$refs.phone.style='border-bottom:0.5px solid #df1e1d!important';
            }else{
-               this.$refs.warn.style.display='none';
+               this.$refs.warnPhone.style.display='none';
               this.$refs.phone.style='border-bottom:0.5px solid #efefef!important';
            }
         },
@@ -79,11 +91,11 @@ export default {
            // console.log(this.Dsiabled);
         }
     },
-    components:{Button,getcode}//使用mint-ui的button的组件
+    components:{Button,getcode,Field}//使用mint-ui的button的组件
 }
 </script>
 <style>
- @import 'toSign.css'; /* 引入toSign.css文件*/
+ @import 'toSign.css';  引入toSign.css文件*/
  #toSignNewCust{
      padding-top:15px;
  }
