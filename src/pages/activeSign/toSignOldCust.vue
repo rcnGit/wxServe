@@ -7,13 +7,14 @@
             <div class='inpBox'>
                 <input type='text' class='' placeholder="请输入您的姓名"/>
                 <span>姓名</span>
-                <em>请输入正确的实名信息</em>
+                <!-- <p class='warn' ref='warn'v-show='true'>{{warn}}</p> -->
                 <!-- <img src='./img/card_img@2x.png' class='clear'/> -->
              </div> <!--inpBox-->
               <div class='inpBox'>
-                <input type='text' class=''placeholder='请输入您的身份证'/>
+                <input type='text' class=''placeholder='请输入您的身份证' ref='idCardNo' v-model="param.idCardNo" v-on:input='idCardNoFn'/>
                 <span>身份证</span>
-                <em>请输入正确的实名信息</em>
+                <!-- <em>请输入正确的实名信息</em> -->
+                <p class='warn' ref='warn'v-show='true'>{{warnIdcard}}</p>
                 <!-- <img src='./img/card_img@2x.png' class='clear'/> -->
              </div> <!--inpBox-->             
              <div style='clear:both'></div>
@@ -24,12 +25,13 @@
 </template>
 <script>
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
-
+import { isValidIdCardNo } from '@/common/js/extends.js'
 import axios from 'axios';
 export default {
     name:'toSignOldCust',
-   data:function(){
+    data:function(){
        return{
+           warnIdcard: '',
            param:{
             idCardNo:'13042419920209204X',//身份证号
             idCardName:'任超楠',//身份证姓名
@@ -52,6 +54,7 @@ export default {
         document.cookie = name + "=" + escape (value) + expire;
     },
         getDescribe:function(id){//拼接跳转链接
+            console.log(this.param)
         var that=this;
           axios({
                 method:'get',
@@ -71,7 +74,17 @@ export default {
                 }
                 
             });
-        }
+        },
+        idCardNoFn:function(){
+            if(!isValidIdCardNo(this.param.idCardNo)){
+                this.$refs.warn.style.display='block';
+                this.$refs.idCardNo.style='border-bottom:0.5px solid #df1e1d!important';
+                this.warnIdcard='请输入正确的实名信息';
+            }else{
+                this.$refs.warn.style.display='none';
+                this.$refs.idCardNo.style='border-bottom:0.5px solid #efefef!important';
+            }
+        },//验证身份证
     },
      mounted:function(){
         var that = this;

@@ -15,7 +15,7 @@ export default {
             },
            ex:{
                 time:180,
-            btnDsiabled:true,
+                btnDsiabled:true,
            },
            warn:''
         }
@@ -33,6 +33,7 @@ export default {
                 that.$emit('warnCodeFunction', that.warn);
             }else{
                 that.$emit('warnCodeFunction', '');
+                that.subTime()
             }
 
             return;
@@ -62,6 +63,7 @@ export default {
         subTime:function(){
             var that=this;
             that.ex.btnDsiabled=true;
+            that.ex.time=180;
             var g=setInterval(function(){
                 that.ex.time=parseInt(that.ex.time-1);
                 if(that.ex.time==0){

@@ -22,7 +22,7 @@
             </div>
            <div>{{content}}</div>
         </div>
-         <mt-button type="danger" size="large" class='toSign'@click='sign()'>我要报名</mt-button>
+         <mt-button type="danger" size="large" class='toSign' @click='sign()'>我要报名</mt-button>
 
     </div>
 </template>
@@ -40,6 +40,9 @@ export default {
             endTime:'',
             location:'',
             content:'',
+            isReviewSignu:'',
+            activityType: '',
+            authenticFlag: '',
              param:{
                  activeId:'',
                   pageNo:1
@@ -63,10 +66,16 @@ export default {
                     }
                 })
                 .then(function(res) {//成功之后
+                    console.log(res)
+                    Indicator.close();
                     var retCode=res.data.retCode;
                     var retMsg=res.data.retMsg;
                     if(retCode!=0){
                         alert(retCode);
+                    }else if(retCode == 0){
+                        console.log(res.data.itemList[0].activityType);  
+                        that.activityType = res.data.itemList[0].activityType;
+                        that.isReviewSignu = res.data.itemList[0].isReviewSignu;
                     }
                     if(res.data.itemList.length<=0){
                         that.$refs.nodata.style.display='block';
@@ -78,19 +87,50 @@ export default {
                         that.location=obj.location;
                         that.content=obj.content;
                     }
-                   console.log(res.data.itemList[0]);  
-                    Indicator.close();
+                });
+            },
+            authentic:function(){
+                let that = this;
+                axios({
+                    method:'get',
+                    url:'/wei/wxservice/wxservice?opName=getUserInfo'//获取客户信息
+                })
+                .then(function(res) {//成功之后
+                    var retCode=res.data.retCode;
+                    if(retCode!=0){
+                        alert(retCode);
+                    }else if(retCode == 0){
+                        console.log(res.data.userInfo)
+                        that.authenticFlag = res.data.userInfo.authenticFlag
+                    }
                 });
             },
             sign:function(){
-                alert('我要报名');
+                
+                if(this.activityType == 'YX'){
+                    this.$router.replace({
+                        name: 'toSignNewCust'
+                    })
+                }else if(this.activityType == 'KF'){
+                    this.authentic()
+                    if(this.authenticFlag == 0){
+                        this.$router.replace({
+                            name: 'toSignOldCust'
+                        })
+                    }else{
+                        this.$router.replace({
+                            name: 'kefuSign'
+                        })
+                    }
+                    
+                }
             }
     },
     created(){
          var oaActId =this.$route.params.oaActId; 
          console.log(oaActId);
          let that = this; //这个是钩子函数mounted
-        Indicator.open(that.loadObj);
+        //Indicator.open(that.loadObj);
         var ifCard=this.$route.params.ifCard;
         // if(ifCard!=''&&ifCard!=undefined){
         //     console.log('ifCard==='+ifCard);

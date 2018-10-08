@@ -12,7 +12,8 @@
                 <mt-button type="danger" size="small" class='sendCodeBtn'@click="getM()" v-bind:disabled='Dsiabled'>{{text}}</mt-button>
              </div> <!--inpBox-->
               <div class='inpBox'>
-                <input type='text' class=''/>
+                <input type='text' class='' maxlength='11' v-model="codeNo" ref='verifycode' v-on:input='codeFn'/>
+                <p class='warn' ref='warnCode'v-show='true'>{{warnCode}}</p>
                 <span>验证码</span>
              </div> <!--inpBox-->
              <div class='inpBox'>
@@ -42,16 +43,19 @@ export default {
             messType:'5',
             text:'发送验证码',
             Dsiabled:false,
-             ipNo:'',
-             warnPhone:'',
-             p:1,
+            ipNo:'',
+            warnPhone:'',
+            codeNo:'',
+            warnCode:'',
+            p:1,
         }
     },
     methods:{
         phoneFn:function(){
-            if(!isValidMobile()){
+            if(!isValidMobile(this.ipNo)){
                 this.$refs.warnPhone.style.display='block';
                 this.$refs.phone.style='border-bottom:0.5px solid #df1e1d!important';
+                this.warnPhone='请输入正确的手机号';
             }else{
                 this.$refs.warnPhone.style.display='none';
                 this.$refs.phone.style='border-bottom:0.5px solid #efefef!important';
@@ -89,7 +93,17 @@ export default {
           
            
            // console.log(this.Dsiabled);
-        }
+        },
+        codeFn:function(){
+            if(!isValidverifycode(this.codeNo)){
+                this.$refs.warnCode.style.display='block';
+                this.$refs.verifycode.style='border-bottom:0.5px solid #df1e1d!important';
+                this.warnCode='请输入正确的验证码';
+            }else{
+                this.$refs.warnCode.style.display='none';
+                this.$refs.verifycode.style='border-bottom:0.5px solid #efefef!important';
+            }
+        },//验证手机验证码
     },
     components:{Button,getcode,Field}//使用mint-ui的button的组件
 }
