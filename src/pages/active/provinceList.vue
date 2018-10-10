@@ -79,8 +79,10 @@ export default {
       src:{
         path:'/active',
         name:'Active'
-      }
-
+      },
+      routerPhone:'',
+      routerPhone2:'',
+      msgCode:'',
     }
   },
   components: {//本页我要使用这些组件
@@ -93,16 +95,28 @@ export default {
           path:this.src.path,
           name:this.src.name,
           params:{
-            city : val
+            city : val,
+            phone:this.routerPhone,
+            phone2:this.routerPhone2,
+            msgCode:this.msgCode
           }
         })
     }
   },
   created:function(){
      var father = this.$route.params.father;
+      var phone = this.$route.params.phone;
+      var phone2 = this.$route.params.phone2;
+      this.msgCode = this.$route.params.msgCode;
      if(father=='onlineApply'){
         this.src.path='/onlineApply';
         this.src.name='onlineApply';
+     }
+     if(phone==''||phone!=undefined){
+        this.routerPhone=phone;
+     }
+     if(phone2==''||phone2!=undefined){
+        this.routerPhone2=phone2;
      }
   }
 }

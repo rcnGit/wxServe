@@ -28,7 +28,7 @@ import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { isValidIdCardNo } from '@/common/js/extends.js'
 import axios from 'axios';
 export default {
-    name:'toSignOldCust',
+    name:'faceMsg',
     data:function(){
        return{
            warnIdcard: '',

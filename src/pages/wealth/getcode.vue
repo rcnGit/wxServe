@@ -35,17 +35,16 @@ export default {
                 that.$emit('warnCodeFunction', '');
                 that.subTime()
             }
-
-            return;
             //ajax提交
             var that=this;
             that.param={
                 mobileNo:ipNo,
                 messType:type
             }
+            console.log(this.param);
              axios({
                 method:'get',
-                url:'/wei/wxservice/wxexternal?opName=send_mobile_message',
+                url:'/wei/wxservice/wxservice?opName=send_mobile_message',
                 params: {
                 param:that.param,//系统类别
                 }
@@ -54,7 +53,7 @@ export default {
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 if(retCode!=0){
-                    alert(retMsg);
+                   // alert(retMsg);
                 }
                 that.subTime(); 
                 console.log(res.data)
