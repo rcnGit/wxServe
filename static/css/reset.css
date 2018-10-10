@@ -148,3 +148,10 @@
     font-size: 14px;
     width:100%;
 }
+
+/* 覆盖mintui弹框样式 */
+.mint-msgbox-confirm{
+    background:#df1e1d!important;
+    color:#fff!important;
+    font-size: 14px;
+}

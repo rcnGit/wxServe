@@ -26,7 +26,7 @@
          <div class='content' style='padding:0;'>
              <div class='applyLine'>
                  <p>若无心仪财富师可联系客服为您推荐财富师</p>
-                 <mt-button type="danger" size="large" class='next' @click='onlineApply()' style='background:#fff!important;color:#df1e1d;border:1px solid #df1e1d!important;width:50%!important;margin-top:20px!important;'>在线申请</mt-button>
+                 <mt-button type="danger" size="large" class='next' @click='onlineApplyV()' style='background:#fff!important;color:#df1e1d;border:1px solid #df1e1d!important;width:50%!important;margin-top:20px!important;'>在线申请</mt-button>
              </div>
            
          </div>
@@ -42,18 +42,18 @@
                    <img src='./img/popBg.png' width='100%'/>
                    <div class='popTxt_contant'>
                        <textarea rows="4" style='width:90%;border:none;outline:0;color:rgb(54,54,54);font-size:14px;padding:25px 15px;line-height:20px;'>{{msg1}}{{msg2}}{{msg3}}</textarea>
-                        <div style='margin-top:15%;'>
+                        <div style='margin-top:15%;display:none;' >
                             <mt-button type="danger" size="large" class='' style='width:50%!important;margin-top:0px!important;'>复制并打开微信</mt-button>
                         </div>
                         <div style='margin-top:7%;'>
-                            <mt-button type="danger" size="large" class='' style='background:#fff!important;color:#df1e1d;border:1px solid #df1e1d!important;width:50%!important;margin-top:0px!important;'>发送短信</mt-button>
+                            <mt-button type="danger" size="large" class=''@click='sendMSG()' style='background:#fff!important;color:#df1e1d;border:1px solid #df1e1d!important;width:50%!important;margin-top:0px!important;'>发送短信</mt-button>
                         </div>
                    </div><!-- popTxt_contant  -->
                    
                </div>
            </div> <!--pop_contant -->
 
-           <div class='pop_wealth' ref='pop_wealth'>
+           <div class='pop_wealth' ref='pop_wealth'style='display:none;'>
                <img v-bind:src='srcImg' class='wimg'/>
                <p>是否确定他（她）为我的专属财富师</p>
                <div style='margin-top:15%;'>
@@ -61,6 +61,14 @@
                 </div>
                 <div style='margin-top:7%;'>
                     <mt-button type="danger"@click='closeB()' size="large" class='' style='background:#fff!important;color:rgb(153,153,153);border:1px solid rgb(153,153,153)!important;width:50%!important;margin-top:0px!important;'>放弃指定</mt-button>
+                </div>
+           </div>
+
+           <div class='pop_wealth2' ref='pop_wealth2'>
+               <img v-bind:src='srcImg2' class='wimg'/>
+               <p>您已线下指定了专属财富师</p>
+               <div style='margin-top:15%;'>
+                    <mt-button type="danger" size="large" class=''@click='closeB()' style='width:50%!important;margin-top:0px!important;'>确定</mt-button>
                 </div>
            </div>
          </mt-popup>
@@ -83,6 +91,7 @@ export default {
             warnName:'',//姓名校验的提示
             popupVisible:false,
             srcImg:'',//财富师头像
+            srcImg2:'',//线下制定的财富师头像财富师头像
             msg1:'我是',
             msg2:'任超楠',
             msg3:'，我正在指定你为我的专属财富师，请回复姓名全程与DT开头的工号，谢谢！',
@@ -117,6 +126,30 @@ export default {
         
              },
     methods:{
+        sendMSG:function(){
+            let ua = navigator.userAgent.toLowerCase();
+            //android终端
+            let isAndroid = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1;  　　//ios终端
+            let isiOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); 
+            if(false) {//isWeixinBrowser()//判断是不是微信
+                
+            }else{
+            if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
+                //ios
+                var str=encodeURI('你好吗');
+               window.location.href='sms:10086&body='+str;
+            } else if (/(Android)/i.test(navigator.userAgent)) {
+                //android
+                window.location.href='sms:10086?body=你好吗？'
+            }
+            }
+    
+            function isWeixinBrowser() {
+                return (/micromessenger/.test(ua)) ? true : false;
+            }
+            alert('23')
+            
+        },//send
         wNameFn:function(){
             var that=this;
             if(isValidName(that.wName)){
@@ -142,6 +175,9 @@ export default {
             }
         },
         sendWX:function(){
+            this.$refs.pop_wealth.style.display='none';
+            this.$refs.pop_wealth2.style.display='none';
+            this.$refs.pop_contant.style.display='block';
             var that=this;
             that.popupVisible=true;
         },
@@ -202,12 +238,24 @@ export default {
                console.log(res.data);
                var data=res.data.data;
               if(retCode==0){//指定成功
-                  that.srcImg=data.photo;
-                  that.popupVisible=true;
-              }else if(retCode==-4){
-                  alert('已绑定线下财富师,并且展示绑定的财富师的信息');
-              }else if(retCode==-2){
-                  alert('未认证，跳转人脸识别页面');
+                this.$refs.pop_wealth.style.display='block';
+                this.$refs.pop_wealth2.style.display='none';
+                this.$refs.pop_contant.style.display='none';
+                that.srcImg=data.photo;
+                that.popupVisible=true;
+              }else if(retCode==-4){//已绑定线下财富师,并且展示绑定的财富师的信息
+                this.$refs.pop_wealth2.style.display='block';
+                this.$refs.pop_wealth.style.display='none';
+                this.$refs.pop_contant.style.display='none';
+                that.srcImg2=data.photo;
+                that.popupVisible=true;
+              }else if(retCode==-2){//未认证，跳转人脸识别页面
+                   this.$router.push({
+                    path:'/faceMsg',
+                    name:'faceMsg',
+                    params:{
+                    }
+                    })
               }else if(retCode==-5){
                   MessageBox('提示','财富师工号不存在');
               }else if(retCode==-6){
@@ -245,6 +293,8 @@ export default {
             });
         },
         onlineApplyV:function(){
+            var that=this;
+            console.log('onlineApplyV');
                axios({
                     method:'get',
                     url:'/ning/wxservice/wxMemberInfo/checkApplyWealther',//申请财富师之前校验财富师
@@ -254,16 +304,31 @@ export default {
                     var retMsg=res.data.retMsg;
                     console.log(res.data);
                     var data=res.data.data;
-                    if(retCode==0){//0-可以申请（data为客户手机号）   //跳转在线申请页面      
-                        alert('指定财富师成功')
+                    if(retCode==0){//0-可以申请（data为客户手机号）   //跳转在线申请页面    
+                        that.$router.push({
+                            path:'/onlineApply',
+                            name:'onlineApply',
+                            params:{
+                                phone:data.phone,
+                            }
+                         })
                     }else if(retCode==-1){//-1-系统异常
                         MessageBox.confirm('系统异常，请联系客服', '');
                     }else if(retCode==-3){//-3-已绑定线上财富师
                          MessageBox('提示', '已绑定线上财富师');
                     }else if(retCode==-4){//-4-已绑定线下财富师（data为已绑定的财富是信息）
-                        alert('系统异常');
+                       this.$refs.pop_wealth2.style.display='block';
+                       this.$refs.pop_wealth.style.display='none';
+                       this.$refs.pop_contant.style.display='none';
+                        that.srcImg2=data.photo;
+                        that.popupVisible=true;
                     }else if(retCode==-2){//-2未认证,跳转人脸识别的页面
-                        alert('系统异常');
+                          this.$router.push({
+                            path:'/faceMsg',
+                            name:'faceMsg',
+                            params:{
+                            }
+                         })
                     }else if(retCode==-5){// -5-已购买过私募资产，请联系客服确定财富师
                          MessageBox.confirm('',
                             {  message: '您已经已购买过私募资产，请拨打客服电话400-110联系客服确定财富师', 
@@ -295,7 +360,7 @@ export default {
     width:100%;
     background:none;
 }
- .pop_contant,.pop_wealth{height:530px;background:#fff;width:92%;margin:0 auto 20px;border-radius: 10px;} 
+ .pop_contant,.pop_wealth,.pop_wealth2{height:530px;background:#fff;width:92%;margin:0 auto 20px;border-radius: 10px;} 
 .sendM{
     color:#7a7a7a;
     font-size: 12px;

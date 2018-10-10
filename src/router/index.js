@@ -7,7 +7,7 @@ import postInfor from '@/pages/PostInfor/PostInformation'
 import minActive from '@/pages/active/minActive'
 import ActiveDetail from '@/pages/activeSign/ActiveDetail'
 import toSignNewCust from '@/pages/activeSign/toSignNewCust'
-import toSignOldCust from '@/pages/activeSign/toSignOldCust'
+import faceMsg from '@/pages/activeSign/faceMsg'//人脸识别，录身份信息
 import pushW from '@/pages/activeSign/pushW'//客服报名有财富师的跳转页面
 import kefuSign from '@/pages/activeSign/kefuSign'//客户福利（客服）个人报名
 import signSuc from '@/pages/activeSign/signSuc'
@@ -60,12 +60,12 @@ export default new Router({
       component: toSignNewCust//使用这个组件
     },
     {
-      path: '/toSignOldCust',
-      name: 'toSignOldCust',
+      path: '/faceMsg',
+      name: 'faceMsg',
       meta: {
         title: '大唐盛宴活动'
       },
-      component: toSignOldCust//使用这个组件---客户福利个人报名
+      component: faceMsg//使用这个组件---客户福利个人报名
     },{
       path: '/pushW',
       name: 'pushW',
