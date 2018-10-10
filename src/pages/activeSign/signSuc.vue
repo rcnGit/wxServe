@@ -3,7 +3,7 @@
         <img src='./img/zwt_img@2x.png' class='ztw'/>
         <p class='p1'>恭喜您，报名申请提交成功</p>
         <p class='p2'>活动时间：<span>2018-08-28 18:00</span></p>
-        <p class='p3'>活动地点：北京朝阳区泰康大厦32层<p/>
+        <p class='p3'>活动地点：北京朝阳区泰康大厦32层</p>
         <mt-button type="danger" size="large" class='sure'>确定</mt-button>
     </div>
 </template>

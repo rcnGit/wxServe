@@ -1,9 +1,9 @@
 <template>
     <div class='activeSign'>
-         <div class='business_card' ref="card">
+         <div class='business_Card' ref="card" v-show="businesscardShow">
             <div class='bus_L'><img src='./img/man_head_img@2x.png'/></div>
             <div class='bus_C'>
-                <p class='position_name'>职位姓名</p>
+                <p class='position_name'>{{businessName}}</p>
                 <p class='Invitation'>邀您参加大唐财富尊享活动</p>
             </div>
             <div class='bus_R'><img src='./img/rightBtn_img@2x.png'/></div>
@@ -22,12 +22,12 @@
             </div>
            <div>{{content}}</div>
         </div>
-         <mt-button type="danger" size="large" class='toSign' @click='sign()'>我要报名</mt-button>
+         <mt-button type="danger" size="large" class='toSign' @click='sign()' v-show='isShow' :disabled="isDisabled">{{actStatus}}</mt-button>
 
     </div>
 </template>
 <script>
-
+import wx from 'weixin-js-sdk';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { Indicator } from 'mint-ui';
 import axios from 'axios'
@@ -40,17 +40,23 @@ export default {
             endTime:'',
             location:'',
             content:'',
-            isReviewSignu:'',
+            isReviewSignup:'',
             activityType: '',
             authenticFlag: '',
-             param:{
-                 activeId:'',
-                  pageNo:1
-             },
+            actStatus:'',
+            isShow: true,
+            isDisabled: false,
+            businesscardShow: false,
+            businessName: '',
+            param:{
+                activeId:'',
+                pageNo:1
+            },
             loadObj:{
                 text: '加载中...',
                 spinnerType:'triple-bounce'
-            }
+            },
+            backUrl: encodeURIComponent(location.href.split('#')[0])
         }
        
     },
@@ -75,7 +81,7 @@ export default {
                     }else if(retCode == 0){
                         console.log(res.data.itemList[0].activityType);  
                         that.activityType = res.data.itemList[0].activityType;
-                        that.isReviewSignu = res.data.itemList[0].isReviewSignu;
+                        that.isReviewSignup = res.data.itemList[0].isReviewSignup;
                     }
                     if(res.data.itemList.length<=0){
                         that.$refs.nodata.style.display='block';
@@ -86,6 +92,15 @@ export default {
                         that.endTime=obj.endTime;
                         that.location=obj.location;
                         that.content=obj.content;
+                        // if(res.data.canSignUp == '0'){
+                        //     that.actStatus= '我要报名';
+                        // }else if(res.data.canSignUp == '1'){
+                        //     that.actStatus= '已报名';
+                        //     that.isDisabled = true;
+                        // }else{
+                        //     that.isShow = false
+                        // }
+                        
                     }
                 });
             },
@@ -102,31 +117,92 @@ export default {
                     }else if(retCode == 0){
                         console.log(res.data.userInfo)
                         that.authenticFlag = res.data.userInfo.authenticFlag
+                        if(res.data.userInfo.businessName != null){
+                            that.businesscardShow = true
+                        }
+                        
                     }
                 });
             },
-            sign:function(){
-                
-                if(this.activityType == 'YX'){
-                    this.$router.replace({
-                        name: 'toSignNewCust'
+            sign:function(){ 
+                if(this.activityType == 'KF'){
+                    this.$router.push({
+                        path: '/toSignNewCust',
+                        query: {
+                            scope: 'snsapi_userinfo'
+                        },
+                        name: 'toSignNewCust',
+                        params:{
+                            isReviewSignup: this.isReviewSignup
+                        }
                     })
-                }else if(this.activityType == 'KF'){
+                }else if(this.activityType == 'YX'){
                     this.authentic()
                     if(this.authenticFlag == 0){
-                        this.$router.replace({
+                        this.$router.push({
+                            path: '/toSignOldCust',
                             name: 'toSignOldCust'
                         })
                     }else{
-                        this.$router.replace({
+                        this.$router.push({
                             name: 'kefuSign'
                         })
                     }
                     
                 }
-            }
+            },
+            async asyncSDKConifg () {
+            let that = this
+            axios.get('/wei/wxservice/core/getJSSDKConfigure.mm?pageUrl=pageUrl',{params:{"url":this.backUrl}})
+                .then(function (res) {
+                wx.config({
+                    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                    appId: res.data.appId, // 必填，公众号的唯一标识
+                    timestamp: res.data.timestamp, // 必填，生成签名的时间戳
+                    nonceStr: res.data.nonceStr, // 必填，生成签名的随机串
+                    signature: res.data.signature, // 必填，签名
+                    jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage'] // 必填，需要使用的JS接口列表
+                })
+                wx.ready(function() { //通过ready接口处理成功验证
+            // config信息验证成功后会执行ready方法
+                wx.onMenuShareAppMessage({ // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用 
+                    title: '活动详情', // 分享标题
+                    desc: 'This is a test!', // 分享描述
+                    link: 'http://192.168.133.119:8080/#/ActiveDetail', // 分享链接
+                    imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
+                    type: '', // 分享类型,music、video或link，不填默认为link
+                    dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+                    success: function() {
+                        // 用户确认分享后执行的回调函数
+                        alert('成功');
+                    },
+                    cancel: function() {
+                        // 用户取消分享后执行的回调函数
+                        alert('用户取消分享');
+                    }
+                    });
+                    wx.onMenuShareTimeline({ //分享朋友圈
+                    title: '标题', // 分享标题
+                    link: '链接',
+                    imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
+                    success: function() {
+                        // 用户确认分享后执行的回调函数
+                    },
+                    cancel: function() {
+                        // 用户取消分享后执行的回调函数
+                    }
+                });
+            });
+                // end
+            })
+            wx.error(function(res){//通过error接口处理失败验证
+                // config信息验证失败会执行error函数
+            });
+        }
     },
     created(){
+        this.asyncSDKConifg()
+        this.authentic()
          var oaActId =this.$route.params.oaActId; 
          console.log(oaActId);
          let that = this; //这个是钩子函数mounted
@@ -150,15 +226,14 @@ export default {
  	   
 </script>
 <style>
- .business_card{
+ .business_Card{
     box-sizing: border-box;
     padding:0 20px;
     height:60px;
     display:flex;
     background-color:rgba(0,0,0,0.4);
-    display: none;
 }
-.business_card .bus_L{
+.business_Card .bus_L{
     width:45px;
     height:100%;
     float: left;
@@ -167,13 +242,13 @@ export default {
     width:50px;
     margin-top:6px;
 }
-.business_card .bus_C{
+.business_Card .bus_C{
     height:100%;
      flex: 1; 
      box-sizing: border-box;
      padding: 14px 0 0px 15px;
 } 
-.business_card .bus_R{
+.business_Card .bus_R{
     width:45px;
     height:100%;
     float: right;
