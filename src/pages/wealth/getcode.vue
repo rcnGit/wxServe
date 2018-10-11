@@ -22,15 +22,21 @@ export default {
     },
     methods:{
         getCodeFn:function(type,ipNo){
+            var that=this;
+            that.ex.btnDsiabled=true;//禁止点击按钮
             //手机号非空和数字校验
             var that=this;
             var reg = /^[0-9]{11}$/;
             if(ipNo.length==0){
                 that.warn='请输入手机号';
                 that.$emit('warnCodeFunction', that.warn);
+                that.ex.btnDsiabled=false;
+                return;
             }else if(ipNo.length<11||!reg.test(ipNo)){
                 that.warn='请输入正确的手机号';
                 that.$emit('warnCodeFunction', that.warn);
+                that.ex.btnDsiabled=false;
+                return
             }else{
                 that.$emit('warnCodeFunction', '');
                 that.subTime()
@@ -42,6 +48,7 @@ export default {
                 messType:type
             }
             console.log(this.param);
+            return;
              axios({
                 method:'get',
                 url:'/wei/wxservice/wxservice?opName=send_mobile_message',
@@ -53,24 +60,22 @@ export default {
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 if(retCode!=0){
-                   // alert(retMsg);
                 }
-                that.subTime(); 
-                console.log(res.data)
             });
         },//fn,
         subTime:function(){
+            
             var that=this;
-            that.ex.btnDsiabled=true;
+            
             that.ex.time=180;
-            var g=setInterval(function(){
+             var g=setInterval(function(){
                 that.ex.time=parseInt(that.ex.time-1);
                 if(that.ex.time==0){
                     clearInterval(g);
                     that.ex.time='重新发送';
                    that.ex.btnDsiabled=false;
                 }
-                that.$emit('childByValue', that.ex);
+                that.$emit('childByValue',that.ex);
               //  console.log(that.time);
             },1000)
         }

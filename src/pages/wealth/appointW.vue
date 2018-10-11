@@ -41,12 +41,12 @@
                <div class='popTxt'>
                    <img src='./img/popBg.png' width='100%'/>
                    <div class='popTxt_contant'>
-                       <textarea rows="4" style='width:90%;border:none;outline:0;color:rgb(54,54,54);font-size:14px;padding:25px 15px;line-height:20px;'>{{msg1}}{{msg2}}{{msg3}}</textarea>
-                        <div style='margin-top:15%;display:none;' >
-                            <mt-button type="danger" size="large" class='' style='width:50%!important;margin-top:0px!important;'>复制并打开微信</mt-button>
+                       <textarea rows="4" id='textSms' style='width:90%;border:none;outline:0;color:rgb(54,54,54);font-size:14px;padding:25px 15px;line-height:20px;'>{{msg1}}{{msg2}}{{msg3}}</textarea>
+                        <div style='margin-top:15%;' >
+                            <mt-button type="danger" size="large" class=''@click='sendweixin()'  style='width:50%!important;margin-top:0px!important;'>复制并发送微信</mt-button>
                         </div>
                         <div style='margin-top:7%;'>
-                            <mt-button type="danger" size="large" class=''@click='sendMSG()' style='background:#fff!important;color:#df1e1d;border:1px solid #df1e1d!important;width:50%!important;margin-top:0px!important;'>发送短信</mt-button>
+                            <mt-button type="danger" size="large" class=''@click='sendMSG()' style='background:#fff!important;color:#df1e1d;border:1px solid #df1e1d!important;width:50%!important;margin-top:0px!important;'>复制并发送短信</mt-button>
                         </div>
                    </div><!-- popTxt_contant  -->
                    
@@ -94,7 +94,7 @@ export default {
             srcImg2:'',//线下制定的财富师头像财富师头像
             msg1:'我是',
             msg2:'任超楠',
-            msg3:'，我正在指定你为我的专属财富师，请回复姓名全程与DT开头的工号，谢谢！',
+            msg3:'，我正在指定你为我的专属财富师，请回复姓名全称与DT开头的工号，谢谢！',
             param:{
                 dtNo:'',
                 dtName:''
@@ -108,24 +108,24 @@ export default {
     },
     component:{Button,axios,Popup,MessageBox},
     created:function(){ 
-        return;
-         MessageBox.confirm('',
-             {  message: 'xxx,你确定？', 
-                title: '提示',  
-                confirmButtonText: 'abc', 
-               cancelButtonText: '123' 
-              }).then(action => {  
-                 if (action == 'confirm') {   
-          //确认的回调
-         window.location.href="tel:17184092628" 
-         } }).catch(err => { 
-             if (err == 'cancel') {   
-              //取消的回调 
-            console.log(2); 
-            }  });
-        
-             },
+        this.getuserName();//获取用户姓名
+    },
     methods:{
+        getuserName:function(){
+            var that=this;
+            axios({
+                method:'get',
+                url:'/ning/wxservice/wxservice?opName=getUserInfo',//获取我的活动
+                params: {
+                
+                }
+            })
+            .then(function(res){
+                console.log(res.data);
+                var userInfo=res.data.userInfo;
+                that.msg2=userInfo.businessName;
+            })
+        },
         sendMSG:function(){
             let ua = navigator.userAgent.toLowerCase();
             //android终端
@@ -136,20 +136,26 @@ export default {
             }else{
             if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
                 //ios
-                var str=encodeURI('你好吗');
-               window.location.href='sms:10086&body='+str;
+                var Url2=document.getElementById("textSms");
+                 Url2.select(); // 选择对象
+                 document.execCommand("Copy"); // 执行浏览器复制命令
+               window.location.href='sms:';
             } else if (/(Android)/i.test(navigator.userAgent)) {
                 //android
-                window.location.href='sms:10086?body=你好吗？'
+                var str=this.msg1+this.msg2+this.msg3;
+                window.location.href='sms:?body='+str;
             }
             }
     
             function isWeixinBrowser() {
                 return (/micromessenger/.test(ua)) ? true : false;
             }
-            alert('23')
+           
             
         },//send
+        sendweixin:function(){
+            MessageBox('提示', '已复制，立即发给您想指定的财富师吧~');
+        },
         wNameFn:function(){
             var that=this;
             if(isValidName(that.wName)){

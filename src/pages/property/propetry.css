@@ -35,10 +35,11 @@ body{
     background:#fff;
 }
 .proDemo img{
-    width:10px;
+    width:24px;
     margin-right:5px;
     float: left;
-    height:10px;
+    position: relative;
+    top: -4px;
 }
 .proTop{
     margin-bottom:20px;

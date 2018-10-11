@@ -15,44 +15,44 @@
                     </div>
                 </div>
         </div>
-        <div class='noData' ref='nodata'>
+        <div class='noData' ref='nodata' style="display:none;">
                 <img src='./img/noprop.png'/>
                 <p class='fSize14'>您还没在大唐开启投资之旅哦</p>
                  <mt-button type="danger" size="large" class='next' @click='downApp ()'>去投资</mt-button>
          </div>
-        <div class='proContent' ref='contant' style='display:none;'>
+        <div class='proContent' ref='contant'>
             <div class='proDemo'>
                 <div class='proTop'>
-                    <img  class='floatLeft'/>
+                    <img  class='floatLeft'src='./img/sLogo.png'/>
                     <span class='floatLeft bigP'>私募</span>
                 </div>
                 <div style='clear:both'></div>
                 <div class='proBot'>
-                    <span class='floatLeft smP'>金额<em>{{privateTotalAsset}}</em></span>
+                    <span class='floatLeft smP'>金额&nbsp;<em>{{privateTotalAsset}}</em></span>
                 </div>
             </div>  <!-- proDemo -->
              <div class='proDemo'>
                 <div class='proTop'>
-                    <img  class='floatLeft'/>
+                    <img  class='floatLeft' src='./img/gLogo.png' />
                     <span class='floatLeft bigP'>公募</span>
                     <span class='floatRight'>更新日期：<em>{{publicDate}}</em></span>
                 </div>
                 <div style='clear:both'></div>
                 <div class='proBot'>
-                    <span class='floatLeft smP'>金额<em>{{publicTotalAsset}}</em></span>
-                    <span class='floatRight'>最新收益<em class='red'>+{{publicYestIncome}}</em></span>
+                    <span class='floatLeft smP'>金额&nbsp;<em>{{publicTotalAsset}}</em></span>
+                    <span class='floatRight'>最新收益<em :class='gC'>{{gH}}{{publicYestIncome}}</em></span>
                 </div>
             </div>  <!-- proDemo -->
              <div class='proDemo'>
                 <div class='proTop'>
-                    <img  class='floatLeft'/>
+                    <img  class='floatLeft'src='./img/dLogo.png'/>
                     <span class='floatLeft bigP'>定期</span>
                     <span class='floatRight'>更新日期：<em>{{securitiesDate}}</em></span>
                 </div>
                 <div style='clear:both'></div>
                 <div class='proBot'>
-                    <span class='floatLeft smP'>金额<em>{{securitiesAddIncome}}</em></span>
-                    <span class='floatRight'>最新收益<em class='red'>+{{securitiesYestIncome}}</em></span>
+                    <span class='floatLeft smP'>金额&nbsp;<em>{{securitiesAddIncome}}</em></span>
+                    <span class='floatRight'>最新收益<em :class='ziC'>{{ziH}}{{securitiesYestIncome}}</em></span>
                 </div>
             </div>  <!-- proDemo -->
         </div>
@@ -60,11 +60,21 @@
 </template>
 <script>
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
+import { Indicator } from 'mint-ui';
+import { MessageBox } from 'mint-ui';//提示框
 import axios from 'axios';
 export default {
     name:'propertyList',
     data:function(){
         return{
+            loadObj:{
+                text: '加载中...',
+                spinnerType: 'triple-bounce'
+            },
+            gC:'red',
+            ziC:'red',
+            ziH:'',//定期的最新涨跌
+            gH:'',//公募的最新涨跌
             totalAsset:'0.00',//总资产
             privateTotalAsset:'',//私募总资产
             privateToConfirmAsset:'0.00',//私募待确认
@@ -78,10 +88,11 @@ export default {
             securitiesDate:''//资管更新日期
         }
     },
-    components:{Button,axios},//使用mint-ui的button的组件
+    components:{Button,axios,Indicator,MessageBox},//使用mint-ui的button的组件
     methods:{
         getList:function(){
              var that=this;
+             Indicator.open(that.loadObj);
                 axios({
                     method:'get',
                     url:'/ning/wxservice/wxMemberInfo/getUserAsset',
@@ -90,23 +101,15 @@ export default {
                     }
                 })
                 .then(function(res) {//成功之后
+                    Indicator.close();
                     var retCode=res.data.retCode;
                     var retMsg=res.data.retMsg;
                     if(retCode!=0){
                         console.log(retMsg);
+                        return;
                     }
                    console.log(res.data);
                    var d=res.data.data;
-                    if(that.totalAsset=='0.00'){
-                        console.log(that.$refs.contant);
-
-                        that.$refs.contant.style.display='none';
-                        that.$refs.nodata.style.display='block';
-                        return;
-                    }else{
-                        that.$refs.contant.style.display='block';
-                        that.$refs.nodata.style.display='none';
-                    }
                     that.totalAsset=that.money(d.totalAsset)//总资产
                     that.privateTotalAsset=that.money(d.privateTotalAsset)//私募总资产
                     that.privateToConfirmAsset=that.money(d.privateToConfirmAsset)//私募待确认
@@ -116,6 +119,19 @@ export default {
                     that.securitiesTotalAsset=that.money(d.securitiesTotalAsset)//资管类总资产
                     that.securitiesYestIncome=that.money(d.securitiesYestIncome)//资管类最新收益
                     that.securitiesAddIncome=that.money(d.securitiesAddIncome)//资管类总收益
+
+
+                    if(that.totalAsset=='0.00'&&that.privateToConfirmAsset=='0.00'){
+                        console.log(that.$refs.contant);
+
+                        that.$refs.contant.style.display='none';
+                        that.$refs.nodata.style.display='block';
+                        return;
+                    }else{
+                        that.$refs.contant.style.display='block';
+                        that.$refs.nodata.style.display='none';
+                    }
+                   
                     if(d.publicDate==''){
                         d.publicDate='--';
                     }
@@ -124,6 +140,20 @@ export default {
                     }
                     that.publicDate=d.publicDate//公募更新日期
                     that.securitiesDate=d.securitiesDate//资管更新日期
+                    if(that.publicYestIncome<0){//公募最新收益
+                        that.gC='green'
+                        that.gH='-'
+                    }else{
+                        that.gC='red'
+                        that.gH='+'
+                    }
+                    if(that.securitiesYestIncome<0){//资管类最新收益
+                         that.ziC='green'
+                         that.ziH='-'
+                    }else{
+                        that.ziC='red'
+                        that.ziH='+'
+                    }
                    
                 });
         },
@@ -161,6 +191,9 @@ export default {
 @import 'propetry.css'; /* 引入toSign.css文件*/
 .red{
     color:rgb(239,39,39);
+}
+.green{
+    color:rgb(11,124,10);
 }
 .noData img{
     width:40%;

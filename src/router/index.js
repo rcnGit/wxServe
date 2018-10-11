@@ -12,7 +12,6 @@ import pushW from '@/pages/activeSign/pushW'//客服报名有财富师的跳转�
 import kefuSign from '@/pages/activeSign/kefuSign'//客户福利（客服）个人报名
 import signSuc from '@/pages/activeSign/signSuc'
 import propertyList from '@/pages/property/propertyList'
-import propertyListDe from '@/pages/property/propertyListDe'
 import appointW from '@/pages/wealth/appointW'//指定财富师页面
 import getcode from '@/pages/wealth/getcode'//指定财富师页面
 import onlineApply from '@/pages/wealth/onlineApply'//指定财富师页面
@@ -97,14 +96,6 @@ export default new Router({
         title: '我的资产'
       },
       component: propertyList//使用这个组件
-    },
-    {
-      path: '/propertyListDe',
-      name: 'propertyListDe',
-      meta: {
-        title: '我的资产'
-      },
-      component: propertyListDe//使用这个组件
     },
     {
       path: '/minActive',

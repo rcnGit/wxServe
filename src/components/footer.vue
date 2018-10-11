@@ -4,7 +4,7 @@
         <p>销售资格证书编号：000000333</p>
         <p>过往业绩不代表未来，市场有风险需谨慎</p>
         <p style='padding-bottom:50px;margin-top:20px; '>
-            <a href='11111'><span style="margin-right:10px">客服电话</span></a>|<span style="margin-left:10px" @click='downApp()'>APP下载</span>
+            <a href='tel:400-819-9868'><span style="margin-right:10px">客服电话</span></a>|<span style="margin-left:10px" @click='downApp()'>APP下载</span>
         </p> 
     </div>
 </template>
@@ -34,7 +34,7 @@ export default {
             function isWeixinBrowser() {
                 return (/micromessenger/.test(ua)) ? true : false;
             }
-        }
+        }//down
     }
     
 }
