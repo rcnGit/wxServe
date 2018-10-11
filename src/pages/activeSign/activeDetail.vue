@@ -30,6 +30,7 @@
 import wx from 'weixin-js-sdk';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { Indicator } from 'mint-ui';
+import { MessageBox } from 'mint-ui';//提示框
 import axios from 'axios'
 export default {
     name:'ActiveDetail',
@@ -51,6 +52,7 @@ export default {
             headImgUrl: '',
             param:{
                 activeId:'',
+                actName:'',
                 pageNo:1
             },
             loadObj:{
@@ -64,7 +66,7 @@ export default {
     methods:{
            getData:function(){
                 let that = this;
-                //console.log(that.param)
+                console.log(that.param)
                 axios({
                     method:'get',
                     url:'/wei/wxservice/wxservice?opName=getactiveinfo',
@@ -78,11 +80,15 @@ export default {
                     var retCode=res.data.retCode;
                     var retMsg=res.data.retMsg;
                     if(retCode!=0){
-                        alert(retCode);
+                        MessageBox('提示', '系统错误');
                     }else if(retCode == 0){
-                        console.log(res.data.itemList[0].activityType);  
-                        that.activityType = res.data.itemList[0].activityType;
-                        that.isReviewSignup = res.data.itemList[0].isReviewSignup;
+                        if(res.data.itemList.length==0){
+                            MessageBox('提示', '暂无活动详情内容');
+                        }else{
+                            that.activityType = res.data.itemList[0].activityType;
+                            that.isReviewSignup = res.data.itemList[0].isReviewSignup;
+                        } 
+                       
                     }
                     if(res.data.itemList.length<=0){
                         that.$refs.nodata.style.display='block';
@@ -115,9 +121,9 @@ export default {
                     Indicator.close();
                     var retCode=res.data.retCode;
                     if(retCode!=0){
-                        alert(retCode);
+                        MessageBox('提示', '系统错误');
                     }else if(retCode == 0){
-                        console.log(res.data.userInfo)
+                        console.log(res.data);
                         that.authenticFlag = res.data.userInfo.authenticFlag
                         that.headImgUrl = res.data.userInfo.headImgUrl
                         if(res.data.userInfo.businessName != null){
@@ -213,8 +219,9 @@ export default {
         this.asyncSDKConifg()
         this.authentic()
          var oaActId =this.$route.params.oaActId; 
-         console.log(oaActId+'1111111');
-         let that = this; //这个是钩子函数mounted
+         var actName =this.$route.params.actName; 
+         console.log(oaActId+'1111111'+actName);
+         let that = this; //这个是钩子函数mounted   
         Indicator.open(that.loadObj);
         var ifCard=this.$route.params.ifCard;
         // if(ifCard!=''&&ifCard!=undefined){
@@ -225,6 +232,7 @@ export default {
         // }
         if(oaActId!=''&&oaActId!=undefined){
             that.param.activeId=oaActId;
+            that.param.actName=actName;
             console.log(that.param.activeId);
             that.getData();
         }
