@@ -35,7 +35,7 @@
                     <span>理财师工号</span>
                   </div> <!--inpBox-->
              
-             <mt-button type="danger" size="large" class='sign' @click="toSignUp()">下一步</mt-button>
+             <mt-button type="danger" size="large" class='sign' @click="toSignUp()">报名</mt-button>
              <p style='font-size:12px;color:rgb(153,153,153);line-height:40px;'>此页面仅供个人客户自行报名，机构客户可联系您的专属财富师为您服务</p>
         </div>
         <getcode ref='c1' v-on:childByValue="childByValue" v-on:warnCodeFunction="warnCodeFunction"></getcode>
@@ -135,24 +135,32 @@ export default {
                        that.phone2 = mtel
                         that.isDisabled2 = true;
                         that.isShow = true
+                        that.isValid = true
                     }
                     if(res.data.userInfo.realName != null){
                         that.param.realName = res.data.userInfo.realName
                         that.isDisabled = true
+                        that.isValid3 = true
                     }
-                    // if(res.data.userInfo.businessName != null){
-                    //     that.param.businessName = res.data.userInfo.businessName
-                    //     that.isDisabled3 = true;
-                    // }
-                    // if(res.data.userInfo.belongBusiness != null){
-                    //     that.param.belongBusiness = res.data.userInfo.belongBusiness
-                    //     that.isDisabled4 = true;
-                    // }
+                    if(res.data.userInfo.businessName != null){
+                        that.param.businessName = res.data.userInfo.businessName
+                        that.isDisabled3 = true;
+                        that.isValid4 = true
+                    }
+                    if(res.data.userInfo.belongBusiness != null){
+                        that.param.belongBusiness = res.data.userInfo.belongBusiness
+                        that.isDisabled4 = true;
+                          that.isValid5 = true
+                    }
                 }
             });
         },
         phoneFn:function(){
-            this.param.phone = this.phone2
+            if(this.userPhone == ''){
+                this.param.phone = this.phone2 
+            }else{
+                this.param.phone = this.userPhone
+            }
             if(!isValidMobile(this.param.phone)){
                 this.$refs.warnPhone.style.display='block';
                 this.$refs.phone.style='border-bottom:0.5px solid #df1e1d!important';
@@ -259,7 +267,39 @@ export default {
                 }
             })
         },
-        toSignUp:function(){
+        signup:function(){
+            let that = this;
+            console.log(that.param)
+            axios({
+                method:'get',
+                url:'/wei/wxservice/wxservice?opName=toSignUp',
+                params: {
+                    param:that.param,//系统类别
+                }
+            })
+            .then(function(res) {//成功之后
+                Indicator.close();
+                console.log(res.data)
+                var retCode=res.data.retCode;
+                var retMsg=res.data.retMsg;                  
+                if(retCode==0){   
+                    console.log(that.param.isReviewSignup)
+                    that.$router.push({
+                        path: '/pushW',
+                        name: 'pushW',
+                        params:{
+                            isReviewSignup: that.param.isReviewSignup,
+                            activeId: that.param.activeId,
+                            businessName: that.param.businessName
+                        }
+                    })
+                }else{
+                    console.log(retMsg);
+                    MessageBox('提示',retMsg);
+                }
+            });
+        },
+        toSignUp:function(){     
             if(this.isValid == false || this.isValid2 == false || this.isValid3 == false || this.isValid4 == false || this.isValid5 == false){
                 this.phoneFn()
                 this.codeFn()
@@ -270,35 +310,18 @@ export default {
                 Indicator.open(this.loadObj);
                 let that = this;
                 console.log(that.param)
-                axios({
-                    method:'get',
-                    url:'/wei/wxservice/wxservice?opName=toSignUp',
-                    params: {
-                        param:that.param,//系统类别
-                    }
-                })
-                .then(function(res) {//成功之后
-                    Indicator.close();
-                    console.log(res.data)
-                    var retCode=res.data.retCode;
-                    var retMsg=res.data.retMsg;
-                    if(retCode==1){
-                        console.log(retMsg);
-                        MessageBox('提示',retMsg);
-                    }else if(retCode==0){   
-                        console.log(that.param.isReviewSignup)
-                        that.$router.push({
-                            path: '/signSuc',
-                            name: 'signSuc',
-                            params:{
-                                isReviewSignup: that.param.isReviewSignup,
-                                activeId: that.param.activeId
-                            }
-                        })
-                    }
-                    
-                    // Indicator.close();
-                });
+                if(that.isDisabled3 == false ){
+                    var message = '报名该活动需先指定财富师，是否定指定'+that.param.businessName+'为您的服务财富师？您可指定一名服务理财师，并拥有更换权力。'
+                    MessageBox.confirm(message).then(action => {
+                        if(action == 'confirm'){
+                            that.signup()
+                        }
+                    }).catch(() => {
+                        //console.log(2);
+                    })
+                }else{
+                    that.signup()
+                }
             }
         }
     },
@@ -338,5 +361,11 @@ export default {
  .sign{
      width:90%;
  }
-
+ .inpRchoose{
+     width:30%;
+     position: absolute;
+     left:74%!important;
+    color:#999;
+    line-height:30px;
+ }
 </style>

@@ -24,7 +24,7 @@ export default {
             activeId: ''
         }
     },
-     created(){
+    created(){
        this.getParams()
     },
     methods: {

@@ -102,15 +102,16 @@ export default {
                 }else if(retCode == 0){
                     console.log(res.data.userInfo)
                     console.log(res.data.userInfo.isNewRecord)
-                    if(res.data.userInfo.phone != null){
-                        that.userPhone = res.data.userInfo.phone
-                        var Tel = that.userPhone
-                        //var Tel = '13245782323'
-                        var mtel = Tel.substr(0, 3) + '****' + Tel.substr(7);
-                       that.phone2 = mtel
-                        that.isDisabled2 = true;
-                        that.isShow = true
-                    }
+                    // if(res.data.userInfo.phone != null){
+                    //     that.userPhone = res.data.userInfo.phone
+                    //     var Tel = that.userPhone
+                    //     //var Tel = '13245782323'
+                    //     var mtel = Tel.substr(0, 3) + '****' + Tel.substr(7);
+                    //     that.phone2 = mtel
+                    //     that.isDisabled2 = true;
+                    //     that.isShow = true
+                    //     that.isValid = true
+                    // }
                     if(res.data.userInfo.realName != null){
                         that.param.realName = res.data.userInfo.realName
                         that.isDisabled = true
@@ -127,8 +128,11 @@ export default {
             });
         },
         phoneFn:function(){
-            console.log(this.phone2)
-            this.param.phone = this.phone2
+            if(this.userPhone == ''){
+                this.param.phone = this.phone2 
+            }else{
+                this.param.phone = this.userPhone
+            }
             if(!isValidMobile(this.param.phone)){
                 this.$refs.warnPhone.style.display='block';
                 this.$refs.phone.style='border-bottom:0.5px solid #df1e1d!important';
@@ -232,7 +236,8 @@ export default {
             })
         },
         toSignUp:function(){
-            if(this.isValid == false || this.isValid2 == false || this.isValid3 == false){
+            if(!this.isValid || !this.isValid2 || !this.isValid3){
+                console.log(this.isValid)
                 this.phoneFn()
                 this.codeFn()
                 this.realnameFn()
