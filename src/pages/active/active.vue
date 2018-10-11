@@ -10,9 +10,9 @@
             <img src='./img/search_img@2x.png' class='search_img' @click='search()'/>
           </div>
         </div><!--act_head-->
-        <div class='noData' ref='nodata' v-show='isShow'>
+        <div class='noData' ref='nodata' v-if='isShow'>
           <img src='./img/nomessage@2x.png'/>
-          <p class='fSize14'>现在还没有活动哦</p>
+          <p class='fSize16'>现在还没有活动哦</p>
         </div>
         <div id='active_content'>
            <div v-for="item in items" class="active_demo" @click='en_details($event)' :oaActId='item.oaActId'>
@@ -112,7 +112,12 @@ export default {
             }else{
               if(res.data.itemList != ''){
                 that.allList=that.allList.concat(res.data.itemList);//把已获取的数据和新获取的数据合并在放入页面
-                that.items=that.allList
+                that.items=that.allList;
+                if(that.allList.length==0||that.allList==undefined){
+                    that.isShow=true;
+                }else{
+                    that.isShow=false;
+                }
                 //console.log(that.items)
                 if(res.data.itemList&&res.data.itemList.length<10){
                     that.load=false;
@@ -283,6 +288,9 @@ color: #d7d6d6;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.noData{
+  background:#fff;
 }
 .noData img{
     width:40%;

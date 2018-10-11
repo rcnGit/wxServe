@@ -113,6 +113,9 @@
  }
 
 /* 字体大小 */
+.fSize16{
+    font-size:16px;
+}
 .fSize14{
     font-size: 14px;
  }

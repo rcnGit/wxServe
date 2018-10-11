@@ -97,7 +97,9 @@ export default {
             msg3:'，我正在指定你为我的专属财富师，请回复姓名全称与DT开头的工号，谢谢！',
             param:{
                 dtNo:'',
-                dtName:''
+                dtName:'',
+                mobile:""//财富师手机号
+
             },
            
 
@@ -233,10 +235,8 @@ export default {
             console.log(this.param);
             axios({
             method:'get',
-            url:'/ning/wxservice/wxMemberInfo/checkWealther',
-            params: {
-              param:that.param,//系统类别
-            }
+            url:'/ning/wxservice/wxMemberInfo/checkWealther',//指定之前校验财富师
+            params:that.param,
         })
         .then(function(res) {//成功之后
               var retCode=res.data.retCode;
@@ -249,6 +249,7 @@ export default {
                 this.$refs.pop_contant.style.display='none';
                 that.srcImg=data.photo;
                 that.popupVisible=true;
+                that.param.mobile=data.mobile;
               }else if(retCode==-4){//已绑定线下财富师,并且展示绑定的财富师的信息
                 this.$refs.pop_wealth2.style.display='block';
                 this.$refs.pop_wealth.style.display='none';
