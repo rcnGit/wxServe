@@ -6,44 +6,85 @@
               <!-- <img src='./img/left_img@2x.png' class='left_img'/>   -->
             </div>
             <div class='inpBox'>
-                <input type='text' class=''/>
-                <span>联系人姓名</span>
-                 <!-- <img src='./img/card_img@2x.png' class='clear' style='right:33%;'/>  -->
-             </div> <!--inpBox-->
-              <div class='inpBox'>
-                <input type='text' class=''style='padding-right:100px;'/>
-                <span>联系人电话</span>
-                <mt-button type="danger" size="small" class='sendCodeBtn'>发送验证码</mt-button>
-                <!-- <img src='./img/card_img@2x.png' class='clear'/> -->
-             </div> <!--inpBox-->
-             <div class='inpBox'>
-                <input type='text' class=''/>
-                <span>验证码</span>
-                <!-- <img src='./img/card_img@2x.png' class='clear'/> -->
-              </div> <!--inpBox-->
-              <div class='inpBox'>
-                <input type='text' class=''/>
-                <span>财富师</span>
-                <!-- <img src='./img/card_img@2x.png' class='clear'/> -->
-              </div> <!--inpBox-->
-              <div class='inpBox'>
-                <input type='text' class=''/>
-                <span>财富师工号</span>
-                <!-- <img src='./img/card_img@2x.png' class='clear'/> -->
-              </div> <!--inpBox-->
+                    <input type='text' class='' v-model="param.realName" :disabled="isDisabled" ref="realName" v-on:input='realnameFn'/>
+                    <p class='warn' ref='warnName' v-show='true'>{{warnName}}</p>
+                    <span>联系人姓名</span>
+                     <!-- <img src='./img/card_img@2x.png' class='clear' style='right:33%;'/>  -->
+                 </div>
+                <div class='inpBox'>
+                        <input type='hidden' class=''style='padding-right:100px;'maxlength='11' v-model="param.phone" ref='phone' />
+                        <input type='text' class=''style='padding-right:100px;'maxlength='11' v-model="phone2" ref='phone2' :disabled="isDisabled2" v-on:input='phoneFn'/>
+                    <p class='warn' ref='warnPhone' v-show='true'>{{warnPhone}}</p>
+                    <span>联系人电话</span>
+                    <span class='inpRchoose fSize13' style='color:#4a90e2;' @click='changeP' v-show='isShow'>变更手机号>></span>
+                 </div> <!--inpBox-->
+                  <div class='inpBox'>
+                    <input type='text' class='' maxlength='11' v-model="param.verifiCode" ref='verifycode' v-on:input='codeFn'/>
+                    <p class='warn' ref='warnCode'v-show='true'>{{warnCode}}</p>
+                    <span>验证码</span>
+                    <mt-button type="danger" size="small" class='sendCodeBtn'@click="getM()" v-bind:disabled='Dsiabled'>{{text}}</mt-button>
+                 </div> <!--inpBox-->
+                 <div class='inpBox'>
+                    <input type='text' class='' v-model="param.businessName" :disabled="isDisabled3" ref='businessName' v-on:input='businessNameFn'/>
+                    <p class='warn' ref='warnbusinessName' v-show='true'>{{warnbusinessName}}</p>
+                    <span>理财师</span>
+                  </div> <!--inpBox-->
+                  <div class='inpBox'>
+                    <input type='text' class='' v-model="param.belongBusiness" :disabled="isDisabled4" ref='belongBusiness' v-on:input='belongBusinessFn'/>
+                    <p class='warn' ref='warnbelongBusiness' v-show='true'>{{warnbelongBusiness}}</p>
+                    <span>理财师工号</span>
+                  </div> <!--inpBox-->
              
-             <mt-button type="danger" size="large" class='sign'>下一步</mt-button>
+             <mt-button type="danger" size="large" class='sign' @click="toSignUp()">下一步</mt-button>
              <p style='font-size:12px;color:rgb(153,153,153);line-height:40px;'>此页面仅供个人客户自行报名，机构客户可联系您的专属财富师为您服务</p>
         </div>
+        <getcode ref='c1' v-on:childByValue="childByValue" v-on:warnCodeFunction="warnCodeFunction"></getcode>
     </div>
 </template>
 <script>
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
+import { Field } from 'mint-ui';
+import { Indicator } from 'mint-ui';
+import { MessageBox } from 'mint-ui';
+import getcode from '../wealth/getcode';
+import axios from 'axios'
+import { isValidMobile, isValidxincode, isValidverifycode, isValidName, isValidEmpNo } from '@/common/js/extends.js'
 export default {
     name:'kefuSign',
     data:function(){
         return{
+            messType:'3',
+            text:'发送验证码',
+            Dsiabled:false,
+            warnPhone:'',
+            warnCode:'',
+            warnName:'',
+            warnbusinessName:'',
+            warnbelongBusiness:'',
+            p:1,
+            isShow:false,
+            isDisabled: false,
+            isDisabled2: false,
+            isDisabled3: false,
+            isDisabled4: false,
+            isValid: false,
+            isValid2: false,
+            isValid3: false,
+            isValid4: false,
+            isValid5: false,
+            userPhone: '',
+            phone2: '',
             param:{
+                realName: '',
+                phone: '',
+                verifiCode: '',
+                activityType: '',
+                belongBusiness: '',
+                businessName: '',
+                activeId: '',
+                isReviewSignup: '',
+            },
+            paramss:{
                 bizId:''
             }
         }
@@ -65,18 +106,213 @@ export default {
             axios({
                 method:'get',
                 url:'/ning/wxservice/wxMemberInfo/getFaceToken', 
-                params: param
+                params: this.params
             })
             .then(function(res) {
                 console.log(res.data)
             })
+        },
+        getData:function(){
+            let that = this;
+            //console.log(that.param)
+            axios({
+                method:'get',
+                url:'/wei/wxservice/wxservice?opName=getUserInfo'//获取客户信息
+            })
+            .then(function(res) {//成功之后
+                Indicator.close();
+                var retCode=res.data.retCode;
+                if(retCode!=0){
+                    alert(retCode);
+                }else if(retCode == 0){
+                    console.log(res.data.userInfo)
+                    console.log(res.data.userInfo.isNewRecord)
+                    if(res.data.userInfo.phone != null){
+                        that.userPhone = res.data.userInfo.phone
+                        var Tel = that.userPhone
+                        //var Tel = '13245782323'
+                        var mtel = Tel.substr(0, 3) + '****' + Tel.substr(7);
+                       that.phone2 = mtel
+                        that.isDisabled2 = true;
+                        that.isShow = true
+                    }
+                    if(res.data.userInfo.realName != null){
+                        that.param.realName = res.data.userInfo.realName
+                        that.isDisabled = true
+                    }
+                    // if(res.data.userInfo.businessName != null){
+                    //     that.param.businessName = res.data.userInfo.businessName
+                    //     that.isDisabled3 = true;
+                    // }
+                    // if(res.data.userInfo.belongBusiness != null){
+                    //     that.param.belongBusiness = res.data.userInfo.belongBusiness
+                    //     that.isDisabled4 = true;
+                    // }
+                }
+            });
+        },
+        phoneFn:function(){
+            this.param.phone = this.phone2
+            if(!isValidMobile(this.param.phone)){
+                this.$refs.warnPhone.style.display='block';
+                this.$refs.phone.style='border-bottom:0.5px solid #df1e1d!important';
+                this.warnPhone='请输入正确的手机号';
+                this.isValid = false
+            }else{
+                this.$refs.warnPhone.style.display='none';
+                this.$refs.phone.style='border-bottom:0.5px solid #efefef!important';
+                this.isValid = true
+            }
+        },//验证手机号
+        getDescribe:function(id){//拼接跳转链接
+        console.log(id)
+            this.$router.push({
+                path:'/signSuc',
+                name:'signSuc',
+                params:{
+                 id : id
+                }
+              })
+        },
+        getM:function(){
+            this.Dsiabled = true
+            if(this.userPhone == ''){
+                this.param.phone == this.phone2 
+            }else{
+                this.param.phone = this.userPhone
+            }
+            this.$refs.c1.getCodeFn(this.messType,this.param.phone);
+        },
+        warnCodeFunction:function(warn){
+             this.warnPhone=warn;
+              if(this.warnPhone!=''){
+               this.$refs.warnPhone.style.display='block';
+              this.$refs.phone.style='border-bottom:0.5px solid #df1e1d!important';
+           }else{
+               this.$refs.warnPhone.style.display='none';
+              this.$refs.phone.style='border-bottom:0.5px solid #efefef!important';
+           }
+        },
+         childByValue:function(v){
+            //console.log(v)
+            this.text=v.time;
+           // console.log(v.time)
+           this.Dsiabled=v.btnDsiabled;
+          
+          
+           
+           // console.log(this.Dsiabled);
+        },
+        codeFn:function(){
+            if(!isValidverifycode(this.param.verifiCode)){
+                this.$refs.warnCode.style.display='block';
+                this.$refs.verifycode.style='border-bottom:0.5px solid #df1e1d!important';
+                this.warnCode='请输入正确的验证码';
+                this.isValid2 = false
+            }else{
+                this.$refs.warnCode.style.display='none';
+                this.$refs.verifycode.style='border-bottom:0.5px solid #efefef!important';
+                this.isValid2 = true
+            }
+        },//验证手机验证码
+        realnameFn:function(){
+            if(isValidName(this.param.realName) || this.param.realName == ""){
+                this.$refs.warnName.style.display='block';
+                this.$refs.realName.style='border-bottom:0.5px solid #df1e1d!important';
+                this.warnName='请输入正确的姓名';
+                this.isValid3 = false
+            }else{
+                this.$refs.warnName.style.display='none';
+                this.$refs.realName.style='border-bottom:0.5px solid #efefef!important';
+                this.isValid3 = true
+            }
+        },//验证联系人姓名
+        businessNameFn:function(){
+            if(isValidName(this.param.businessName) || this.param.businessName == ""){
+                this.$refs.warnbusinessName.style.display='block';
+                this.$refs.businessName.style='border-bottom:0.5px solid #df1e1d!important';
+                this.warnbusinessName='请输入正确的财富师姓名';
+                this.isValid4 = false
+            }else{
+                this.$refs.warnbusinessName.style.display='none';
+                this.$refs.businessName.style='border-bottom:0.5px solid #efefef!important';
+                this.isValid4 = true
+            }
+        },//验证财富师姓名
+        belongBusinessFn:function(){
+            if(!isValidEmpNo(this.param.belongBusiness)){
+                this.$refs.warnbelongBusiness.style.display='block';
+                this.$refs.belongBusiness.style='border-bottom:0.5px solid #df1e1d!important';
+                this.warnbelongBusiness='请输入正确的财富师工号';
+                this.isValid5 = false
+            }else{
+                this.$refs.warnbelongBusiness.style.display='none';
+                this.$refs.belongBusiness.style='border-bottom:0.5px solid #efefef!important';
+                this.isValid5 = true
+            }
+        },//验证财富师工号
+        changeP:function(){
+             this.$router.push({
+                path:'/changephone',
+                name:'changephone',
+                params:{
+                }
+            })
+        },
+        toSignUp:function(){
+            if(this.isValid == false || this.isValid2 == false || this.isValid3 == false || this.isValid4 == false || this.isValid5 == false){
+                this.phoneFn()
+                this.codeFn()
+                this.realnameFn()
+                this.businessNameFn()
+                this.belongBusinessFn()
+            }else{
+                Indicator.open(this.loadObj);
+                let that = this;
+                console.log(that.param)
+                axios({
+                    method:'get',
+                    url:'/wei/wxservice/wxservice?opName=toSignUp',
+                    params: {
+                        param:that.param,//系统类别
+                    }
+                })
+                .then(function(res) {//成功之后
+                    Indicator.close();
+                    console.log(res.data)
+                    var retCode=res.data.retCode;
+                    var retMsg=res.data.retMsg;
+                    if(retCode==1){
+                        console.log(retMsg);
+                        MessageBox('提示',retMsg);
+                    }else if(retCode==0){   
+                        console.log(that.param.isReviewSignup)
+                        that.$router.push({
+                            path: '/signSuc',
+                            name: 'signSuc',
+                            params:{
+                                isReviewSignup: that.param.isReviewSignup,
+                                activeId: that.param.activeId
+                            }
+                        })
+                    }
+                    
+                    // Indicator.close();
+                });
+            }
         }
     },
-    components:{Button},//使用mint-ui的button的组件
+    components:{Button,getcode,Field},//使用mint-ui的button的组件
     created:function(){
          var bizId=localStorage.getItem('bizId');
-         this.param.bizId=bizId;
+         this.paramss.bizId=bizId;
        this.getResult();
+       Indicator.open(this.loadObj);
+        this.param.isReviewSignup = this.$route.params.isReviewSignup;
+        this.param.activityType = this.$route.params.activityType;
+      // this.param.activityType = 'YX'
+        this.param.activeId = this.$route.params.activeId;
+        this.getData()
     }
 
 }

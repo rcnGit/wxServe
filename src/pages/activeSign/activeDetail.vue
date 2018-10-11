@@ -1,7 +1,7 @@
 <template>
     <div class='activeSign'>
          <div class='business_Card' ref="card" v-show="businesscardShow">
-            <div class='bus_L'><img src='./img/man_head_img@2x.png'/></div>
+            <div class='bus_L'><img :src="headImgUrl"/></div>
             <div class='bus_C'>
                 <p class='position_name'>{{businessName}}</p>
                 <p class='Invitation'>邀您参加大唐财富尊享活动</p>
@@ -48,6 +48,7 @@ export default {
             isDisabled: false,
             businesscardShow: false,
             businessName: '',
+            headImgUrl: '',
             param:{
                 activeId:'',
                 pageNo:1
@@ -87,19 +88,19 @@ export default {
                         that.$refs.nodata.style.display='block';
                     }else{
                         var obj=res.data.itemList[0];
-                       that.actName=obj.actName;
-                       that.beginTime=obj.beginTime;
+                        that.actName=obj.actName;
+                        that.beginTime=obj.beginTime;
                         that.endTime=obj.endTime;
                         that.location=obj.location;
                         that.content=obj.content;
-                        // if(res.data.canSignUp == '0'){
-                        //     that.actStatus= '我要报名';
-                        // }else if(res.data.canSignUp == '1'){
-                        //     that.actStatus= '已报名';
-                        //     that.isDisabled = true;
-                        // }else{
-                        //     that.isShow = false
-                        // }
+                        if(res.data.canSignUp == '0'){
+                            that.actStatus= '我要报名';
+                        }else if(res.data.canSignUp == '1'){
+                            that.actStatus= '已报名';
+                            that.isDisabled = true;
+                        }else{
+                            that.isShow = false
+                        }
                         
                     }
                 });
@@ -111,13 +112,19 @@ export default {
                     url:'/wei/wxservice/wxservice?opName=getUserInfo'//获取客户信息
                 })
                 .then(function(res) {//成功之后
+                    Indicator.close();
                     var retCode=res.data.retCode;
                     if(retCode!=0){
                         alert(retCode);
                     }else if(retCode == 0){
                         console.log(res.data.userInfo)
                         that.authenticFlag = res.data.userInfo.authenticFlag
+                        that.headImgUrl = res.data.userInfo.headImgUrl
                         if(res.data.userInfo.businessName != null){
+                            that.businessName = '财富师'+res.data.userInfo.businessName
+                            that.businesscardShow = true
+                        }else{
+                            that.businessName = res.data.userInfo.nickname
                             that.businesscardShow = true
                         }
                         
@@ -125,7 +132,7 @@ export default {
                 });
             },
             sign:function(){ 
-                if(this.activityType == 'KF'){
+                if(this.activityType == 'YX'){
                     this.$router.push({
                         path: '/toSignNewCust',
                         query: {
@@ -133,15 +140,17 @@ export default {
                         },
                         name: 'toSignNewCust',
                         params:{
-                            isReviewSignup: this.isReviewSignup
+                            isReviewSignup: this.isReviewSignup,
+                            activityType: this.activityType,
+                            activeId: this.param.activeId
                         }
                     })
-                }else if(this.activityType == 'YX'){
+                }else if(this.activityType == 'KF'){
                     this.authentic()
                     if(this.authenticFlag == 0){
                         this.$router.push({
-                            path: '/toSignOldCust',
-                            name: 'toSignOldCust'
+                            path: '/faceMsg',
+                            name: 'faceMsg'
                         })
                     }else{
                         this.$router.push({
@@ -204,9 +213,9 @@ export default {
         this.asyncSDKConifg()
         this.authentic()
          var oaActId =this.$route.params.oaActId; 
-         console.log(oaActId);
+         console.log(oaActId+'1111111');
          let that = this; //这个是钩子函数mounted
-        //Indicator.open(that.loadObj);
+        Indicator.open(that.loadObj);
         var ifCard=this.$route.params.ifCard;
         // if(ifCard!=''&&ifCard!=undefined){
         //     console.log('ifCard==='+ifCard);
@@ -216,7 +225,7 @@ export default {
         // }
         if(oaActId!=''&&oaActId!=undefined){
             that.param.activeId=oaActId;
-            console.log(that.param);
+            console.log(that.param.activeId);
             that.getData();
         }
     } 

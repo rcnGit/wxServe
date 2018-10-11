@@ -1,10 +1,15 @@
 <template>
     <div>
         <img src='./img/zwt_img@2x.png' class='ztw'/>
-        <p class='p1'>恭喜您，报名申请提交成功</p>
-        <p class='p2'>活动时间：<span>2018-08-28 18:00</span></p>
-        <p class='p3'>活动地点：北京朝阳区泰康大厦32层</p>
-        <mt-button type="danger" size="large" class='sure'>确定</mt-button>
+        <div class="Review" v-if="isshow">
+            <p class='p1'>恭喜您，报名申请提交成功</p>
+            <p class='p2'>活动时间：<span>2018-08-28 18:00</span></p>
+            <p class='p3'>活动地点：北京朝阳区泰康大厦32层</p>
+        </div>
+        <div class="ReviewF" v-else>
+            <p class='p4'>工作人员将在N个工作日内反馈审核结果，您可在我的活动中<span class="progress" @click='toActive()'>查看进度>></span></p>
+        </div>
+        <mt-button type="danger" size="large" class='sure' @click='toActiveDetail()'>确定</mt-button>
     </div>
 </template>
 <script>
@@ -14,7 +19,9 @@ export default {
     components:{Button},//使用mint-ui的button的组件
      data:function(){
         return{
-            id:''
+            isReviewSignup:'',
+            isshow: true,
+            activeId: ''
         }
     },
      created(){
@@ -24,9 +31,31 @@ export default {
       getParams () {
           console.log(this.$route)
         // 取到路由带过来的参数 
-        var routerParams = this.$route.params.id
+        var routerParams = this.$route.params.isReviewSignup
+       this.activeId = this.$route.params.activeId
+       // var routerParams = '0'
         // 将数据放在当前组件的数据内
-        alert(routerParams);
+       console.log(routerParams);
+       if(routerParams == '1'){
+           this.isshow = true
+       }else{
+            this.isshow = false 
+       }
+      },
+      toActiveDetail:function(){
+        this.$router.push({
+          path:'/ActiveDetail',
+          name:'ActiveDetail',
+          params:{
+            oaActId : this.activeId
+          }
+        })
+      },
+      toActive:function(){
+        this.$router.push({
+          path:'/Active',
+          name:'Active'
+        })
       }
     },
     watch: {
@@ -55,6 +84,16 @@ export default {
     font-size: 13px;
     color:rgb(53,55,57);
     line-height: 35px;
+}
+.p4{
+    font-size: 13px;
+    color:rgb(53,55,57);
+    line-height: 22px;
+    padding: 0 40px;
+    text-align: left;
+}
+.progress{
+    color: #08c;
 }
 .sure{
      width:90%;

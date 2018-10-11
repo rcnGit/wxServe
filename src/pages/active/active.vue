@@ -10,6 +10,10 @@
             <img src='./img/search_img@2x.png' class='search_img' @click='search()'/>
           </div>
         </div><!--act_head-->
+        <div class='noData' ref='nodata' v-show='isShow'>
+          <img src='./img/nomessage@2x.png'/>
+          <p class='fSize14'>现在还没有活动哦</p>
+        </div>
         <div id='active_content'>
            <div v-for="item in items" class="active_demo" @click='en_details($event)' :oaActId='item.oaActId'>
                <img v-bind:src="item.bulletinPicture" width='100%' style='min-height:100px;max-height:150px;'/>
@@ -46,14 +50,15 @@ export default {
       msg: '我是活动页面，哈哈哈',
       allList:[],
       load:true,
+      isShow:false,
       loadObj:{
         text: '加载中...',
-  spinnerType: 'triple-bounce'
+        spinnerType: 'triple-bounce'
       },
       param:{
           pageNo:1,
           city:'',
-          actName:'',
+          actName:''
       },
       items:[]
     }
@@ -71,8 +76,7 @@ export default {
           path:'/ActiveDetail',
           name:'ActiveDetail',
           params:{
-            oaActId : oaActId,
-            ifCard:true
+            oaActId : oaActId
           }
         })
     },
@@ -99,18 +103,24 @@ export default {
             }
         })
         .then(function(res) {//成功之后
-              var retCode=res.data.retCode;
-              var retMsg=res.data.retMsg;
-              if(retCode!=0){
-                console.log(retMsg);
+          console.log(res.data)
+            Indicator.close();
+            var retCode=res.data.retCode;
+            var retMsg=res.data.retMsg;
+            if(retCode!=0){
+              console.log(retMsg);
+            }else{
+              if(res.data.itemList != ''){
+                that.allList=that.allList.concat(res.data.itemList);//把已获取的数据和新获取的数据合并在放入页面
+                that.items=that.allList
+                //console.log(that.items)
+                if(res.data.itemList&&res.data.itemList.length<10){
+                    that.load=false;
+                }
+              }else{
+                this.isShow = true;
               }
-              that.allList=that.allList.concat(res.data.itemList);//把已获取的数据和新获取的数据合并在放入页面
-              that.items=that.allList
-             //console.log(that.items)
-              if(res.data.itemList&&res.data.itemList.length<10){
-                  that.load=false;
-              }
-              Indicator.close();
+            }
         });
     }
     
@@ -164,16 +174,23 @@ export default {
 
 </script>
 <style>
+body{
+  background: #fff;
+}
 .business_card{
   display:none;
 }
 .act_head{
-  height:40px;
+  /* height:40px; */
+  width: 100%;
   box-sizing: border-box;
-  padding:0 13px;
+  padding:10px 13px 5px;
   line-height: 40px; 
   display:flex; /*父元素声明弹性盒*/
-  margin-top:10px;
+  position: fixed;
+  top: 0;
+  z-index: 999999999;
+  background: #fff;
 }
 .act_h_left{
   width:60px;
@@ -219,7 +236,7 @@ color: #d7d6d6;
 }
 #active_content{
   background:#f8f8f8;
-  margin-top:20px;
+  margin-top:55px;
   margin-bottom:50px;
 }
 .textMain{
@@ -267,6 +284,13 @@ color: #d7d6d6;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
+.noData img{
+    width:40%;
+    margin:80px auto 0;
+}
+.noData p{
+    color:rgb(197,197,197);
+    margin-top:30px;
+}
 </style>
 

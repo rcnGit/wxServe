@@ -6,12 +6,14 @@
               <!-- <img src='./img/left_img@2x.png' class='left_img'/>   -->
             </div>
             <div class='inpBox'>
-                <input type='text' class='' v-model="param.realName" :disabled="isDisabled"/>
+                <input type='text' class='' v-model="param.realName" :disabled="isDisabled" ref="realName" v-on:input='realnameFn'/>
+                <p class='warn' ref='warnName' v-show='true'>{{warnName}}</p>
                 <span>联系人姓名</span>
                  <!-- <img src='./img/card_img@2x.png' class='clear' style='right:33%;'/>  -->
              </div>
             <div class='inpBox'>
-                <input type='text' class=''style='padding-right:100px;'maxlength='11' v-model="param.phone" ref='phone' v-on:input='phoneFn' :disabled="isDisabled2"/>
+                <input type='hidden' class=''style='padding-right:100px;'maxlength='11' v-model="param.phone" ref='phone' />
+                <input type='text' class=''style='padding-right:100px;'maxlength='11' v-model="phone2" ref='phone2' :disabled="isDisabled2" v-on:input='phoneFn'/>
                 <p class='warn' ref='warnPhone' v-show='true'>{{warnPhone}}</p>
                 <span>联系人电话</span>
                 <span class='inpRchoose fSize13' style='color:#4a90e2;' @click='changeP' v-show='isShow'>变更手机号>></span>
@@ -23,11 +25,13 @@
                 <mt-button type="danger" size="small" class='sendCodeBtn'@click="getM()" v-bind:disabled='Dsiabled'>{{text}}</mt-button>
              </div> <!--inpBox-->
              <div class='inpBox'>
-                <input type='text' class='' v-model="param.businessName" :disabled="isDisabled3"/>
+                <input type='text' class='' v-model="param.businessName" :disabled="isDisabled3" ref='businessName' v-on:input='businessNameFn'/>
+                <p class='warn' ref='warnbusinessName' v-show='true'>{{warnbusinessName}}</p>
                 <span>理财师</span>
               </div> <!--inpBox-->
               <div class='inpBox'>
-                <input type='text' class='' v-model="param.belongBusiness" :disabled="isDisabled4"/>
+                <input type='text' class='' v-model="param.belongBusiness" :disabled="isDisabled4" ref='belongBusiness' v-on:input='belongBusinessFn'/>
+                <p class='warn' ref='warnbelongBusiness' v-show='true'>{{warnbelongBusiness}}</p>
                 <span>理财师工号</span>
               </div> <!--inpBox-->
              
@@ -41,26 +45,34 @@
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { Field } from 'mint-ui';
 import { Indicator } from 'mint-ui';
+import { MessageBox } from 'mint-ui';
 import getcode from '../wealth/getcode';
 import axios from 'axios'
-import { isValidMobile, isValidxincode, isValidverifycode } from '@/common/js/extends.js'
+import { isValidMobile, isValidxincode, isValidverifycode, isValidName, isValidEmpNo } from '@/common/js/extends.js'
 export default {
     name:'toSignNewCust',
     data:function(){
         return{
-            messType:'5',
+            messType:'3',
             text:'发送验证码',
             Dsiabled:false,
             warnPhone:'',
             warnCode:'',
+            warnName:'',
+            warnbusinessName:'',
+            warnbelongBusiness:'',
             p:1,
             isShow:false,
             isDisabled: false,
             isDisabled2: false,
             isDisabled3: false,
             isDisabled4: false,
+            isDisabled6: false,
             isValid: false,
             isValid2: false,
+            isValid3: false,
+            userPhone: '',
+            phone2: '',
             param:{
                 realName: '',
                 phone: '',
@@ -68,12 +80,14 @@ export default {
                 activityType: '',
                 belongBusiness: '',
                 businessName: '',
+                activeId: '',
                 isReviewSignup: '',
             }
         }
     },
     methods:{
         getData:function(){
+            
             let that = this;
             //console.log(that.param)
             axios({
@@ -87,11 +101,13 @@ export default {
                     alert(retCode);
                 }else if(retCode == 0){
                     console.log(res.data.userInfo)
+                    console.log(res.data.userInfo.isNewRecord)
                     if(res.data.userInfo.phone != null){
-                        var Tel = res.data.userInfo.phone
+                        that.userPhone = res.data.userInfo.phone
+                        var Tel = that.userPhone
                         //var Tel = '13245782323'
                         var mtel = Tel.substr(0, 3) + '****' + Tel.substr(7);
-                        that.param.phone = mtel
+                       that.phone2 = mtel
                         that.isDisabled2 = true;
                         that.isShow = true
                     }
@@ -111,6 +127,8 @@ export default {
             });
         },
         phoneFn:function(){
+            console.log(this.phone2)
+            this.param.phone = this.phone2
             if(!isValidMobile(this.param.phone)){
                 this.$refs.warnPhone.style.display='block';
                 this.$refs.phone.style='border-bottom:0.5px solid #df1e1d!important';
@@ -120,7 +138,7 @@ export default {
                 this.$refs.warnPhone.style.display='none';
                 this.$refs.phone.style='border-bottom:0.5px solid #efefef!important';
                 this.isValid = true
-            }
+            } 
         },//验证手机号
         getDescribe:function(id){//拼接跳转链接
         console.log(id)
@@ -133,6 +151,12 @@ export default {
               })
         },
         getM:function(){
+            this.Dsiabled = true
+            if(this.userPhone == ''){
+                this.param.phone == this.phone2 
+            }else{
+                this.param.phone = this.userPhone
+            }
             this.$refs.c1.getCodeFn(this.messType,this.param.phone);
         },
         warnCodeFunction:function(warn){
@@ -167,6 +191,38 @@ export default {
                 this.isValid2 = true
             }
         },//验证手机验证码
+        realnameFn:function(){
+            if(isValidName(this.param.realName) || this.param.realName == ""){
+                this.$refs.warnName.style.display='block';
+                this.$refs.realName.style='border-bottom:0.5px solid #df1e1d!important';
+                this.warnName='请输入正确的姓名';
+                this.isValid3 = false
+            }else{
+                this.$refs.warnName.style.display='none';
+                this.$refs.realName.style='border-bottom:0.5px solid #efefef!important';
+                this.isValid3 = true
+            }
+        },//验证联系人姓名
+        businessNameFn:function(){
+            if(isValidName(this.param.businessName) || this.param.businessName == ""){
+                this.$refs.warnbusinessName.style.display='block';
+                this.$refs.businessName.style='border-bottom:0.5px solid #df1e1d!important';
+                this.warnbusinessName='请输入正确的财富师姓名';
+            }else{
+                this.$refs.warnbusinessName.style.display='none';
+                this.$refs.businessName.style='border-bottom:0.5px solid #efefef!important';
+            }
+        },//验证财富师姓名
+        belongBusinessFn:function(){
+            if(!isValidEmpNo(this.param.belongBusiness)){
+                this.$refs.warnbelongBusiness.style.display='block';
+                this.$refs.belongBusiness.style='border-bottom:0.5px solid #df1e1d!important';
+                this.warnbelongBusiness='请输入正确的财富师工号';
+            }else{
+                this.$refs.warnbelongBusiness.style.display='none';
+                this.$refs.belongBusiness.style='border-bottom:0.5px solid #efefef!important';
+            }
+        },//验证财富师工号
         changeP:function(){
              this.$router.push({
                 path:'/changephone',
@@ -176,10 +232,12 @@ export default {
             })
         },
         toSignUp:function(){
-            if(this.isValid == false || this.isValid2 == false){
+            if(this.isValid == false || this.isValid2 == false || this.isValid3 == false){
                 this.phoneFn()
                 this.codeFn()
+                this.realnameFn()
             }else{
+                Indicator.open(this.loadObj);
                 let that = this;
                 console.log(that.param)
                 axios({
@@ -190,18 +248,25 @@ export default {
                     }
                 })
                 .then(function(res) {//成功之后
-                    console.log(res)
-                    // var retCode=res.data.retCode;
-                    // var retMsg=res.data.retMsg;
-                    // if(retCode!=0){
-                    //     console.log(retMsg);
-                    // }
-                    // that.allList=that.allList.concat(res.data.itemList);//把已获取的数据和新获取的数据合并在放入页面
-                    // that.items=that.allList
-                    // //console.log(that.items)
-                    // if(res.data.itemList&&res.data.itemList.length<10){
-                    //     that.load=false;
-                    // }
+                    Indicator.close();
+                    console.log(res.data)
+                    var retCode=res.data.retCode;
+                    var retMsg=res.data.retMsg;
+                    if(retCode != 0){
+                        console.log(retMsg);
+                        MessageBox('提示',retMsg);
+                    }else if(retCode == 0){   
+                        console.log(that.param.isReviewSignup)
+                        that.$router.push({
+                            path: '/signSuc',
+                            name: 'signSuc',
+                            params:{
+                                isReviewSignup: that.param.isReviewSignup,
+                                activeId: that.param.activeId
+                            }
+                        })
+                    }
+                    
                     // Indicator.close();
                 });
             }
@@ -212,7 +277,9 @@ export default {
     created(){
         Indicator.open(this.loadObj);
         this.param.isReviewSignup = this.$route.params.isReviewSignup;
-        console.log(this.param.isReviewSignup)
+        this.param.activityType = this.$route.params.activityType;
+      // this.param.activityType = 'YX'
+        this.param.activeId = this.$route.params.activeId;
         this.getData()
     },
     components:{Button,getcode,Field}//使用mint-ui的button的组件
