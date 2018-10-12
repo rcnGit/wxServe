@@ -1,27 +1,28 @@
 <template>
     <div>
-        <img src='./img/zwt_img@2x.png' class='ztw'/>
         <div class="Review" v-if="isshow">
-            <p class='p1'>恭喜您，报名申请提交成功</p>
-            <p class='p2'>活动时间：<span>2018-08-28 18:00</span></p>
-            <p class='p3'>活动地点：北京朝阳区泰康大厦32层</p>
+            <img src='./img/signSuc.png' class='ztw'/> 
+            <p class='p1'>签到成功</p>
         </div>
         <div class="ReviewF" v-else>
-            <p class='p4'>工作人员将在N个工作日内反馈审核结果，您可在我的活动中<span class="progress" @click='toActive()'>查看进度>></span></p>
-        </div>
-        <mt-button type="danger" size="large" class='sure' @click='toActiveDetail()'>确定</mt-button>
+            <img src='./img/signFail@2x.png' class='ztw'/>
+            <p class='p1'>签到失败</p>
+            <p class='p4'>您在大唐财富平台绑定的手机号<span class="phone">{{phone}}</span>未报名该活动，请先报名</p>
+            <mt-button type="danger" size="large" class='sure' @click='toActiveDetail()'>去报名</mt-button>
+        </div>    
     </div>
 </template>
 <script>
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 export default {
-    name:'signSun',
+    name:'SuccCheckin',
     components:{Button},//使用mint-ui的button的组件
      data:function(){
         return{
-            isReviewSignup:'',
+            retCode:'',
             isshow: true,
-            activeId: ''
+            activeId: '',
+            phone:''
         }
     },
     created(){
@@ -31,12 +32,14 @@ export default {
       getParams () {
           console.log(this.$route)
         // 取到路由带过来的参数 
-        var routerParams = this.$route.params.isReviewSignup
+        var routerParams = this.$route.params.retCode
        this.activeId = this.$route.params.activeId
+       this.phone = this.$route.params.phone
        // var routerParams = '1'
         // 将数据放在当前组件的数据内
        console.log(routerParams);
-       if(routerParams == '1'){
+       console.log(this.activeId);
+       if(routerParams == '0'){
            this.isshow = true
            setTimeout(() => {
             this.toActiveDetail()

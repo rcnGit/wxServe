@@ -17,6 +17,8 @@ import getcode from '@/pages/wealth/getcode'//指定财富师页面
 import onlineApply from '@/pages/wealth/onlineApply'//指定财富师页面
 import changephone from '@/pages/wealth/changephone'//修改手机号
 import applysuc from '@/pages/wealth/applysuc'//财富师申请成功
+import activeCheckin from '@/pages/activeCheckin/activeCheckin'//签到
+import SuccCheckin from '@/pages/activeCheckin/SuccCheckin'//签到成功
 Vue.use(Router)
 
 export default new Router({
@@ -72,6 +74,21 @@ export default new Router({
         title: '大唐盛宴活动'
       },
       component: pushW//使用这个组件
+    },
+    {
+      path: '/activeCheckin',
+      name: 'activeCheckin',
+      meta: {
+        title: '大唐盛宴活动'
+      },
+      component: activeCheckin//使用这个组件---客户福利个人报名
+    },{
+      path: '/SuccCheckin',
+      name: 'SuccCheckin',
+      meta: {
+        title: '大唐盛宴活动'
+      },
+      component: SuccCheckin//使用这个组件
     },
     {
       path: '/kefuSign',
