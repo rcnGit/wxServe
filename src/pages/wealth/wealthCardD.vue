@@ -68,7 +68,7 @@ html{
       padding-bottom:20px;
 }
 .wImg{
-    width:30%;
+    width:28%;
     padding-top:50px;
 }
 .wname{

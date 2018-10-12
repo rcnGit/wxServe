@@ -10,6 +10,11 @@
                 <img src='./img/nomsg.png'/>
                 <p class='fSize16'>暂无投后消息</p>
          </div>
+         <div class='wz'ref='wz' style="background:#fff;display:none;" >
+            <img src='../../common/img/wr.png'  style='width:40%;margin:80px auto 30px;'/>
+            <p class='fSize16' style='color:rgb(59,59,59)'>实名认证后可查看投后消息哦~</p>
+        <mt-button type="danger" size="large" class='next' @click='rz()' style='margin-top:81px;'>去人脸识别实名认证</mt-button>
+        </div>
     </div>
 </template>
 <script>
@@ -28,6 +33,15 @@ export default {
     },
     components:{MessageBox},
     methods:{
+        rz:function(){//去实名认证
+            this.$router.push({
+                    path:'/faceMsg',
+                    name:'faceMsg',
+                    params:{
+                        
+                    }
+                })
+        },
         getList:function(){
             var that=this;
             axios({
@@ -46,6 +60,9 @@ export default {
                    return;
                 }else if(retCode==-2){
                      MessageBox('提示','您还没有购买任何产品哦~');
+                }else if(retCode==1){//未认证
+                     that.$refs.wz.style.display='block';
+                        return;
                 }
                 if(that.items.length<1){
                      that.$refs.nodata.style.display='block';

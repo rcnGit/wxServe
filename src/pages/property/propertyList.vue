@@ -1,5 +1,5 @@
 <template>
-    <div class='propertyList fColorFFF'>
+    <div class='propertyList fColorFFF' style='min-height:430px;'>
         <div class='headContent'>
                 <p class='fSize13 p1'>总金额（元）</p>
                 <p class='p2'>{{totalAsset}}</p> <!--在数字上加逗号 -->
@@ -17,10 +17,10 @@
         </div>
         <div class='noData' ref='nodata' style="display:none;">
                 <img src='./img/noprop.png'/>
-                <p class='fSize14'>您还没在大唐开启投资之旅哦</p>
+                <p class='fSize16'>您还没在大唐开启投资之旅哦</p>
                  <mt-button type="danger" size="large" class='next' @click='downApp ()'>去投资</mt-button>
          </div>
-        <div class='proContent' ref='contant'>
+        <div class='proContent' ref='contant' style='display:none;'>
             <div class='proDemo'>
                 <div class='proTop'>
                     <img  class='floatLeft'src='./img/sLogo.png'/>
@@ -56,6 +56,11 @@
                 </div>
             </div>  <!-- proDemo -->
         </div>
+        <div class='wz'ref='wz' style="background:#fff;display:none;" >
+            <img src='../../common/img/wr.png'  style='width:40%;margin:80px auto 30px;'/>
+            <p class='fSize16' style='color:rgb(59,59,59)'>实名认证后可查看我的资产哦~</p>
+        <mt-button type="danger" size="large" class='next' @click='rz()' style='margin-top:81px;'>去人脸识别实名认证</mt-button>
+        </div>
     </div>
 </template>
 <script>
@@ -90,6 +95,15 @@ export default {
     },
     components:{Button,axios,Indicator,MessageBox},//使用mint-ui的button的组件
     methods:{
+        rz:function(){//去实名认证
+            this.$router.push({
+                    path:'/faceMsg',
+                    name:'faceMsg',
+                    params:{
+                        
+                    }
+                })
+        },
         getList:function(){
              var that=this;
              Indicator.open(that.loadObj);
@@ -104,11 +118,12 @@ export default {
                     Indicator.close();
                     var retCode=res.data.retCode;
                     var retMsg=res.data.retMsg;
-                    if(retCode!=0){
-                        console.log(retMsg);
+                    if(retCode==-2){//未实名认证
+                        that.$refs.wz.style.display='block';
                         return;
+                    }else if(retCode==-1){//系统异常
+                        MessageBox('提示', '系统异常');
                     }
-                   console.log(res.data);
                    var d=res.data.data;
                     that.totalAsset=that.money(d.totalAsset)//总资产
                     that.privateTotalAsset=that.money(d.privateTotalAsset)//私募总资产
@@ -122,8 +137,6 @@ export default {
 
 
                     if(that.totalAsset=='0.00'&&that.privateToConfirmAsset=='0.00'){
-                        console.log(that.$refs.contant);
-
                         that.$refs.contant.style.display='none';
                         that.$refs.nodata.style.display='block';
                         return;
@@ -194,6 +207,9 @@ export default {
 }
 .green{
     color:rgb(11,124,10);
+}
+.noData{
+    background:#fff;
 }
 .noData img{
     width:40%;
