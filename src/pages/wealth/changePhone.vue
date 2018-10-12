@@ -70,6 +70,7 @@ export default {
            // console.log(this.Dsiabled);
         },
         changeP:function(){
+            console.log('click')
             var that=this;
             if(that.ipNo==''){
                 this.$refs.phwarn.style.display='block';
@@ -100,9 +101,10 @@ export default {
                 this.$refs.codewarn.style.display='none';
                 this.$refs.code.style='border-bottom:0.5px solid #efefef!important';
             }
+            Indicator.open();
             axios({
                 method:'get',
-                url:'/ning/wxservice/wxMemberInfo/getCustActList',//获取我的活动
+                url:'/ning/wxservice/wxMemberInfo/changeMobile',//
                 params: {
                 phone:that.ipNo,//新的手机号
                 msgCode:that.msgCode//短信验证码
@@ -110,6 +112,7 @@ export default {
                 }
             })
             .then(function(res) {//成功之后
+                Indicator.close();
                 console.log(res.data);
                 var retCode=res.data.retCode;
                 if(retCode=='0'){//更改成功

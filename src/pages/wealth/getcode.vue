@@ -34,11 +34,11 @@ export default {
                 return;
             }else if(ipNo.length<11||!reg.test(ipNo)){
                 that.warn='请输入正确的手机号';
-                that.$emit('warnCodeFunction', that.warn);
+                that.$emit('warnCodeFunction',that.warn);
                 that.ex.btnDsiabled=false;
                 return
             }else{
-                that.$emit('warnCodeFunction', '');
+                that.$emit('warnCodeFunction','');
                 that.subTime()
             }
             //ajax提交
@@ -48,10 +48,9 @@ export default {
                 messType:type
             }
             console.log(this.param);
-            return;
              axios({
                 method:'get',
-                url:'/wei/wxservice/wxservice?opName=send_mobile_message',
+                url:'/ning/wxservice/wxservice?opName=send_mobile_message',
                 params: {
                 param:that.param,//系统类别
                 }
@@ -60,13 +59,13 @@ export default {
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 if(retCode!=0){
+
                 }
             });
         },//fn,
         subTime:function(){
             
             var that=this;
-            
             that.ex.time=180;
              var g=setInterval(function(){
                 that.ex.time=parseInt(that.ex.time-1);

@@ -31,7 +31,8 @@ export function isValidBusiCode (code) {
  * 检测身份证号码是否正确
  */
 export function isValidIdCardNo (code) {
-  return /^\d{6}\-\d{4}\-\d{4}\-(\d{1}|(\d{3}[0-9xX]))$/.test(code)
+  //return /^\d{6}\-\d{4}\-\d{4}\-(\d{1}|(\d{3}[0-9xX]))$/.test(code)
+  return /(^\d{15}$)|(^\d{17}([0-9]|X)$)/.test(code);
 }
 /**
  * 检测邮箱是否正确

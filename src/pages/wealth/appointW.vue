@@ -75,6 +75,7 @@
     </div>
 </template>
 <script>
+import { Indicator } from 'mint-ui';
 import { Popup } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
@@ -125,7 +126,7 @@ export default {
             .then(function(res){
                 console.log(res.data);
                 var userInfo=res.data.userInfo;
-                that.msg2=userInfo.businessName;
+                that.msg2=userInfo.realName;
             })
         },
         sendMSG:function(){
@@ -228,6 +229,7 @@ export default {
             }
             this.param.dtNo='DT'+this.gh;
             this.param.dtName=this.wName;
+            Indicator.open();
             this.valiW();
         },
         valiW:function(){
@@ -239,25 +241,26 @@ export default {
             params:that.param,
         })
         .then(function(res) {//成功之后
+            Indicator.close();
               var retCode=res.data.retCode;
               var retMsg=res.data.retMsg;
                console.log(res.data);
                var data=res.data.data;
               if(retCode==0){//指定成功
-                this.$refs.pop_wealth.style.display='block';
-                this.$refs.pop_wealth2.style.display='none';
-                this.$refs.pop_contant.style.display='none';
+                that.$refs.pop_wealth.style.display='block';
+                that.$refs.pop_wealth2.style.display='none';
+                that.$refs.pop_contant.style.display='none';
                 that.srcImg=data.photo;
                 that.popupVisible=true;
                 that.param.mobile=data.mobile;
               }else if(retCode==-4){//已绑定线下财富师,并且展示绑定的财富师的信息
-                this.$refs.pop_wealth2.style.display='block';
-                this.$refs.pop_wealth.style.display='none';
-                this.$refs.pop_contant.style.display='none';
+                that.$refs.pop_wealth2.style.display='block';
+                that.$refs.pop_wealth.style.display='none';
+                that.$refs.pop_contant.style.display='none';
                 that.srcImg2=data.photo;
                 that.popupVisible=true;
               }else if(retCode==-2){//未认证，跳转人脸识别页面
-                   this.$router.push({
+                   that.$router.push({
                     path:'/faceMsg',
                     name:'faceMsg',
                     params:{
@@ -269,6 +272,8 @@ export default {
                   MessageBox('提示','财富师已离职');
               }else if(retCode==-3){
                   MessageBox('提示','您已绑定财富师');
+              }else if(retCode==-1){
+                  MessageBox('提示','系统错误');
                   
               }
               
@@ -281,17 +286,23 @@ export default {
             axios({
                 method:'get',
                 url:'/ning/wxservice/wxMemberInfo/bindWealther',//客户确认指定财富师
-                params: {
-                param:that.param,//系统类别
-                }
+                params:that.param,//系统类别
+                
             })
             .then(function(res) {//成功之后
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 console.log(res.data);
                 var data=res.data.data;
-                if(retCode==0){//指定成功
-                   MessageBox('提示', '指定财富师成功');
+                if(retCode==0){//指定成功    跳转财富师名片页面
+                   MessageBox('提示', '指定财富师成功').then(action => {
+                  if(action == 'confirm'){
+                   //跳转财富师名片页面
+                    window.location.href='https://test-interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+that.param.dtNo;
+                  }else{//取消
+                    console.log('查看订单')
+                  }
+              });
                 }else if(retCode==-1){
                     MessageBox('提示', '系统异常');
                 }
