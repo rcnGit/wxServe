@@ -6,7 +6,7 @@
                 <p class='position_name'>{{businessName}}</p>
                 <p class='Invitation'>邀您参加大唐财富尊享活动</p>
             </div>
-            <div class='bus_R'><img src='./img/rightBtn_img@2x.png'/></div>
+            <div class='bus_R' @click="toBusiness()"><img src='./img/rightBtn_img@2x.png'/></div>
          </div>  <!--business_card-->
         <div class='addressBox'>
           <div class='ad_m'>
@@ -54,7 +54,10 @@ export default {
             isShow: true,//按钮是否显示
             isDisabled: false,
             businesscardShow: false,
+            realname:'',
+            userphone:'',
             businessName: '',
+            belongBusiness:'',
             headImgUrl: '',
             contentShow:true,
             param:{
@@ -133,38 +136,62 @@ export default {
                         console.log(res.data);
                         that.authenticFlag = res.data.userInfo.authenticFlag
                         that.headImgUrl = res.data.userInfo.headImgUrl
+                        that.userphone = res.data.userInfo.userphone
+                        that.realname = res.data.userInfo.realname
                         if(res.data.userInfo.businessName != null){
                             that.businessName = '财富师'+res.data.userInfo.businessName
                             that.businesscardShow = true
+                            that.belongBusiness = res.data.userInfo.belongBusiness
                         }else{
                             that.businessName = res.data.userInfo.nickname
-                            that.businesscardShow = true
+                            that.businesscardShow = false
                         }
                         
                     }
                 });
             },
             sign:function(){ 
-                if(this.activityType == 'YXKF'){
+                if(this.activityType == 'YX'){
                     console.log(this.actName)
-                    this.$router.push({
-                        path: '/toSignNewCust',
-                        name: 'toSignNewCust',
-                        params:{
-                            isReviewSignup: this.isReviewSignup,
-                            activityType: this.activityType,
-                            activeId: this.param.activeId,
-                            actName: this.actName
-                        }
-                    })
-                }else if(this.activityType == 'YX'){
+                    if(!this.realname && !this.userphone && !this.businessName){
+                        this.$router.push({
+                            path: '/toSignNewCust',
+                            name: 'toSignNewCust',
+                            params:{
+                                isReviewSignup: this.isReviewSignup,
+                                activityType: this.activityType,
+                                activeId: this.param.activeId,
+                                actName: this.actName
+                            }
+                        })
+                    }else{
+                        var message = '您确定报名此活动？'
+                        MessageBox.confirm('', {
+                            message: message,
+                            title: '',
+                        }).then(action => {
+                            if(action == 'confirm'){
+                                this.$router.push({
+                                    path: '/signSuc',
+                                    name: 'signSuc',
+                                    params:{
+                                        isReviewSignup: this.isReviewSignup,
+                                        activeId: this.param.activeId
+                                    }
+                                })
+                            }
+                        }).catch(() => {
+                            //console.log(2);
+                        })
+                    }  
+                }else if(this.activityType == 'KF'){
                     this.authentic()
                     if(this.authenticFlag == 0){
                         this.$router.push({
                             path: '/faceMsg',
                             name: 'faceMsg',
                             params:{
-                                returnUrl: 'http://localhost:8080/#/ActiveDetail'
+                                returnUrl: 'http://172.16.6.124:8099/#/ActiveDetail'
                             }
                         })
                     }else{
@@ -182,6 +209,9 @@ export default {
                     
                 }
             },
+            toBusiness:function(){
+                window.location.href='https://test-interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+this.belongBusiness;
+            },
             async asyncSDKConifg () {
             let that = this
             axios.get('/wei/wxservice/core/getJSSDKConfigure.mm?pageUrl=pageUrl',{params:{"url":this.backUrl}})
@@ -197,9 +227,9 @@ export default {
                 wx.ready(function() { //通过ready接口处理成功验证
             // config信息验证成功后会执行ready方法
                 wx.onMenuShareAppMessage({ // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用 
-                    title: '活动详情', // 分享标题
-                    desc: 'This is a test!', // 分享描述
-                    link: 'http://192.168.133.119:8080/#/ActiveDetail', // 分享链接
+                    title: '大唐财富', // 分享标题
+                    desc: '中国私人银行服务的领航者，诚邀您开启财富之旅', // 分享描述
+                    link: 'http://172.16.6.124:8099/#/ActiveDetail?ifcard=1', // 分享链接
                     imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
                     type: '', // 分享类型,music、video或link，不填默认为link
                     dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
@@ -213,8 +243,8 @@ export default {
                     }
                     });
                     wx.onMenuShareTimeline({ //分享朋友圈
-                    title: '标题', // 分享标题
-                    link: '链接',
+                    title: '大唐财富', // 分享标题
+                    link: 'http://172.16.6.124:8099/#/ActiveDetail',
                     imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
                     success: function() {
                         // 用户确认分享后执行的回调函数
@@ -232,6 +262,11 @@ export default {
         }
     },
     created(){
+        if(this.$route.query.ifcard == 1){
+            this.businesscardShow = true
+        }else{
+            this.businesscardShow = false
+        }
         this.asyncSDKConifg()//微信分享函数；
         this.authentic()//获取客户信息；
          var oaActId =this.$route.params.oaActId; 
@@ -287,7 +322,7 @@ export default {
      padding: 14px 0 0px 15px;
 } 
 .business_Card .bus_R{
-    width:45px;
+    width:20px;
     height:100%;
     float: right;
 } 

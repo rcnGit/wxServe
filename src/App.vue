@@ -17,6 +17,7 @@ export default{
   },
  created () {
    // this.asyncSDKConifg()
+   console.log(this.$route.meta.title)
   },
   components:{comfooter},
  methods: {
