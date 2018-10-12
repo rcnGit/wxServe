@@ -62,6 +62,7 @@ export default {
     },
     methods:{
         getData:function(){
+            Indicator.open(this.loadObj);
             let that = this;
             //console.log(that.param)
             axios({
@@ -76,14 +77,13 @@ export default {
                     MessageBox('提示',retMsg);
                 }else if(retCode == 0){
                     console.log(res.data.userInfo)
-                    console.log(res.data.userInfo.isNewRecord)
                     that.authenticFlag = res.data.userInfo.authenticFlag
                     if(res.data.userInfo.phone != null){
-                        console.log(that.userPhone)
+                        //console.log(res.data.userInfo.phone)
                         var Tel = res.data.userInfo.phone
                         var mtel = Tel.substr(0, 3) + '****' + Tel.substr(7);
                         that.userPhone = mtel
-                        //that.axiosSign()
+                        that.axiosSign()
                     }else{
                         //that.isShow = true
                     }
@@ -165,9 +165,7 @@ export default {
                 Indicator.close();
                 console.log(res.data)
                 var retCode=res.data.retCode;
-                //var retCode= -2;
                 var retMsg=res.data.retMsg;
-               // var retMsg="res.data.retMsg";
                 if(retCode == 9){
                     var message = '您未报名该活动，需要重新报名。'
                     MessageBox.confirm('', {
@@ -209,11 +207,11 @@ export default {
     },
     created(){
        Indicator.open(this.loadObj);
-    
+       console.log(this.$route.query.actId)
       this.param.actId = this.$route.query.actId
-    //   if(this.param.actId){
-    //     Indicator.close();
-    //   }
+      if(this.param.actId){
+        Indicator.close();
+      }
         this.getData()
     },
     components:{Button,getcode,Field}//使用mint-ui的button的组件
