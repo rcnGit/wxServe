@@ -104,8 +104,10 @@ export default {
             } 
         },//验证手机号
         getM:function(){
-            this.Dsiabled = true
-            this.$refs.c1.getCodeFn(this.messType,this.param.mobile);
+           if(this.phoneFn()){
+               this.Dsiabled = true
+           }
+            this.$refs.c1.getCodeFn(this.messType,this.param.mobile,this.authenticFlag);
         },
         warnCodeFunction:function(warn){
              this.warnPhone=warn;
@@ -196,24 +198,6 @@ export default {
                             retCode: retCode,
                             activeId: that.param.actId,
                             phone: that.userPhone
-                        }
-                    })
-                }else if(retCode == -2 ){   
-                    console.log(that.authenticFlag)
-                    if(that.authenticFlag =="0"){
-                        var message = '该手机号已绑定其他账号，您无法通过该号码签到活动。如有疑问请咨询客服：400-819-9868'
-                    }else if(that.authenticFlag =="1"){
-                        var message = '该手机号已绑定其他账号，您无法通过该号码签到活动，请绑定您资金的手机号如有疑问请咨询客服：400-819-9868'
-                    }        
-                    MessageBox.alert('', {
-                        message: message,
-                        title: '',
-                        showConfirmButton:true,
-                        confirmButtonClass:'confirmButton',
-                        confirmButtonText:'我知道了',
-                    }).then(action => {
-                        if(action == 'confirm'){
-                            
                         }
                     })
                 }else{
