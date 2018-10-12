@@ -22,11 +22,11 @@
           </div>
         </div>
         <div class='actDe'>
-            <div class='nodata' style='display:none;' ref='nodata'>
+            <div class='nodata' ref='nodata' v-if="contentShow">
                  <img src='./img/nodataImg@2x.png'/>
                  <p>暂无活动介绍</p>
             </div>
-           <div>{{content}}</div>
+           <div v-else>{{content}}</div>
         </div>
          <mt-button type="danger" size="large" class='toSign' @click='sign()' v-show='isShow' :disabled="isDisabled">{{actStatus}}</mt-button>
 
@@ -56,6 +56,7 @@ export default {
             businesscardShow: false,
             businessName: '',
             headImgUrl: '',
+            contentShow:true,
             param:{
                 activeId:'',
                 actName:'',
@@ -88,33 +89,32 @@ export default {
                     if(retCode!=0){
                         MessageBox('提示', '系统错误');
                     }else if(retCode == 0){
-                        if(res.data.itemList.length==0){
-                            MessageBox('提示', '暂无活动详情内容');
+                        if(res.data.itemList.length<=0){
+                       // that.$refs.nodata.style.display='block';
+                        that.contentShow = true
                         }else{
+                            that.contentShow = false
                             that.activityType = res.data.itemList[0].activityType;
                             that.isReviewSignup = res.data.itemList[0].isReviewSignup;
-                        } 
+                            var obj=res.data.itemList[0];
+                            that.actName=obj.actName;
+                            that.beginTime=obj.beginTime;
+                            that.endTime=obj.endTime;
+                            that.location=obj.location;
+                            that.content=obj.content;
+                            if(res.data.canSignUp == '0'){
+                                that.actStatus= '我要报名';
+                            }else if(res.data.canSignUp == '1'){
+                                that.actStatus= '已报名';
+                                that.isDisabled = true;
+                            }else{
+                                that.isShow = false
+                            }
+                            
+                        }
                        
                     }
-                    if(res.data.itemList.length<=0){
-                        that.$refs.nodata.style.display='block';
-                    }else{
-                        var obj=res.data.itemList[0];
-                        that.actName=obj.actName;
-                        that.beginTime=obj.beginTime;
-                        that.endTime=obj.endTime;
-                        that.location=obj.location;
-                        that.content=obj.content;
-                        if(res.data.canSignUp == '0'){
-                            that.actStatus= '我要报名';
-                        }else if(res.data.canSignUp == '1'){
-                            that.actStatus= '已报名';
-                            that.isDisabled = true;
-                        }else{
-                            that.isShow = false
-                        }
-                        
-                    }
+                    
                 });
             },
             authentic:function(){
@@ -162,7 +162,10 @@ export default {
                     if(this.authenticFlag == 0){
                         this.$router.push({
                             path: '/faceMsg',
-                            name: 'faceMsg'
+                            name: 'faceMsg',
+                            params:{
+                                returnUrl: 'http://localhost:8080/#/ActiveDetail'
+                            }
                         })
                     }else{
                         this.$router.push({
