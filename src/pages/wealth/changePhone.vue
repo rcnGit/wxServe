@@ -2,13 +2,13 @@
     <div class='changephone'>
         <div class='content'>
             <div class='inpBox'>
-                <input type='text' class='' maxlength='11' v-model="ipNo" ref='ph'/>
+                <input type='text' class='' maxlength='11' v-model="ipNo" ref='ph'v-on:input='phFn' placeholder="请输入手机号码"/>
                 <p class='warn' ref='phwarn'>{{phwarn}}</p>
                 <span>新手机号</span>
                 <mt-button type="danger" size="small" class='sendCodeBtn' @click="getM()" v-bind:disabled='Dsiabled'>{{text}}</mt-button>
              </div> <!--inpBox-->
               <div class='inpBox'>
-                <input type='text' class=''  ref='code'v-model="msgCode"/>
+                <input type='text' class=''  ref='code'v-model="msgCode" placeholder="请输入验证码" v-on:input='codeFn'/>
                 <p class='warn' ref='codewarn'>{{codewarn}}</p>
                 <span>验证码</span>
              </div> <!--inpBox-->
@@ -41,7 +41,37 @@ export default {
     },
     components:{getcode,MessageBox,Button},
     methods:{
-        getM:function(){
+        phFn:function(){//实时校验手机号
+            if(this.ipNo==''){
+                //this.$refs.phwarn.style.display='none';
+                //this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important';
+                return;
+            }else if(!isValidMobile(this.ipNo)){
+                this.$refs.phwarn.style.display='block';
+                this.phwarn='请输入正确的手机号码';
+                this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important';
+                return;
+            }else{
+                this.$refs.phwarn.style.display='none';
+                this.$refs.ph.style='border-bottom:0.5px solid #efefef!important';
+            }
+        },
+        codeFn:function(){//实时校验验证码
+            var that=this;
+            if(that.msgCode==''){//校验验证码
+                this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important';
+                return;
+            }else if(!isValidverifycode(that.msgCode)){
+                this.$refs.codewarn.style.display='block';
+                this.codewarn='请输入正确的手机验证码';
+                this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important';
+                return;
+            }else{
+                this.$refs.codewarn.style.display='none';
+                this.$refs.code.style='border-bottom:0.5px solid #efefef!important';
+            }
+        },
+        getM:function(){ 
             var that=this;
             that.Dsiabled=true;
             if(that.ipNo==''){

@@ -5,7 +5,7 @@
              <span>请输入财富师姓名与工号进行关联</span>
             </div>
             <div class='inpBox'>
-                <input type='text' class='' placeholder="请输入您的姓名" v-model='wName' ref='wName' v-on:input='wNameFn'/>
+                <input type='text' class='' maxlength='30' placeholder="请输入您的姓名" v-model='wName' ref='wName' v-on:input='wNameFn'/>
                 <P ref='warnName' class='warn'>{{warnName}}</P>
                 <span>姓名</span>
                 <em>请输入正确的实名信息</em>
@@ -172,6 +172,8 @@ export default {
         },
         ghFn:function(){
             if(this.gh==''){
+                //this.$refs.ghw.style.display='none';
+                //this.$refs.gh.style='border-bottom:0.5px solid #df1e1d!important';
                 return;
             }
             if(!/^\+?[1-9][0-9]*$/.test(this.gh)){

@@ -51,7 +51,7 @@ export default {
             activityType: '',
             authenticFlag: '',
             actStatus:'',
-            isShow: true,
+            isShow: true,//按钮是否显示
             isDisabled: false,
             businesscardShow: false,
             businessName: '',
@@ -75,7 +75,7 @@ export default {
                 console.log(that.param)
                 axios({
                     method:'get',
-                    url:'/wei/wxservice/wxservice?opName=getactiveinfo',
+                    url:'/wei/wxservice/wxservice?opName=getactiveinfo',//调取活动列表和详情的接口
                     params: {
                         param:that.param,//系统类别
                     }
@@ -229,12 +229,17 @@ export default {
         }
     },
     created(){
-        this.asyncSDKConifg()
-        this.authentic()
+        this.asyncSDKConifg()//微信分享函数；
+        this.authentic()//获取客户信息；
          var oaActId =this.$route.params.oaActId; 
          var actName =this.$route.params.actName; 
-         console.log(oaActId+'1111111'+actName);
-         let that = this; //这个是钩子函数mounted   
+         var comefrom =this.$route.params.comefrom;
+         let that = this; //这个是钩子函数mounted
+         if(comefrom=='tangguan'){
+             that.isShow=false;
+         }else{
+
+         }  
         Indicator.open(that.loadObj);
         var ifCard=this.$route.params.ifCard;
         // if(ifCard!=''&&ifCard!=undefined){

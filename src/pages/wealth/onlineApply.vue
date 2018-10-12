@@ -2,20 +2,20 @@
     <div class='online'>
         <div class='content'>
             <div class='inpBox'>
-                <input type='text' class='' maxlength='11' v-model="ipNo" ref='ph'v-bind:disabled='ifdisabledPh'/>
+                <input type='text' class=''placeholder="请输入手机号码" v-on:input='pnFn' maxlength='11' v-model="ipNo" ref='ph'v-bind:disabled='ifdisabledPh'/>
                 <P ref='phWarn' class='warn'>{{phWarn}}</P>
                 <span>手机号</span>
                 <span class='inpRchoose fSize13' style='color:#4a90e2;display:none;' @click='changeP' ref='changeSP'>变更手机号>></span>
              </div> <!--inpBox-->
               <div class='inpBox' ref='sendCode' style='display:none'>
-                <input type='text' class='' v-model="msgCode" ref='code'/>
+                <input type='text' class='' v-model="msgCode" ref='code' placeholder="请输入验证码" v-on:input='codeFn'/>
                 <p ref='codeWarn' class='warn'>{{codeWarn}}</p>
                 <span>验证码</span>
                  <mt-button type="danger" size="small" class='sendCodeBtn' @click="getM()" v-bind:disabled='Dsiabled'>{{text}}</mt-button>
              </div> <!--inpBox-->
              <div class='inpBox'>
-                <input type='text' class=''v-model='routerCity'ref='prov'/>
-                <p ref='provWarn' class='warn'>{{provWarn}}</p>
+                <input type='text' class=''v-model='routerCity'ref='prov' placeholder="请选择所在地" disabled=true/>
+                <p ref='provWarn' class='warn' >{{provWarn}}</p>
                 <span>所在地</span>
                 <span class='inpRchoose fSize13'style='text-align:center;color:#c5c5c5;'@click='chooseAdd'>去选择<img src='../../common/img/chooseR.png' class='chooseR'/></span>
               </div> <!--inpBox-->
@@ -31,13 +31,13 @@ import getcode from './getcode'
 import axios from 'axios';
 import { MessageBox } from 'mint-ui';//提示框
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
-import { isValidMobile } from '@/common/js/extends.js';//引入mint-ui的button组件文件包
+import { isValidMobile,isValidverifycode } from '@/common/js/extends.js';//引入mint-ui的button组件文件包
 export default {
     name:'onlineApply',
     data:function(){
         return{
             messType:'5',
-            ipNo:'17184092628',
+            ipNo:'',
             text:'发送验证码',
             phWarn:'',//校验是否输入手机号的提示
             codeWarn:'',//校验是否输入手机号的提示
@@ -56,9 +56,35 @@ export default {
             }
         }
     },
-    components:{getcode,isValidMobile,MessageBox},
+    components:{getcode,isValidMobile,MessageBox,isValidverifycode},
     methods:{
-
+        pnFn:function(){
+           
+             if(this.ipNo==''){
+                return;
+            }else if(!isValidMobile(this.ipNo)){
+                this.$refs.phWarn.style.display='block';
+                this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important'
+                this.phWarn='请输入正确的手机号';
+                return;
+            }else{
+                this.$refs.phWarn.style.display='none';
+                this.$refs.ph.style='border-bottom:0.5px solid #efefef!important';
+            }
+        },
+        codeFn:function(){
+               if(this.msgCode==''){
+                    return;
+                }else if(!isValidverifycode(this.msgCode)){
+                    this.$refs.codeWarn.style.display='block';
+                    this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important'
+                    this.codeWarn='请输入四位的验证码';
+                     return;
+                }else{
+                    this.$refs.codeWarn.style.display='none';
+                    this.$refs.code.style='border-bottom:0.5px solid #efefef!important';
+                }
+        },
         getM:function(){
             this.$refs.c1.getCodeFn(this.messType,this.ipNo);
         },
@@ -78,8 +104,6 @@ export default {
             })
         },
         chooseAdd:function(){
-            
-           
             this.$router.push({
                 path:'/provinceList',
                 name:'provinceList',
@@ -190,12 +214,15 @@ export default {
             this.ipNo=this.routerPhone;
             this.ifdisabledPh=true;
         }
+        this.pnFn();
+        this.codeFn()
           var routerCity = this.$route.params.city;
             if(routerCity!=''&&routerCity!=undefined){
                this.routerCity=routerCity;
                // this.$route.params.city='';
                 return;
             }
+        
     }
 }
 </script>

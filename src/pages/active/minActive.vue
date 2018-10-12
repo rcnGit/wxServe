@@ -47,6 +47,7 @@ export default {
         return{
             allList:[],
             load:true,
+            comefrom:'',
             loadObj:{
                 text: '加载中...',
                 spinnerType: 'triple-bounce',
@@ -111,9 +112,10 @@ export default {
                 path:'/ActiveDetail',
                 name:'ActiveDetail',
                 params:{
-                    oaActId : oaActId,
+                    oaActId:oaActId,
                     actName:actName,
-                    ifCard:true
+                    ifCard:true,
+                    comefrom:that.comefrom
                 }
                 })
             },
@@ -124,6 +126,9 @@ export default {
     },
     created:function(){
           let that = this;
+          if(this.$route.params.comefrom=='tangguan'){
+              that.comefrom =this.$route.params.comefrom;
+          }
             window.onscroll = function(){
                 
                 //变量scrollTop是滚动条滚动时，距离顶部的距离
