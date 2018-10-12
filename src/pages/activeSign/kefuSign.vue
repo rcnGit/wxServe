@@ -162,7 +162,9 @@ export default {
             }
         },//验证手机号
         getM:function(){
-            this.Dsiabled = true
+            if(this.phoneFn()){
+               this.Dsiabled = true
+            }
             if(this.userPhone == ''){
                 this.param.phone == this.phone2 
             }else{

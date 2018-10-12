@@ -16,7 +16,7 @@ export default{
     }
   },
  created () {
-    this.asyncSDKConifg()
+   // this.asyncSDKConifg()
   },
   components:{comfooter},
  methods: {
