@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/pages/HelloWorld/HelloWorld'
 import active from '@/pages/active/active'
 import provinceList from '@/pages/active/provinceList'
 import postInfor from '@/pages/PostInfor/PostInformation'
@@ -19,15 +18,12 @@ import changephone from '@/pages/wealth/changephone'//修改手机号
 import applysuc from '@/pages/wealth/applysuc'//财富师申请成功
 import activeCheckin from '@/pages/activeCheckin/activeCheckin'//签到
 import SuccCheckin from '@/pages/activeCheckin/SuccCheckin'//签到成功
+import wealthCardD from '@/pages/wealth/wealthCardD'//没有财富师名片的，代理名片
+import wchoose from '@/pages/wealth/wchoose'//没有财富师名片的，代理名片
 Vue.use(Router)
 
 export default new Router({
   routes: [
-    {
-      path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
-    },
     {
       path: '/active',
       name: 'Active',
@@ -169,6 +165,22 @@ export default new Router({
         title: '申请成功'
       },
       component: applysuc//使用这个组件
+    },
+    {
+      path: '/wealthCardD',
+      name: 'wealthCardD',
+      meta: {
+        title: '财富师名片'
+      },
+      component: wealthCardD//使用这个组件
+    },
+    {
+      path: '/wchoose',
+      name: 'wchoose',
+      meta: {
+        title: '专属财富师'
+      },
+      component: wchoose//使用这个组件
     }
   
   ]

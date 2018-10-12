@@ -5,9 +5,9 @@
              <span>请输入您的实名信息</span>
             </div>
             <div class='inpBox'>
-                <input type='text' class='' placeholder="请输入您的姓名"/>
+                <input type='text' class=''ref='name' placeholder="请输入您的姓名" v-on:input='nameFn' v-model="param.idCardName"/>
                 <span>姓名</span>
-                <!-- <p class='warn' ref='warn'v-show='true'>{{warn}}</p> -->
+                <p class='warn' ref='namewarn'v-show='true'>{{namewarn}}</p> 
                 <!-- <img src='./img/card_img@2x.png' class='clear'/> -->
              </div> <!--inpBox-->
               <div class='inpBox'>
@@ -24,8 +24,9 @@
     </div>
 </template>
 <script>
+import { Indicator } from 'mint-ui';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
-import { isValidIdCardNo } from '@/common/js/extends.js'
+import { isValidIdCardNo,isValidName} from '@/common/js/extends.js'
 import axios from 'axios';
 export default {
     name:'faceMsg',
@@ -33,71 +34,85 @@ export default {
        return{
            warnIdcard: '',
            param:{
-            idCardNo:'13042419920209204X',//身份证号
-            idCardName:'任超楠',//身份证姓名
-
+            idCardNo:'',//身份证号
+            idCardName:'',//身份证姓名
+            returnUrl:''//人脸识别后返回的Url
            },
+           namewarn:'',
            token:''
        }
    },
     components:{Button,axios},//使用mint-ui的button的组件
     methods:{
-        //Cookie设置值
-    writeCookie:function  (name, value, hours)
-    {
-        var expire = "";
-        if (hours != null)
-        {
-            expire = new Date ((new Date ()).getTime () + hours * 3600000);
-            expire = "; expires=" + expire.toGMTString ();
+    getDescribe:function(id){//拼接跳转链接
+        //校验身份信息的内容；
+        if(this.param.idCardNo==''){
+            return;
+        }else if(!isValidIdCardNo(this.param.idCardNo)){
+            return;
         }
-        document.cookie = name + "=" + escape (value) + expire;
-    },
-        getDescribe:function(id){//拼接跳转链接
-            console.log(this.param)
+
+        if(this.param.idCardName==''){
+            return;
+        }else if(isValidName(this.param.idCardName)){
+            return;
+        }
+
+        console.log(this.param)
         var that=this;
-          axios({
-                method:'get',
-                url:'/ning/wxservice/wxMemberInfo/getFaceToken',
-                params:this.param
-            })
-            .then(function(res) {//成功之后
-               console.log(res.data.data);
-                that.token=res.data.data.token;
-                var bizId=res.data.data.bizId;
-                localStorage.setItem('bizId',bizId);
-                var bizId=localStorage.getItem('bizId');
-               // that.writeCookie ("bizId", bizId, 24);
-                //alert(bizId);
-                if(bizId!=''){
-                    window.location.href='https://api.megvii.com/faceid/lite/do?token='+that.token;
-                }
-                
-            });
+        Indicator.open();
+        axios({
+            method:'get',
+            url:'/ning/wxservice/wxMemberInfo/getFaceToken',
+            params:this.param
+        })
+        .then(function(res) {//成功之后
+            Indicator.close();
+            console.log(res.data.data);
+            that.token=res.data.data.token;
+            var bizId=res.data.data.bizId;
+            localStorage.setItem('bizId',bizId);
+            var bizId=localStorage.getItem('bizId');
+            if(bizId!=''&&bizId!=undefined){
+                window.location.href='https://api.megvii.com/faceid/lite/do?token='+that.token;
+            }
+            
+        });
         },
         idCardNoFn:function(){
-            if(!isValidIdCardNo(this.param.idCardNo)){
+            if(this.param.idCardNo==''){
+                return;
+            }else if(!isValidIdCardNo(this.param.idCardNo)){
                 this.$refs.warn.style.display='block';
                 this.$refs.idCardNo.style='border-bottom:0.5px solid #df1e1d!important';
-                this.warnIdcard='请输入正确的实名信息';
+                this.warnIdcard='请输入正确的身份证号';
+                return;
             }else{
                 this.$refs.warn.style.display='none';
                 this.$refs.idCardNo.style='border-bottom:0.5px solid #efefef!important';
             }
         },//验证身份证
+        nameFn:function(){
+            if(this.param.idCardName==''){
+                return;
+            }else if(isValidName(this.param.idCardName)){
+                this.$refs.namewarn.style.display='block';
+                this.$refs.name.style='border-bottom:0.5px solid #df1e1d!important';
+                this.namewarn='请输入正确的姓名';
+                return;
+            }else{
+                 console.log('none')
+                this.$refs.namewarn.style.display='none';
+                this.$refs.name.style='border-bottom:0.5px solid #efefef!important';
+            }
+        },
     },
-     mounted:function(){
+    mounted:function(){
         var that = this;
-        return;
-        axios({
-            method:'get',
-            url:'/api/fundDataManage/fundInfo/BasicInfo/000020',
-        })
-            .then(function(res) {//成功之后
-            console.log(res)
-                //console.log(res.data.data);
-               //that.dataSource =  that.dataSource.concat(res.data.data.advertisementList);
-        });
+       var returnUrl = this.$route.params.returnUrl;
+       if(returnUrl&&returnUrl!=undefined){
+           that.returnUrl=''+returnUrl;
+       }
     }
 }
 

@@ -8,12 +8,13 @@
         </div>
         <div class='noData' ref='nodata' style='display:block;'>
                 <img src='./img/nomsg.png'/>
-                <p class='fSize14'>暂无投后消息</p>
+                <p class='fSize16'>暂无投后消息</p>
          </div>
     </div>
 </template>
 <script>
 import { Indicator } from 'mint-ui';
+import { MessageBox } from 'mint-ui';//提示框
 import axios from 'axios'
 export default {
     name:'postInfor',
@@ -25,6 +26,7 @@ export default {
             }
         }
     },
+    components:{MessageBox},
     methods:{
         getList:function(){
             var that=this;
@@ -39,9 +41,11 @@ export default {
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                  console.log(res.data);
-                if(retCode!=0){
-                   alert('系统错误');
+                if(retCode==-1){
+                    MessageBox('提示', '系统错误');
                    return;
+                }else if(retCode==-2){
+                     MessageBox('提示','您还没有购买任何产品哦~');
                 }
                 if(that.items.length<1){
                      that.$refs.nodata.style.display='block';
