@@ -97,21 +97,21 @@ export default {
             .then(function(res) {//成功之后
                 Indicator.close();
                 var retCode=res.data.retCode;
+                var retMsg=res.data.retMsg;
                 if(retCode!=0){
-                    alert(retCode);
+                    MessageBox('提示',retMsg);
                 }else if(retCode == 0){
                     console.log(res.data.userInfo)
                     console.log(res.data.userInfo.isNewRecord)
-                    // if(res.data.userInfo.phone != null){
-                    //     that.userPhone = res.data.userInfo.phone
-                    //     var Tel = that.userPhone
-                    //     //var Tel = '13245782323'
-                    //     var mtel = Tel.substr(0, 3) + '****' + Tel.substr(7);
-                    //     that.phone2 = mtel
-                    //     that.isDisabled2 = true;
-                    //     that.isShow = true
-                    //     that.isValid = true
-                    // }
+                    if(res.data.userInfo.phone != null){
+                        that.userPhone = res.data.userInfo.phone
+                        var Tel = that.userPhone
+                        var mtel = Tel.substr(0, 3) + '****' + Tel.substr(7);
+                        that.phone2 = mtel
+                        that.isDisabled2 = true;
+                        that.isShow = true
+                        that.isValid = true
+                    }
                     if(res.data.userInfo.realName != null){
                         that.param.realName = res.data.userInfo.realName
                         that.isDisabled = true
@@ -275,7 +275,6 @@ export default {
         Indicator.open(this.loadObj);
         this.param.isReviewSignup = this.$route.params.isReviewSignup;
         this.param.activityType = this.$route.params.activityType;
-      // this.param.activityType = 'YX'
         this.param.activeId = this.$route.params.activeId;
         this.param.actName = this.$route.params.actName;
         this.getData()
