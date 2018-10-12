@@ -82,23 +82,12 @@ export default {
                 belongBusiness: '',
                 businessName: '',
                 activeId: '',
+                actName: '',
                 isReviewSignup: '',
             },
             paramss:{
                 bizId:''
             }
-        }
-    },
-    methods:{
-        getDescribe:function(id){//拼接跳转链接
-        console.log(id)
-            this.$router.push({
-                path:'/signSuc',
-                name:'signSuc',
-                params:{
-                 id : id
-                }
-              })
         }
     },
     methods:{
@@ -117,7 +106,7 @@ export default {
             //console.log(that.param)
             axios({
                 method:'get',
-                url:'/wei/wxservice/wxservice?opName=getUserInfo'//获取客户信息
+                url:'/wei/wxservice/wxservice?opName=getUserInfo&scope=snsapi_userinfo'//获取客户信息
             })
             .then(function(res) {//成功之后
                 Indicator.close();
@@ -172,16 +161,6 @@ export default {
                 this.isValid = true
             }
         },//验证手机号
-        getDescribe:function(id){//拼接跳转链接
-        console.log(id)
-            this.$router.push({
-                path:'/signSuc',
-                name:'signSuc',
-                params:{
-                 id : id
-                }
-              })
-        },
         getM:function(){
             this.Dsiabled = true
             if(this.userPhone == ''){
@@ -312,7 +291,10 @@ export default {
                 console.log(that.param)
                 if(that.isDisabled3 == false ){
                     var message = '报名该活动需先指定财富师，是否定指定'+that.param.businessName+'为您的服务财富师？您可指定一名服务理财师，并拥有更换权力。'
-                    MessageBox.confirm(message).then(action => {
+                    MessageBox.confirm('', {
+                        message: message,
+                        title: ''
+                    }).then(action => {
                         if(action == 'confirm'){
                             that.signup()
                         }
@@ -335,6 +317,7 @@ export default {
         this.param.activityType = this.$route.params.activityType;
       // this.param.activityType = 'YX'
         this.param.activeId = this.$route.params.activeId;
+        this.param.actName = this.$route.params.actName;
         this.getData()
     }
 

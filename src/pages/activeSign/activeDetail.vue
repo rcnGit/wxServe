@@ -11,8 +11,14 @@
         <div class='addressBox'>
           <div class='ad_m'>
               <p class='ad_tit'>{{actName}}</p>
-              <p class='ad_date'>{{beginTime}}——{{endTime}}</p>
-              <p class='ad_address'>{{location}}</p>
+              <div class="ad_d">
+                <img src='./img/date@2x.png' class="add_icon"/>
+                <p class='ad_date'>{{beginTime}} — {{endTime}}</p>
+              </div>
+              <div class="ad_d">
+                <img src='./img/address@2x.png' class="date_icon"/>
+                <p class='ad_address'>{{location}}</p>
+              </div>
           </div>
         </div>
         <div class='actDe'>
@@ -120,8 +126,9 @@ export default {
                 .then(function(res) {//成功之后
                     Indicator.close();
                     var retCode=res.data.retCode;
+                    var retMsg=res.data.retMsg;
                     if(retCode!=0){
-                        MessageBox('提示', '系统错误');
+                        MessageBox('提示', retMsg);
                     }else if(retCode == 0){
                         console.log(res.data);
                         that.authenticFlag = res.data.userInfo.authenticFlag
@@ -138,20 +145,19 @@ export default {
                 });
             },
             sign:function(){ 
-                if(this.activityType == 'YX'){
+                if(this.activityType == 'YXKF'){
+                    console.log(this.actName)
                     this.$router.push({
                         path: '/toSignNewCust',
-                        query: {
-                            scope: 'snsapi_userinfo'
-                        },
                         name: 'toSignNewCust',
                         params:{
                             isReviewSignup: this.isReviewSignup,
                             activityType: this.activityType,
-                            activeId: this.param.activeId
+                            activeId: this.param.activeId,
+                            actName: this.actName
                         }
                     })
-                }else if(this.activityType == 'KF'){
+                }else if(this.activityType == 'YX'){
                     this.authentic()
                     if(this.authenticFlag == 0){
                         this.$router.push({
@@ -160,7 +166,14 @@ export default {
                         })
                     }else{
                         this.$router.push({
-                            name: 'kefuSign'
+                            path: '/kefuSign',
+                            name: 'kefuSign',
+                            params:{
+                                isReviewSignup: this.isReviewSignup,
+                                activityType: this.activityType,
+                                activeId: this.param.activeId,
+                                actName: this.actName
+                            }
                         })
                     }
                     
@@ -313,6 +326,8 @@ export default {
     font-size: 14px;
     color:rgb(100, 98, 98);
     margin-bottom:7px;
+    float: left;
+    line-height: 20px;
 }
 .ad_address{
     font-size: 14px;
@@ -323,6 +338,8 @@ export default {
     display:-webkit-box; 
     -webkit-box-orient:vertical;
     -webkit-line-clamp:2; 
+    float: left;
+    line-height: 20px;
 }
 .actDe{
     width:96%;
@@ -342,6 +359,21 @@ export default {
 .nodata p{
     font-size: 16px;
     color:rgb(57,66,89);
+}
+.ad_d{
+    overflow: hidden;
+}
+.add_icon{
+    width:18px;
+    height:18px;
+    margin-right: 7px;
+    float: left;
+}
+.date_icon{
+    width:15px;
+    height:18px;
+    margin-right: 7px;
+    float: left;
 }
 </style>
 

@@ -81,18 +81,18 @@ export default {
                 belongBusiness: '',
                 businessName: '',
                 activeId: '',
+                actName:'',
                 isReviewSignup: '',
             }
         }
     },
     methods:{
         getData:function(){
-            
             let that = this;
             //console.log(that.param)
             axios({
                 method:'get',
-                url:'/wei/wxservice/wxservice?opName=getUserInfo'//获取客户信息
+                url:'/wei/wxservice/wxservice?opName=getUserInfo&scope=snsapi_userinfo'//获取客户信息
             })
             .then(function(res) {//成功之后
                 Indicator.close();
@@ -102,16 +102,16 @@ export default {
                 }else if(retCode == 0){
                     console.log(res.data.userInfo)
                     console.log(res.data.userInfo.isNewRecord)
-                    // if(res.data.userInfo.phone != null){
-                    //     that.userPhone = res.data.userInfo.phone
-                    //     var Tel = that.userPhone
-                    //     //var Tel = '13245782323'
-                    //     var mtel = Tel.substr(0, 3) + '****' + Tel.substr(7);
-                    //     that.phone2 = mtel
-                    //     that.isDisabled2 = true;
-                    //     that.isShow = true
-                    //     that.isValid = true
-                    // }
+                    if(res.data.userInfo.phone != null){
+                        that.userPhone = res.data.userInfo.phone
+                        var Tel = that.userPhone
+                        //var Tel = '13245782323'
+                        var mtel = Tel.substr(0, 3) + '****' + Tel.substr(7);
+                        that.phone2 = mtel
+                        that.isDisabled2 = true;
+                        that.isShow = true
+                        that.isValid = true
+                    }
                     if(res.data.userInfo.realName != null){
                         that.param.realName = res.data.userInfo.realName
                         that.isDisabled = true
@@ -144,16 +144,6 @@ export default {
                 this.isValid = true
             } 
         },//验证手机号
-        getDescribe:function(id){//拼接跳转链接
-        console.log(id)
-            this.$router.push({
-                path:'/signSuc',
-                name:'signSuc',
-                params:{
-                 id : id
-                }
-              })
-        },
         getM:function(){
             this.Dsiabled = true
             if(this.userPhone == ''){
@@ -285,6 +275,7 @@ export default {
         this.param.activityType = this.$route.params.activityType;
       // this.param.activityType = 'YX'
         this.param.activeId = this.$route.params.activeId;
+        this.param.actName = this.$route.params.actName;
         this.getData()
     },
     components:{Button,getcode,Field}//使用mint-ui的button的组件
