@@ -1,7 +1,10 @@
 <template>
     <div class='activeSign'>
          <div class='business_Card' ref="card" v-show="businesscardShow">
-            <div class='bus_L'><img :src="headImgUrl"/></div>
+            <div class='bus_L'>
+                <img :src="headImgUrl" v-if="headimgShow"/>
+                <img src='./img/man_head_img@2x.png' v-else/>
+            </div>
             <div class='bus_C'>
                 <p class='position_name'>{{businessName}}</p>
                 <p class='Invitation'>邀您参加大唐财富尊享活动</p>
@@ -59,6 +62,7 @@ export default {
             businessName: '',
             belongBusiness:'',
             headImgUrl: '',
+            headimgShow: false,
             contentShow:true,
             param:{
                 activeId:'',
@@ -68,8 +72,7 @@ export default {
             loadObj:{
                 text: '加载中...',
                 spinnerType:'triple-bounce'
-            },
-            backUrl: encodeURIComponent(location.href.split('#')[0])
+            }
         }
        
     },
@@ -135,13 +138,19 @@ export default {
                     }else if(retCode == 0){
                         console.log(res.data);
                         that.authenticFlag = res.data.userInfo.authenticFlag
-                        that.headImgUrl = res.data.userInfo.headImgUrl
                         that.userphone = res.data.userInfo.userphone
                         that.realname = res.data.userInfo.realname
                         if(res.data.userInfo.businessName != null){
                             that.businessName = '财富师'+res.data.userInfo.businessName
                             that.businesscardShow = true
                             that.belongBusiness = res.data.userInfo.belongBusiness
+                            var headImgUrl = res.data.userInfo.headImgUrl
+                            if(headImgUrl == null){
+                                that.headimgShow = false
+                            }else{
+                                that.headimgShow = true
+                                that.headImgUrl = res.data.userInfo.headImgUrl
+                            }
                         }else{
                             that.businessName = res.data.userInfo.nickname
                             that.businesscardShow = false
@@ -191,7 +200,7 @@ export default {
                             path: '/faceMsg',
                             name: 'faceMsg',
                             params:{
-                                returnUrl: 'http://172.16.6.124:8099/#/ActiveDetail'
+                                returnUrl: 'http://test-interface.tdyhfund.com/weixin-h5/index.html#/ActiveDetail'
                             }
                         })
                     }else{
@@ -211,55 +220,7 @@ export default {
             },
             toBusiness:function(){
                 window.location.href='https://test-interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+this.belongBusiness;
-            },
-            async asyncSDKConifg () {
-            let that = this
-            axios.get('/wei/wxservice/core/getJSSDKConfigure.mm?pageUrl=pageUrl',{params:{"url":this.backUrl}})
-                .then(function (res) {
-                wx.config({
-                    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-                    appId: res.data.appId, // 必填，公众号的唯一标识
-                    timestamp: res.data.timestamp, // 必填，生成签名的时间戳
-                    nonceStr: res.data.nonceStr, // 必填，生成签名的随机串
-                    signature: res.data.signature, // 必填，签名
-                    jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage'] // 必填，需要使用的JS接口列表
-                })
-                wx.ready(function() { //通过ready接口处理成功验证
-            // config信息验证成功后会执行ready方法
-                wx.onMenuShareAppMessage({ // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用 
-                    title: '大唐财富', // 分享标题
-                    desc: '中国私人银行服务的领航者，诚邀您开启财富之旅', // 分享描述
-                    link: 'http://172.16.6.124:8099/#/ActiveDetail?ifcard=1', // 分享链接
-                    imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
-                    type: '', // 分享类型,music、video或link，不填默认为link
-                    dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
-                    success: function() {
-                        // 用户确认分享后执行的回调函数
-                        alert('成功');
-                    },
-                    cancel: function() {
-                        // 用户取消分享后执行的回调函数
-                        alert('用户取消分享');
-                    }
-                    });
-                    wx.onMenuShareTimeline({ //分享朋友圈
-                    title: '大唐财富', // 分享标题
-                    link: 'http://172.16.6.124:8099/#/ActiveDetail',
-                    imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
-                    success: function() {
-                        // 用户确认分享后执行的回调函数
-                    },
-                    cancel: function() {
-                        // 用户取消分享后执行的回调函数
-                    }
-                });
-            });
-                // end
-            })
-            wx.error(function(res){//通过error接口处理失败验证
-                // config信息验证失败会执行error函数
-            });
-        }
+            }
     },
     created(){
         if(this.$route.query.ifcard == 1){
@@ -267,7 +228,6 @@ export default {
         }else{
             this.businesscardShow = false
         }
-        this.asyncSDKConifg()//微信分享函数；
         this.authentic()//获取客户信息；
          var oaActId =this.$route.params.oaActId; 
          var actName =this.$route.params.actName; 
@@ -314,6 +274,7 @@ export default {
 .bus_L img{
     width:50px;
     margin-top:6px;
+    border-radius: 25px;
 }
 .business_Card .bus_C{
     height:100%;

@@ -266,7 +266,7 @@ export default {
                     path:'/faceMsg',
                     name:'faceMsg',
                     params:{
-                        returnUrl:'http://192.168.131.23:8080/#/appointW'
+                        returnUrl:'http://test-interface.tdyhfund.com/weixin-h5/index.html#/appointW'
                     }
                     })
               }else if(retCode==-5){
