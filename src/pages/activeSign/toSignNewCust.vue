@@ -104,7 +104,6 @@ export default {
                 }else if(retCode == 0){
                     console.log(res.data.userInfo)
                     console.log(res.data.userInfo.isNewRecord)
-                    res.data.userInfo.phone = ''
                     if(!res.data.userInfo.phone == false){
                         that.userPhone = res.data.userInfo.phone
                         var Tel = that.userPhone
