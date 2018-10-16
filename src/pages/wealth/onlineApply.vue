@@ -64,12 +64,12 @@ export default {
                 return;
             }else if(!isValidMobile(this.ipNo)){
                 this.$refs.phWarn.style.display='block';
-                this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important'
+               // this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important'
                 this.phWarn='请输入正确的手机号';
                 return;
             }else{
                 this.$refs.phWarn.style.display='none';
-                this.$refs.ph.style='border-bottom:0.5px solid #efefef!important';
+               // this.$refs.ph.style='border-bottom:0.5px solid #efefef!important';
             }
         },
         codeFn:function(){
@@ -77,12 +77,12 @@ export default {
                     return;
                 }else if(!isValidverifycode(this.msgCode)){
                     this.$refs.codeWarn.style.display='block';
-                    this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important'
+                    //this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important'
                     this.codeWarn='请输入四位的验证码';
                      return;
                 }else{
                     this.$refs.codeWarn.style.display='none';
-                    this.$refs.code.style='border-bottom:0.5px solid #efefef!important';
+                   // this.$refs.code.style='border-bottom:0.5px solid #efefef!important';
                 }
         },
         getM:function(){
@@ -122,12 +122,12 @@ export default {
           
             if(this.param.phone==''||this.param.phone==undefined){
                 this.$refs.phWarn.style.display='block';
-                this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important'
+               // this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important'
                 this.phWarn='请输入手机号';
                 return;
             }else if(!isValidMobile(this.param.phone)){
                 this.$refs.phWarn.style.display='block';
-                this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important'
+               // this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important'
                 this.phWarn='请输入正确的手机号';
                 return;
             }else{
@@ -138,17 +138,17 @@ export default {
             if(this.$refs.sendCode.style.display=='block'){
                 if(this.msgCode==''){
                     this.$refs.codeWarn.style.display='block';
-                    this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important'
+                   // this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important'
                     this.codeWarn='请输入验证码';
                     return;
                 }else if(this.msgCode.length!=4){
                     this.$refs.codeWarn.style.display='block';
-                    this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important'
+                   // this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important'
                     this.codeWarn='请输入四位的验证码';
                      return;
                 }else{
                     this.$refs.codeWarn.style.display='none';
-                    this.$refs.code.style='border-bottom:0.5px solid #efefef!important';
+                    //this.$refs.code.style='border-bottom:0.5px solid #efefef!important';
                     this.param.msgCode=this.msgCode;
                 }
 
@@ -157,17 +157,17 @@ export default {
             
             if(this.param.province==''||this.param.province==undefined){
                 this.$refs.provWarn.style.display='block';
-                this.$refs.prov.style='border-bottom:0.5px solid #df1e1d!important'
+                //this.$refs.prov.style='border-bottom:0.5px solid #df1e1d!important'
                 this.provWarn='请选择城市';
                 return;
             }else{
                 this.$refs.provWarn.style.display='none';
-                this.$refs.prov.style='border-bottom:0.5px solid #efefef!important';
+                //this.$refs.prov.style='border-bottom:0.5px solid #efefef!important';
             }
             console.log(this.param);
              axios({
                     method:'get',
-                    url:'/ning/wxservice/wxMemberInfo/applyWealther',//申请财富师之前校验财富师
+                    url:'/wxservice/wxMemberInfo/applyWealther',//申请财富师之前校验财富师
                     params:this.param,
                 })
                 .then(function(res) {

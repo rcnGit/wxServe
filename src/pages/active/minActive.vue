@@ -78,7 +78,7 @@ export default {
              Indicator.open(that.loadObj);
             axios({
                 method:'get',
-                url:'/ning/wxservice/wxMemberInfo/getCustActList',//获取我的活动comefrom="tangguan"
+                url:'/wxservice/wxMemberInfo/getCustActList',//获取我的活动comefrom="tangguan"
                 params: {
                 rowId:that.rowId,//系统类别
                 }

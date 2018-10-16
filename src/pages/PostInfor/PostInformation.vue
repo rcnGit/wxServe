@@ -46,7 +46,7 @@ export default {
             var that=this;
             axios({
                 method:'get',
-                url:'/wei/wxservice/wxservice?opName=queryPublishInfo',
+                url:'/wxservice/wxservice?opName=queryPublishInfo',
                 params: {
                 param:that.param,//系统类别
                 }

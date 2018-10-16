@@ -7,7 +7,7 @@
             </div>
             <div class='inpBox'>
                 <input type='text' class='' v-model="param.realName" :disabled="isDisabled" ref="realName" v-on:input='realnameFn'/>
-                <p class='warn' ref='warnName' v-show='true'>{{warnName}}</p>
+                <p class='warn' ref='warnName' v-show='warnShow'>{{warnName}}</p>
                 <span>联系人姓名</span>
                  <!-- <img src='./img/card_img@2x.png' class='clear' style='right:33%;'/>  -->
              </div>
@@ -71,6 +71,7 @@ export default {
             isValid: false,
             isValid2: false,
             isValid3: false,
+            warnShow: false,
             userPhone: '',
             phone2: '',
             param:{
@@ -92,7 +93,7 @@ export default {
             //console.log(that.param)
             axios({
                 method:'get',
-                url:'/wei/wxservice/wxservice?opName=getUserInfo&scope=snsapi_userinfo'//获取客户信息
+                url:'/wxservice/wxservice?opName=getUserInfo&scope=snsapi_userinfo'//获取客户信息
             })
             .then(function(res) {//成功之后
                 Indicator.close();
@@ -103,7 +104,8 @@ export default {
                 }else if(retCode == 0){
                     console.log(res.data.userInfo)
                     console.log(res.data.userInfo.isNewRecord)
-                    if(res.data.userInfo.phone != null){
+                    res.data.userInfo.phone = ''
+                    if(!res.data.userInfo.phone == false){
                         that.userPhone = res.data.userInfo.phone
                         var Tel = that.userPhone
                         var mtel = Tel.substr(0, 3) + '****' + Tel.substr(7);
@@ -112,15 +114,15 @@ export default {
                         that.isShow = true
                         that.isValid = true
                     }
-                    if(res.data.userInfo.realName != null){
+                    if(!res.data.userInfo.realName == false){
                         that.param.realName = res.data.userInfo.realName
                         that.isDisabled = true
                     }
-                    if(res.data.userInfo.businessName != null){
+                    if(!res.data.userInfo.businessName == false){
                         that.param.businessName = res.data.userInfo.businessName
                         that.isDisabled3 = true;
                     }
-                    if(res.data.userInfo.belongBusiness != null){
+                    if(!res.data.userInfo.belongBusiness == false){
                         that.param.belongBusiness = res.data.userInfo.belongBusiness
                         that.isDisabled4 = true;
                     }
@@ -135,12 +137,12 @@ export default {
             }
             if(!isValidMobile(this.param.phone)){
                 this.$refs.warnPhone.style.display='block';
-                this.$refs.phone.style='border-bottom:0.5px solid #df1e1d!important';
                 this.warnPhone='请输入正确的手机号';
+              //  this.$refs.phone.style='border-bottom:0.5px solid #df1e1d!important';
                 this.isValid = false
             }else{
                 this.$refs.warnPhone.style.display='none';
-                this.$refs.phone.style='border-bottom:0.5px solid #efefef!important';
+               // this.$refs.phone.style='border-bottom:0.5px solid #efefef!important';
                 this.isValid = true
             } 
         },//验证手机号
@@ -159,10 +161,10 @@ export default {
              this.warnPhone=warn;
               if(this.warnPhone!=''){
                this.$refs.warnPhone.style.display='block';
-              this.$refs.phone.style='border-bottom:0.5px solid #df1e1d!important';
+             // this.$refs.phone.style='border-bottom:0.5px solid #df1e1d!important';
            }else{
                this.$refs.warnPhone.style.display='none';
-              this.$refs.phone.style='border-bottom:0.5px solid #efefef!important';
+             // this.$refs.phone.style='border-bottom:0.5px solid #efefef!important';
            }
         },
          childByValue:function(v){
@@ -178,45 +180,45 @@ export default {
         codeFn:function(){
             if(!isValidverifycode(this.param.verifiCode)){
                 this.$refs.warnCode.style.display='block';
-                this.$refs.verifycode.style='border-bottom:0.5px solid #df1e1d!important';
                 this.warnCode='请输入正确的验证码';
+                //this.$refs.verifycode.style='border-bottom:0.5px solid #df1e1d!important';
                 this.isValid2 = false
             }else{
                 this.$refs.warnCode.style.display='none';
-                this.$refs.verifycode.style='border-bottom:0.5px solid #efefef!important';
+                //this.$refs.verifycode.style='border-bottom:0.5px solid #efefef!important';
                 this.isValid2 = true
             }
         },//验证手机验证码
         realnameFn:function(){
             if(isValidName(this.param.realName) || this.param.realName == ""){
                 this.$refs.warnName.style.display='block';
-                this.$refs.realName.style='border-bottom:0.5px solid #df1e1d!important';
                 this.warnName='请输入正确的姓名';
+               // this.$refs.realName.style='border-bottom:0.5px solid #df1e1d!important';
                 this.isValid3 = false
             }else{
                 this.$refs.warnName.style.display='none';
-                this.$refs.realName.style='border-bottom:0.5px solid #efefef!important';
+                //this.$refs.realName.style='border-bottom:0.5px solid #efefef!important';
                 this.isValid3 = true
             }
         },//验证联系人姓名
         businessNameFn:function(){
             if(isValidName(this.param.businessName) || this.param.businessName == ""){
                 this.$refs.warnbusinessName.style.display='block';
-                this.$refs.businessName.style='border-bottom:0.5px solid #df1e1d!important';
                 this.warnbusinessName='请输入正确的财富师姓名';
+               // this.$refs.businessName.style='border-bottom:0.5px solid #df1e1d!important';
             }else{
                 this.$refs.warnbusinessName.style.display='none';
-                this.$refs.businessName.style='border-bottom:0.5px solid #efefef!important';
+                //this.$refs.businessName.style='border-bottom:0.5px solid #efefef!important';
             }
         },//验证财富师姓名
         belongBusinessFn:function(){
             if(!isValidEmpNo(this.param.belongBusiness)){
                 this.$refs.warnbelongBusiness.style.display='block';
-                this.$refs.belongBusiness.style='border-bottom:0.5px solid #df1e1d!important';
                 this.warnbelongBusiness='请输入正确的财富师工号';
+                //this.$refs.belongBusiness.style='border-bottom:0.5px solid #df1e1d!important';
             }else{
                 this.$refs.warnbelongBusiness.style.display='none';
-                this.$refs.belongBusiness.style='border-bottom:0.5px solid #efefef!important';
+                //this.$refs.belongBusiness.style='border-bottom:0.5px solid #efefef!important';
             }
         },//验证财富师工号
         changeP:function(){
@@ -230,16 +232,16 @@ export default {
         toSignUp:function(){
             if(!this.isValid || !this.isValid2 || !this.isValid3){
                 console.log(this.isValid)
-                this.phoneFn()
-                this.codeFn()
-                this.realnameFn()
+              this.phoneFn();
+              this.realnameFn();
+                this.codeFn();
             }else{
                 Indicator.open(this.loadObj);
                 let that = this;
                 console.log(that.param)
                 axios({
                     method:'get',
-                    url:'/wei/wxservice/wxservice?opName=toSignUp',
+                    url:'/wxservice/wxservice?opName=toSignUp',
                     params: {
                         param:that.param,//系统类别
                     }

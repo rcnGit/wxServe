@@ -118,7 +118,7 @@ export default {
             var that=this;
             axios({
                 method:'get',
-                url:'/ning/wxservice/wxservice?opName=getUserInfo',//获取我的活动
+                url:'/wxservice/wxservice?opName=getUserInfo',//获取我的活动
                 params: {
                 
                 }
@@ -164,10 +164,10 @@ export default {
             if(isValidName(that.wName)){
                 this.$refs.warnName.style.display='block';
                 this.warnName='请输入正确的姓名';
-                this.$refs.wName.style='border-bottom:0.5px solid #df1e1d!important';
+               // this.$refs.wName.style='border-bottom:0.5px solid #df1e1d!important';
             }else{
                 this.$refs.warnName.style.display='none'
-                this.$refs.wName.style='border-bottom:0.5px solid #efefef!important';
+                //this.$refs.wName.style='border-bottom:0.5px solid #efefef!important';
             }
         },
         ghFn:function(){
@@ -179,10 +179,10 @@ export default {
             if(!/^\+?[1-9][0-9]*$/.test(this.gh)){
                 this.$refs.ghw.style.display='block';
                 this.warnGh='请输入正确的财富师工号';
-                this.$refs.gh.style='border-bottom:0.5px solid #df1e1d!important';
+                //this.$refs.gh.style='border-bottom:0.5px solid #df1e1d!important';
             }else{
                 this.$refs.ghw.style.display='none';
-                this.$refs.gh.style='border-bottom:0.5px solid #efefef!important';
+                //this.$refs.gh.style='border-bottom:0.5px solid #efefef!important';
             }
         },
         sendWX:function(){
@@ -201,33 +201,33 @@ export default {
             if(that.wName==''){
                 this.$refs.warnName.style.display='block';
                 this.warnName='请输入财富师姓名';
-                this.$refs.wName.style='border-bottom:0.5px solid #df1e1d!important';
+               // this.$refs.wName.style='border-bottom:0.5px solid #df1e1d!important';
                  return;
             }else if(isValidName(that.wName)){
                 console.log('请输入正确的财富师姓名');
                 this.$refs.warnName.style.display='block';
                 this.warnName='请输入正确的姓名';
-                this.$refs.wName.style='border-bottom:0.5px solid #df1e1d!important';
+                //this.$refs.wName.style='border-bottom:0.5px solid #df1e1d!important';
                  return;
             }else{
                 this.$refs.warnName.style.display='none'
-                this.$refs.wName.style='border-bottom:0.5px solid #efefef!important';
+                //this.$refs.wName.style='border-bottom:0.5px solid #efefef!important';
             }
             //判断工号
              if(this.gh==''){
                this.$refs.ghw.style.display='block';
                 this.warnGh='请输入财富师工号';
-                this.$refs.gh.style='border-bottom:0.5px solid #df1e1d!important';
+                //this.$refs.gh.style='border-bottom:0.5px solid #df1e1d!important';
                  return;
             }else if(!/^\+?[1-9][0-9]*$/.test(this.gh)){
                 this.$refs.ghw.style.display='block';
                 this.warnGh='请输入正确的财富师工号';
-                this.$refs.gh.style= 'border-bottom:0.5px solid #df1e1d!important';
+                //this.$refs.gh.style= 'border-bottom:0.5px solid #df1e1d!important';
                 return;
                
             }else{
                 this.$refs.ghw.style.display='none';
-                this.$refs.gh.style='border-bottom:0.5px solid #efefef!important';
+                //this.$refs.gh.style='border-bottom:0.5px solid #efefef!important';
             }
             this.param.dtNo='DT'+this.gh;
             this.param.dtName=this.wName;
@@ -239,7 +239,7 @@ export default {
             console.log(this.param);
             axios({
             method:'get',
-            url:'/ning/wxservice/wxMemberInfo/checkWealther',//指定之前校验财富师
+            url:'/wxservice/wxMemberInfo/checkWealther',//指定之前校验财富师
             params:that.param,
         })
         .then(function(res) {//成功之后
@@ -288,7 +288,7 @@ export default {
             console.log(this.param);
             axios({
                 method:'get',
-                url:'/ning/wxservice/wxMemberInfo/bindWealther',//客户确认指定财富师
+                url:'/wxservice/wxMemberInfo/bindWealther',//客户确认指定财富师
                 params:that.param,//系统类别
                 
             })
@@ -318,7 +318,7 @@ export default {
             console.log('onlineApplyV');
                axios({
                     method:'get',
-                    url:'/ning/wxservice/wxMemberInfo/checkApplyWealther',//申请财富师之前校验财富师
+                    url:'/wxservice/wxMemberInfo/checkApplyWealther',//申请财富师之前校验财富师
                 })
                 .then(function(res) {//成功之后
                     var retCode=res.data.retCode;

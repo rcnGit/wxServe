@@ -41,6 +41,7 @@
 <script>
 import provinceList from './provinceList.vue'
 import { Indicator } from 'mint-ui';
+import { MessageBox } from 'mint-ui';//提示框
 import axios from 'axios'
 var arrData=[];
 export default {
@@ -97,7 +98,7 @@ export default {
         //console.log(that.param)
         axios({
             method:'get',
-            url:'/wei/wxservice/wxservice?opName=getactiveinfo',
+            url:'/wxservice/wxservice?opName=getactiveinfo',
             params: {
               param:that.param,//系统类别
             }
@@ -108,7 +109,7 @@ export default {
             var retCode=res.data.retCode;
             var retMsg=res.data.retMsg;
             if(retCode!=0){
-              console.log(retMsg);
+              MessageBox('提示', retMsg);
             }else{
               if(res.data.itemList != ''){
                 that.allList=that.allList.concat(res.data.itemList);//把已获取的数据和新获取的数据合并在放入页面

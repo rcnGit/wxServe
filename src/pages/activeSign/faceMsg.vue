@@ -63,7 +63,7 @@ export default {
         Indicator.open();
         axios({
             method:'get',
-            url:'/ning/wxservice/wxMemberInfo/getFaceToken',
+            url:'/wxservice/wxMemberInfo/getFaceToken',
             params:this.param
         })
         .then(function(res) {//成功之后
@@ -84,12 +84,12 @@ export default {
                 return;
             }else if(!isValidIdCardNo(this.param.idCardNo)){
                 this.$refs.warn.style.display='block';
-                this.$refs.idCardNo.style='border-bottom:0.5px solid #df1e1d!important';
+                //this.$refs.idCardNo.style='border-bottom:0.5px solid #df1e1d!important';
                 this.warnIdcard='请输入正确的身份证号';
                 return;
             }else{
                 this.$refs.warn.style.display='none';
-                this.$refs.idCardNo.style='border-bottom:0.5px solid #efefef!important';
+               // this.$refs.idCardNo.style='border-bottom:0.5px solid #efefef!important';
             }
         },//验证身份证
         nameFn:function(){

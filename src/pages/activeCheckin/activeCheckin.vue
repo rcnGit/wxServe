@@ -67,7 +67,7 @@ export default {
             //console.log(that.param)
             axios({
                 method:'get',
-                url:'/wei/wxservice/wxservice?opName=getUserInfo'//获取客户信息
+                url:'/wxservice/wxservice?opName=getUserInfo'//获取客户信息
             })
             .then(function(res) {//成功之后
                 Indicator.close();
@@ -78,7 +78,7 @@ export default {
                 }else if(retCode == 0){
                     console.log(res.data.userInfo)
                     that.authenticFlag = res.data.userInfo.authenticFlag
-                    if(res.data.userInfo.phone != null){
+                    if(!res.data.userInfo.phone == false){
                         //console.log(res.data.userInfo.phone)
                         var Tel = res.data.userInfo.phone
                         var mtel = Tel.substr(0, 3) + '****' + Tel.substr(7);
@@ -94,12 +94,12 @@ export default {
         phoneFn:function(){
             if(!isValidMobile(this.param.mobile)){
                 this.$refs.warnPhone.style.display='block';
-                this.$refs.mobile.style='border-bottom:0.5px solid #df1e1d!important';
+               // this.$refs.mobile.style='border-bottom:0.5px solid #df1e1d!important';
                 this.warnPhone='请输入正确的手机号';
                 this.isValid = false
             }else{
                 this.$refs.warnPhone.style.display='none';
-                this.$refs.mobile.style='border-bottom:0.5px solid #efefef!important';
+              //  this.$refs.mobile.style='border-bottom:0.5px solid #efefef!important';
                 this.isValid = true
             } 
         },//验证手机号
@@ -113,10 +113,10 @@ export default {
              this.warnPhone=warn;
               if(this.warnPhone!=''){
                this.$refs.warnPhone.style.display='block';
-              this.$refs.mobile.style='border-bottom:0.5px solid #df1e1d!important';
+            //  this.$refs.mobile.style='border-bottom:0.5px solid #df1e1d!important';
            }else{
                this.$refs.warnPhone.style.display='none';
-              this.$refs.mobile.style='border-bottom:0.5px solid #efefef!important';
+            //  this.$refs.mobile.style='border-bottom:0.5px solid #efefef!important';
            }
         },
          childByValue:function(v){
@@ -132,12 +132,12 @@ export default {
         codeFn:function(){
             if(!isValidverifycode(this.param.verifiCode)){
                 this.$refs.warnCode.style.display='block';
-                this.$refs.verifycode.style='border-bottom:0.5px solid #df1e1d!important';
+               // this.$refs.verifycode.style='border-bottom:0.5px solid #df1e1d!important';
                 this.warnCode='请输入正确的验证码';
                 this.isValid2 = false
             }else{
                 this.$refs.warnCode.style.display='none';
-                this.$refs.verifycode.style='border-bottom:0.5px solid #efefef!important';
+             //   this.$refs.verifycode.style='border-bottom:0.5px solid #efefef!important';
                 this.isValid2 = true
             }
         },//验证手机验证码
@@ -156,7 +156,7 @@ export default {
             console.log(that.param)
             axios({
                 method:'get',
-                url:'/wei/wxservice/wxservice?opName=towxSigned&scope=snsapi_userinfo',
+                url:'/wxservice/wxservice?opName=towxSigned&scope=snsapi_userinfo',
                 params: {
                     param:that.param,//系统类别
                 }

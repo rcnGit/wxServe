@@ -51,7 +51,7 @@ export default {
             console.log(that.param);
              axios({
                 method:'get',
-                url:'/wei/wxservice/wxservice?opName=send_mobile_message',
+                url:'/wxservice/wxservice?opName=send_mobile_message',
                 params: {
                 param:that.param,//系统类别
                 }

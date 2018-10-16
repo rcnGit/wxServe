@@ -54,7 +54,7 @@ export default {
             activityType: '',
             authenticFlag: '',
             actStatus:'',
-            isShow: true,//按钮是否显示
+            isShow: false,//按钮是否显示
             isDisabled: false,
             businesscardShow: false,
             realname:'',
@@ -82,7 +82,7 @@ export default {
                 console.log(that.param)
                 axios({
                     method:'get',
-                    url:'/wei/wxservice/wxservice?opName=getactiveinfo',//调取活动列表和详情的接口
+                    url:'/wxservice/wxservice?opName=getactiveinfo',//调取活动列表和详情的接口
                     params: {
                         param:that.param,//系统类别
                     }
@@ -109,8 +109,10 @@ export default {
                             that.location=obj.location;
                             that.content=obj.content;
                             if(res.data.canSignUp == '0'){
+                                that.isShow = true
                                 that.actStatus= '我要报名';
                             }else if(res.data.canSignUp == '1'){
+                                that.isShow = true
                                 that.actStatus= '已报名';
                                 that.isDisabled = true;
                             }else{
@@ -127,7 +129,7 @@ export default {
                 let that = this;
                 axios({
                     method:'get',
-                    url:'/wei/wxservice/wxservice?opName=getUserInfo'//获取客户信息
+                    url:'/wxservice/wxservice?opName=getUserInfo'//获取客户信息
                 })
                 .then(function(res) {//成功之后
                     Indicator.close();
@@ -140,7 +142,7 @@ export default {
                         that.authenticFlag = res.data.userInfo.authenticFlag
                         that.userphone = res.data.userInfo.userphone
                         that.realname = res.data.userInfo.realname
-                        if(res.data.userInfo.businessName != null){
+                        if(!res.data.userInfo.businessName == false){
                             that.businessName = '财富师'+res.data.userInfo.businessName
                             that.businesscardShow = true
                             that.belongBusiness = res.data.userInfo.belongBusiness

@@ -36,7 +36,7 @@ export default {
     mounted:function(){
          axios({
                 method:'get',
-                url:'/ning/wxservice/wxMemberInfo/checkApplyWealther',//
+                url:'/wxservice/wxMemberInfo/checkApplyWealther',//
                 params: {
                 
                 }

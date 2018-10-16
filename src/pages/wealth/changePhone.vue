@@ -49,26 +49,26 @@ export default {
             }else if(!isValidMobile(this.ipNo)){
                 this.$refs.phwarn.style.display='block';
                 this.phwarn='请输入正确的手机号码';
-                this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important';
+               // this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important';
                 return;
             }else{
                 this.$refs.phwarn.style.display='none';
-                this.$refs.ph.style='border-bottom:0.5px solid #efefef!important';
+                //this.$refs.ph.style='border-bottom:0.5px solid #efefef!important';
             }
         },
         codeFn:function(){//实时校验验证码
             var that=this;
             if(that.msgCode==''){//校验验证码
-                this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important';
+               // this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important';
                 return;
             }else if(!isValidverifycode(that.msgCode)){
                 this.$refs.codewarn.style.display='block';
                 this.codewarn='请输入正确的手机验证码';
-                this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important';
+                //this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important';
                 return;
             }else{
                 this.$refs.codewarn.style.display='none';
-                this.$refs.code.style='border-bottom:0.5px solid #efefef!important';
+               // this.$refs.code.style='border-bottom:0.5px solid #efefef!important';
             }
         },
         getM:function(){ 
@@ -77,18 +77,18 @@ export default {
             if(that.ipNo==''){
                 this.$refs.phwarn.style.display='block';
                 this.phwarn='请输入手机号码';
-                this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important';
+                //this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important';
                 that.Dsiabled=false;
                 return;
             }else if(!isValidMobile(that.ipNo)){
                 this.$refs.phwarn.style.display='block';
                 this.phwarn='请输入正确的手机号码';
-                this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important';
+                //this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important';
                 that.Dsiabled=false;
                 return;
             }else{
                 this.$refs.phwarn.style.display='none';
-                this.$refs.ph.style='border-bottom:0.5px solid #efefef!important';
+               // this.$refs.ph.style='border-bottom:0.5px solid #efefef!important';
             }
             this.$refs.c1.getCodeFn(this.messType,this.ipNo);
         },
@@ -105,36 +105,36 @@ export default {
             if(that.ipNo==''){
                 this.$refs.phwarn.style.display='block';
                 this.phwarn='请输入手机号码';
-                this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important';
+              //  this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important';
                 return;
             }else if(!isValidMobile(that.ipNo)){
                 this.$refs.phwarn.style.display='block';
                 this.phwarn='请输入正确的手机号码';
-                this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important';
+               // this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important';
                 return;
             }else{
                 this.$refs.phwarn.style.display='none';
-                this.$refs.ph.style='border-bottom:0.5px solid #efefef!important';
+               // this.$refs.ph.style='border-bottom:0.5px solid #efefef!important';
             }
 
              if(that.msgCode==''){//校验验证码
                 this.$refs.codewarn.style.display='block';
                 this.codewarn='请输入手机验证码';
-                this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important';
+               // this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important';
                 return;
             }else if(!isValidverifycode(that.msgCode)){
                 this.$refs.codewarn.style.display='block';
                 this.codewarn='请输入正确的手机验证码';
-                this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important';
+               // this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important';
                 return;
             }else{
                 this.$refs.codewarn.style.display='none';
-                this.$refs.code.style='border-bottom:0.5px solid #efefef!important';
+               // this.$refs.code.style='border-bottom:0.5px solid #efefef!important';
             }
             Indicator.open();
             axios({
                 method:'get',
-                url:'/ning/wxservice/wxMemberInfo/changeMobile',//
+                url:'/wxservice/wxMemberInfo/changeMobile',//
                 params: {
                 phone:that.ipNo,//新的手机号
                 msgCode:that.msgCode//短信验证码

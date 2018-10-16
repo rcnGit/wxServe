@@ -109,7 +109,7 @@ export default {
              Indicator.open(that.loadObj);
                 axios({
                     method:'get',
-                    url:'/ning/wxservice/wxMemberInfo/getUserAsset',
+                    url:'/wxservice/wxMemberInfo/getUserAsset',
                     params: {
                    // param:that.param,//系统类别
                     }
