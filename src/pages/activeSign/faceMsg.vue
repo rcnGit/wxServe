@@ -63,7 +63,7 @@ export default {
         Indicator.open();
         axios({
             method:'get',
-            url:'/wxservice/wxMemberInfo/getFaceToken',
+            url:'/ning/wxservice/wxMemberInfo/getFaceToken',
             params:this.param
         })
         .then(function(res) {//成功之后
@@ -89,7 +89,7 @@ export default {
                 return;
             }else{
                 this.$refs.warn.style.display='none';
-               // this.$refs.idCardNo.style='border-bottom:0.5px solid #efefef!important';
+                this.$refs.idCardNo.style='border-bottom:0.5px solid #efefef!important';
             }
         },//验证身份证
         nameFn:function(){
@@ -97,7 +97,7 @@ export default {
                 return;
             }else if(isValidName(this.param.idCardName)){
                 this.$refs.namewarn.style.display='block';
-                this.$refs.name.style='border-bottom:0.5px solid #df1e1d!important';
+               // this.$refs.name.style='border-bottom:0.5px solid #df1e1d!important';
                 this.namewarn='请输入正确的姓名';
                 return;
             }else{
@@ -111,7 +111,7 @@ export default {
         var that = this;
        var returnUrl = this.$route.params.returnUrl;
        if(returnUrl&&returnUrl!=undefined){
-           that.returnUrl=''+returnUrl;
+           that.returnUrl=returnUrl;
        }
     }
 }

@@ -14,7 +14,7 @@
                  <mt-button type="danger" size="small" class='sendCodeBtn' @click="getM()" v-bind:disabled='Dsiabled'>{{text}}</mt-button>
              </div> <!--inpBox-->
              <div class='inpBox'>
-                <input type='text' class=''v-model='routerCity'ref='prov' placeholder="请选择所在地" disabled=true/>
+                <input type='text' class=''v-model='routerCity'ref='prov' placeholder="请选择所在地" disabled=true style='border-bottom:1px solid #efefef;opacity: 1;'/>
                 <p ref='provWarn' class='warn' >{{provWarn}}</p>
                 <span>所在地</span>
                 <span class='inpRchoose fSize13'style='text-align:center;color:#c5c5c5;'@click='chooseAdd'>去选择<img src='../../common/img/chooseR.png' class='chooseR'/></span>
