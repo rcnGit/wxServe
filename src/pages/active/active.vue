@@ -15,7 +15,7 @@
           <p class='fSize16'>现在还没有活动哦</p>
         </div>
         <div id='active_content'>
-           <div v-for="item in items" class="active_demo" @click='en_details($event)' :oaActId='item.oaActId'>
+           <div v-for="item in items" class="active_demo" @click='en_details($event)' :oaActId='item.oaActId' :ActName='item.actName'>
                <img v-bind:src="item.bulletinPicture" width='100%' style='min-height:100px;max-height:150px;'/>
               <div class='textMain'>
                 <p class='active_title'>{{item.actName}}</p>
@@ -73,11 +73,13 @@ export default {
      // console.log(event.target);
      // console.log(event.target.getAttribute('oaactid'))//点击到的元素
        var oaActId=event.currentTarget.getAttribute('oaactid');//绑定事件的元素
+       var ActName=event.currentTarget.getAttribute('ActName');//绑定事件的元素
        this.$router.push({
           path:'/ActiveDetail',
           name:'ActiveDetail',
           params:{
-            oaActId : oaActId
+            oaActId : oaActId,
+            actName : ActName
           }
         })
     },
