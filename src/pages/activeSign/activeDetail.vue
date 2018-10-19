@@ -190,7 +190,7 @@ export default {
                         that.realname = res.data.userInfo.realname
                         if(!res.data.userInfo.businessName == false){
                             that.businessName = '财富师'+res.data.userInfo.businessName
-                            that.businesscardShow = true
+                           // that.businesscardShow = true
                             that.belongBusiness = res.data.userInfo.belongBusiness
                             that.getPhoto()
                             console.log(that.photo)
@@ -213,7 +213,7 @@ export default {
                                 that.headImgUrl = res.data.userInfo.headImgUrl
                             }
                             that.businessName = res.data.userInfo.nickname
-                            that.businesscardShow = false
+                           // that.businesscardShow = false
                             console.log(that.actName)
                             console.log(that.businessName)
                             var businName
