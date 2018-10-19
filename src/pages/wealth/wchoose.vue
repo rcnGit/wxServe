@@ -98,10 +98,12 @@ export default {
             .then(function(res){
                 console.log(res.data);
                 var retCode=res.data.retCode;
+                alert(retCode);
                 if(retCode=='-1'){//系统异常
                     MessageBox('提示', '系统异常');
                 }else{
                     var mployment=res.data.data.mployment;
+                     alert(mployment);
                     that.$refs.pic.src='res.data.data.photo'//财富师头像
                      if(mployment==0){//有名片
                      alert('打开财富师,糖巢APP');
@@ -139,11 +141,14 @@ export default {
             .then(function(res){
                 console.log(res.data);
                 var retCode=res.data.retCode;
+                alert(retCode+'===+判断是否有财富师')
                 if(retCode=='0'){
                     var belongBusiness=res.data.userInfo.belongBusiness;
                     that.cgh=belongBusiness;//财富师工号
+                     alert('是否有财富师===='+belongBusiness);
                     if(!belongBusiness||belongBusiness==''||belongBusiness==undefined){//没有财富师
                         that.authenticFlag=res.data.userInfo.authenticFlag;
+                       
                         return;
                        
                     }else{
