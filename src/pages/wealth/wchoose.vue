@@ -103,17 +103,18 @@ export default {
                 }else{
                     var mployment=res.data.data.mployment;
                     that.$refs.pic.src='res.data.data.photo'//财富师头像
-                    // if(mployment==0){//有名片
+                     if(mployment==0){//有名片
+                     alert('打开财富师,糖巢APP');
                          window.location.href='https://test-interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+that.cgh;
-                    // }else{//没有名片
-                    //     that.$router.push({//跳入本地名片代理页面
-                    //         path:'/wealthCardD',
-                    //         name:'wealthCardD',
-                    //         params:{
-                    //             gh:that.gh
-                    //         }
-                    //      })
-                    // }
+                     }else{//没有名片
+                         that.$router.push({//跳入本地名片代理页面
+                             path:'/wealthCardD',
+                             name:'wealthCardD',
+                             params:{
+                                 gh:that.gh
+                             }
+                          })
+                     }
                 }
             })
         }

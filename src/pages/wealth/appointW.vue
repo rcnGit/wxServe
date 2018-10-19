@@ -249,12 +249,13 @@ export default {
             that.popupVisible=false;
         },
         appW:function(){
+            alert('appw');
             if(this.wName==''){
                 this.$refs.warnName.style.display='block';
                 this.warnName='请输入财富师姓名';
                // this.$refs.wName.style='border-bottom:0.5px solid #df1e1d!important';
                  return;
-            }else if(isValidName(that.wName)){
+            }else if(isValidName(this.wName)){
                 console.log('请输入正确的财富师姓名');
                 this.$refs.warnName.style.display='block';
                 this.warnName='请输入正确的姓名';
@@ -286,6 +287,7 @@ export default {
             this.valiW();
         },
         valiW:function(){
+            alert('valiw');
             var that=this;
             console.log(that.param);
             axios({
@@ -295,6 +297,7 @@ export default {
         })
         .then(function(res) {//成功之后
             Indicator.close();
+            alert(retCode)
               var retCode=res.data.retCode;
               var retMsg=res.data.retMsg;
                console.log(res.data);
