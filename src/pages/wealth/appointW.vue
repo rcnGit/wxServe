@@ -12,7 +12,7 @@
                 <!-- <img src='./img/card_img@2x.png' class='clear'/> -->
              </div> <!--inpBox-->
               <div class='inpBox'>
-                <input type='text' class=''placeholder='请输入财富师工号后七位数字' maxlength='7' v-model='gh'ref='gh'/>
+                <input type='text' class=''placeholder='请输入财富师工号后七位数字'maxlength='7' v-model='gh'ref='gh'/>
                 <P ref='ghw' class='warn'>{{warnGh}}</P>
                 <span>工号DT</span>
                 <em>请输入正确的实名信息</em>
@@ -249,7 +249,7 @@ export default {
                 this.warnName='请输入财富师姓名';
                // this.$refs.wName.style='border-bottom:0.5px solid #df1e1d!important';
                  return;
-            }else if(isValidName(this.wName)){
+            }else if(isValidName(that.wName)){
                 console.log('请输入正确的财富师姓名');
                 this.$refs.warnName.style.display='block';
                 this.warnName='请输入正确的姓名';
