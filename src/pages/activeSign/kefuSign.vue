@@ -156,10 +156,10 @@ export default {
                           that.isValid5 = true
                     }
                 }
-                // else if(retCode == 400){
-                //     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                // window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
-                // }
+                 else if(retCode == 400){
+                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
+                 window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=kefuSign#wechat_redirect';
+                 }
                 else{
                     MessageBox('提示',retMsg);
                 }

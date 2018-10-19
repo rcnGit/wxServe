@@ -101,7 +101,7 @@ export default {
                 }
                 else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=queryPublishInfo'
-                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
+                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=PostInformation#wechat_redirect';
                 }
                 if(that.items.length<1){
                      that.$refs.nodata.style.display='block';

@@ -87,7 +87,7 @@ export default {
             var retCode=res.data.retCode;
             if(retCode == 400){
                 var serbackUrl = that.Host+'wxservice/wxMemberInfo/getFaceToken'
-                window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
+                window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=faceMsg#wechat_redirect';
             }else if(retCode == '-2'){
                 MessageBox('提示','身份证不合法');
                 return;

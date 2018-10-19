@@ -149,7 +149,7 @@ export default {
                         return;
                 }else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxMemberInfo/getCustActList'
-                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
+                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=minActive#wechat_redirect';
                 }else{
                     that.isShow = true
                     MessageBox('提示', retMsg);
