@@ -385,7 +385,13 @@ export default {
             this.businesscardShow = false
         }
         var oaActId =this.$route.params.oaActId || this.$route.query.oaActId; 
-        var actName =this.$route.params.actName || this.$route.query.actName;  
+        var actName =this.$route.params.actName || this.$route.query.actName;
+        if(!oaActId == true){ 
+            var Activiy = localStorage.getItem('activiy')
+            Activiy = JSON.parse(Activiy)
+            oaActId = Activiy.huoId
+            actName = Activiy.huoName
+        }
         this.OaActId = oaActId
         this.actName = actName
          this.authentic()//获取客户信息

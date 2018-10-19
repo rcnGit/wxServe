@@ -7,7 +7,7 @@
           </div>
           <div class="act_h_right">
             <input placeholder="活动名称" class='searchInput'ref='name'/>
-            <img src='./img/search_img@2x.png' class='search_img' @click='search()'/>
+            <img src='./img/search_img@2x.png' class='search_img' @click.stop='search'/>
           </div>
         </div><!--act_head-->
         <div class='noData' ref='nodata' v-if='isShow'>
@@ -90,6 +90,11 @@ export default {
             actName : ActName
           }
         })
+        var huoId = oaActId;
+        var huoName = ActName;
+        var actObj = {'huoId': huoId, 'huoName': huoName}
+        actObj = JSON.stringify(actObj)
+        localStorage.setItem('activiy',actObj)
     },
     search:function(){
       var that=this;

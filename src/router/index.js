@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import notFound from '@/pages/404'//404页面
 import active from '@/pages/active/active'
 import provinceList from '@/pages/active/provinceList'
 import postInfor from '@/pages/PostInfor/PostInformation'
@@ -25,6 +26,14 @@ Vue.use(Router)
 export default new Router({
  // mode: 'history',
   routes: [
+    {
+      path: '/404',
+      name: 'notFound',
+      meta: {
+        title: '404'
+      },
+      component: notFound//使用这个组件
+    },
     {
       path: '/provinceList',
       name: 'provinceList',

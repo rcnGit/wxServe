@@ -14,7 +14,7 @@
                 <input type='text' class=''placeholder='请输入您的身份证' ref='idCardNo' v-model="param.idCardNo" />
                 <span>身份证</span>
                 <!-- <em>请输入正确的实名信息</em> -->
-                <p class='warn' ref='warn'v-show='true'>{{warnIdcard}}</p>
+                <p class='warn' ref='warnIdcard'v-show='true'>{{warnIdcard}}</p>
                 <!-- <img src='./img/card_img@2x.png' class='clear'/> -->
              </div> <!--inpBox-->             
              <div style='clear:both'></div>
@@ -49,16 +49,28 @@ export default {
     methods:{
     getDescribe:function(id){//拼接跳转链接
         //校验身份信息的内容；
-        if(this.param.idCardNo==''){
-            return;
-        }else if(!isValidIdCardNo(this.param.idCardNo)){
-            return;
-        }
-
         if(this.param.idCardName==''){
+            this.$refs.namewarn.style.display='block';
+            this.namewarn='请输入姓名';
             return;
         }else if(isValidName(this.param.idCardName)){
+            this.$refs.namewarn.style.display='block';
+            this.namewarn='请输入正确的姓名';
             return;
+        }else{
+            this.$refs.namewarn.style.display='none'
+        }
+
+        if(this.param.idCardNo==''){
+            this.$refs.warnIdcard.style.display='block';
+            this.warnIdcard='请输入身份证';
+            return;
+        }else if(!isValidIdCardNo(this.param.idCardNo)){
+            this.$refs.warnIdcard.style.display='block';
+            this.warnIdcard='请输入正确的身份证';
+            return;
+        }else{
+            this.$refs.warnIdcard.style.display='none'
         }
 
         console.log(this.param)

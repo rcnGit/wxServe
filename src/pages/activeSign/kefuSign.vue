@@ -156,10 +156,10 @@ export default {
                           that.isValid5 = true
                     }
                 }
-                else if(retCode == 400){
-                    var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
-                }
+                // else if(retCode == 400){
+                //     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
+                // window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
+                // }
                 else{
                     MessageBox('提示',retMsg);
                 }
@@ -286,15 +286,38 @@ export default {
                 var retMsg=res.data.retMsg;                  
                 if(retCode==0){   
                     console.log(that.param.isReviewSignup)
-                    that.$router.push({
-                        path: '/pushW',
-                        name: 'pushW',
-                        params:{
-                            isReviewSignup: that.param.isReviewSignup,
-                            activeId: that.param.activeId,
-                            businessName: that.param.businessName
-                        }
-                    })
+                    console.log(that.isDisabled3)
+                    if(that.isDisabled3 == false ){
+                        var message = '报名该活动需先指定财富师，是否定指定'+that.param.businessName+'为您的服务财富师？您可指定一名服务理财师，并拥有更换权力。'
+                        MessageBox.confirm('', {
+                            message: message,
+                            title: ''
+                        }).then(action => {
+                            if(action == 'confirm'){
+                                that.$router.push({
+                                    path: '/pushW',
+                                    name: 'pushW',
+                                    params:{
+                                        isReviewSignup: that.param.isReviewSignup,
+                                        activeId: that.param.activeId,
+                                        businessName: that.param.businessName
+                                    }
+                                })
+                            }
+                        }).catch(() => {
+                            //console.log(2);
+                        })
+                    }else{
+                        that.$router.push({
+                            path: '/pushW',
+                            name: 'pushW',
+                            params:{
+                                isReviewSignup: that.param.isReviewSignup,
+                                activeId: that.param.activeId,
+                                businessName: that.param.businessName
+                            }
+                        })
+                    }
                 }else{
                     console.log(retMsg);
                     MessageBox('提示',retMsg);
@@ -309,24 +332,7 @@ export default {
                 this.businessNameFn()
                 this.belongBusinessFn()
             }else{
-                Indicator.open(this.loadObj);
-                let that = this;
-                console.log(that.param)
-                if(that.isDisabled3 == false ){
-                    var message = '报名该活动需先指定财富师，是否定指定'+that.param.businessName+'为您的服务财富师？您可指定一名服务理财师，并拥有更换权力。'
-                    MessageBox.confirm('', {
-                        message: message,
-                        title: ''
-                    }).then(action => {
-                        if(action == 'confirm'){
-                            that.signup()
-                        }
-                    }).catch(() => {
-                        //console.log(2);
-                    })
-                }else{
-                    that.signup()
-                }
+                this.signup()
             }
         },
         async asyncSDKConifg (actName,businessName) {
