@@ -56,6 +56,7 @@
            <div class='pop_wealth' ref='pop_wealth'style='display:none;'>
                <img v-bind:src='srcImg' class='wimg' v-if="headimgShow"/>
                <img src='./img/w.png' class='wimg' v-else/>
+               <p>{{dtName}}</p>
                <p>是否确定他（她）为我的专属财富师</p>
                <div style='margin-top:15%;'>
                     <mt-button type="danger" size="large" class=''@click='zhiding()' style='width:50%!important;margin-top:0px!important;'>确定</mt-button>
@@ -68,6 +69,7 @@
            <div class='pop_wealth2' ref='pop_wealth2'>
                <img v-bind:src='srcImg2' class='wimg' v-if="headimgShow2"/>
                <img src='./img/w.png' class='wimg' v-else/>
+               <p>{{dtName2}}</p>
                <p>您已线下指定了专属财富师</p>
                <div style='margin-top:15%;'>
                     <mt-button type="danger" size="large" class=''@click='closeB()' style='width:50%!important;margin-top:0px!important;'>确定</mt-button>
@@ -97,6 +99,8 @@ export default {
             popupVisible:false,
             srcImg:'',//财富师头像
             srcImg2:'',//线下制定的财富师头像财富师头像
+            dtName:'',
+            dtName2:'',
             msg1:'我是',
             msg2:'任超楠',
             msg3:'，我正在指定你为我的专属财富师，请回复姓名全称与DT开头的工号，谢谢！',
@@ -313,6 +317,7 @@ export default {
                 }else{
                     that.headimgShow = false
                 }
+                that.dtName=data.dtName;
                 that.popupVisible=true;
                 that.param.mobile=data.mobile;
               }else if(retCode==-4){//已绑定线下财富师,并且展示绑定的财富师的信息
@@ -326,6 +331,7 @@ export default {
                 }else{
                     that.headimgShow2 = false
                 }
+                that.dtName2=data.dtName;
                 that.popupVisible=true;
               }else if(retCode==-2){//未认证，跳转人脸识别页面
                    that.$router.push({
@@ -414,6 +420,7 @@ export default {
                         }else{
                             that.headimgShow2 = false
                         }
+                        that.dtName2=data.dtName;
                         that.popupVisible=true;
                     }else if(retCode==-2){//-2未认证,跳转人脸识别的页面
                           that.$router.push({
