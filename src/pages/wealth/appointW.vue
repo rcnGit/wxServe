@@ -303,7 +303,7 @@ export default {
                 that.$refs.pop_wealth.style.display='block';
                 that.$refs.pop_wealth2.style.display='none';
                 that.$refs.pop_contant.style.display='none';
-                alert(data.photo)
+               // alert(data.photo)
                 if(!data.photo == false){
                     that.srcImg=data.photo;
                     that.headimgShow=true
@@ -316,7 +316,7 @@ export default {
                 that.$refs.pop_wealth2.style.display='block';
                 that.$refs.pop_wealth.style.display='none';
                 that.$refs.pop_contant.style.display='none';
-                alert(data.photo+'1111111')
+                //alert(data.photo+'1111111')
                 if(!data.photo == false){
                     that.srcImg2=data.photo;
                     that.headimgShow2=true
@@ -404,7 +404,7 @@ export default {
                        that.$refs.pop_wealth2.style.display='block';
                        that.$refs.pop_wealth.style.display='none';
                        that.$refs.pop_contant.style.display='none';
-                       alert(data.photo+'222')
+                       //alert(data.photo+'222')
                        if(!data.photo == false){
                             that.srcImg2=data.photo;
                             that.headimgShow2=true
