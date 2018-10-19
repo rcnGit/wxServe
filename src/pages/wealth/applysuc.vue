@@ -16,6 +16,7 @@
     </div>
 </template>
 <script>
+import comfooter from './components/footer';
 export default {
     name:'applysuc',
     data:function(){
@@ -23,6 +24,7 @@ export default {
             exeTime:''
         }
     },
+    components:{comfooter},
     methods:{
 
     },

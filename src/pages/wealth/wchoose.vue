@@ -1,19 +1,20 @@
 <template>
-    <div class='wealthCardD'>
-        <div class='bg'>
-            <p style='font-size:16px;color:rgb(53,53,53);padding-top:20px;font-weight:700;'>专属财富师</p>
-            <p style='font-size:13px;color:rgb(99,99,99);margin: 20px auto 0;'>您还未指定财富师，立即指定，尊享贴身服务</p>
-            <img src="./img/w.png" class='wImg' ref='pic'/>
-                <div style='margin:24px auto 20px;'>
+    <div class='wealthCardD' >
+        <div v-if="ifCardShow">
+            <div class='bg'>
+                <p style='font-size:16px;color:rgb(53,53,53);padding-top:20px;font-weight:700;'>专属财富师</p>
+                <p style='font-size:13px;color:rgb(99,99,99);margin: 20px auto 0;'>您还未指定财富师，立即指定，尊享贴身服务</p>
+                <img src="./img/w.png" class='wImg' ref='pic'/>
+                    <div style='margin:24px auto 20px;'>
+                        
+                        <p class='intr'><span>优选产品</span><span class='int_gg'>|</span><span>财富师动态</span><span class='int_gg'>|</span><span>专属活动</span></p>
+                    </div>
                     
-                    <p class='intr'><span>优选产品</span><span class='int_gg'>|</span><span>财富师动态</span><span class='int_gg'>|</span><span>专属活动</span></p>
-                 </div>
-                  
-         </div>        
-                
-           
-            <mt-button type="danger" size="large" class=''@click='zhid()' style='width:58%!important;margin-top:50px!important;'>立即指定您的专属财富师</mt-button>
-        
+            </div>        
+                    
+            
+                <mt-button type="danger" size="large" class=''@click='zhid()' style='width:58%!important;margin-top:50px!important;'>立即指定您的专属财富师</mt-button>
+         </div>  <!--show-->
     </div>
 </template>
 <script>
@@ -31,7 +32,8 @@ export default {
             paramurl: location.href.split('?')[0],
             faceparam:{
                 bizId: '',
-                backUrl: location.href.split('?')[0]
+                backUrl: location.href.split('?')[0],
+                ifCardShow:false,
             }
         }
     },
@@ -142,11 +144,12 @@ export default {
                     that.cgh=belongBusiness;//财富师工号
                     if(!belongBusiness||belongBusiness==''||belongBusiness==undefined){//没有财富师
                         that.authenticFlag=res.data.userInfo.authenticFlag;
-                       
+                       that.ifCardShow=true;
                         return;
                        
                     }else{
                         //有财富师
+                         that.ifCardShow=false;
                         that.wname=res.data.userInfo.businessName;
                        // that.pming();//去判断有没有财富师名片
                        window.location.href='https://test-interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+belongBusiness;
@@ -166,10 +169,14 @@ export default {
 }
 </script>
 <style>
+.comfooter{
+    display: none!important;
+}
 html{
       background:#fff;  
 }
 .wealthCardD{
+     min-height:300px;
      background:#fff; 
      padding-bottom:30px;
 }
