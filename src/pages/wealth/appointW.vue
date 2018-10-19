@@ -317,7 +317,8 @@ export default {
                 }else{
                     that.headimgShow = false
                 }
-                alert(data.dtName)
+                alert(data.photo+'photo')
+                        alert(data.dtName+'dtName')
                 that.dtName=data.dtName;
                 that.popupVisible=true;
                 that.param.mobile=data.mobile;
@@ -332,7 +333,8 @@ export default {
                 }else{
                     that.headimgShow2 = false
                 }
-                alert(data.dtName)
+                alert(data.photo+'photo')
+                        alert(data.dtName+'dtName')
                 that.dtName2=data.dtName;
                 that.popupVisible=true;
               }else if(retCode==-2){//未认证，跳转人脸识别页面
@@ -422,7 +424,8 @@ export default {
                         }else{
                             that.headimgShow2 = false
                         }
-                        alert(data.dtName)
+                        alert(data.photo+'photo')
+                        alert(data.dtName+'dtName')
                         that.dtName2=data.dtName;
                         that.popupVisible=true;
                     }else if(retCode==-2){//-2未认证,跳转人脸识别的页面
