@@ -195,11 +195,11 @@ export default {
                             that.getPhoto()
                             console.log(that.photo)
                             var headImgUrl = that.photo
-                            if(headImgUrl == null){
-                                that.headimgShow = false
-                            }else{
+                            if(!that.photo == false){
                                 that.headimgShow = true
                                 that.headImgUrl = that.photo
+                            }else{
+                                that.headimgShow = false
                             }
                             var actname = that.businessName+'邀请您参加'+that.actName
                             var busname = '大唐财富尊享活动'+that.actName+'即将举办，机会难得，邀请你一起参加'
