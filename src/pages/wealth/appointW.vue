@@ -54,7 +54,8 @@
            </div> <!--pop_contant -->
 
            <div class='pop_wealth' ref='pop_wealth'style='display:none;'>
-               <img v-bind:src='srcImg' class='wimg'/>
+               <img v-bind:src='srcImg' class='wimg' v-if="headimgShow"/>
+               <img src='./img/w.png' class='wimg' v-else/>
                <p>是否确定他（她）为我的专属财富师</p>
                <div style='margin-top:15%;'>
                     <mt-button type="danger" size="large" class=''@click='zhiding()' style='width:50%!important;margin-top:0px!important;'>确定</mt-button>
@@ -65,7 +66,8 @@
            </div>
 
            <div class='pop_wealth2' ref='pop_wealth2'>
-               <img v-bind:src='srcImg2' class='wimg'/>
+               <img v-bind:src='srcImg2' class='wimg' v-if="headimgShow2"/>
+               <img src='./img/w.png' class='wimg' v-else/>
                <p>您已线下指定了专属财富师</p>
                <div style='margin-top:15%;'>
                     <mt-button type="danger" size="large" class=''@click='closeB()' style='width:50%!important;margin-top:0px!important;'>确定</mt-button>
@@ -87,6 +89,8 @@ export default {
         return{
             wName:'',
             gh:'',
+            headimgShow: false,
+            headimgShow2:false,
             warnGh:'',//工号的校验提醒
             actions:'',
             warnName:'',//姓名校验的提示
@@ -298,14 +302,26 @@ export default {
                 that.$refs.pop_wealth.style.display='block';
                 that.$refs.pop_wealth2.style.display='none';
                 that.$refs.pop_contant.style.display='none';
-                that.srcImg=data.photo;
+                alert(data.photo)
+                if(!data.photo == false){
+                    that.srcImg=data.photo;
+                    that.headimgShow=true
+                }else{
+                    that.headimgShow = false
+                }
                 that.popupVisible=true;
                 that.param.mobile=data.mobile;
               }else if(retCode==-4){//已绑定线下财富师,并且展示绑定的财富师的信息
                 that.$refs.pop_wealth2.style.display='block';
                 that.$refs.pop_wealth.style.display='none';
                 that.$refs.pop_contant.style.display='none';
-                that.srcImg2=data.photo;
+                alert(data.photo+'1111111')
+                if(!data.photo == false){
+                    that.srcImg2=data.photo;
+                    that.headimgShow2=true
+                }else{
+                    that.headimgShow2 = false
+                }
                 that.popupVisible=true;
               }else if(retCode==-2){//未认证，跳转人脸识别页面
                    that.$router.push({
@@ -387,7 +403,13 @@ export default {
                        that.$refs.pop_wealth2.style.display='block';
                        that.$refs.pop_wealth.style.display='none';
                        that.$refs.pop_contant.style.display='none';
-                        that.srcImg2=data.photo;
+                       alert(data.photo+'222')
+                       if(!data.photo == false){
+                            that.srcImg2=data.photo;
+                            that.headimgShow2=true
+                        }else{
+                            that.headimgShow2 = false
+                        }
                         that.popupVisible=true;
                     }else if(retCode==-2){//-2未认证,跳转人脸识别的页面
                           that.$router.push({
@@ -475,7 +497,7 @@ export default {
 
 .wimg{
     width:35%;
-    margin:50px auto 30;
+    margin:50px auto 30px;
 }
 </style>
 
