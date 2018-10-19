@@ -6,7 +6,7 @@
                 <p><span class='text'>{{item.prodName}}prodName</span><span class='date'>{{item.publishtime}}</span></p>
             </div>   <!--postOne -->
         </div>
-        <div class='noData' ref='nodata' style='display:block;'>
+        <div class='noData' ref='nodata' style='display:none;'>
                 <img src='./img/nomsg.png'/>
                 <p class='fSize16'>暂无投后消息</p>
          </div>
@@ -27,8 +27,14 @@ export default {
         return{
             items:[],
             param:{
-                certNo:''//包括个人客户的身份证号等和机构客户的机构代码
-            }
+                certNo:'',//包括个人客户的身份证号等和机构客户的机构代码
+                backUrl: location.href.split('?')[0]
+            },
+            faceparam:{
+                bizId: '',
+                backUrl: location.href.split('?')[0]
+            },
+            serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxservice?opName=queryPublishInfo'),//接口
         }
     },
     components:{MessageBox},
@@ -38,9 +44,37 @@ export default {
                     path:'/faceMsg',
                     name:'faceMsg',
                     params:{
-                        
+                        returnUrl:this.Host+'weixin-h5/index.html#/PostInformation'
                     }
                 })
+        },
+        getfaceId:function(){
+            var that=this;
+            axios({
+                method:'get',
+                url:'/wxservice/wxMemberInfo/getFaceResult',
+                params: that.faceparam
+            })
+            .then(function(res){
+                console.log(res.data);
+                var retCode=res.data.retCode;
+                if(retCode == '0'){
+                    MessageBox('提示','人脸识别成功');
+                    return;
+                }else if(retCode == '-2'){
+                    MessageBox('提示','该身份证已绑定其他手机号');
+                    return;
+                }else if(retCode == '-1'){
+                    MessageBox('提示','系统异常');
+                    return;
+                }else if(retCode == '-3'){
+                    MessageBox('提示','人脸识别未通过');
+                    return;
+                }else if(retCode == '-4'){
+                    MessageBox('提示','未查询到人脸识别结果');
+                    return;
+                }
+            })
         },
         getList:function(){
             var that=this;
@@ -48,10 +82,11 @@ export default {
                 method:'get',
                 url:'/wxservice/wxservice?opName=queryPublishInfo',
                 params: {
-                param:that.param,//系统类别
+                param:that.param//系统类别
                 }
             })
             .then(function(res) {//成功之后
+                Indicator.close();
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                  console.log(res.data);
@@ -64,12 +99,15 @@ export default {
                      that.$refs.wz.style.display='block';
                         return;
                 }
+                else if(retCode == 400){
+                    var serbackUrl = that.Host+'wxservice/wxservice?opName=queryPublishInfo'
+                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
+                }
                 if(that.items.length<1){
                      that.$refs.nodata.style.display='block';
                      that.$refs.hasData.style.display='none';
                 }
                 that.items=res.data.itemList;
-                Indicator.close();
             });
         },
         open:function(){
@@ -78,6 +116,11 @@ export default {
         }
     },
     created:function(){
+        var bizId=localStorage.getItem('bizId');
+        this.faceparam.bizId = bizId
+        if(!this.$route.query.faceResult == false){
+           this.getfaceId()
+        }
         var that=this;
          Indicator.open(that.loadObj);
          that.getList();

@@ -23,15 +23,8 @@ import wchoose from '@/pages/wealth/wchoose'//没有财富师名片的，代理�
 Vue.use(Router)
 
 export default new Router({
+ // mode: 'history',
   routes: [
-    {
-      path: '/active',
-      name: 'Active',
-      meta: {
-        title: '尊享活动'
-      },
-      component: active
-    },
     {
       path: '/provinceList',
       name: 'provinceList',
@@ -39,6 +32,14 @@ export default new Router({
         title: '省份选择'
       },
       component: provinceList//使用这个组件
+    },
+    {
+      path: '/active',
+      name: 'active',
+      meta: {
+        title: '尊享活动'
+      },
+      component: active
     },
     {
       path: '/ActiveDetail',

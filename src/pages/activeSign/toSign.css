@@ -45,7 +45,7 @@ body{
 input:focus{
     outline:0;
     border:none!important;
-    border-bottom:0.5px solid #df1e1d!important;
+    border-bottom:0.5px solid #efefef!important;
 }
 .inpBox span{
     position:absolute;

@@ -5,13 +5,13 @@
              <span>请输入您的实名信息</span>
             </div>
             <div class='inpBox'>
-                <input type='text' class=''ref='name' placeholder="请输入您的姓名" v-on:input='nameFn' v-model="param.idCardName"/>
+                <input type='text' class=''ref='name' placeholder="请输入您的姓名"  v-model="param.idCardName"/>
                 <span>姓名</span>
                 <p class='warn' ref='namewarn'v-show='true'>{{namewarn}}</p> 
                 <!-- <img src='./img/card_img@2x.png' class='clear'/> -->
              </div> <!--inpBox-->
               <div class='inpBox'>
-                <input type='text' class=''placeholder='请输入您的身份证' ref='idCardNo' v-model="param.idCardNo" v-on:input='idCardNoFn'/>
+                <input type='text' class=''placeholder='请输入您的身份证' ref='idCardNo' v-model="param.idCardNo" />
                 <span>身份证</span>
                 <!-- <em>请输入正确的实名信息</em> -->
                 <p class='warn' ref='warn'v-show='true'>{{warnIdcard}}</p>
@@ -26,6 +26,7 @@
 <script>
 import { Indicator } from 'mint-ui';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
+import { MessageBox } from 'mint-ui';//提示框
 import { isValidIdCardNo,isValidName} from '@/common/js/extends.js'
 import axios from 'axios';
 export default {
@@ -36,10 +37,12 @@ export default {
            param:{
             idCardNo:'',//身份证号
             idCardName:'',//身份证姓名
-            returnUrl:''//人脸识别后返回的Url
+            returnUrl:'',//人脸识别后返回的Url
+            backUrl: location.href.split('?')[0]
            },
            namewarn:'',
-           token:''
+           token:'',
+           serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxMemberInfo/getFaceToken')
        }
    },
     components:{Button,axios},//使用mint-ui的button的组件
@@ -63,20 +66,36 @@ export default {
         Indicator.open();
         axios({
             method:'get',
-            url:'/ning/wxservice/wxMemberInfo/getFaceToken',
-            params:this.param
+            url:'/wxservice/wxMemberInfo/getFaceToken',//ning
+            params:that.param
         })
         .then(function(res) {//成功之后
             Indicator.close();
-            console.log(res.data.data);
-            that.token=res.data.data.token;
-            var bizId=res.data.data.bizId;
-            localStorage.setItem('bizId',bizId);
-            var bizId=localStorage.getItem('bizId');
-            if(bizId!=''&&bizId!=undefined){
-                window.location.href='https://api.megvii.com/faceid/lite/do?token='+that.token;
+            console.log(res.data);
+            var retCode=res.data.retCode;
+            if(retCode == 400){
+                var serbackUrl = that.Host+'wxservice/wxMemberInfo/getFaceToken'
+                window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
+            }else if(retCode == '-2'){
+                MessageBox('提示','身份证不合法');
+                return;
+            }else if(retCode == '-1'){
+                MessageBox('提示','系统异常');
+                return;
+            }else if(retCode == '-3'){
+                MessageBox('提示','未获取到token');
+                return;
+            }else{
+                that.token=res.data.data.token;
+                var bizId=res.data.data.bizId;
+                localStorage.setItem('bizId',bizId);
+                var bizId=localStorage.getItem('bizId');
+                if(bizId!=''&&bizId!=undefined){
+                    window.location.href='https://api.megvii.com/faceid/lite/do?token='+that.token;
+                }else{
+                   
+                }
             }
-            
         });
         },
         idCardNoFn:function(){
@@ -107,11 +126,12 @@ export default {
             }
         },
     },
-    mounted:function(){
-        var that = this;
-       var returnUrl = this.$route.params.returnUrl;
+    created:function(){
+       var that = this;
+      var returnUrl = that.$route.params.returnUrl;
        if(returnUrl&&returnUrl!=undefined){
-           that.returnUrl=returnUrl;
+           that.param.returnUrl=returnUrl+'?faceResult=1';
+           
        }
     }
 }
@@ -120,7 +140,7 @@ export default {
 <style>
  @import 'toSign.css'; /* 引入toSign.css文件*/
  body{
-     padding-top:15px;
+     /* padding-top:15px; */
      background: #fff;
  }
  

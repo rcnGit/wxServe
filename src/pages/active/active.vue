@@ -2,8 +2,8 @@
     <div class='active'>
         <div class='act_head'>
           <div class="act_h_left">
-            <router-link to='/provinceList'><span>全国</span><img src='./img/upBtn_img@2x.png'/>
-            </router-link>
+            <!-- <router-link to='/provinceList'><span>全国</span><img src='./img/upBtn_img@2x.png'/>
+            </router-link> -->
           </div>
           <div class="act_h_right">
             <input placeholder="活动名称" class='searchInput'ref='name'/>
@@ -45,21 +45,29 @@ import { MessageBox } from 'mint-ui';//提示框
 import axios from 'axios'
 var arrData=[];
 export default {
-  name: 'Active',
+  name: 'active',
   data:function(){
     return {
-      msg: '我是活动页面，哈哈哈',
+      checkkey:'',
+      msg: '活动页面',
       allList:[],
+      cd:true,
       load:true,
       isShow:false,
       loadObj:{
         text: '加载中...',
         spinnerType: 'triple-bounce'
       },
+      backurl: location.href.split('?')[0],
+      backUrl: encodeURIComponent('https://weixin-test-interface.tdyhfund.com/wxservice/wxservice?opName=getactiveinfo'),
       param:{
           pageNo:1,
           city:'',
-          actName:''
+          actName:'',
+          code:'',
+          //isRed: 0,
+         // backUrl: location.href.split('#')[0]+'/wxservice/wxservice?opName=getactiveinfo'
+         backUrl: location.href.split('?')[0]
       },
       items:[]
     }
@@ -97,7 +105,16 @@ export default {
     },
     getData:function(){
         let that = this;
-        //console.log(that.param)
+        // that.checkkey = that.$route.query.checkkey;
+        // alert(!that.checkkey==false);
+        // if(!that.checkkey==false){
+        //   that.setCookie('checkkey',that.checkkey,1);
+        //   alert(that.param.isRed);
+        //   alert(that.checkkey);
+        // }else{
+        //    alert(that.param.isRed+'------'+that.checkkey+'==============================')
+        // }
+       
         axios({
             method:'get',
             url:'/wxservice/wxservice?opName=getactiveinfo',
@@ -108,12 +125,12 @@ export default {
         .then(function(res) {//成功之后
           console.log(res.data)
             Indicator.close();
-            var retCode=res.data.retCode;
+            var retCode=res.data.retCode
             var retMsg=res.data.retMsg;
-            if(retCode!=0){
-              MessageBox('提示', retMsg);
-            }else{
+            //alert(retCode+'------'+retMsg+'------'+res.data.itemList.length);
+            if(retCode == 0){
               if(res.data.itemList != ''){
+               // alert(that.allList.length);
                 that.allList=that.allList.concat(res.data.itemList);//把已获取的数据和新获取的数据合并在放入页面
                 that.items=that.allList;
                 if(that.allList.length==0||that.allList==undefined){
@@ -129,9 +146,36 @@ export default {
                 this.isShow = true;
               }
             }
+            else if(retCode == 400){
+              var serbackUrl = that.Host+'wxservice/wxservice?opName=getactiveinfo'
+             window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
+            }
+            else{
+              MessageBox('提示', retMsg);
+            }
         });
     }
-    
+    // getCode:function(){
+    //  // alert(location.href.split('?')[0])
+    //   //alert(this.$route.query.code)
+    //   if(!this.$route.query.checkkey == false){
+    //     this.param.code = this.$route.query.code;
+    //     this.param.isRed = 1;
+    //     this.getData()
+    //   }else{
+    //     this.param.code = '';
+    //     this.param.isRed = 0;
+    //     this.getData()
+    //   }
+    // },
+//     setCookie: function (cname, cvalue, exdays) {
+//         var d = new Date();
+//         d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+//         var expires = "expires=" + d.toUTCString();
+//         console.info(cname + "=" + cvalue + "; " + expires);
+//         document.cookie = cname + "=" + cvalue + "; " + expires;
+//         console.info(document.cookie);
+//       }
   },
    mounted:function(){
       let that = this; //这个是钩子函数mounted
@@ -144,7 +188,7 @@ export default {
             city:routerCity,
             actName:''
           }
-          that.getData();
+         that.getData();
           this.$route.params.city='';
           return;
      }
@@ -201,7 +245,7 @@ body{
   background: #fff;
 }
 .act_h_left{
-  width:60px;
+  /* width:60px; */
   float: left;
 }
 .act_h_left span{

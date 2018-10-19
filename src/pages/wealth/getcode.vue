@@ -26,7 +26,6 @@ export default {
             var that=this;
             that.ex.btnDsiabled=true;//禁止点击按钮
             //手机号非空和数字校验
-            var that=this;
             var reg = /^[0-9]{11}$/;
             if(ipNo.length==0){
                 that.warn='请输入手机号';

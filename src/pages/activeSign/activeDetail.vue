@@ -45,7 +45,9 @@ export default {
     name:'ActiveDetail',
     data:function (){
         return{
+            OaActId:'',
             actName:'',
+            actStatus:'',
             beginTime:'',
             endTime:'',
             location:'',
@@ -53,7 +55,7 @@ export default {
             isReviewSignup:'',
             activityType: '',
             authenticFlag: '',
-            actStatus:'',
+            actStatusCode:'',
             isShow: false,//按钮是否显示
             isDisabled: false,
             businesscardShow: false,
@@ -64,20 +66,59 @@ export default {
             headImgUrl: '',
             headimgShow: false,
             contentShow:true,
+            photo: '',
             param:{
                 activeId:'',
                 actName:'',
                 pageNo:1
             },
+            user:{
+                userId: "",
+                osFlag: 3
+            },
             loadObj:{
                 text: '加载中...',
                 spinnerType:'triple-bounce'
             },
-            backUrl: encodeURIComponent(location.href.split('#')[0])
+            faceparam:{
+                bizId: '',
+                backUrl: location.href.split('?')[0]
+            },
+            backUrl: encodeURIComponent(location.href.split('#')[0]),//微信分享
+            serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxservice?opName=getUserInfo'),//接口
+            paramurl: location.href.split('?')[0]
         }
        
     },
     methods:{
+        getfaceId:function(){
+            var that=this;
+            axios({
+                method:'get',
+                url:'/wxservice/wxMemberInfo/getFaceResult',
+                params: that.faceparam
+            })
+            .then(function(res){
+                console.log(res.data);
+                var retCode=res.data.retCode;
+                if(retCode == '0'){
+                    MessageBox('提示','人脸识别成功');
+                    return;
+                }else if(retCode == '-2'){
+                    MessageBox('提示','该身份证已绑定其他手机号');
+                    return;
+                }else if(retCode == '-1'){
+                    MessageBox('提示','系统异常');
+                    return;
+                }else if(retCode == '-3'){
+                    MessageBox('提示','人脸识别未通过');
+                    return;
+                }else if(retCode == '-4'){
+                    MessageBox('提示','未查询到人脸识别结果');
+                    return;
+                }
+            })
+        },
            getData:function(){
                 let that = this;
                 console.log(that.param)
@@ -109,13 +150,16 @@ export default {
                             that.endTime=obj.endTime;
                             that.location=obj.location;
                             that.content=obj.content;
-                            if(res.data.canSignUp == '0'){
-                                that.isShow = true
-                                that.actStatus= '我要报名';
-                            }else if(res.data.canSignUp == '1'){
-                                that.isShow = true
-                                that.actStatus= '已报名';
-                                that.isDisabled = true;
+                            that.actStatusCode=obj.actStatus
+                            if(that.actStatusCode == '进行中' || that.actStatusCode == '延期中'){
+                                if(res.data.canSignUp == '0'){
+                                    that.isShow = true
+                                    that.actStatus= '我要报名';
+                                }else if(res.data.canSignUp == '1'){
+                                    that.isShow = true
+                                    that.actStatus= '已报名';
+                                    that.isDisabled = true;
+                                }
                             }else{
                                 that.isShow = false
                             }
@@ -128,18 +172,18 @@ export default {
             },
             authentic:function(){
                 let that = this;
-                
                 axios({
                     method:'get',
-                    url:'/wxservice/wxservice?opName=getUserInfo'//获取客户信息
+                    url:'/wxservice/wxservice?opName=getUserInfo',//获取客户信息
+                    params: {
+                        backUrl: that.paramurl
+                    }
                 })
                 .then(function(res) {//成功之后
                     Indicator.close();
                     var retCode=res.data.retCode;
                     var retMsg=res.data.retMsg;
-                    if(retCode!=0){
-                        MessageBox('提示', retMsg);
-                    }else if(retCode == 0){
+                    if(retCode == 0){
                         console.log(res.data);
                         that.authenticFlag = res.data.userInfo.authenticFlag
                         that.userphone = res.data.userInfo.userphone
@@ -148,6 +192,19 @@ export default {
                             that.businessName = '财富师'+res.data.userInfo.businessName
                             that.businesscardShow = true
                             that.belongBusiness = res.data.userInfo.belongBusiness
+                            that.getPhoto()
+                            console.log(that.photo)
+                            var headImgUrl = that.photo
+                            if(headImgUrl == null){
+                                that.headimgShow = false
+                            }else{
+                                that.headimgShow = true
+                                that.headImgUrl = that.photo
+                            }
+                            var actname = that.businessName+'邀请您参加'+that.actName
+                            var busname = '大唐财富尊享活动'+that.actName+'即将举办，机会难得，邀请你一起参加'
+                            that.asyncSDKConifg(actname,busname)
+                        }else{
                             var headImgUrl = res.data.userInfo.headImgUrl
                             if(headImgUrl == null){
                                 that.headimgShow = false
@@ -155,10 +212,6 @@ export default {
                                 that.headimgShow = true
                                 that.headImgUrl = res.data.userInfo.headImgUrl
                             }
-                            var actname = that.businessName+'邀请您参加'+that.actName
-                            var busname = '大唐财富尊享活动'+that.actName+'即将举办，机会难得，邀请你一起参加'
-                            that.asyncSDKConifg(actname,busname)
-                        }else{
                             that.businessName = res.data.userInfo.nickname
                             that.businesscardShow = false
                             console.log(that.actName)
@@ -172,7 +225,38 @@ export default {
                             var actname = businName+'邀请您参加'+that.actName
                             var busname = '大唐财富尊享活动'+that.actName+'即将举办，要一起参加吗？'
                             that.asyncSDKConifg(actname,busname)
-                        }  
+                        } 
+                    }else if(retCode == 400){
+                        var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
+                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
+                    }else{
+                        MessageBox('提示', retMsg); 
+                    }
+                })
+            },
+            getPhoto:function(){
+                let that = this;
+                that.user.userId = that.belongBusiness
+                console.log(that.user)
+                axios({
+                    method:'get',
+                    url:'/tcapi/WealthApiController/myCard',//获取客户信息
+                    params: {
+                        param:that.user//系统类别
+                    }
+                })
+                .then(function(res) {//成功之后
+                    Indicator.close();
+                    console.log(res.data)
+                    var retCode=res.data.retCode;
+                    var retMsg=res.data.retMsg;
+                    if(retCode!=0){
+                        MessageBox('提示', retMsg);
+                    }else if(retCode == 0){
+                        console.log(res.data);
+                        that.photo = res.data.userInfo.photo
+                       // that.userphone = res.data.userInfo.userphone
+                        //that.realname = res.data.userInfo.realname 
                     }
                 })
             },
@@ -217,7 +301,7 @@ export default {
                             path: '/faceMsg',
                             name: 'faceMsg',
                             params:{
-                                returnUrl: 'http://test-interface.tdyhfund.com/weixin-h5/index.html#/ActiveDetail'
+                                returnUrl: this.Host+'weixin-h5/index.html#/ActiveDetail?oaActId='+this.OaActId+'&actName='+this.actName
                             }
                         })
                     }else{
@@ -290,14 +374,19 @@ export default {
 
     },
     created(){
+        var bizId=localStorage.getItem('bizId');
+        this.faceparam.bizId = bizId
+        if(!this.$route.query.faceResult == false){
+           this.getfaceId()
+        }
         if(this.$route.query.ifcard == 1){
             this.businesscardShow = true
         }else{
             this.businesscardShow = false
         }
-       
-        var oaActId =this.$route.params.oaActId; 
-        var actName =this.$route.params.actName; 
+        var oaActId =this.$route.params.oaActId || this.$route.query.oaActId; 
+        var actName =this.$route.params.actName || this.$route.query.actName;  
+        this.OaActId = oaActId
         this.actName = actName
          this.authentic()//获取客户信息
          var comefrom =this.$route.params.comefrom;

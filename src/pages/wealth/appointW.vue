@@ -1,18 +1,18 @@
-<<template>
+<template>
     <div id='appointW'>
         <div class='content'>
             <div class='tip'>
              <span>请输入财富师姓名与工号进行关联</span>
             </div>
             <div class='inpBox'>
-                <input type='text' class='' maxlength='30' placeholder="请输入您的姓名" v-model='wName' ref='wName' v-on:input='wNameFn'/>
+                <input type='text' class='' maxlength='30' placeholder="请输入您的姓名" v-model='wName' ref='wName' />
                 <P ref='warnName' class='warn'>{{warnName}}</P>
                 <span>姓名</span>
                 <em>请输入正确的实名信息</em>
                 <!-- <img src='./img/card_img@2x.png' class='clear'/> -->
              </div> <!--inpBox-->
               <div class='inpBox'>
-                <input type='text' class=''placeholder='请输入财富师工号后七位数字'maxlength='7' v-model='gh'ref='gh'v-on:input='ghFn'/>
+                <input type='text' class=''placeholder='请输入财富师工号后七位数字'maxlength='7' v-model='gh'ref='gh'/>
                 <P ref='ghw' class='warn'>{{warnGh}}</P>
                 <span>工号DT</span>
                 <em>请输入正确的实名信息</em>
@@ -102,31 +102,78 @@ export default {
                 mobile:""//财富师手机号
 
             },
-           
-
-
+            faceparam:{
+                bizId: '',
+                backUrl: location.href.split('?')[0]
+            },
+            serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxservice?opName=getUserInfo'),//接口
+            paramurl: location.href.split('?')[0]
 
         }
         
     },
     component:{Button,axios,Popup,MessageBox},
     created:function(){ 
+        var bizId=localStorage.getItem('bizId');
+        this.faceparam.bizId = bizId
+        if(!this.$route.query.faceResult == false){
+           this.getfaceId()
+        }
         this.getuserName();//获取用户姓名
     },
     methods:{
+        getfaceId:function(){
+            var that=this;
+            axios({
+                method:'get',
+                url:'/wxservice/wxMemberInfo/getFaceResult',
+                params: that.faceparam
+            })
+            .then(function(res){
+                console.log(res.data);
+                var retCode=res.data.retCode;
+                if(retCode == '0'){
+                    MessageBox('提示','人脸识别成功');
+                    return;
+                }else if(retCode == '-2'){
+                    MessageBox('提示','该身份证已绑定其他手机号');
+                    return;
+                }else if(retCode == '-1'){
+                    MessageBox('提示','系统异常');
+                    return;
+                }else if(retCode == '-3'){
+                    MessageBox('提示','人脸识别未通过');
+                    return;
+                }else if(retCode == '-4'){
+                    MessageBox('提示','未查询到人脸识别结果');
+                    return;
+                }
+            })
+        },
         getuserName:function(){
             var that=this;
             axios({
                 method:'get',
                 url:'/wxservice/wxservice?opName=getUserInfo',//获取我的活动
                 params: {
-                
+                    backUrl: that.paramurl
                 }
             })
             .then(function(res){
                 console.log(res.data);
-                var userInfo=res.data.userInfo;
-                that.msg2=userInfo.realName;
+                var retCode=res.data.retCode;
+                var retMsg=res.data.retMsg;
+                if(retCode == 0){
+                    var userInfo=res.data.userInfo;
+                    that.msg2=userInfo.realName;
+                }
+                else if(retCode == 400){
+                    var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
+                  window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
+                }
+                else{
+                    MessageBox('提示',retMsg);
+                }
             })
         },
         sendMSG:function(){
@@ -162,12 +209,12 @@ export default {
         wNameFn:function(){
             var that=this;
             if(isValidName(that.wName)){
-                this.$refs.warnName.style.display='block';
-                this.warnName='请输入正确的姓名';
-               // this.$refs.wName.style='border-bottom:0.5px solid #df1e1d!important';
+                that.$refs.warnName.style.display='block';
+                that.warnName='请输入正确的姓名';
+               // that.$refs.wName.style='border-bottom:0.5px solid #df1e1d!important';
             }else{
-                this.$refs.warnName.style.display='none'
-                //this.$refs.wName.style='border-bottom:0.5px solid #efefef!important';
+                that.$refs.warnName.style.display='none'
+                //that.$refs.wName.style='border-bottom:0.5px solid #efefef!important';
             }
         },
         ghFn:function(){
@@ -197,8 +244,7 @@ export default {
             that.popupVisible=false;
         },
         appW:function(){
-            var that=this;
-            if(that.wName==''){
+            if(this.wName==''){
                 this.$refs.warnName.style.display='block';
                 this.warnName='请输入财富师姓名';
                // this.$refs.wName.style='border-bottom:0.5px solid #df1e1d!important';
@@ -236,7 +282,7 @@ export default {
         },
         valiW:function(){
             var that=this;
-            console.log(this.param);
+            console.log(that.param);
             axios({
             method:'get',
             url:'/wxservice/wxMemberInfo/checkWealther',//指定之前校验财富师
@@ -266,7 +312,7 @@ export default {
                     path:'/faceMsg',
                     name:'faceMsg',
                     params:{
-                        returnUrl:'http://test-interface.tdyhfund.com/weixin-h5/index.html#/appointW'
+                        returnUrl:that.Host+'weixin-h5/index.html#/appointW'
                     }
                     })
               }else if(retCode==-5){
@@ -285,7 +331,7 @@ export default {
         },
         zhiding:function(){
             var that=this;
-            console.log(this.param);
+            console.log(that.param);
             axios({
                 method:'get',
                 url:'/wxservice/wxMemberInfo/bindWealther',//客户确认指定财富师
@@ -338,16 +384,17 @@ export default {
                     }else if(retCode==-3){//-3-已绑定线上财富师
                          MessageBox('提示', '已绑定线上财富师');
                     }else if(retCode==-4){//-4-已绑定线下财富师（data为已绑定的财富是信息）
-                       this.$refs.pop_wealth2.style.display='block';
-                       this.$refs.pop_wealth.style.display='none';
-                       this.$refs.pop_contant.style.display='none';
+                       that.$refs.pop_wealth2.style.display='block';
+                       that.$refs.pop_wealth.style.display='none';
+                       that.$refs.pop_contant.style.display='none';
                         that.srcImg2=data.photo;
                         that.popupVisible=true;
                     }else if(retCode==-2){//-2未认证,跳转人脸识别的页面
-                          this.$router.push({
+                          that.$router.push({
                             path:'/faceMsg',
                             name:'faceMsg',
                             params:{
+                                returnUrl:that.Host+'weixin-h5/index.html#/appointW' 
                             }
                          })
                     }else if(retCode==-5){// -5-已购买过私募资产，请联系客服确定财富师

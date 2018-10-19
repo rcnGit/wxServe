@@ -78,7 +78,7 @@ export default {
       msg: '我是活动页面，哈哈哈',
       src:{
         path:'/active',
-        name:'Active'
+        name:'active'
       },
       routerPhone:'',
       routerPhone2:'',

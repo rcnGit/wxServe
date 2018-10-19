@@ -2,19 +2,19 @@
     <div class='online'>
         <div class='content'>
             <div class='inpBox'>
-                <input type='text' class=''placeholder="请输入手机号码" v-on:input='pnFn' maxlength='11' v-model="ipNo" ref='ph'v-bind:disabled='ifdisabledPh'/>
+                <input type='text' class=''placeholder="请输入手机号码" maxlength='11' v-model="ipNo" ref='ph'v-bind:disabled='ifdisabledPh'/>
                 <P ref='phWarn' class='warn'>{{phWarn}}</P>
                 <span>手机号</span>
                 <span class='inpRchoose fSize13' style='color:#4a90e2;display:none;' @click='changeP' ref='changeSP'>变更手机号>></span>
              </div> <!--inpBox-->
               <div class='inpBox' ref='sendCode' style='display:none'>
-                <input type='text' class='' v-model="msgCode" ref='code' placeholder="请输入验证码" v-on:input='codeFn'/>
+                <input type='text' class='' v-model="msgCode" ref='code' placeholder="请输入验证码"/>
                 <p ref='codeWarn' class='warn'>{{codeWarn}}</p>
                 <span>验证码</span>
                  <mt-button type="danger" size="small" class='sendCodeBtn' @click="getM()" v-bind:disabled='Dsiabled'>{{text}}</mt-button>
              </div> <!--inpBox-->
              <div class='inpBox'>
-                <input type='text' class=''v-model='routerCity'ref='prov' placeholder="请选择所在地" disabled=true style='border-bottom:1px solid #efefef;opacity: 1;'/>
+                <input type='text' class=''v-model='routerCity'ref='prov' placeholder="请选择所在地" disabled=true style='border-bottom:1px solid #efefef;opacity: 1;background:#fff;'/>
                 <p ref='provWarn' class='warn' >{{provWarn}}</p>
                 <span>所在地</span>
                 <span class='inpRchoose fSize13'style='text-align:center;color:#c5c5c5;'@click='chooseAdd'>去选择<img src='../../common/img/chooseR.png' class='chooseR'/></span>
@@ -52,8 +52,9 @@ export default {
                 province:'',//省份
                 phone:'',//电话号码
                 msgCode:'',//验证码
-
-            }
+                backUrl: location.href.split('?')[0]
+            },
+            serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxMemberInfo/applyWealther'),//接口
         }
     },
     components:{getcode,isValidMobile,MessageBox,isValidverifycode},
@@ -116,7 +117,6 @@ export default {
             })
         },
         onlineW:function(){
-            var that=this;
             this.param.province=this.routerCity;
             this.param.phone=this.ipNo
           
@@ -164,11 +164,12 @@ export default {
                 this.$refs.provWarn.style.display='none';
                 //this.$refs.prov.style='border-bottom:0.5px solid #efefef!important';
             }
-            console.log(this.param);
+            var that=this;
+            console.log(that.param);
              axios({
                     method:'get',
                     url:'/wxservice/wxMemberInfo/applyWealther',//申请财富师之前校验财富师
-                    params:this.param,
+                    params:that.param,
                 })
                 .then(function(res) {
                     console.log(res.data);
@@ -188,6 +189,9 @@ export default {
                         MessageBox('提示', '验证码不正确');
                     }else if(retCode==-3){
                         MessageBox('提示', '请发送验证码');
+                    }else if(retCode == 400){
+                        var serbackUrl = that.Host+'wxservice/wxMemberInfo/applyWealther'
+                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
                     }
                 })
         }

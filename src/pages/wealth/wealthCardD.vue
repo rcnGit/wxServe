@@ -26,6 +26,8 @@ export default {
         return{
             wname:'***',
             gh:'***',
+            serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxMemberInfo/checkApplyWealther'),//接口
+            paramurl: location.href.split('?')[0]
         }
     },
     methods:{
@@ -34,21 +36,26 @@ export default {
         }
     },
     mounted:function(){
+        var that=this;
          axios({
                 method:'get',
-                url:'/wxservice/wxMemberInfo/checkApplyWealther',//
+                url:'/wxservice/wxMemberInfo/checkApplyWealther',//申请财富师之前校验财富师
                 params: {
-                
+                    backUrl: that.paramurl
                 }
             })
             .then(function(res){
                 var retCode=res.data.retCode;
-                if(retCode!='-1'){//获取财富师信息  
-                   this.$refs.picT=res.data.data.photo;
+                var retMsg=res.data.retMsg;
+                if(retCode =='0'){//获取财富师信息  
+                   that.$refs.picT=res.data.data.photo;
                    that.wname=res.data.data.dtName;
                    that.gh=res.data.data.dtNo;
+                }else if(retCode == 400){
+                    var serbackUrl = that.Host+'wxservice/wxMemberInfo/checkApplyWealther'
+                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
                 }else{//系统异常
-                     MessageBox('提示', '系统异常');
+                     MessageBox('提示', retMsg);
                 }
             })
     },

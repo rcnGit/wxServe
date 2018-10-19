@@ -1,7 +1,7 @@
 <template>
     <div class='comfooter'>
         <p style='padding-top:50px;'>中国证监会批准的大唐官方基金销售平台</p>
-        <p>销售资格证书编号：000000333</p>
+        <!-- <p>销售资格证书编号：000000333</p> -->
         <p>过往业绩不代表未来，市场有风险需谨慎</p>
         <p style='padding-bottom:50px;margin-top:20px; '>
             <a href='tel:400-819-9868'><span style="margin-right:10px">客服电话</span></a>|<span style="margin-left:10px" @click='downApp()'>APP下载</span>

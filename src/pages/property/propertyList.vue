@@ -1,8 +1,8 @@
 <template>
     <div class='propertyList fColorFFF' style='min-height:430px;'>
         <div class='headContent'>
-                <p class='fSize13 p1'>总金额（元）</p>
-                <p class='p2'>{{totalAsset}}</p> <!--在数字上加逗号 -->
+                <p class='fSize13 pp1'>总金额（元）</p>
+                <p class='pp2'>{{totalAsset}}</p> <!--在数字上加逗号 -->
                 <p class='p3'>私募待确认：{{privateToConfirmAsset}}（元）</p><!--在数字上加逗号 -->
                 <div style='display:none;'>
                     <div class='floatLeft w50 inc_box' style='border-right:0.5px solid #efefef;'>
@@ -76,6 +76,10 @@ export default {
                 text: '加载中...',
                 spinnerType: 'triple-bounce'
             },
+            faceparam:{
+                bizId: '',
+                backUrl: location.href.split('?')[0]
+            },
             gC:'red',
             ziC:'red',
             ziH:'',//定期的最新涨跌
@@ -90,7 +94,9 @@ export default {
             securitiesYestIncome:'',//资管类最新收益
             securitiesAddIncome:'',//资管类总收益
             publicDate:'',         //公募更新日期
-            securitiesDate:''//资管更新日期
+            securitiesDate:'',//资管更新日期
+            serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxMemberInfo/getUserAsset'),//接口
+            paramurl: location.href.split('?')[0]
         }
     },
     components:{Button,axios,Indicator,MessageBox},//使用mint-ui的button的组件
@@ -100,9 +106,37 @@ export default {
                     path:'/faceMsg',
                     name:'faceMsg',
                     params:{
-                        
+                        returnUrl:this.Host+'weixin-h5/index.html#/propertyList'
                     }
                 })
+        },
+        getfaceId:function(){
+            var that=this;
+            axios({
+                method:'get',
+                url:'/wxservice/wxMemberInfo/getFaceResult',
+                params: that.faceparam
+            })
+            .then(function(res){
+                console.log(res.data);
+                var retCode=res.data.retCode;
+                if(retCode == '0'){
+                    MessageBox('提示','人脸识别成功');
+                    return;
+                }else if(retCode == '-2'){
+                    MessageBox('提示','该身份证已绑定其他手机号');
+                    return;
+                }else if(retCode == '-1'){
+                    MessageBox('提示','系统异常');
+                    return;
+                }else if(retCode == '-3'){
+                    MessageBox('提示','人脸识别未通过');
+                    return;
+                }else if(retCode == '-4'){
+                    MessageBox('提示','未查询到人脸识别结果');
+                    return;
+                }
+            })
         },
         getList:function(){
              var that=this;
@@ -112,6 +146,7 @@ export default {
                     url:'/wxservice/wxMemberInfo/getUserAsset',
                     params: {
                    // param:that.param,//系统类别
+                        backUrl: that.paramurl
                     }
                 })
                 .then(function(res) {//成功之后
@@ -123,6 +158,9 @@ export default {
                         return;
                     }else if(retCode==-1){//系统异常
                         MessageBox('提示', '系统异常');
+                    }else if(retCode == 400){
+                        var serbackUrl = that.Host+'wxservice/wxMemberInfo/getUserAsset'
+                      window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
                     }
                    var d=res.data.data;
                     that.totalAsset=that.money(d.totalAsset)//总资产
@@ -195,6 +233,11 @@ export default {
         }
     },
     created:function(){
+        var bizId=localStorage.getItem('bizId');
+        this.faceparam.bizId = bizId
+        if(!this.$route.query.faceResult == false){
+           this.getfaceId()
+        }
         this.getList();
     }
 

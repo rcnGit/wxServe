@@ -36,7 +36,7 @@
           </div>
           <div class='wz'ref='wz' style="background:#fff;display:none;" >
             <img src='../../common/img/wr.png'  style='width:40%;margin:80px auto 30px;'/>
-            <p class='fSize16' style='color:rgb(59,59,59)'>实名认证后可查看投后消息哦~</p>
+            <p class='fSize16' style='color:rgb(59,59,59)'>实名认证后可查看我的活动哦~</p>
         <mt-button type="danger" size="large" class='next' @click='rz()' style='margin-top:81px;'>去人脸识别实名认证</mt-button>
         </div>
     </div>
@@ -58,9 +58,15 @@ export default {
                 spinnerType: 'triple-bounce',
 
             },
+            faceparam:{
+                bizId: '',
+                backUrl: location.href.split('?')[0]
+            },
             isShow:false,
             items:[],
             rowId:0,
+            serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxMemberInfo/getCustActList'),//接口
+            paramurl: location.href.split('?')[0]
         }
     },
     methods:{
@@ -69,27 +75,56 @@ export default {
                     path:'/faceMsg',
                     name:'faceMsg',
                     params:{
-                        
+                        returnUrl:this.Host+'weixin-h5/index.html#/minActive'
                     }
                 })
+        },
+        getfaceId:function(){
+            var that=this;
+            axios({
+                method:'get',
+                url:'/wxservice/wxMemberInfo/getFaceResult',
+                params: that.faceparam
+            })
+            .then(function(res){
+                console.log(res.data);
+                var retCode=res.data.retCode;
+                if(retCode == '0'){
+                    MessageBox('提示','人脸识别成功');
+                    return;
+                }else if(retCode == '-2'){
+                    MessageBox('提示','该身份证已绑定其他手机号');
+                    return;
+                }else if(retCode == '-1'){
+                    MessageBox('提示','系统异常');
+                    return;
+                }else if(retCode == '-3'){
+                    MessageBox('提示','人脸识别未通过');
+                    return;
+                }else if(retCode == '-4'){
+                    MessageBox('提示','未查询到人脸识别结果');
+                    return;
+                }
+            })
         },
         getdata:function(){
              var that=this;
              Indicator.open(that.loadObj);
             axios({
                 method:'get',
-                url:'/wxservice/wxMemberInfo/getCustActList',//获取我的活动comefrom="tangguan"
+                url:'/wxservice/wxMemberInfo/getCustActList',//获取我的活动    、、comefrom="tangguan"
                 params: {
                 rowId:that.rowId,//系统类别
+                backUrl: that.paramurl
                 }
             })
             .then(function(res) {//成功之后
+                Indicator.close();
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 console.log(res.data);
                 var data=res.data.data;
-                if(retCode==0){//
-                    Indicator.close();
+                if(retCode==0){
                     //that.items=data.actList;
                     that.rowId=data.rowId;
                     if(res.data.actList != ''){
@@ -112,8 +147,13 @@ export default {
                 }else if(retCode==-3){
                     that.$refs.wz.style.display='block';
                         return;
+                }else if(retCode == 400){
+                    var serbackUrl = that.Host+'wxservice/wxMemberInfo/getCustActList'
+                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
                 }else{
+                    that.isShow = true
                     MessageBox('提示', retMsg);
+                    return;
                 }
                 
                   
@@ -125,7 +165,7 @@ export default {
             // console.log(event.target.getAttribute('oaactid'))//点击到的元素
             var oaActId=event.currentTarget.getAttribute('oaActId');//绑定事件的元素
             var actName=event.currentTarget.getAttribute('actName');//绑定事件的元素
-            this.$router.push({
+            that.$router.push({
                 path:'/ActiveDetail',
                 name:'ActiveDetail',
                 params:{
@@ -142,9 +182,14 @@ export default {
          that.getdata();
     },
     created:function(){
+        var bizId=localStorage.getItem('bizId');
+        this.faceparam.bizId = bizId
+        if(!this.$route.query.faceResult == false){
+           this.getfaceId()
+        }
           let that = this;
-          if(this.$route.params.comefrom=='tangguan'){
-              that.comefrom =this.$route.params.comefrom;
+          if(that.$route.params.comefrom=='tangguan'){
+              that.comefrom =that.$route.params.comefrom;
           }
             window.onscroll = function(){
                 

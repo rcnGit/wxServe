@@ -11,12 +11,12 @@
                  <!-- <img src='./img/card_img@2x.png' class='clear' style='right:33%;'/>  -->
              </div>
             <div class='inpBox'>
-                <input type='text' class=''style='padding-right:100px;'maxlength='11' v-model="param.mobile" ref='mobile' :disabled="isDisabled2" v-on:input='phoneFn' placeholder="请填写您报名时手机号"/>
+                <input type='text' class=''style='padding-right:100px;'maxlength='11' v-model="param.mobile" ref='mobile' :disabled="isDisabled2"  placeholder="请填写您报名时手机号"/>
                 <p class='warn' ref='warnPhone' v-show='true'>{{warnPhone}}</p>
                 <span>手机号</span>
              </div> <!--inpBox-->
               <div class='inpBox'>
-                <input type='text' class='' maxlength='11' v-model="param.verifiCode" ref='verifycode' v-on:input='codeFn'/>
+                <input type='text' class='' maxlength='11' v-model="param.verifiCode" ref='verifycode' />
                 <p class='warn' ref='warnCode'v-show='true'>{{warnCode}}</p>
                 <span>验证码</span>
                 <mt-button type="danger" size="small" class='sendCodeBtn'@click="getM()" v-bind:disabled='Dsiabled'>{{text}}</mt-button>
@@ -57,7 +57,9 @@ export default {
                 custProp: 0,
                 mobile: '',
                 verifiCode: ''
-            }
+            },
+            serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxservice?opName=getUserInfo'),//接口
+            paramurl: location.href.split('?')[0]
         }
     },
     methods:{
@@ -67,15 +69,16 @@ export default {
             //console.log(that.param)
             axios({
                 method:'get',
-                url:'/wxservice/wxservice?opName=getUserInfo'//获取客户信息
+                url:'/wxservice/wxservice?opName=getUserInfo',//获取客户信息
+                params: {
+                    backUrl: that.paramurl
+                }
             })
             .then(function(res) {//成功之后
                 Indicator.close();
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
-                if(retCode!=0){
-                    MessageBox('提示',retMsg);
-                }else if(retCode == 0){
+                if(retCode == 0){
                     console.log(res.data.userInfo)
                     that.authenticFlag = res.data.userInfo.authenticFlag
                     if(!res.data.userInfo.phone == false){
@@ -87,7 +90,11 @@ export default {
                     }else{
                         //that.isShow = true
                     }
-                    
+                }else if(retCode == 400){
+                    var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
+                window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
+                }else{
+                    MessageBox('提示',retMsg);
                 }
             });
         },

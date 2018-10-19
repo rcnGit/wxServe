@@ -6,31 +6,31 @@
               <!-- <img src='./img/left_img@2x.png' class='left_img'/>   -->
             </div>
             <div class='inpBox'>
-                    <input type='text' class='' v-model="param.realName" :disabled="isDisabled" ref="realName" v-on:input='realnameFn'/>
+                    <input type='text' class='' v-model="param.realName" :disabled="isDisabled" ref="realName"/>
                     <p class='warn' ref='warnName' v-show='true'>{{warnName}}</p>
                     <span>联系人姓名</span>
                      <!-- <img src='./img/card_img@2x.png' class='clear' style='right:33%;'/>  -->
                  </div>
                 <div class='inpBox'>
                         <input type='hidden' class=''style='padding-right:100px;'maxlength='11' v-model="param.phone" ref='phone' />
-                        <input type='text' class=''style='padding-right:100px;'maxlength='11' v-model="phone2" ref='phone2' :disabled="isDisabled2" v-on:input='phoneFn'/>
+                        <input type='text' class=''style='padding-right:100px;'maxlength='11' v-model="phone2" ref='phone2' :disabled="isDisabled2" />
                     <p class='warn' ref='warnPhone' v-show='true'>{{warnPhone}}</p>
                     <span>联系人电话</span>
                     <span class='inpRchoose fSize13' style='color:#4a90e2;' @click='changeP' v-show='isShow'>变更手机号>></span>
                  </div> <!--inpBox-->
                   <div class='inpBox'>
-                    <input type='text' class='' maxlength='11' v-model="param.verifiCode" ref='verifycode' v-on:input='codeFn'/>
+                    <input type='text' class='' maxlength='11' v-model="param.verifiCode" ref='verifycode' />
                     <p class='warn' ref='warnCode'v-show='true'>{{warnCode}}</p>
                     <span>验证码</span>
                     <mt-button type="danger" size="small" class='sendCodeBtn'@click="getM()" v-bind:disabled='Dsiabled'>{{text}}</mt-button>
                  </div> <!--inpBox-->
                  <div class='inpBox'>
-                    <input type='text' class='' v-model="param.businessName" :disabled="isDisabled3" ref='businessName' v-on:input='businessNameFn'/>
+                    <input type='text' class='' v-model="param.businessName" :disabled="isDisabled3" ref='businessName' />
                     <p class='warn' ref='warnbusinessName' v-show='true'>{{warnbusinessName}}</p>
                     <span>理财师</span>
                   </div> <!--inpBox-->
                   <div class='inpBox'>
-                    <input type='text' class='' v-model="param.belongBusiness" :disabled="isDisabled4" ref='belongBusiness' v-on:input='belongBusinessFn'/>
+                    <input type='text' class='' v-model="param.belongBusiness" :disabled="isDisabled4" ref='belongBusiness' />
                     <p class='warn' ref='warnbelongBusiness' v-show='true'>{{warnbelongBusiness}}</p>
                     <span>理财师工号</span>
                   </div> <!--inpBox-->
@@ -89,7 +89,9 @@ export default {
             paramss:{
                 bizId:''
             },
-            backUrl: encodeURIComponent(location.href.split('#')[0])
+            backUrl: encodeURIComponent(location.href.split('#')[0]),
+            serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxservice?opName=getUserInfo'),//接口
+            paramurl: location.href.split('?')[0]
         }
     },
     methods:{
@@ -108,15 +110,17 @@ export default {
             //console.log(that.param)
             axios({
                 method:'get',
-                url:'/wxservice/wxservice?opName=getUserInfo&scope=snsapi_userinfo'//获取客户信息
+                url:'/wxservice/wxservice?opName=getUserInfo',//获取客户信息
+                params: {
+                    scope: 'snsapi_userinfo',
+                    backUrl: that.paramurl
+                }
             })
             .then(function(res) {//成功之后
                 Indicator.close();
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
-                if(retCode!=0){
-                    MessageBox('提示',retMsg);
-                }else if(retCode == 0){
+                if(retCode == 0){
                     console.log(res.data.userInfo)
                     console.log(res.data.userInfo.isNewRecord)
                     if(!res.data.userInfo.phone == false){
@@ -151,6 +155,13 @@ export default {
                         that.isDisabled4 = true;
                           that.isValid5 = true
                     }
+                }
+                else if(retCode == 400){
+                    var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
+                window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
+                }
+                else{
+                    MessageBox('提示',retMsg);
                 }
             });
         },
