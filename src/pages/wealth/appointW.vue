@@ -301,8 +301,8 @@ export default {
         })
         .then(function(res) {//成功之后
             Indicator.close();
-            alert(retCode)
               var retCode=res.data.retCode;
+               alert(retCode)
               var retMsg=res.data.retMsg;
                console.log(res.data);
                var data=res.data.data;
@@ -352,7 +352,7 @@ export default {
                   
               }
               
-             //  Indicator.close();
+               Indicator.close();
         });
         },
         zhiding:function(){
