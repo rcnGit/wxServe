@@ -5,14 +5,14 @@
              <span>请输入财富师姓名与工号进行关联</span>
             </div>
             <div class='inpBox'>
-                <input type='text' class='' maxlength='30' placeholder="请输入您的姓名" v-model='wName' ref='wName' />
+                <input type='text' class='' maxlength='30' placeholder="请输入财富师的姓名" v-model='wName' ref='wName' />
                 <P ref='warnName' class='warn'>{{warnName}}</P>
                 <span>姓名</span>
                 <em>请输入正确的实名信息</em>
                 <!-- <img src='./img/card_img@2x.png' class='clear'/> -->
              </div> <!--inpBox-->
               <div class='inpBox'>
-                <input type='text' class=''placeholder='请输入财富师工号后七位数字'maxlength='7' v-model='gh'ref='gh'/>
+                <input type='tel' class=''placeholder='请输入财富师工号后七位数字'maxlength='7'  v-model='gh'ref='gh'/>
                 <P ref='ghw' class='warn'>{{warnGh}}</P>
                 <span>工号DT</span>
                 <em>请输入正确的实名信息</em>
@@ -41,7 +41,7 @@
                <div class='popTxt'>
                    <img src='./img/popBg.png' width='100%'/>
                    <div class='popTxt_contant'>
-                       <textarea rows="4" id='textSms' style='width:90%;border:none;outline:0;color:rgb(54,54,54);font-size:14px;padding:25px 15px;line-height:20px;'>{{msg1}}{{msg2}}{{msg3}}</textarea>
+                       <textarea rows="4" id='textSms' ref='textSms' style='width:90%;border:none;outline:0;color:rgb(54,54,54);font-size:14px;padding:10px 15px;line-height:20px;'>{{msg1}}{{msg2}}{{msg3}}</textarea>
                         <div style='margin-top:15%;' >
                             <mt-button type="danger" size="large" class=''@click='sendweixin()'  style='width:50%!important;margin-top:0px!important;'>复制并发送微信</mt-button>
                         </div>
@@ -76,6 +76,7 @@
                 </div>
            </div>
          </mt-popup>
+
     </div>
 </template>
 <script>
@@ -84,6 +85,9 @@ import { Popup } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { isValidName } from '@/common/js/extends.js';//引入mint-ui的button组件文件包
+import {handleClipboard } from '@/common/js/clipboard.js'//vue 复制功能
+import clip from '@/common/js/clipboard.js'//vue 复制功能
+import { getCookie,setCookie } from '@/common/js/cookie.js'
 import axios from 'axios';
 export default {
     name:'appointW',
@@ -98,6 +102,7 @@ export default {
             warnName:'',//姓名校验的提示
             popupVisible:false,
             srcImg:'',//财富师头像
+            inputData:"你好",//复制的参数
             srcImg2:'',//线下制定的财富师头像财富师头像
             dtName:'',
             dtName2:'',
@@ -108,7 +113,6 @@ export default {
                 dtNo:'',
                 dtName:'',
                 mobile:""//财富师手机号
-
             },
             faceparam:{
                 bizId: '',
@@ -121,16 +125,28 @@ export default {
         
     },
     component:{Button,axios,Popup,MessageBox},
-    created:function(){ 
-        var bizId=localStorage.getItem('bizId');
+    created:function(){
+        var bizId=decodeURIComponent(getCookie("bizId"));
         this.faceparam.bizId = bizId
         if(!this.$route.query.faceResult == false){
            this.getfaceId()
+        }else{
+            this.getuserName();//获取用户姓名
         }
-        this.getuserName();//获取用户姓名
+        
     },
     methods:{
+        handleCopy(text, event) {
+            console.log(event);
+           clip(text, event)
+           console.log('clicp')
+         },
+        copy:function(){
+           var text=this.$refs.textSms.value;
+           this.handleCopy(text,event); 
+        },
         getfaceId:function(){
+            alert('getfaceId');
             var that=this;
             axios({
                 method:'get',
@@ -138,22 +154,92 @@ export default {
                 params: that.faceparam
             })
             .then(function(res){
-                console.log(res.data);
                 var retCode=res.data.retCode;
+                alert(retCode);
+                var returnUrl = that.$route.query.returnUrl;
                 if(retCode == '0'){
                     MessageBox('提示','人脸识别成功');
+                    that.getuserName();//获取用户姓名
                     return;
                 }else if(retCode == '-2'){
-                    MessageBox('提示','该身份证已绑定其他手机号');
+                    MessageBox('提示','该身份证已绑定其他手机号').then(action => {
+                      if(action == 'confirm'){
+                       //跳转财富师名片页面
+                        that.$router.push({
+                            path:'/faceMsg',
+                            name:'faceMsg',
+                            query:{
+                            returnUrl:returnUrl,
+                            }
+                        })
+                      }else{//取消
+                        console.log('查看订单')
+                      }
+                  });//提示信息
                     return;
                 }else if(retCode == '-1'){
-                    MessageBox('提示','系统异常');
+                    MessageBox('提示','系统异常').then(action => {
+                      if(action == 'confirm'){
+                       //跳转财富师名片页面
+                        that.$router.push({
+                            path:'/faceMsg',
+                            name:'faceMsg',
+                            query:{
+                            returnUrl:returnUrl,
+                            }
+                        })
+                      }else{//取消
+                        console.log('查看订单')
+                      }
+                  });//提示信息
                     return;
                 }else if(retCode == '-3'){
-                    MessageBox('提示','人脸识别未通过');
+                    MessageBox('提示','人脸识别未通过').then(action => {
+                      if(action == 'confirm'){
+                       //跳转财富师名片页面
+                        that.$router.push({
+                            path:'/faceMsg',
+                            name:'faceMsg',
+                            query:{
+                            returnUrl:returnUrl,
+                            }
+                        })
+                      }else{//取消
+                        console.log('查看订单')
+                      }
+                  });//提示信息
                     return;
                 }else if(retCode == '-4'){
-                    MessageBox('提示','未查询到人脸识别结果');
+                    MessageBox('提示','未查询到人脸识别结果').then(action => {
+                      if(action == 'confirm'){
+                       //跳转财富师名片页面
+                        that.$router.push({
+                            path:'/faceMsg',
+                            name:'faceMsg',
+                            query:{
+                            returnUrl:returnUrl,
+                            }
+                        })
+                      }else{//取消
+                        console.log('查看订单')
+                      }
+                  });//提示信息
+                    return;
+                }else{
+                    MessageBox('提示','请重新进行人脸识别').then(action => {
+                      if(action == 'confirm'){
+                       //跳转财富师名片页面
+                        that.$router.push({
+                            path:'/faceMsg',
+                            name:'faceMsg',
+                            query:{
+                            returnUrl:returnUrl,
+                            }
+                        })
+                      }else{//取消
+                        console.log('查看订单')
+                      }
+                  });//提示信息
                     return;
                 }
             })
@@ -174,9 +260,11 @@ export default {
                 if(retCode == 0){
                     var userInfo=res.data.userInfo;
                     that.msg2=userInfo.realName;
-                }
-                else if(retCode == 400){
-                    return;
+                    if(userInfo.belongBusiness!=''&&userInfo.belongBusiness!=null&&userInfo.belongBusiness!=undefined){
+                        //打开财富师页面
+                         window.location.href='http://172.16.6.59:8887/tcapi/HTML5/html/shared_card.html?userId='+userInfo.belongBusiness;
+                    }
+                }else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
                   window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=appointW#wechat_redirect';
                 }
@@ -186,6 +274,7 @@ export default {
             })
         },
         sendMSG:function(){
+            var that=this;
             let ua = navigator.userAgent.toLowerCase();
             //android终端
             let isAndroid = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1;  　　//ios终端
@@ -193,17 +282,16 @@ export default {
             if(false) {//isWeixinBrowser()//判断是不是微信
                 
             }else{
-            if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
-                //ios
-                var Url2=document.getElementById("textSms");
-                 Url2.select(); // 选择对象
-                 document.execCommand("Copy"); // 执行浏览器复制命令
-               window.location.href='sms:';
-            } else if (/(Android)/i.test(navigator.userAgent)) {
-                //android
-                var str=this.msg1+this.msg2+this.msg3;
-                window.location.href='sms:?body='+str;
-            }
+                if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
+                        that.copy();
+                        window.location.href='sms:';
+
+                    
+                }else if (/(Android)/i.test(navigator.userAgent)) {
+                    //android
+                    var str=this.$refs.textSms.value;
+                    window.location.href='sms:?body='+str;
+                }
             }
     
             function isWeixinBrowser() {
@@ -213,7 +301,9 @@ export default {
             
         },//send
         sendweixin:function(){
-            MessageBox('提示', '已复制，立即发给您想指定的财富师吧~');
+            alert('已复制，请找到财富师微信并粘贴内容');
+            this.copy();
+           // MessageBox('提示', '已复制，立即发给您想指定的财富师吧~');
         },
         wNameFn:function(){
             var that=this;
@@ -232,7 +322,7 @@ export default {
                 //this.$refs.gh.style='border-bottom:0.5px solid #df1e1d!important';
                 return;
             }
-            if(!/^\+?[1-9][0-9]*$/.test(this.gh)){
+            if(!/^[0-9]{7}$/.test(this.gh)){
                 this.$refs.ghw.style.display='block';
                 this.warnGh='请输入正确的财富师工号';
                 //this.$refs.gh.style='border-bottom:0.5px solid #df1e1d!important';
@@ -253,7 +343,6 @@ export default {
             that.popupVisible=false;
         },
         appW:function(){
-            alert('appw');
             if(this.wName==''){
                 this.$refs.warnName.style.display='block';
                 this.warnName='请输入财富师姓名';
@@ -291,7 +380,6 @@ export default {
             this.valiW();
         },
         valiW:function(){
-            alert('valiw');
             var that=this;
             console.log(that.param);
             axios({
@@ -302,7 +390,6 @@ export default {
         .then(function(res) {//成功之后
             Indicator.close();
               var retCode=res.data.retCode;
-               alert(retCode)
               var retMsg=res.data.retMsg;
                console.log(res.data);
                var data=res.data.data;
@@ -310,15 +397,12 @@ export default {
                 that.$refs.pop_wealth.style.display='block';
                 that.$refs.pop_wealth2.style.display='none';
                 that.$refs.pop_contant.style.display='none';
-               // alert(data.photo)
                 if(!data.photo == false){
                     that.srcImg=data.photo;
                     that.headimgShow=true
                 }else{
                     that.headimgShow = false
                 }
-                alert(data.photo+'photo')
-                        alert(data.dtName+'dtName')
                 that.dtName=data.dtName;
                 that.popupVisible=true;
                 that.param.mobile=data.mobile;
@@ -326,27 +410,24 @@ export default {
                 that.$refs.pop_wealth2.style.display='block';
                 that.$refs.pop_wealth.style.display='none';
                 that.$refs.pop_contant.style.display='none';
-                //alert(data.photo+'1111111')
                 if(!data.photo == false){
                     that.srcImg2=data.photo;
                     that.headimgShow2=true
                 }else{
                     that.headimgShow2 = false
                 }
-                alert(data.photo+'photo')
-                        alert(data.dtName+'dtName')
                 that.dtName2=data.dtName;
                 that.popupVisible=true;
               }else if(retCode==-2){//未认证，跳转人脸识别页面
                    that.$router.push({
                     path:'/faceMsg',
                     name:'faceMsg',
-                    params:{
+                    query:{
                         returnUrl:that.Host+'weixin-h5/index.html#/appointW'
                     }
                     })
               }else if(retCode==-5){
-                  MessageBox('提示','财富师工号不存在');
+                  MessageBox('提示','财富师姓名或工号输入有误');
               }else if(retCode==-6){
                   MessageBox('提示','财富师已离职');
               }else if(retCode==-3){
@@ -405,7 +486,7 @@ export default {
                         that.$router.push({
                             path:'/onlineApply',
                             name:'onlineApply',
-                            params:{
+                            query:{
                                 phone:data.phone,
                             }
                          })
@@ -417,35 +498,32 @@ export default {
                        that.$refs.pop_wealth2.style.display='block';
                        that.$refs.pop_wealth.style.display='none';
                        that.$refs.pop_contant.style.display='none';
-                       //alert(data.photo+'222')
                        if(!data.photo == false){
                             that.srcImg2=data.photo;
                             that.headimgShow2=true
                         }else{
                             that.headimgShow2 = false
                         }
-                        alert(data.photo+'photo')
-                        alert(data.dtName+'dtName')
                         that.dtName2=data.dtName;
                         that.popupVisible=true;
                     }else if(retCode==-2){//-2未认证,跳转人脸识别的页面
                           that.$router.push({
                             path:'/faceMsg',
                             name:'faceMsg',
-                            params:{
+                            query:{
                                 returnUrl:that.Host+'weixin-h5/index.html#/appointW' 
                             }
                          })
                     }else if(retCode==-5){// -5-已购买过私募资产，请联系客服确定财富师
                          MessageBox.confirm('',
-                            {  message: '您已经已购买过私募资产，请拨打客服电话400-110联系客服确定财富师', 
+                            {  message: '请拨打客服电话400-819-9868联系客服确定财富师', 
                                title: '提示',  
                                 confirmButtonText: '立即拨打', 
                               cancelButtonText: '取消' 
                              }).then(action => {  
                                 if (action == 'confirm') {   
                                   //确认的回调
-                                window.location.href="tel:17184092628"
+                                window.location.href="tel:400-819-9868"
                                  } }).catch(err => { 
                                  if (err == 'cancel') {   
                                   //取消的回调 
@@ -467,7 +545,7 @@ export default {
     width:100%;
     background:none;
 }
- .pop_contant,.pop_wealth,.pop_wealth2{height:530px;background:#fff;width:92%;margin:0 auto 20px;border-radius: 10px;} 
+ .pop_contant,.pop_wealth,.pop_wealth2{height:75%;background:#fff;width:92%;margin:0 auto 20px;border-radius: 10px;} 
 .sendM{
     color:#7a7a7a;
     font-size: 12px;
@@ -502,6 +580,7 @@ export default {
     width:90%;
     margin:20px auto 0;
     position: relative;
+    padding-bottom:20px;
 }
 .popTxt_contant{
     width:100%;

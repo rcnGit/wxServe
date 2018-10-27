@@ -6,8 +6,8 @@
             </router-link> -->
           </div>
           <div class="act_h_right">
-            <input placeholder="活动名称" class='searchInput'ref='name'/>
-            <img src='./img/search_img@2x.png' class='search_img' @click.stop='search'/>
+            <input placeholder="请输入活动名称关键字" class='searchInput'ref='name'/>
+            <img src='./img/search_img.png' class='search_img' @click.stop='search'/>
           </div>
         </div><!--act_head-->
         <div class='noData' ref='nodata' v-if='isShow'>
@@ -15,26 +15,33 @@
           <p class='fSize16'>现在还没有活动哦</p>
         </div>
         <div id='active_content'>
+          <div style='height:20px;background:#18171D;'></div>
            <div v-for="item in items" class="active_demo" @click='en_details($event)' :oaActId='item.oaActId' :ActName='item.actName'>
-               <img v-bind:src="item.bulletinPicture" width='100%' style='min-height:100px;max-height:150px;'/>
+               <div style="position:relative;">
+                 <img v-bind:src="item.bulletinPicture" width='100%' style='min-height:180px;max-height:200px;'/>
+                 <div class='meng'><img src='./img/img_meng.png'width='100%' height='100%'/></div> 
+               </div>
               <div class='textMain'>
-                <p class='active_title'>{{item.actName}}</p>
-                <p class='active_demo_content'>{{item.content}}</p>
-              </div> 
+                <p class='active_title' style='padding-bottom:15px;'>{{item.location}}</p>
+                <p class='active_demo_content' style='padding-bottom:10px;'>{{item.content}}</p>
+              </div>
+              
               <div class='img_text'>
+                  <p class='img_active_date'>活动时间:{{subTime(item.beginTime)}}</p>
                   <p class='img_active_title'>{{item.actName}}</p>
-                  <p class='img_active_date'>{{item.beginTime}}</p>
+                  
               </div>
           </div> 
           <div class='loading' style="font-size:18px;color:rgb(59,59,59);line-height:50px;display:none;">
             加载中，请稍后......
           </div>
-          <div class='loader'ref='loader' style="font-size:18px;color:rgb(59,59,59);line-height:50px;display:none;">
+          <div class='loader'ref='loader' style="font-size:14px;color:#685F57;line-height:50px;display:none;">
             已经到底了
           </div>
 
             
         </div><!--active_content-->
+        
     </div>
     
 </template>
@@ -43,6 +50,7 @@ import provinceList from './provinceList.vue'
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
 import axios from 'axios'
+import { getCookie,setCookie} from '@/common/js/cookie.js'
 var arrData=[];
 export default {
   name: 'active',
@@ -59,12 +67,13 @@ export default {
         spinnerType: 'triple-bounce'
       },
       backurl: location.href.split('?')[0],
-      backUrl: encodeURIComponent('https://weixin-test-interface.tdyhfund.com/wxservice/wxservice?opName=getactiveinfo'),
+      backUrl: encodeURIComponent('https://weixin-test-interface.tdyhfund.com/wxservice/wxexternal?opName=getactiveinfo'),
       param:{
           pageNo:1,
           city:'',
           actName:'',
           code:'',
+          comefrom:'',
           //isRed: 0,
          // backUrl: location.href.split('#')[0]+'/wxservice/wxservice?opName=getactiveinfo'
          backUrl: location.href.split('?')[0]
@@ -76,6 +85,10 @@ export default {
     openProvincsList:function(){
       alert('打开省市列表');
     },
+    subTime:function(time){
+      time=time.substr(0,10);
+      return time;
+    },
     en_details:function(e){
        var that=this;
      // console.log(event.target);
@@ -85,9 +98,10 @@ export default {
        this.$router.push({
           path:'/ActiveDetail',
           name:'ActiveDetail',
-          params:{
+          query:{
             oaActId : oaActId,
-            actName : ActName
+            actName : ActName,
+            comefrom:that.param.comefrom,//是否糖罐进入
           }
         })
         var huoId = oaActId;
@@ -104,35 +118,24 @@ export default {
       this.param={
           pageNo:1,
           city:'',
-          actName:name
+          actName:name,
+          comefrom:that.param.comefrom
         }
      this.getData();
     },
     getData:function(){
         let that = this;
-        // that.checkkey = that.$route.query.checkkey;
-        // alert(!that.checkkey==false);
-        // if(!that.checkkey==false){
-        //   that.setCookie('checkkey',that.checkkey,1);
-        //   alert(that.param.isRed);
-        //   alert(that.checkkey);
-        // }else{
-        //    alert(that.param.isRed+'------'+that.checkkey+'==============================')
-        // }
-       
         axios({
             method:'get',
-            url:'/wxservice/wxservice?opName=getactiveinfo',
+            url:'/wxservice/wxexternal?opName=getactiveinfo',
             params: {
               param:that.param,//系统类别
             }
         })
         .then(function(res) {//成功之后
-          console.log(res.data)
             Indicator.close();
             var retCode=res.data.retCode
             var retMsg=res.data.retMsg;
-            //alert(retCode+'------'+retMsg+'------'+res.data.itemList.length);
             if(retCode == 0){
               if(res.data.itemList != ''){
                // alert(that.allList.length);
@@ -150,10 +153,9 @@ export default {
               }else{
                 this.isShow = true;
               }
-            }
-            else if(retCode == 400){
-              var serbackUrl = that.Host+'wxservice/wxservice?opName=getactiveinfo'
-             window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
+            }else if(retCode == 400){
+              var serbackUrl = that.Host+'wxservice/wxexternal?opName=getactiveinfo'
+              window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
             }
             else{
               MessageBox('提示', retMsg);
@@ -185,7 +187,12 @@ export default {
    mounted:function(){
       let that = this; //这个是钩子函数mounted
      Indicator.open(that.loadObj);
-     var routerCity = this.$route.params.city;
+     if(that.$route.query.comefrom=='tangguan'||that.$route.params.comefrom=='tangguan'){
+        that.param.comefrom ='tangguan';
+        alert('tangguan');
+        
+    }
+     var routerCity = this.$route.query.city;
      if(routerCity!=''&&routerCity!=undefined){
          that.allList=[];
            that.param={
@@ -194,7 +201,7 @@ export default {
             actName:''
           }
          that.getData();
-          this.$route.params.city='';
+          this.$route.query.city='';
           return;
      }
      
@@ -231,9 +238,6 @@ export default {
 
 </script>
 <style>
-body{
-  background: #fff;
-}
 .business_card{
   display:none;
 }
@@ -241,13 +245,13 @@ body{
   /* height:40px; */
   width: 100%;
   box-sizing: border-box;
-  padding:10px 13px 5px;
+  padding:20px 13px 10px;
   line-height: 40px; 
   display:flex; /*父元素声明弹性盒*/
   position: fixed;
   top: 0;
+  background:#18171D;
   z-index: 999999999;
-  background: #fff;
 }
 .act_h_left{
   /* width:60px; */
@@ -273,54 +277,83 @@ body{
   width:100%;
   height:100%;
   border:1px solid #e4e5e7;
-  background:rgb(248,248,248);
+  background:#fff;
   border-radius: 4px;
   padding:3px 30px 3px 10px;
   box-sizing: border-box;
   font-size: 14px;
   color:rgb(57,66,89);
+  box-shadow: none;
+  outline-color: invert ;
+	outline-style: none ;
+	outline-width: 0px ;
+	border: none ;
+	border-style: none ;
+	text-shadow: none ;
+	-webkit-appearance: none ;
+	-webkit-user-select: text ;
+	outline-color: transparent ;
+  box-shadow: none;
+  opacity: 1;
 }
 input::-webkit-input-placeholder { /* WebKit browsers */ 
-color: #d7d6d6; 
+color: #808080; 
 } 
 
 
 .search_img{
   width:20px;
   position: absolute;
-  top:9px;
+  top:10px;
   right:10px;
 }
 #active_content{
-  background:#f8f8f8;
+  background:#18171D;
   margin-top:55px;
-  margin-bottom:50px;
+  padding: 0 10px;
+  /* margin-bottom:50px; */
 }
 .textMain{
   padding:0 13px;
 }
 .active_demo{
-  border-bottom: 1px solid #efefef;
-  margin-bottom:20px;
+  margin-bottom:16px;
   background: #fff;
   position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.meng{
+  /* background:rgba(0,0,0,0.4); */
+  position: absolute;
+    width: 88%;
+    position: absolute;
+    left: 6%;
+    height: 68%;
+    top: 16%;
 }
 .img_text{
   width:100%;
   min-height:86px;
   position: absolute;
-  bottom:88px;
+  bottom:53%;
   left:0;
   color:#fff;
+  padding-top:3%;
 }
 .img_active_title{
+  display: inline-block;
+  max-width:80%;
+  margin:0 auto;
+  white-space: nowrap;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 20px;
-  line-height: 50px;
-  border-bottom: 1px solid #fff;
+  margin-top: 8%;
 }
 .img_active_date{
   font-size: 15px;
-  margin-top:15px;
   letter-spacing: 1px;
 }
 .active_title{
@@ -340,6 +373,7 @@ color: #d7d6d6;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: none;
 }
 .noData{
   background:#fff;

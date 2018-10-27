@@ -94,7 +94,7 @@ export default {
         this.$router.push({
           path:this.src.path,
           name:this.src.name,
-          params:{
+          query:{
             city : val,
             phone:this.routerPhone,
             phone2:this.routerPhone2,
@@ -104,10 +104,10 @@ export default {
     }
   },
   created:function(){
-     var father = this.$route.params.father;
-      var phone = this.$route.params.phone;
-      var phone2 = this.$route.params.phone2;
-      this.msgCode = this.$route.params.msgCode;
+     var father = this.$route.query.father;
+      var phone = this.$route.query.phone;
+      var phone2 = this.$route.query.phone2;
+      this.msgCode = this.$route.query.msgCode;
      if(father=='onlineApply'){
         this.src.path='/onlineApply';
         this.src.name='onlineApply';

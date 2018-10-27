@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import notFound from '@/pages/404'//404页面
+
 import active from '@/pages/active/active'
 import provinceList from '@/pages/active/provinceList'
 import postInfor from '@/pages/PostInfor/PostInformation'
@@ -16,6 +16,7 @@ import appointW from '@/pages/wealth/appointW'//指定财富师页面
 import getcode from '@/pages/wealth/getcode'//指定财富师页面
 import onlineApply from '@/pages/wealth/onlineApply'//指定财富师页面
 import changephone from '@/pages/wealth/changephone'//修改手机号
+import bdphone from '@/pages/wealth/bdphone'//绑定手机号
 import applysuc from '@/pages/wealth/applysuc'//财富师申请成功
 import activeCheckin from '@/pages/activeCheckin/activeCheckin'//签到
 import SuccCheckin from '@/pages/activeCheckin/SuccCheckin'//签到成功
@@ -26,14 +27,6 @@ Vue.use(Router)
 export default new Router({
  // mode: 'history',
   routes: [
-    {
-      path: '/404',
-      name: 'notFound',
-      meta: {
-        title: '404'
-      },
-      component: notFound//使用这个组件
-    },
     {
       path: '/provinceList',
       name: 'provinceList',
@@ -70,7 +63,7 @@ export default new Router({
       path: '/faceMsg',
       name: 'faceMsg',
       meta: {
-        title: '大唐盛宴活动'
+        title: '人脸识别'
       },
       component: faceMsg//使用这个组件---客户福利个人报名
     },{
@@ -167,6 +160,14 @@ export default new Router({
         title: '修改手机号'
       },
       component: changephone//使用这个组件
+    },
+    {
+      path: '/bdphone',
+      name: 'bdphone',
+      meta: {
+        title: '绑定手机号'
+      },
+      component: bdphone//使用这个组件
     },
     {
       path: '/applysuc',

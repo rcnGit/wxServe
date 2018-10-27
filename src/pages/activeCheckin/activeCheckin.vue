@@ -1,29 +1,42 @@
 <template>
-    <div id='toSignNewCust'>
-        <div class='content'>
-            <div class='tip'>
-                <span>请验证报名信息后签到</span>
-              <!-- <img src='./img/left_img@2x.png' class='left_img'/>   -->
+    <div id=''>
+        <div v-if='ifCheckin'>
+            <div class='content'>
+                <div class='tip'>
+                    <span>请验证报名信息后签到</span>
+                <!-- <img src='./img/left_img@2x.png' class='left_img'/>   -->
+                </div>
+                <div class='inpBox'>
+                    <input type='text' class='' :disabled="isDisabled" value="个人客户"/>
+                    <span>客户类别</span>
+                    <!-- <img src='./img/card_img@2x.png' class='clear' style='right:33%;'/>  -->
+                </div>
+                <div class='inpBox'>
+                    <input type='tel' class=''style='padding-right:100px;'maxlength='11' v-model="param.mobile" ref='mobile' :disabled="isDisabled2"  placeholder="请填写您报名时手机号"/>
+                    <p class='warn' ref='warnPhone' v-show='true'>{{warnPhone}}</p>
+                    <span>手机号</span>
+                </div> <!--inpBox-->
+                <div class='inpBox'>
+                    <input type='tel' class='' maxlength='11' v-model="param.verifiCode" ref='verifycode' />
+                    <p class='warn' ref='warnCode'v-show='true'>{{warnCode}}</p>
+                    <span>验证码</span>
+                    <mt-button type="danger" size="small" class='sendCodeBtn'@click="getM()" v-bind:disabled='Dsiabled'>{{text}}</mt-button>
+                </div> <!--inpBox-->
+                <mt-button type="danger" size="large" class='sign' @click="toSignUp()">签到</mt-button>
             </div>
-            <div class='inpBox'>
-                <input type='text' class='' :disabled="isDisabled" value="个人客户"/>
-                <span>客户类别</span>
-                 <!-- <img src='./img/card_img@2x.png' class='clear' style='right:33%;'/>  -->
-             </div>
-            <div class='inpBox'>
-                <input type='text' class=''style='padding-right:100px;'maxlength='11' v-model="param.mobile" ref='mobile' :disabled="isDisabled2"  placeholder="请填写您报名时手机号"/>
-                <p class='warn' ref='warnPhone' v-show='true'>{{warnPhone}}</p>
-                <span>手机号</span>
-             </div> <!--inpBox-->
-              <div class='inpBox'>
-                <input type='text' class='' maxlength='11' v-model="param.verifiCode" ref='verifycode' />
-                <p class='warn' ref='warnCode'v-show='true'>{{warnCode}}</p>
-                <span>验证码</span>
-                <mt-button type="danger" size="small" class='sendCodeBtn'@click="getM()" v-bind:disabled='Dsiabled'>{{text}}</mt-button>
-             </div> <!--inpBox-->
-             <mt-button type="danger" size="large" class='sign' @click="toSignUp()">签到</mt-button>
-        </div>
-        <getcode ref='c1' v-on:childByValue="childByValue" v-on:warnCodeFunction="warnCodeFunction"></getcode>
+            <getcode ref='c1' v-on:childByValue="childByValue" v-on:warnCodeFunction="warnCodeFunction"></getcode>
+        
+            <!-- 底部提示框 -->
+            <mt-popup v-model="popupVisible" position="center" pop-transition="popup-fade">
+            <div class='pop_contant' ref='pop_contant'>
+                <p class='pop_title'>大唐财富服务号</p>
+                <div class='popImgBox'>
+                    <img :src='erweima' style='width:80%;margin:20px auto 10px;'/>
+                    <p style='color:rgb(59,59,59);font-size:14px;line-height:20px;margin-bottom:20px;text-align:center;'>扫码关注大唐财富服务号后完成签到</p>
+                </div>
+            </div> <!--pop_contant -->
+            </mt-popup>  
+        <div>
     </div>
 </template>
 <script>
@@ -31,6 +44,7 @@ import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { Field } from 'mint-ui';
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';
+import { Popup } from 'mint-ui';//底部出来的弹框；
 import getcode from '../wealth/getcode';
 import axios from 'axios'
 import { isValidMobile, isValidverifycode} from '@/common/js/extends.js'
@@ -38,11 +52,15 @@ export default {
     name:'activeCheckin',
     data:function(){
         return{
-            messType:'3',
-            text:'发送验证码',
+            messType:'4',//签到type
+            text:'获取验证码',
+            ifCheckin:false,
             Dsiabled:false,
             warnPhone:'',
             warnCode:'',
+            subscribe:'',//是否关注
+            popupVisible:false,//弹框是否出现
+            erweima:'',
             p:1,
             isShow:false,
             isDisabled: true,
@@ -58,6 +76,7 @@ export default {
                 mobile: '',
                 verifiCode: ''
             },
+            actName:'',
             serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxservice?opName=getUserInfo'),//接口
             paramurl: location.href.split('?')[0]
         }
@@ -79,7 +98,31 @@ export default {
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 if(retCode == 0){
-                    console.log(res.data.userInfo)
+                    that.subscribe=res.data.userInfo.subscribe;//是否关注
+                    alert( that.subscribe+'==== that.subscribe')
+                    if(that.subscribe==0){//未关注
+                        //调连接扫二维码；
+                        that.getErweima();
+                    }else{//已关注
+                        var phone=res.data.userInfo.phone;
+                        if(!phone==false){
+                            //签到成功
+                              console.log(retCode)
+                              that.$router.push({
+                                path: '/SuccCheckin',
+                                name: 'SuccCheckin',
+                                query:{
+                                    retCode: retCode,
+                                    activeId: that.param.actId,
+                                    phone: that.userPhone
+                                }
+                             })
+                        }else{
+                            //打开输入信息
+                            that.ifCheckin=true;
+                        }
+                    }
+
                     that.authenticFlag = res.data.userInfo.authenticFlag
                     if(!res.data.userInfo.phone == false){
                         //console.log(res.data.userInfo.phone)
@@ -92,11 +135,38 @@ export default {
                     }
                 }else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=activeCheckin#wechat_redirect';
+                window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=activeCheckin_'+that.param.actId+'#wechat_redirect';
                 }else{
                     MessageBox('提示',retMsg);
                 }
             });
+        },
+        getErweima:function(){
+             Indicator.open();
+            var that=this;
+            axios({
+                method:'get',
+                url:'/wxservice/wxexternal?opName=cSignSQRCode',//获取客户信息
+                params: {
+                    param:{
+                        actId:that.param.actId,
+                        sign:1,//报名
+                    }
+                }
+            })
+            .then(function(res) {
+                 Indicator.close();
+                var retCode=res.data.retCode;
+                alert(retCode+'请求弹框的状态');
+                if(retCode==0){
+                    //获取二维码成功
+                    var url=res.data.url;
+                    that.popupVisible=true;//出现弹框
+                    that.erweima=url;
+                }else{
+                    alert('获取二维码失败');
+                }
+                })//
         },
         phoneFn:function(){
             if(!isValidMobile(this.param.mobile)){
@@ -127,9 +197,13 @@ export default {
            }
         },
          childByValue:function(v){
-            //console.log(v)
-            this.text=v.time;
-           // console.log(v.time)
+             if(v.time!='重新发送'&&v.time!='获取验证码'){
+                this.text=v.time+'s';
+            }else if(v.time==NaN||v.time==undefined||v.time=='NANs'){
+                this.text='重新发送';
+            }else{
+                this.text=v.time
+            }
            this.Dsiabled=v.btnDsiabled;
           
           
@@ -158,7 +232,7 @@ export default {
             }
         },
         axiosSign:function(){
-            Indicator.open(this.loadObj);
+            Indicator.open();
             let that = this;
             console.log(that.param)
             axios({
@@ -174,32 +248,37 @@ export default {
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 if(retCode == 9){
-                    var message = '您未报名该活动，需要重新报名。'
-                    MessageBox.confirm('', {
-                        message: message,
-                        title: '',
-                        showConfirmButton:true,
-                        confirmButtonClass:'confirmButton',
-                        confirmButtonText:'去报名',
-                    }).then(action => {
-                        if(action == 'confirm'){
-                            that.$router.push({
-                                path:'/ActiveDetail',
-                                name:'ActiveDetail',
-                                params:{
-                                    oaActId : that.param.actId,
-                                }
-                            })
-                        }
-                    }).catch(() => {
-                        //console.log(2);
-                    })
+                     //跳到糖罐签到页；
+                    var mobile=that.param.mobile;//用户手机号；
+                    var actId=that.param.actId;//活动ID
+                     var actName=that.actName;//活动ID
+                    window.location.href="http://interface.tdyhfund.com/tgweb/static/ctp/html5/activitySign/weiKeqian.html?mobile="+mobile+"&actId="+actId+"&title="+actName+"&custype=0";
+                    // var message = '您未报名该活动，需要重新报名。'
+                    // MessageBox.confirm('', {
+                    //     message: message,
+                    //     title: '',
+                    //     showConfirmButton:true,
+                    //     confirmButtonClass:'confirmButton',
+                    //     confirmButtonText:'去报名',
+                    // }).then(action => {
+                    //     if(action == 'confirm'){
+                    //         that.$router.push({
+                    //             path:'/ActiveDetail',
+                    //             name:'ActiveDetail',
+                    //             query:{
+                    //                 oaActId : that.param.actId,
+                    //             }
+                    //         })
+                    //     }
+                    // }).catch(() => {
+                        
+                    // })
                 }else if(retCode == 0 || retCode == 1){   
                     console.log(retCode)
                     that.$router.push({
                         path: '/SuccCheckin',
                         name: 'SuccCheckin',
-                        params:{
+                        query:{
                             retCode: retCode,
                             activeId: that.param.actId,
                             phone: that.userPhone
@@ -214,8 +293,10 @@ export default {
     },
     created(){
        Indicator.open(this.loadObj);
-       console.log(this.$route.query.actId)
-      this.param.actId = this.$route.query.actId
+       //手动授权
+       alert(this.$route.query.actId)
+      this.param.actId = this.$route.query.actId;
+      this.actName = this.$route.query.actName;
       if(this.param.actId){
         Indicator.close();
       }

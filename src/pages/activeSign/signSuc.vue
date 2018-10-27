@@ -1,12 +1,15 @@
 <template>
     <div>
         <img src='./img/zwt_img@2x.png' class='ztw'/>
-        <div class="Review" v-if="isshow">
-            <p class='p1'>恭喜您，报名申请提交成功</p>
-            <p class='p2'>活动时间：<span>2018-08-28 18:00</span></p>
-            <p class='p3'>活动地点：北京朝阳区泰康大厦32层</p>
+        <div class="Review" >
+            <p class='p1'>恭喜您，{{result}}成功</p>
+            <div v-if="isshow">
+                <p class='p2'>活动时间：<span>{{beginTime}}</span></p>
+                <p class='p3'>活动地点：{{location}}</p>
+            </div>
+           
         </div>
-        <div class="ReviewF" v-else>
+        <div class="ReviewF" v-if="!isshow">
             <p class='p4'>工作人员将在N个工作日内反馈审核结果，您可在我的活动中<span class="progress" @click='toActive()'>查看进度>></span></p>
         </div>
         <mt-button type="danger" size="large" class='sure' @click='toActiveDetail()'>确定</mt-button>
@@ -14,6 +17,7 @@
 </template>
 <script>
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
+import { MessageBox } from 'mint-ui';
 export default {
     name:'signSun',
     components:{Button},//使用mint-ui的button的组件
@@ -21,7 +25,10 @@ export default {
         return{
             isReviewSignup:'',
             isshow: true,
-            activeId: ''
+            activeId: '',
+            beginTime:'',
+            result:'报名',
+            location :'',//活动地点
         }
     },
     created(){
@@ -31,34 +38,41 @@ export default {
       getParams () {
           console.log(this.$route)
         // 取到路由带过来的参数 
-        var routerParams = this.$route.params.isReviewSignup
-       this.activeId = this.$route.params.activeId
-       // var routerParams = '1'
+       
+        var isReviewSignup = this.$route.query.isReviewSignup;
+        this.activeId = this.$route.query.activeId
+        this.actName = decodeURIComponent(this.$route.query.actName);
+        this.beginTime=this.$route.query.beginTime;
+        this.location =decodeURIComponent(this.$route.query.location);
+        alert(this.location+'suc解码后');
         // 将数据放在当前组件的数据内
-       console.log(routerParams);
-       if(routerParams == '1'){
-           this.isshow = true
-           setTimeout(() => {
-            this.toActiveDetail()
-            }, 3000)
-       }else{
-            this.isshow = false 
-       }
+        if(isReviewSignup == '1'){//用审核
+            this.result='报名申请提交';
+            this.isshow = false
+            // setTimeout(() => {
+            //  this.toActiveDetail()
+            //  }, 3000)    现在不用跳到详情页面了
+        }else{//不用审核
+            this.result='报名';
+             this.isshow = true;
+        }
       },
       toActiveDetail:function(){
-        this.$router.push({
+          var that=this;
+        that.$router.push({
           path:'/ActiveDetail',
           name:'ActiveDetail',
-          params:{
-            oaActId : this.activeId
+          query:{
+            oaActId:that.activeId,
+            actName:that.actName
           }
         })
       },
-      toActive:function(){
-        this.$router.push({
-          path:'/Active',
-          name:'Active'
-        })
+      toActive:function(){//查看我的进度;
+            this.$router.push({
+            path:'/minActive',
+            name:'minActive'
+            })
       }
     },
     watch: {

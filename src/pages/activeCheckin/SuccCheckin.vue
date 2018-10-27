@@ -32,9 +32,9 @@ export default {
       getParams () {
           console.log(this.$route)
         // 取到路由带过来的参数 
-        var routerParams = this.$route.params.retCode
-       this.activeId = this.$route.params.activeId
-       this.phone = this.$route.params.phone
+        var routerParams = this.$route.query.retCode
+       this.activeId = this.$route.query.activeId
+       this.phone = this.$route.query.phone
        // var routerParams = '1'
         // 将数据放在当前组件的数据内
        console.log(routerParams);

@@ -3,7 +3,7 @@
         <img src='./img/signSuc.png' width='28%'/>
         <p style="font-size:15px;margin-bottom:20px;font-weight:700;">您的参与意愿已推送给您的财富师</p> 
         <p>该活动需要您的财富师为您申请参与资格。我们已将您的</p>
-        <p>推送给您的财富师<span>{{Wname}}</span><span style='color:#4a90e2;'>联系我的财富师>></span></p>
+        <p>推送给您的财富师<span>{{Wname}}</span><span style='color:#4a90e2;'@click='toMingpian()'>联系我的财富师>></span></p>
         <div>
             <mt-button type="danger" size="large" class='sure' @click='toActiveDetail()'>确定</mt-button>
             <mt-button type="danger" size="large" class='inMinAct' @click='toActive()'>进入我的活动</mt-button>
@@ -18,19 +18,24 @@ export default {
         return{
             Wname:'',
             isReviewSignup:'',
-            activeId: ''
+            activeId: '',
+            belongBusiness:'',//财富师工号
         }
     },
     created(){
-       this.getParams()
+       this.getParams();
+         window.onscroll = function(){
+                return;  
+            }
     },
     methods: {
       getParams () {
-          console.log(this.$route)
         // 取到路由带过来的参数 
-      var routerParams = this.$route.params.isReviewSignup
-       this.activeId = this.$route.params.activeId
-       this.Wname = this.$route.params.businessName
+      var routerParams = this.$route.query.isReviewSignup
+       this.activeId = this.$route.query.activeId
+       this.Wname = this.$route.query.businessName;
+       this.belongBusiness = this.$route.query.belongBusiness
+       alert(this.belongBusiness);
        // var routerParams = '0'
         // 将数据放在当前组件的数据内
        
@@ -39,16 +44,21 @@ export default {
         this.$router.push({
           path:'/ActiveDetail',
           name:'ActiveDetail',
-          params:{
+          query:{
             oaActId : this.activeId
           }
         })
       },
       toActive:function(){
         this.$router.push({
-          path:'/Active',
-          name:'Active'
+          path:'/minActive',
+          name:'minActive',
+          query:{
+          }
         })
+      },
+      toMingpian:function(){
+          window.location.href='http://172.16.6.59:8887/tcapi/HTML5/html/shared_card.html?userId='+this.belongBusiness;
       }
     },
     watch: {

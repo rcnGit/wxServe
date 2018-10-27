@@ -13,26 +13,26 @@
                  </div>
                 <div class='inpBox'>
                         <input type='hidden' class=''style='padding-right:100px;'maxlength='11' v-model="param.phone" ref='phone' />
-                        <input type='text' class=''style='padding-right:100px;'maxlength='11' v-model="phone2" ref='phone2' :disabled="isDisabled2" />
+                        <input type='tel'  class=''style='padding-right:100px;'maxlength='11' v-model="phone2" ref='phone2' :disabled="isDisabled2" placeholder="请输入联系人电话"/>
                     <p class='warn' ref='warnPhone' v-show='true'>{{warnPhone}}</p>
                     <span>联系人电话</span>
-                    <span class='inpRchoose fSize13' style='color:#4a90e2;' @click='changeP' v-show='isShow'>变更手机号>></span>
+                    <span class='inpRchoose fSize13' style='color:#4a90e2;' @click='changeP()' v-show='isShow'>变更手机号>></span>
                  </div> <!--inpBox-->
                   <div class='inpBox'>
-                    <input type='text' class='' maxlength='11' v-model="param.verifiCode" ref='verifycode' />
+                    <input type='tel' class='' maxlength='4' v-model="param.verifiCode" ref='verifycode' placeholder="请输入验证码"/>
                     <p class='warn' ref='warnCode'v-show='true'>{{warnCode}}</p>
                     <span>验证码</span>
                     <mt-button type="danger" size="small" class='sendCodeBtn'@click="getM()" v-bind:disabled='Dsiabled'>{{text}}</mt-button>
                  </div> <!--inpBox-->
                  <div class='inpBox'>
-                    <input type='text' class='' v-model="param.businessName" :disabled="isDisabled3" ref='businessName' />
+                    <input type='text' class='' v-model="param.businessName" :disabled="isDisabled3" ref='businessName' placeholder="请输入理财师姓名"/>
                     <p class='warn' ref='warnbusinessName' v-show='true'>{{warnbusinessName}}</p>
-                    <span>理财师</span>
+                    <span>财富师</span>
                   </div> <!--inpBox-->
                   <div class='inpBox'>
-                    <input type='text' class='' v-model="param.belongBusiness" :disabled="isDisabled4" ref='belongBusiness' />
+                    <input type='tel' class='' v-model="gh" :disabled="isDisabled4" ref='belongBusiness'placeholder="请输入理财师工号" maxlength="7"/>
                     <p class='warn' ref='warnbelongBusiness' v-show='true'>{{warnbelongBusiness}}</p>
-                    <span>理财师工号</span>
+                    <span>理财师工号DT</span>
                   </div> <!--inpBox-->
              
              <mt-button type="danger" size="large" class='sign' @click="toSignUp()">报名</mt-button>
@@ -49,20 +49,24 @@ import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';
 import getcode from '../wealth/getcode';
 import axios from 'axios'
+import { getCookie,setCookie } from '@/common/js/cookie.js'
 import { isValidMobile, isValidxincode, isValidverifycode, isValidName, isValidEmpNo } from '@/common/js/extends.js'
 export default {
     name:'kefuSign',
     data:function(){
         return{
             messType:'3',
-            text:'发送验证码',
+            text:'获取验证码',
             Dsiabled:false,
+            gh:'',
             warnPhone:'',
             warnCode:'',
             warnName:'',
             warnbusinessName:'',
             warnbelongBusiness:'',
+            ifCaiFu:false,//之前没有财富师
             p:1,
+            idNo:'',//身份证号
             isShow:false,
             isDisabled: false,
             isDisabled2: false,
@@ -74,7 +78,7 @@ export default {
             isValid4: false,
             isValid5: false,
             userPhone: '',
-            phone2: '',
+            phone2: '',//显示的手机号
             param:{
                 realName: '',
                 phone: '',
@@ -86,26 +90,28 @@ export default {
                 actName: '',
                 isReviewSignup: '',
             },
-            paramss:{
+            params:{
                 bizId:''
             },
             backUrl: encodeURIComponent(location.href.split('#')[0]),
             serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxservice?opName=getUserInfo'),//接口
-            paramurl: location.href.split('?')[0]
+            paramurl: location.href.split('?')[0],
+            isFaceSuc:0,//未实名成功
         }
     },
     methods:{
-        getResult:function(){
-            axios({
-                method:'get',
-                url:'/wxservice/wxMemberInfo/getFaceToken', 
-                params: this.params
-            })
-            .then(function(res) {
-                console.log(res.data)
-            })
-        },
+        // getResult:function(){
+        //     axios({
+        //         method:'get',
+        //         url:'/wxservice/wxMemberInfo/getFaceToken', 
+        //         params: this.params
+        //     })
+        //     .then(function(res) {
+        //         console.log(res.data)
+        //     })
+        // },
         getData:function(){
+            alert('getData')
             let that = this;
             //console.log(that.param)
             axios({
@@ -120,9 +126,10 @@ export default {
                 Indicator.close();
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
+               // alert(retCode)
                 if(retCode == 0){
-                    console.log(res.data.userInfo)
-                    console.log(res.data.userInfo.isNewRecord)
+                    that.isFaceSuc=res.data.userInfo.authenticFlag;
+                   // alert(res.data.userInfo.authenticFlag+'===res.data.userInfo.authenticFlag')
                     if(!res.data.userInfo.phone == false){
                         that.userPhone = res.data.userInfo.phone
                         var Tel = that.userPhone
@@ -132,8 +139,10 @@ export default {
                         that.isShow = true
                         that.isValid = true
                     }
+                   // alert(res.data.userInfo.realName);
                     if(!res.data.userInfo.realName == false){
-                        that.param.realName = res.data.userInfo.realName
+                        that.param.realName = res.data.userInfo.realName;
+                        that.idNo = res.data.userInfo.idNo;//身份证
                         that.isDisabled = true
                         that.isValid3 = true
                     }
@@ -151,16 +160,18 @@ export default {
                         that.asyncSDKConifg(actname,busname)
                     }
                     if(!res.data.userInfo.belongBusiness == false){
-                        that.param.belongBusiness = res.data.userInfo.belongBusiness
+                        //已经有财富师不是自己输入的
+                        that.ifCaiFu=true;
+                        //that.gh = res.data.userInfo.belongBusiness
+                        var gh=res.data.userInfo.belongBusiness;
+                        that.gh=gh.substr(2,7);
                         that.isDisabled4 = true;
                           that.isValid5 = true
                     }
-                }
-                 else if(retCode == 400){
+                }else if(retCode == 400){
                      var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                 window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=kefuSign#wechat_redirect';
-                 }
-                else{
+                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=kefuSign#wechat_redirect';
+                 }else{
                     MessageBox('提示',retMsg);
                 }
             });
@@ -183,8 +194,9 @@ export default {
             }
         },//验证手机号
         getM:function(){
-            if(this.phoneFn()){
-               this.Dsiabled = true
+            this.Dsiabled = true;
+            if(!this.phoneFn()){
+                this.Dsiabled = false;
             }
             if(this.userPhone == ''){
                 this.param.phone == this.phone2 
@@ -203,9 +215,15 @@ export default {
             //  this.$refs.phone.style='border-bottom:0.5px solid #efefef!important';
            }
         },
-         childByValue:function(v){
+        childByValue:function(v){
             //console.log(v)
-            this.text=v.time;
+            if(v.time!='重新发送'&&v.time!='获取验证码'){
+                this.text=v.time+'s';
+            }else if(v.time==NaN||v.time==undefined||v.time=='NANs'){
+                this.text='重新发送';
+            }else{
+                this.text=v.time
+            }
            // console.log(v.time)
            this.Dsiabled=v.btnDsiabled;
           
@@ -250,7 +268,7 @@ export default {
             }
         },//验证财富师姓名
         belongBusinessFn:function(){
-            if(!isValidEmpNo(this.param.belongBusiness)){
+            if(!isValidEmpNo(this.gh)){
                 this.$refs.warnbelongBusiness.style.display='block';
                 this.warnbelongBusiness='请输入正确的财富师工号';
                // this.$refs.belongBusiness.style='border-bottom:0.5px solid #df1e1d!important';
@@ -262,16 +280,99 @@ export default {
             }
         },//验证财富师工号
         changeP:function(){
-             this.$router.push({
-                path:'/changephone',
-                name:'changephone',
+            //人脸
+            var that=this;
+             //alert(getCookie('bizId')+'changeP');
+            //var bizId=decodeURIComponent(getCookie("bizId"));
+            //alert(bizId+'changeP');
+            if(that.isFaceSuc==1){
+                that.face();//去人脸
+            }else{
+                //去修改手机号；
+                  this.$router.push({
+                     path:'/changephone',
+                     name:'changephone',
+                     query:{
+                         changeForm:'kefuSign',
+                         isReviewSignup:this.param.isReviewSignup,
+                         activityType:this.param.activityType,
+                         activeId:this.param.activeId,
+                         actName:this.param.actName,
+                     }
+                 })
+            }
+            
+         
+        },
+        face:function(){
+            alert('face2');
+            var that=this;
+            var idCardNo=that.idNo;
+            var idCardName=that.param.realName;
+            var canshu='changeForm=kefuSign&isReviewSignup='+that.param.isReviewSignup+'&activityType='+that.param.activityType+'&activeId='+that.param.activeId+'&actName='+encodeURIComponent(that.param.actName)+'&isFace=1';
+            //alert(canshu);
+            alert(idCardNo+idCardName);
+            Indicator.open();
+            axios({
+                method:'get',
+                url:'/wxservice/wxMemberInfo/getFaceToken',//ning
                 params:{
+                    idCardNo:idCardNo,//身份证号
+                    idCardName:idCardName,//身份证姓名
+                    returnUrl:that.Host+'weixin-h5/index.html#/changePhone?'+canshu,//人脸识别后返回的Url
+                    backUrl: location.href.split('?')[0]
                 }
+            })
+            .then(function(res) {//成功之后
+                Indicator.close();
+                console.log(res.data);
+                var retCode=res.data.retCode;
+                alert(retCode);
+                 if(retCode == 400){
+                     var serbackUrl = that.Host+'wxservice/wxMemberInfo/getFaceToken'
+                     window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=faceMsg#wechat_redirect';
+                 }else if(retCode == '-2'){
+                     MessageBox('提示','身份证不合法');
+                     return;
+                 }else if(retCode == '-1'){
+                     MessageBox('提示','系统异常');
+                     return;
+                 }else if(retCode == '-3'){
+                     MessageBox('提示','未获取到token');
+                     return;
+                 }else{
+                     that.token=res.data.data.token;
+                     var bizId=res.data.data.bizId;
+                     alert(bizId);
+                     setCookie('bizId',bizId);
+                     window.location.href='https://api.megvii.com/faceid/lite/do?token='+that.token;
+                
+                 }
             })
         },
         signup:function(){
             let that = this;
-            console.log(that.param)
+            if(that.ifCaiFu){//之前有财富师
+                that.kefuAxio();
+                return;
+            }
+            var message = '报名该活动需先指定财富师，是否指定'+that.param.businessName+'为您的服务财富师？您可指定一名服务理财师，并拥有更换权力。'
+                MessageBox.confirm('', {
+                    message: message,
+                    title: ''
+                }).then(action => {
+                    if(action == 'confirm'){
+                        that.kefuAxio();
+                    }
+                }).catch(() => {
+                    //console.log(2);
+                })//
+            
+        },//signup
+        kefuAxio:function(){
+            var that=this;
+            //that.param.belongBusiness='DT'+that.param.belongBusiness;
+            that.param.belongBusiness='DT'+that.gh;
             axios({
                 method:'get',
                 url:'/wxservice/wxservice?opName=toSignUp',
@@ -281,58 +382,86 @@ export default {
             })
             .then(function(res) {//成功之后
                 Indicator.close();
-                console.log(res.data)
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;                  
-                if(retCode==0){   
-                    console.log(that.param.isReviewSignup)
-                    console.log(that.isDisabled3)
+                if(retCode==0){ 
                     if(that.isDisabled3 == false ){
-                        var message = '报名该活动需先指定财富师，是否定指定'+that.param.businessName+'为您的服务财富师？您可指定一名服务理财师，并拥有更换权力。'
-                        MessageBox.confirm('', {
-                            message: message,
-                            title: ''
-                        }).then(action => {
-                            if(action == 'confirm'){
                                 that.$router.push({
                                     path: '/pushW',
                                     name: 'pushW',
-                                    params:{
+                                    query:{
                                         isReviewSignup: that.param.isReviewSignup,
                                         activeId: that.param.activeId,
-                                        businessName: that.param.businessName
+                                        businessName: that.param.businessName,
+                                        belongBusiness:that.param.belongBusiness,
                                     }
                                 })
-                            }
-                        }).catch(() => {
-                            //console.log(2);
-                        })
                     }else{
                         that.$router.push({
                             path: '/pushW',
                             name: 'pushW',
-                            params:{
+                            query:{
                                 isReviewSignup: that.param.isReviewSignup,
                                 activeId: that.param.activeId,
                                 businessName: that.param.businessName
                             }
                         })
                     }
-                }else{
-                    console.log(retMsg);
-                    MessageBox('提示',retMsg);
+                }else if(retCode==3){
+                    var crmInfo=res.data.crmInfo;
+                    if(crmInfo.retCode==1){
+                         MessageBox('提示','报名失败，系统错误');
+                    }else if(crmInfo.retCode==3){
+                        MessageBox('提示','此活动已举办');
+                    }else if(crmInfo.retCode==4){
+                        MessageBox('提示','此活动已取消');
+                    }else if(crmInfo.retCode==5){
+                        MessageBox('提示','此活动报名已结束');
+                    }else if(crmInfo.retCode==6){
+                        MessageBox('提示','您已经报过名');
+                    }else if(crmInfo.retCode==7){
+                        MessageBox('提示','客户性质传入值错误');
+                    }else if(crmInfo.retCode==8){
+                        MessageBox('提示','此客户为老客户，请联系此客户专属财富师进行报名');
+                    }else if(crmInfo.retCode==9){
+                        MessageBox('提示','此活动已结束');
+                    }else if(crmInfo.retCode==10){
+                        MessageBox('提示','活动不存在');
+                    }else if(crmInfo.retCode==11){
+                        MessageBox('提示','此财富师不存在');
+                    }
+                    return;
+                }else if(retCode== 1){
+                    MessageBox('提示','验证码错误');
+                }else if(retCode== 2){
+                    MessageBox('提示','推送crm系统错误');
+                }else if(retCode== -1){
+                    MessageBox('提示','系统异常');  
+                }else if(retCode== -2){
+                    MessageBox('提示','绑定手机号出错');
+                }else if(retCode== -3){
+                    MessageBox('提示','已绑定线上财富师');
+                }else if(retCode== -4){
+                    MessageBox('提示','已绑定线下财富师');
+                }else if(retCode== -5){
+                    MessageBox('提示','财富师工号不存在');
+                }else if(retCode== -6){
+                    MessageBox('提示','财富师已离职');
                 }
             });
-        },
-        toSignUp:function(){     
+        },//报名走的接口
+        toSignUp:function(){ 
+            // Indicator.open();   
+            this.phoneFn()
+            this.codeFn()
+            this.realnameFn()
+            this.businessNameFn()
+            this.belongBusinessFn();//检验工号 
             if(this.isValid == false || this.isValid2 == false || this.isValid3 == false || this.isValid4 == false || this.isValid5 == false){
-                this.phoneFn()
-                this.codeFn()
-                this.realnameFn()
-                this.businessNameFn()
-                this.belongBusinessFn()
+                 return;
             }else{
-                this.signup()
+                 Indicator.open()
+                this.signup();
             }
         },
         async asyncSDKConifg (actName,businessName) {
@@ -387,14 +516,16 @@ export default {
     },
     components:{Button,getcode,Field},//使用mint-ui的button的组件
     created:function(){
-         var bizId=localStorage.getItem('bizId');
-         this.paramss.bizId=bizId;
-       this.getResult();
+        var that=this;
+         var bizId=decodeURIComponent(getCookie("bizId"));
+         that.params.bizId=bizId;
+      //this.getResult();
        Indicator.open(this.loadObj);
-        this.param.isReviewSignup = this.$route.params.isReviewSignup;
-        this.param.activityType = this.$route.params.activityType;
-        this.param.activeId = this.$route.params.activeId;
-        this.param.actName = this.$route.params.actName;
+       alert(this.$route.query.isReviewSignup+'this.$route.query.isReviewSignup'+'====this.$route.query.activityType='+this.$route.query.activityType+'=='+this.$route.query.actName)
+        this.param.isReviewSignup = this.$route.query.isReviewSignup;
+        this.param.activityType = this.$route.query.activityType;
+        this.param.activeId = this.$route.query.activeId;
+        this.param.actName = decodeURIComponent(this.$route.query.actName);
         this.getData()
     }
 

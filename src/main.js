@@ -7,7 +7,7 @@ import App from './App'
 import router from './router'
 import Loading from './pages/test/index'//loading是组件名
 import utils from '../static/js/utils.js'    
-
+import $ from 'jquery'
 
 Vue.config.productionTip = false
 /* eslint-disable no-new */

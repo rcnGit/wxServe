@@ -6,7 +6,7 @@
                 <img src='./img/man_head_img@2x.png' v-else/>
             </div>
             <div class='bus_C'>
-                <p class='position_name'>{{businessName}}</p>
+                <p class='position_name'>{{shareName}}</p>
                 <p class='Invitation'>邀您参加大唐财富尊享活动</p>
             </div>
             <div class='bus_R' @click="toBusiness()"><img src='./img/rightBtn_img@2x.png'/></div>
@@ -32,14 +32,26 @@
            <div v-else>{{content}}</div>
         </div>
          <mt-button type="danger" size="large" class='toSign' @click='sign()' v-show='isShow' :disabled="isDisabled">{{actStatus}}</mt-button>
-
+        <!-- 底部提示框 -->
+        <mt-popup v-model="popupVisible" position="center" pop-transition="popup-fade">
+           <div class='pop_contant' ref='pop_contant'>
+               <p class='pop_title'>大唐财富服务号</p>
+               <div class='popImgBox'>
+                   <img :src='erweima' style='width:80%;margin:20px auto 10px;'/>
+                   <p style='color:rgb(59,59,59);font-size:14px;line-height:20px;margin-bottom:20px;text-align:center;'>扫码关注大唐财富服务号后完成报名</p>
+               </div>
+           </div> <!--pop_contant -->
+         </mt-popup>  
+        
     </div>
 </template>
 <script>
 import wx from 'weixin-js-sdk';
+import { Popup } from 'mint-ui';//底部出来的弹框；
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
+import { getCookie,setCookie } from '@/common/js/cookie.js'
 import axios from 'axios'
 export default {
     name:'ActiveDetail',
@@ -50,7 +62,10 @@ export default {
             actStatus:'',
             beginTime:'',
             endTime:'',
-            location:'',
+            location:'',//活动地点
+            subscribe:'',//是否关注
+            erweima:'',
+            popupVisible:false,//是否出现二维码的弹框
             content:'',
             isReviewSignup:'',
             activityType: '',
@@ -59,18 +74,36 @@ export default {
             isShow: false,//按钮是否显示
             isDisabled: false,
             businesscardShow: false,
-            realname:'',
+            realName:'',
             userphone:'',
             businessName: '',
             belongBusiness:'',
+            ghT:'',//分享者的财富师工号
+            busNameT:'',//分享者财富师的名字,
+            shareName:'',
+            nameT:'',//分享者的名字
             headImgUrl: '',
+            photoT:'',//对方的头像
             headimgShow: false,
             contentShow:true,
             photo: '',
             param:{
                 activeId:'',
                 actName:'',
-                pageNo:1
+                pageNo:1,
+                comefrom:'',
+            },
+             paramOnly:{
+                 name:'haha',
+                realName:'',
+                phone: '',
+                verifiCode: '',
+                activityType: '',
+                belongBusiness: '',
+                businessName: '',
+                activeId: '',
+                actName:'',
+                isReviewSignup: '',
             },
             user:{
                 userId: "",
@@ -84,13 +117,94 @@ export default {
                 bizId: '',
                 backUrl: location.href.split('?')[0]
             },
-            backUrl: encodeURIComponent(location.href.split('#')[0]),//微信分享
+            backUrl: location.href.split('#')[0],//微信分享
             serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxservice?opName=getUserInfo'),//接口
             paramurl: location.href.split('?')[0]
         }
        
     },
     methods:{
+        zhijieSign:function(){
+            var that=this;
+               axios({
+                method:'get',
+                url:'/wxservice/wxservice?opName=toSignUp',
+                params:{
+                    param:that.paramOnly,
+                }
+            })
+            .then(function(res){
+                var retCode=res.data.retCode;
+                var retMsg=res.data.retMsg;
+                if(retCode== 1){
+                    MessageBox('提示','验证码错误');
+                }else if(retCode== 2){
+                    MessageBox('提示','推送crm系统错误');
+                }else if(retCode== -1){
+                    MessageBox('提示','系统异常');  
+                }else if(retCode== -2){
+                    MessageBox('提示','绑定手机号出错');
+                }else if(retCode== -3){
+                    MessageBox('提示','已绑定线上财富师');
+                }else if(retCode== -4){
+                    MessageBox('提示','已绑定线下财富师');
+                }else if(retCode== -5){
+                    MessageBox('提示','财富师工号不存在');
+                }else if(retCode== -6){
+                    MessageBox('提示','财富师已离职');
+                }else if(retCode == 0){
+                    var message = '您确定报名此活动？'
+                    MessageBox.confirm('',{
+                    message: message,
+                    title: '',
+                    }).then(action => {
+                    if(action == 'confirm'){
+                        that.$router.push({
+                            path: '/signSuc',
+                            name: 'signSuc',
+                            query:{
+                                isReviewSignup:that.isReviewSignup,
+                                activeId:that.param.activeId,
+                                actName:that.param.actName,
+                                beginTime:that.beginTime,
+                                location :that.location ,
+                            }
+                        })
+                    }else{
+                       // alert('取消');
+                    }
+                    }).catch(() => {
+                   
+                    })
+
+                }else if(retCode == 3){
+                    var crmInfo=res.data.crmInfo;
+                    if(crmInfo.retCode==1){
+                         MessageBox('提示','报名失败，系统错误');
+                    }else if(crmInfo.retCode==3){
+                        MessageBox('提示','此活动已举办');
+                    }else if(crmInfo.retCode==4){
+                        MessageBox('提示','此活动已取消');
+                    }else if(crmInfo.retCode==5){
+                        MessageBox('提示','此活动报名已结束');
+                    }else if(crmInfo.retCode==6){
+                        MessageBox('提示','您已经报过名');
+                    }else if(crmInfo.retCode==7){
+                        MessageBox('提示','客户性质传入值错误');
+                    }else if(crmInfo.retCode==8){
+                        MessageBox('提示','此客户为老客户，请联系此客户专属财富师进行报名');
+                    }else if(crmInfo.retCode==9){
+                        MessageBox('提示','此活动已结束');
+                    }else if(crmInfo.retCode==10){
+                        MessageBox('提示','活动不存在');
+                    }else if(crmInfo.retCode==11){
+                        MessageBox('提示','此财富师不存在');
+                    }
+                    return;
+                }//状态为三；
+             
+            })
+        },
         getfaceId:function(){
             var that=this;
             axios({
@@ -103,12 +217,13 @@ export default {
                 var retCode=res.data.retCode;
                 if(retCode == '0'){
                     MessageBox('提示','人脸识别成功');
+                    that.authentic()
                     return;
                 }else if(retCode == '-2'){
                     MessageBox('提示','该身份证已绑定其他手机号');
                     return;
                 }else if(retCode == '-1'){
-                    MessageBox('提示','系统异常');
+                    //MessageBox('提示','系统异常');
                     return;
                 }else if(retCode == '-3'){
                     MessageBox('提示','人脸识别未通过');
@@ -119,234 +234,250 @@ export default {
                 }
             })
         },
-           getData:function(){
-                let that = this;
-                console.log(that.param)
-                axios({
-                    method:'get',
-                    url:'/wxservice/wxservice?opName=getactiveinfo',//调取活动列表和详情的接口
-                    params: {
-                        param:that.param,//系统类别
-                    }
-                })
-                .then(function(res) {//成功之后
-                    console.log(res)
-                    Indicator.close();
-                    var retCode=res.data.retCode;
-                    var retMsg=res.data.retMsg;
-                    if(retCode!=0){
-                        MessageBox('提示', '系统错误');
-                    }else if(retCode == 0){
-                        if(res.data.itemList.length<=0){
-                       // that.$refs.nodata.style.display='block';
-                        that.contentShow = true
-                        }else{
-                            that.contentShow = false
-                            that.activityType = res.data.itemList[0].activityType;
-                            that.isReviewSignup = res.data.itemList[0].isReviewSignup;
-                            var obj=res.data.itemList[0];
-                            that.actName=obj.actName;
-                            that.beginTime=obj.beginTime;
-                            that.endTime=obj.endTime;
-                            that.location=obj.location;
-                            that.content=obj.content;
-                            that.actStatusCode=obj.actStatus
-                            if(that.actStatusCode == '进行中' || that.actStatusCode == '延期中'){
-                                if(res.data.canSignUp == '0'){
-                                    that.isShow = true
-                                    that.actStatus= '我要报名';
-                                }else if(res.data.canSignUp == '1'){
-                                    that.isShow = true
-                                    that.actStatus= '已报名';
-                                    that.isDisabled = true;
-                                }
-                            }else{
-                                that.isShow = false
-                            }
-                            
+        getData:function(){
+            let that = this;
+            console.log(that.param)
+            axios({
+                method:'get',
+                url:'/wxservice/wxservice?opName=getactiveinfo',//调取活动列表和详情的接口
+                params: {
+                    param:that.param,//系统类别
+                }
+            })
+            .then(function(res) {//成功之后
+                console.log(res)
+                Indicator.close();
+                var retCode=res.data.retCode;
+                var retMsg=res.data.retMsg;
+                if(retCode!=0){
+                    MessageBox('提示', '系统错误');
+                }else if(retCode == 0){
+                    if(res.data.itemList.length<=0){
+                    // that.$refs.nodata.style.display='block';
+                    that.contentShow = true
+                    }else{
+                        that.contentShow = false;
+                        that.activityType = res.data.itemList[0].activityType;
+                        that.isReviewSignup = res.data.itemList[0].isReviewSignup;
+                        var obj=res.data.itemList[0];
+                        that.actName=obj.actName;
+                        that.beginTime=obj.beginTime;
+                        that.endTime=obj.endTime;
+                        that.location=obj.location;
+                        that.content=obj.content;
+                        that.actStatusCode=obj.actStatus;
+                        if(that.param.comefrom=='tangguan'){
+                            that.isShow=false;
+                            return;
                         }
-                       
-                    }
-                    
-                });
-            },
-            authentic:function(){
-                let that = this;
-                axios({
-                    method:'get',
-                    url:'/wxservice/wxservice?opName=getUserInfo',//获取客户信息
-                    params: {
-                        backUrl: that.paramurl
-                    }
-                })
-                .then(function(res) {//成功之后
-                    Indicator.close();
-                    var retCode=res.data.retCode;
-                    var retMsg=res.data.retMsg;
-                    if(retCode == 0){
-                        console.log(res.data);
-                        that.authenticFlag = res.data.userInfo.authenticFlag
-                        that.userphone = res.data.userInfo.userphone
-                        that.realname = res.data.userInfo.realname
-                        if(!res.data.userInfo.businessName == false){
-                            that.businessName = '财富师'+res.data.userInfo.businessName
-                           // that.businesscardShow = true
-                            that.belongBusiness = res.data.userInfo.belongBusiness
-                            that.getPhoto()
-                            console.log(that.photo)
-                            var headImgUrl = that.photo
-                            if(!that.photo == false){
-                                that.headimgShow = true
-                                that.headImgUrl = that.photo
-                            }else{
-                                that.headimgShow = false
+                        // alert(res.data.actCanSignUp);
+                        if(res.data.actCanSignUp==1){//that.actStatusCode == '进行中' || that.actStatusCode == '延期中'
+                            alert(that.actStatus);
+                            if(res.data.canSignUp == '0'){
+                                that.isShow = true
+                                that.actStatus= '我要报名';
+                            }else if(res.data.canSignUp == '1'){
+                                that.isShow = true;
+                                that.actStatus= '已报名';
+                                that.isDisabled = true;
                             }
-                            var actname = that.businessName+'邀请您参加'+that.actName
-                            var busname = '大唐财富尊享活动'+that.actName+'即将举办，机会难得，邀请你一起参加'
-                            that.asyncSDKConifg(actname,busname)
                         }else{
-                            var headImgUrl = res.data.userInfo.headImgUrl
-                            if(headImgUrl == null){
-                                that.headimgShow = false
-                            }else{
-                                that.headimgShow = true
-                                that.headImgUrl = res.data.userInfo.headImgUrl
-                            }
-                            that.businessName = res.data.userInfo.nickname
-                           // that.businesscardShow = false
-                            console.log(that.actName)
-                            console.log(that.businessName)
-                            var businName
-                            if(!that.businessName == false){
-                                businName = that.businessName
-                            }else{
-                                businName = ''
-                            }
-                            var actname = businName+'邀请您参加'+that.actName
-                            var busname = '大唐财富尊享活动'+that.actName+'即将举办，要一起参加吗？'
-                            that.asyncSDKConifg(actname,busname)
-                        } 
-                    }else if(retCode == 400){
-                        var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=activeDetail#wechat_redirect';
-                    }else{
-                        MessageBox('提示', retMsg); 
-                    }
-                })
-            },
-            getPhoto:function(){
-                let that = this;
-                that.user.userId = that.belongBusiness
-                console.log(that.user)
-                axios({
-                    method:'get',
-                    url:'/tcapi/WealthApiController/myCard',//获取客户信息
-                    params: {
-                        param:that.user//系统类别
-                    }
-                })
-                .then(function(res) {//成功之后
-                    Indicator.close();
-                    console.log(res.data)
-                    var retCode=res.data.retCode;
-                    var retMsg=res.data.retMsg;
-                    if(retCode!=0){
-                        MessageBox('提示', retMsg);
-                    }else if(retCode == 0){
-                        console.log(res.data);
-                        that.photo = res.data.userInfo.photo
-                       // that.userphone = res.data.userInfo.userphone
-                        //that.realname = res.data.userInfo.realname 
-                    }
-                })
-            },
-            sign:function(){ 
-                if(this.activityType == 'YX'){
-                    console.log(this.actName)
-                    if(!this.realname && !this.userphone && !this.businessName){
-                        this.$router.push({
-                            path: '/toSignNewCust',
-                            name: 'toSignNewCust',
-                            params:{
-                                isReviewSignup: this.isReviewSignup,
-                                activityType: this.activityType,
-                                activeId: this.param.activeId,
-                                actName: this.actName
-                            }
-                        })
-                    }else{
-                        var message = '您确定报名此活动？'
-                        MessageBox.confirm('', {
-                            message: message,
-                            title: '',
-                        }).then(action => {
-                            if(action == 'confirm'){
-                                this.$router.push({
-                                    path: '/signSuc',
-                                    name: 'signSuc',
-                                    params:{
-                                        isReviewSignup: this.isReviewSignup,
-                                        activeId: this.param.activeId
-                                    }
-                                })
-                            }
-                        }).catch(() => {
-                            //console.log(2);
-                        })
-                    }  
-                }else if(this.activityType == 'KF'){
-                    this.authentic()
-                    if(this.authenticFlag == 0){
-                        this.$router.push({
-                            path: '/faceMsg',
-                            name: 'faceMsg',
-                            params:{
-                                returnUrl: this.Host+'weixin-h5/index.html#/ActiveDetail?oaActId='+this.OaActId+'&actName='+this.actName
-                            }
-                        })
-                    }else{
-                        this.$router.push({
-                            path: '/kefuSign',
-                            name: 'kefuSign',
-                            params:{
-                                isReviewSignup: this.isReviewSignup,
-                                activityType: this.activityType,
-                                activeId: this.param.activeId,
-                                actName: this.actName
-                            }
-                        })
+                            that.isShow = false
+                        }
+                        
                     }
                     
                 }
-            },
-            toBusiness:function(){
-                window.location.href='https://test-interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+this.belongBusiness;
-            },
-            async asyncSDKConifg (actName,businessName) {
-                let that = this
-                axios.get('/wxservice/core/getJSSDKConfigure.mm?pageUrl=pageUrl',{params:{"url":this.backUrl}})
-                    .then(function (res) {
-                    wx.config({
-                        debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-                        appId: res.data.appId, // 必填，公众号的唯一标识
-                        timestamp: res.data.timestamp, // 必填，生成签名的时间戳
-                        nonceStr: res.data.nonceStr, // 必填，生成签名的随机串
-                        signature: res.data.signature, // 必填，签名
-                        jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage'] // 必填，需要使用的JS接口列表
+                
+            });
+        },
+        getErweima:function(){
+             Indicator.open();
+            var that=this;
+            axios({
+                method:'get',
+                url:'/wxservice/wxexternal?opName=cSignSQRCode',//获取客户信息
+                params: {
+                    param:{
+                        actId:that.OaActId,
+                        sign:0,//报名
+                    }
+                }
+            })
+            .then(function(res) {
+                 Indicator.close();
+                var retCode=res.data.retCode;
+                alert(retCode+'请求弹框的状态');
+                if(retCode==0){
+                    //获取二维码成功
+                    var url=res.data.url;
+                    that.popupVisible=true;//出现弹框
+                    that.erweima=url;
+                }else{
+                    alert('获取二维码失败');
+                }
+                })//
+        },
+        authentic:function(){
+            let that = this;
+            axios({
+                method:'get',
+                url:'/wxservice/wxservice?opName=getUserInfo',//获取客户信息
+                params: {
+                    backUrl: that.paramurl
+                }
+            })
+            .then(function(res) {//成功之后
+                Indicator.close();
+                var retCode=res.data.retCode;
+                var retMsg=res.data.retMsg;
+                alert('获取客户信息'+retCode);
+                if(retCode == 0){
+                    console.log(res.data);
+                    that.subscribe=res.data.userInfo.subscribe;//是否关注
+                    if(that.subscribe==0){//未关注
+                        //调连接扫二维码；
+                        that.getErweima();
+                    }
+                    that.authenticFlag = res.data.userInfo.authenticFlag//是否人脸
+                    that.userphone = res.data.userInfo.phone;
+                    that.realName = res.data.userInfo.realName;
+                    that.paramOnly.realName=res.data.userInfo.realName;
+                    alert(!res.data.userInfo.businessName==false);
+                    if(!res.data.userInfo.businessName==false){//我的财富师
+                        that.businessName = '财富师'+res.data.userInfo.businessName
+                        // that.businesscardShow = true
+                        that.belongBusiness = res.data.userInfo.belongBusiness
+                        var actname = that.businessName+'邀请您参加'+that.actName
+                        var busname = '大唐财富尊享活动'+that.actName+'即将举办，机会难得，邀请你一起参加'
+                        alert(actname+'==='+busname);
+                        that.asyncSDKConifg(actname,busname)
+                    }else{
+                        that.photoT= res.data.userInfo.headImgUrl;
+                        var nickName = res.data.userInfo.nickName;
+                        var actname = nickName+'邀请您参加'+that.actName;
+                        var busname = '大唐财富尊享活动'+that.actName+'即将举办，要一起参加吗？'
+                        alert(actname);
+                        alert(busname);
+                        that.asyncSDKConifg(actname,busname)
+                    } 
+                    return;
+                }else if(retCode == 400){
+                    if(that.param.comefrom =='tangguan'){
+                        return;
+                    }else{
+                            var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
+                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=activeDetail#wechat_redirect';
+                    }
+                    
+                }else{
+                    MessageBox('提示', retMsg); 
+                }
+            })
+        },
+        getPhoto:function(){
+            let that = this;
+            alert(that.$route.query.ghT+'=that.$route.query.ghT')
+            axios({
+                method:'get',
+                url:'/tcapi/WealthApiController/myCard',//获取客户信息
+                params: {
+                    param:that.user//系统类别
+                }
+            })
+            .then(function(res) {//成功之后
+                Indicator.close();
+                console.log(res.data)
+                var retCode=res.data.retCode;
+                var retMsg=res.data.retMsg;
+                if(retCode!=0){
+                    MessageBox('提示', retMsg);
+                }else if(retCode == 0){
+                    that.photo = res.data.userInfo.photo
+                    that.busNameT = res.data.userInfo.name; //对方财富师的名字
+                    // that.userphone = res.data.userInfo.userphone
+                    
+                }
+            })
+        },
+            
+        sign:function(){
+            var that=this; 
+            that.paramOnly.activityType=that.activityType;
+            if(that.activityType == 'YX'){
+                if(!that.realName || !that.userphone || !that.belongBusiness){
+                    that.$router.push({
+                        path: '/toSignNewCust',
+                        name: 'toSignNewCust',
+                        query:{
+                            isReviewSignup: that.isReviewSignup,
+                            activityType: that.activityType,
+                            activeId: that.param.activeId,
+                            actName: that.actName,
+                            beginTime:that.beginTime,
+                            location :that.location ,
+                        }
                     })
-                    wx.ready(function() { //通过ready接口处理成功验证
-                        console.log(businessName)
-                // config信息验证成功后会执行ready方法
+                }else{
+                    that.zhijieSign();
+                }  //直接报名
+            }else if(that.activityType == 'KF'){
+                alert(that.activityType);
+                that.authentic()
+                if(that.authenticFlag == 0){
+                    alert(that.authenticFlag)
+                    that.actName=encodeURIComponent(that.actName);
+                    that.$router.push({
+                        path: '/faceMsg',
+                        name: 'faceMsg',
+                        query:{
+                            returnUrl: that.Host+'weixin-h5/index.html#/ActiveDetail?oaActId='+that.OaActId+'&actName='+that.actName
+                        }
+                    })
+                }else{
+                    this.$router.push({
+                        path: '/kefuSign',
+                        name: 'kefuSign',
+                        query:{
+                            isReviewSignup: this.isReviewSignup,
+                            activityType: this.activityType,
+                            activeId: this.param.activeId,
+                            actName: this.actName
+                        }
+                    })
+                }
+                
+            }
+        },
+        toBusiness:function(){
+            window.location.href='https://test-interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+this.belongBusiness;
+        },
+        async asyncSDKConifg (actName,businessName) {
+            let that = this;
+            axios.get('/wxservice/core/getJSSDKConfigure.mm?pageUrl='+this.backUrl)
+                .then(function (res) {
+                wx.config({
+                    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                    appId: res.data.appId, // 必填，公众号的唯一标识
+                    timestamp: res.data.timestamp, // 必填，生成签名的时间戳
+                    nonceStr: res.data.nonceStr, // 必填，生成签名的随机串
+                    signature: res.data.signature, // 必填，签名
+                    jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage'] // 必填，需要使用的JS接口列表
+                })
+                wx.ready(function(res) { //通过ready接口处理成功验证
+                    console.log(businessName)
+                    // config信息验证成功后会执行ready方法
                     wx.onMenuShareAppMessage({ // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用 
                         title: actName, // 分享标题
                         desc: businessName, // 分享描述
-                        link: location.href.split('?')[0]+'?ifcard=1', // 分享链接
+                        link: location.href.split('?')[0]+'?ghT='+that.belongBusiness, // 分享链接
+                        //link:window.location.href.split('#')[0] + 'static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href),
                         imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
                         type: '', // 分享类型,music、video或link，不填默认为link
                         dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
                         success: function() {
                             // 用户确认分享后执行的回调函数
-                            //alert('成功');
+                            alert('成功分享给朋友');
                         },
                         cancel: function() {
                             // 用户取消分享后执行的回调函数
@@ -354,36 +485,42 @@ export default {
                         }
                         });
                         wx.onMenuShareTimeline({ //分享朋友圈
-                        title: actName, // 分享标题
-                        link: location.href.split('?')[0]+'?ifcard=1',
-                        imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
-                        success: function() {
-                            // 用户确认分享后执行的回调函数
-                        },
-                        cancel: function() {
-                            // 用户取消分享后执行的回调函数
-                        }
-                    });
+                            title: actName, // 分享标题
+                            link: location.href.split('?')[0]+'?ifcard=1',
+                            imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
+                            success: function() {
+                                // 用户确认分享后执行的回调函数
+                                alert('分享朋友圈');
+                            },
+                            cancel: function() {
+                                // 用户取消分享后执行的回调函数
+                            }
+                        });
                 });
-                    // end
-                })
-                wx.error(function(res){//通过error接口处理失败验证
-                    // config信息验证失败会执行error函数
-                });
-            }
+                // end
+            })
+            wx.error(function(res){//通过error接口处理失败验证
+                // config信息验证失败会执行error函数
+            });
+        }
 
     },
     created(){
-        var bizId=localStorage.getItem('bizId');
-        this.faceparam.bizId = bizId
-        if(!this.$route.query.faceResult == false){
-           this.getfaceId()
+        //this.asyncSDKConifg();
+        //是否糖罐入口
+        var that=this;
+        if(that.$route.query.comefrom=='tangguan'||that.$route.params.comefrom=='tangguan'){
+            that.param.comefrom ='tangguan';
         }
-        if(this.$route.query.ifcard == 1){
-            this.businesscardShow = true
-        }else{
-            this.businesscardShow = false
-        }
+        document.body.scrollTop = document.documentElement.scrollTop = 0;//回到顶部；
+        var bizId=decodeURIComponent(getCookie("bizId"));
+        that.faceparam.bizId = bizId;
+         if(!this.$route.query.faceResult == false||bizId==null){
+            that.getfaceId();
+         }else{
+             that.authentic()//获取客户信息
+         }
+         //================
         var oaActId =this.$route.params.oaActId || this.$route.query.oaActId; 
         var actName =this.$route.params.actName || this.$route.query.actName;
         if(!oaActId == true){ 
@@ -391,28 +528,41 @@ export default {
             Activiy = JSON.parse(Activiy)
             oaActId = Activiy.huoId
             actName = Activiy.huoName
+        }else{
+           
         }
         this.OaActId = oaActId
-        this.actName = actName
-         this.authentic()//获取客户信息
-         var comefrom =this.$route.params.comefrom;
-         let that = this; //这个是钩子函数mounted
-         if(comefrom=='tangguan'){
-             that.isShow=false;
-         }else{
-
-         }  
+        this.actName = decodeURIComponent(actName);
         Indicator.open(that.loadObj);
-        var ifCard=this.$route.params.ifCard;
-        // if(ifCard!=''&&ifCard!=undefined){
-        //     console.log('ifCard==='+ifCard);
-        //     if(ifCard){
-        //         this.$refs.card.style.display='flex';
-        //     }
-        // }
+        var ifCard=this.$route.query.ifCard;
+         if(ifCard!=''&&ifCard!=undefined){
+             console.log('ifCard==='+ifCard);
+             if(ifCard==1){
+                 this.$refs.card.style.display='flex';
+             }
+         }
+         that.user.userId = that.$route.query.ghT;
+         alert(that.$route.query.ghT+'ghT');
+         if(!that.user.userId==false){//对方有财富师
+             that.headimgShow = true;
+              that.getPhoto()
+              that.headImgUrl = that.photo
+              that.shareName=that.busNameT;//对方的财富师名字
+         }else{
+             that.headimgShow = false;
+         }
+            
+       
+
+
+
+
+
         if(oaActId!=''&&oaActId!=undefined){
             that.param.activeId=oaActId;
             that.param.actName=actName;
+            that.paramOnly.activeId=oaActId;
+            that.paramOnly.actName=actName;
             console.log(that.param.activeId);
             that.getData();
         }
@@ -425,6 +575,9 @@ export default {
  	   
 </script>
 <style>
+    .activeSign{
+        padding-bottom:50px;
+    }
  .business_Card{
     box-sizing: border-box;
     padding:0 20px;
@@ -521,6 +674,10 @@ export default {
 .toSign{
     width:90%;
     margin:22px auto 0;
+    position: fixed;
+    bottom:130px;
+    left:50%;
+    transform: translateX(-50%);
 }
 .nodata img{
     width:150px;

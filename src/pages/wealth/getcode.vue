@@ -14,8 +14,9 @@ export default {
                 mobileNo:'',
                 messType:'',
             },
+             messText:'',
            ex:{
-                time:180,
+                time:60,
                 btnDsiabled:true,
            },
            warn:''
@@ -24,7 +25,16 @@ export default {
     methods:{
         getCodeFn:function(type,ipNo,authenticFlag){
             var that=this;
-            that.ex.btnDsiabled=true;//禁止点击按钮
+            if(type==3||type=='3'){
+                that.messText='活动报名';
+            }else if(type==4||type=='4'){
+                that.messText='活动签到';
+            }else if(type==5||type=='5'){
+                that.messText='无法重复绑定';
+            }else if(type==6||type=='6'){
+                that.messText='推送客户意愿给财富师';
+            }
+           // that.ex.btnDsiabled=true;//禁止点击按钮
             //手机号非空和数字校验
             var reg = /^[0-9]{11}$/;
             if(ipNo.length==0){
@@ -39,13 +49,14 @@ export default {
                 return
             }else{
                 that.$emit('warnCodeFunction','');
-                that.subTime()
+                
             }
             //ajax提交
             var that=this;
             that.param={
                 mobileNo:ipNo,
-                messType:type
+                messType:type,
+               
             }
             console.log(that.param);
              axios({
@@ -57,46 +68,59 @@ export default {
              })
             .then(function(res) {//成功之后
                 var retCode=res.data.retCode;
-                //var retCode= -2;
                 var retMsg=res.data.retMsg;
                 if(retCode == -1){
-                    MessageBox('提示',retMsg);
+                  var message = retMsg;
+                  that.ex.time='获取验证码';
+                  that.$emit('childByValue',that.ex);//传到调用页面
+                   MessageBox('提示',message);
                 }else if(retCode == -2){
-                    console.log(authenticFlag)
-                    if(authenticFlag =="0"){
-                        var message = '该手机号已绑定其他账号，您无法通过该号码签到活动。如有疑问请咨询客服：400-819-9868'
-                    }else if(authenticFlag =="1"){
-                        var message = '该手机号已绑定其他账号，您无法通过该号码签到活动，请绑定您资金的手机号如有疑问请咨询客服：400-819-9868'
-                    }        
-                    MessageBox.alert('', {
+                    that.ex.time='获取验证码';
+                    that.$emit('childByValue',that.ex);//传到调用页面
+                    var message = '该手机号已绑定其他账号，无法重复绑定。如有疑问请咨询客服：400-819-9868';
+                    // if(authenticFlag =="0"){
+                    //     var message = '该手机号已绑定其他账号，'+that.messText+'。如有疑问请咨询客服：400-819-9868'
+                    // }else if(authenticFlag =="1"){
+                    //     var message = '该手机号已绑定其他账号，'+that.messText+'，请绑定您资金的手机号如有疑问请咨询客服：400-819-9868'
+                    // }        
+                    MessageBox.confirm('', {
                         message: message,
-                        title: '',
+                        title: '提示',
                         showConfirmButton:true,
-                        confirmButtonClass:'confirmButton',
-                        confirmButtonText:'我知道了',
+                        confirmButtonText:'去联系',
+                        cancelButtonText:'取消',
                     }).then(action => {
                         if(action == 'confirm'){
-                            
+                           window.location.href='tel:400-819-9868';
                         }
+                    }).catch(() => {
+                       //取消按钮
                     })
+                }else if(retCode == 0){
+                    that.subTime();
                 }
             });
         },//fn,
         subTime:function(){ 
             var that=this;
-            that.ex.time=180;
+            that.ex.time=60;
              var g=setInterval(function(){
                 that.ex.time=parseInt(that.ex.time-1);
                 if(that.ex.time==0){
                     clearInterval(g);
                     that.ex.time='重新发送';
                     that.ex.btnDsiabled=false;
+                }else if(that.ex.time==NaN){
+                    that.ex.btnDsiabled=false;
+                    that.ex.time='重新发送';
                 }
                 that.$emit('childByValue',that.ex);
-              //  console.log(that.time);
             },1000)
         }
     },
+    mounted:function(){
+        
+    }
   // component:(getcode)
 }
 </script>

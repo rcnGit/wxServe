@@ -21,6 +21,7 @@
 import axios from 'axios';
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
+import { getCookie,setCookie } from '@/common/js/cookie.js'
 export default {
     name:'wchoose',
     data:function(){
@@ -33,8 +34,8 @@ export default {
             faceparam:{
                 bizId: '',
                 backUrl: location.href.split('?')[0],
-                ifCardShow:false,
-            }
+            },
+             ifCardShow:false,
         }
     },
     methods:{
@@ -44,7 +45,7 @@ export default {
                 that.$router.push({
                     path:'/faceMsg',
                     name:'faceMsg',
-                    params:{
+                    query:{
                         returnUrl:that.Host+'weixin-h5/index.html#/appointW'
                     }
                 })
@@ -52,7 +53,7 @@ export default {
                 that.$router.push({
                     path:'/appointW',
                     name:'appointW',
-                    params:{
+                    query:{
                         
                     }
                 })
@@ -69,6 +70,7 @@ export default {
             })
             .then(function(res){
                 console.log(res.data);
+                 Indicator.close();
                 var retCode=res.data.retCode;
                 if(retCode == '0'){
                     MessageBox('提示','人脸识别成功');
@@ -111,7 +113,7 @@ export default {
                          that.$router.push({//跳入本地名片代理页面
                              path:'/wealthCardD',
                              name:'wealthCardD',
-                             params:{
+                             query:{
                                  gh:that.gh
                              }
                           })
@@ -121,15 +123,18 @@ export default {
         }
 
     },
-    created:function(){ 
-        var bizId=localStorage.getItem('bizId');
-        this.faceparam.bizId = bizId
-        if(!this.$route.query.faceResult == false){
-           this.getfaceId()
-        }
-    },
-    mounted:function(){
+    created:function(){
+        alert('123');
           var that=this;
+
+           Indicator.open();
+           var bizId=decodeURIComponent(getCookie("bizId"));
+            this.faceparam.bizId = bizId
+            if(!this.$route.query.faceResult == false){
+            this.getfaceId();
+            }
+
+
             axios({
                 method:'get',
                 url:'/wxservice/wxservice?opName=getUserInfo',//判断是否有财富师
@@ -139,19 +144,31 @@ export default {
             })
             .then(function(res){
                 var retCode=res.data.retCode;
+                var isApplyWealther=res.data.isApplyWealther;
+                 Indicator.close();
+                if(isApplyWealther==1){
+                    that.$router.push({//跳入本地名片代理页面
+                             path:'/applysuc',
+                             name:'applysuc',
+                             query:{
+                                // gh:that.gh
+                             }
+                          })
+                }
                 if(retCode=='0'){
                     var belongBusiness=res.data.userInfo.belongBusiness;
                     that.cgh=belongBusiness;//财富师工号
                     if(!belongBusiness||belongBusiness==''||belongBusiness==undefined){//没有财富师
                         that.authenticFlag=res.data.userInfo.authenticFlag;
                        that.ifCardShow=true;
+                      
                         return;
                        
                     }else{
                         //有财富师
                          that.ifCardShow=false;
                         that.wname=res.data.userInfo.businessName;
-                       // that.pming();//去判断有没有财富师名片
+                       // that.pming();
                        window.location.href='https://test-interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+belongBusiness;
                     }
                 }else if(retCode=='-1'){//系统异常
@@ -161,7 +178,7 @@ export default {
                 }
                 else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                  window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=wchoose#wechat_redirect';
+                  window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=wchoose#wechat_redirect';
                 }
             })
     },
@@ -169,9 +186,9 @@ export default {
 }
 </script>
 <style>
-.comfooter{
+/* .comfooter{
     display: none!important;
-}
+} */
 html{
       background:#fff;  
 }

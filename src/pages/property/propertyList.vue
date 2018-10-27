@@ -40,19 +40,19 @@
                 <div style='clear:both'></div>
                 <div class='proBot'>
                     <span class='floatLeft smP'>金额&nbsp;<em>{{publicTotalAsset}}</em></span>
-                    <span class='floatRight'>最新收益<em :class='gC'>{{gH}}{{publicYestIncome}}</em></span>
+                    <span class='floatRight'>最新收益<em :class='gC'>{{publicYestIncome}}</em></span>
                 </div>
             </div>  <!-- proDemo -->
              <div class='proDemo'>
                 <div class='proTop'>
                     <img  class='floatLeft'src='./img/dLogo.png'/>
-                    <span class='floatLeft bigP'>定期</span>
+                    <span class='floatLeft bigP'>资管理财</span>
                     <span class='floatRight'>更新日期：<em>{{securitiesDate}}</em></span>
                 </div>
                 <div style='clear:both'></div>
                 <div class='proBot'>
                     <span class='floatLeft smP'>金额&nbsp;<em>{{securitiesAddIncome}}</em></span>
-                    <span class='floatRight'>最新收益<em :class='ziC'>{{ziH}}{{securitiesYestIncome}}</em></span>
+                    <span class='floatRight'>最新收益<em :class='ziC'>{{securitiesYestIncome}}</em></span>
                 </div>
             </div>  <!-- proDemo -->
         </div>
@@ -67,6 +67,7 @@
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
+import { getCookie,setCookie } from '@/common/js/cookie.js'
 import axios from 'axios';
 export default {
     name:'propertyList',
@@ -82,11 +83,9 @@ export default {
             },
             gC:'red',
             ziC:'red',
-            ziH:'',//定期的最新涨跌
-            gH:'',//公募的最新涨跌
-            totalAsset:'0.00',//总资产
+            totalAsset:'--',//总资产
             privateTotalAsset:'',//私募总资产
-            privateToConfirmAsset:'0.00',//私募待确认
+            privateToConfirmAsset:'--',//私募待确认
             publicTotalAsset:'',//公募总资产
             publicYestIncome:'',//公募最新收益
             publicAddIncome:'',//公募总收益
@@ -105,12 +104,13 @@ export default {
             this.$router.push({
                     path:'/faceMsg',
                     name:'faceMsg',
-                    params:{
+                    query:{
                         returnUrl:this.Host+'weixin-h5/index.html#/propertyList'
                     }
                 })
         },
         getfaceId:function(){
+            alert('getfaceId');
             var that=this;
             axios({
                 method:'get',
@@ -120,30 +120,41 @@ export default {
             .then(function(res){
                 console.log(res.data);
                 var retCode=res.data.retCode;
+                alert(retCode);
                 if(retCode == '0'){
                     MessageBox('提示','人脸识别成功');
+                     that.getList();
                     return;
                 }else if(retCode == '-2'){
                     MessageBox('提示','该身份证已绑定其他手机号');
+                    that.$refs.wz.style.display='block'; 
                     return;
                 }else if(retCode == '-1'){
                     MessageBox('提示','系统异常');
+                    that.$refs.wz.style.display='block';
                     return;
                 }else if(retCode == '-3'){
                     MessageBox('提示','人脸识别未通过');
+                    that.$refs.wz.style.display='block';
                     return;
                 }else if(retCode == '-4'){
                     MessageBox('提示','未查询到人脸识别结果');
+                    that.$refs.wz.style.display='block';
+                        
+                    return;
+                }else{
+                     MessageBox('提示','未查询到人脸识别结果');
+                    that.$refs.wz.style.display='block';
                     return;
                 }
             })
         },
         getList:function(){
              var that=this;
-             Indicator.open(that.loadObj);
+             Indicator.open();
                 axios({
                     method:'get',
-                    url:'/wxservice/wxMemberInfo/getUserAsset',
+                    url:'/wxservice/wxMemberInfo/getUserAsset?v='+(new Date()).getTime(),
                     params: {
                    // param:that.param,//系统类别
                         backUrl: that.paramurl
@@ -154,22 +165,31 @@ export default {
                     var retCode=res.data.retCode;
                     var retMsg=res.data.retMsg;
                     if(retCode==-2){//未实名认证
+                        that.totalAsset='--';
                         that.$refs.wz.style.display='block';
                         return;
                     }else if(retCode==-1){//系统异常
                         MessageBox('提示', '系统异常');
                     }else if(retCode == 400){
-                        var serbackUrl = that.Host+'wxservice/wxMemberInfo/getUserAsset'
-                      window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=propertyList#wechat_redirect';
+                        var serbackUrl = that.Host+'wxservice/wxMemberInfo/getUserAsset?v='+(new Date()).getTime();
+                      window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=propertyList#wechat_redirect';
                     }
                    var d=res.data.data;
                     that.totalAsset=that.money(d.totalAsset)//总资产
                     that.privateTotalAsset=that.money(d.privateTotalAsset)//私募总资产
                     that.privateToConfirmAsset=that.money(d.privateToConfirmAsset)//私募待确认
                     that. publicTotalAsset=that.money(d.publicTotalAsset)//公募总资产
+                    if(d.publicYestIncome<0){//公募最新收益
+                        that.gC='green'
+                    }else{
+                        that.gC='red'
+                    }
                     that.publicYestIncome=that.money(d.publicYestIncome)//公募最新收益
                     that.publicAddIncome=that.money(d.publicAddIncome)//公募总收益
                     that.securitiesTotalAsset=that.money(d.securitiesTotalAsset)//资管类总资产
+                    if(d.securitiesYestIncome<0){
+                            that.zic='green';
+                    }
                     that.securitiesYestIncome=that.money(d.securitiesYestIncome)//资管类最新收益
                     that.securitiesAddIncome=that.money(d.securitiesAddIncome)//资管类总收益
 
@@ -191,20 +211,8 @@ export default {
                     }
                     that.publicDate=d.publicDate//公募更新日期
                     that.securitiesDate=d.securitiesDate//资管更新日期
-                    if(that.publicYestIncome<0){//公募最新收益
-                        that.gC='green'
-                        that.gH='-'
-                    }else{
-                        that.gC='red'
-                        that.gH='+'
-                    }
-                    if(that.securitiesYestIncome<0){//资管类最新收益
-                         that.ziC='green'
-                         that.ziH='-'
-                    }else{
-                        that.ziC='red'
-                        that.ziH='+'
-                    }
+                    
+                   
                    
                 });
         },
@@ -220,10 +228,10 @@ export default {
                     //ios
                     //this.ShowPop = !this.ShowPop;
                     //this.ShowDark = !this.ShowDark;
-                    window.location='https://itunes.apple.com/cn/app/tang-guan-er-da-tang-cai-fu/id1011675066?mt=8';
+                    window.location='https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf';
                 } else if (/(Android)/i.test(navigator.userAgent)) {
                     //android
-                    window.location = 'http://interface.tdyhfund.com/tgmgmt/file/apk/DTTangGuan.apk'
+                    window.location = 'https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf'
                 }
                 }
         
@@ -233,12 +241,15 @@ export default {
         }
     },
     created:function(){
-        var bizId=localStorage.getItem('bizId');
-        this.faceparam.bizId = bizId
         if(!this.$route.query.faceResult == false){
-           this.getfaceId()
+             //var bizId=localStorage.getItem('bizId');
+            var bizId=decodeURIComponent(getCookie("bizId"));
+            this.faceparam.bizId = bizId;
+            this.getfaceId();
+        }else{
+             this.getList();
         }
-        this.getList();
+       
     }
 
 }

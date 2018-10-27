@@ -92,6 +92,7 @@
      color:rgb(18,28,50);
      border-color:#efefef;
      text-align: left;
+     padding-bottom:125px!important;
  }
 /* 设置所有的元素 */
 *{
@@ -156,5 +157,8 @@
 .mint-msgbox-confirm{
     background:#df1e1d!important;
     color:#fff!important;
+    font-size: 14px;
+}
+.mint-msgbox-cancel{
     font-size: 14px;
 }

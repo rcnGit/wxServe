@@ -11,7 +11,7 @@
                 <!-- <img src='./img/card_img@2x.png' class='clear'/> -->
              </div> <!--inpBox-->
               <div class='inpBox'>
-                <input type='text' class=''placeholder='请输入您的身份证' ref='idCardNo' v-model="param.idCardNo" />
+                <input type='text' class=''placeholder='请输入您的身份证号' v-on:input="shenJ()" ref='idCardNo' v-model="param.idCardNo" maxlength="20" />
                 <span>身份证</span>
                 <!-- <em>请输入正确的实名信息</em> -->
                 <p class='warn' ref='warnIdcard'v-show='true'>{{warnIdcard}}</p>
@@ -28,6 +28,7 @@ import { Indicator } from 'mint-ui';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { MessageBox } from 'mint-ui';//提示框
 import { isValidIdCardNo,isValidName} from '@/common/js/extends.js'
+import { getCookie,setCookie } from '@/common/js/cookie.js'
 import axios from 'axios';
 export default {
     name:'faceMsg',
@@ -47,8 +48,13 @@ export default {
    },
     components:{Button,axios},//使用mint-ui的button的组件
     methods:{
+        shenJ:function(){
+           this.param.idCardNo=this.param.idCardNo.replace(/[\W]/g,'');
+           this.param.idCardNo=this.param.idCardNo.toLocaleUpperCase();
+        },
     getDescribe:function(id){//拼接跳转链接
         //校验身份信息的内容；
+
         if(this.param.idCardName==''){
             this.$refs.namewarn.style.display='block';
             this.namewarn='请输入姓名';
@@ -76,6 +82,7 @@ export default {
         console.log(this.param)
         var that=this;
         Indicator.open();
+        alert(that.param.returnUrl);
         axios({
             method:'get',
             url:'/wxservice/wxMemberInfo/getFaceToken',//ning
@@ -95,18 +102,21 @@ export default {
                 MessageBox('提示','系统异常');
                 return;
             }else if(retCode == '-3'){
-                MessageBox('提示','未获取到token');
+                MessageBox('提示','当前网络不稳定，请重试');
+                return;
+            }else if(retCode == '-4'){
+                MessageBox('提示','您的实名信息已绑定其他微信无法重复绑定，如有疑问请拨打客服电话：400-819-9868');
+                return;
+            }else if(retCode == '-5'){
+                MessageBox('提示','手机号与已实名的手机号不一致');
                 return;
             }else{
                 that.token=res.data.data.token;
                 var bizId=res.data.data.bizId;
-                localStorage.setItem('bizId',bizId);
-                var bizId=localStorage.getItem('bizId');
-                if(bizId!=''&&bizId!=undefined){
-                    window.location.href='https://api.megvii.com/faceid/lite/do?token='+that.token;
-                }else{
-                   
-                }
+                alert(bizId+'成功');
+                setCookie('bizId',bizId);
+               window.location.href='https://api.megvii.com/faceid/lite/do?token='+that.token;
+               
             }
         });
         },
@@ -140,9 +150,15 @@ export default {
     },
     created:function(){
        var that = this;
-      var returnUrl = that.$route.params.returnUrl;
+      var returnUrl = that.$route.query.returnUrl;
+      alert(returnUrl+'开始')
        if(returnUrl&&returnUrl!=undefined){
-           that.param.returnUrl=returnUrl+'?faceResult=1';
+           if(returnUrl.indexOf("?") != -1){
+               that.param.returnUrl=returnUrl+'&faceResult=1';
+           }else{
+               that.param.returnUrl=returnUrl+'?faceResult=1';
+           }
+           
            
        }
     }

@@ -2,13 +2,13 @@
     <div class='changephone'>
         <div class='content'>
             <div class='inpBox'>
-                <input type='text' class='' maxlength='11' v-model="ipNo" ref='ph' placeholder="请输入手机号码"/>
+                <input type='tel' class='' maxlength='11' v-model="ipNo" ref='ph' placeholder="请输入手机号码" />
                 <p class='warn' ref='phwarn'>{{phwarn}}</p>
                 <span>新手机号</span>
                 <mt-button type="danger" size="small" class='sendCodeBtn' @click="getM()" v-bind:disabled='Dsiabled'>{{text}}</mt-button>
              </div> <!--inpBox-->
               <div class='inpBox'>
-                <input type='text' class=''  ref='code'v-model="msgCode" placeholder="请输入验证码" />
+                <input type='tel' class=''  ref='code'v-model="msgCode" placeholder="请输入验证码" maxlength="4" />
                 <p class='warn' ref='codewarn'>{{codewarn}}</p>
                 <span>验证码</span>
              </div> <!--inpBox-->
@@ -24,6 +24,7 @@ import { MessageBox } from 'mint-ui';//提示框
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import axios from 'axios';
 import getcode from './getcode'
+import { getCookie,setCookie } from '@/common/js/cookie.js'
 import { isValidName,isValidMobile ,isValidverifycode} from '@/common/js/extends.js';//引入mint-ui的button组件文件包
 export default {
     name:'changephone',
@@ -31,13 +32,29 @@ export default {
         return{
             messType:'5',
             ipNo:'',//17184092628
-            text:'发送验证码',
+            text:'获取验证码',
             msgCode:'',
             Dsiabled:false,
             codewarn:'',
             phwarn:'',
             serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxMemberInfo/changeMobile'),//接口
-            paramurl: location.href.split('?')[0]
+            paramurl: location.href.split('?')[0],
+            changeForm:'',//更改手机号后返回指定的页面；
+            isReviewSignup:'',
+            activityType:'',
+            activeId:'',
+            beginTime:'',
+            location:'',
+            actName:'',
+            msgCode:'',//以下在线申请财富师页面的入参
+            phone:'',
+            phone2:'',
+            city:'',
+            isFace:'0',
+            faceparam:{
+                bizId: '',
+                backUrl: location.href.split('?')[0]
+            }
         }
     },
     components:{getcode,MessageBox,Button},
@@ -95,8 +112,13 @@ export default {
         },
         childByValue:function(v){
             //console.log(v)
-            this.text=v.time;
-           // console.log(v.time)
+             if(v.time!='重新发送'&&v.time!='获取验证码'){
+                this.text=v.time+'s';
+            }else if(v.time==NaN||v.time==undefined||v.time=='NANs'){
+                this.text='重新发送';
+            }else{
+                this.text=v.time
+            }
            this.Dsiabled=v.btnDsiabled;
            // console.log(this.Dsiabled);
         },
@@ -147,7 +169,28 @@ export default {
                 console.log(res.data);
                 var retCode=res.data.retCode;
                 if(retCode=='0'){//更改成功
-                     MessageBox('提示','手机号码更改成功');
+                     //MessageBox('提示','手机号码更改成功');
+                    MessageBox('提示', '手机号码更改成功').then(action => {
+                      if(action == 'confirm'){
+                        that.$router.push({
+                            path:'/'+that.changeForm,
+                            name:that.changeForm,
+                            query:{
+                                changeForm:that.changeForm,
+                                isReviewSignup:that.isReviewSignup,
+                                activityType:that.activityType,
+                                activeId:that.activeId,
+                                actName:that.actName,
+                                beginTime:that.beginTime,
+                                location:that.location,
+                                phone:that.ipNo,
+                                city:that.city,
+                            }
+                        })
+                       }else{//取消
+                        
+                      }
+                  });
                 }else if(retCode=='-2'){//验证码不正确
                      MessageBox('提示','验证码不正确');
                 }else if(retCode=='-3'){//请发送验证码
@@ -163,8 +206,156 @@ export default {
                     MessageBox('提示','系统异常');
                 }
             })
-        }
+        },
+        getfaceId:function(){
+            var that=this;
+            axios({
+                method:'get',
+                url:'/wxservice/wxMemberInfo/getFaceResult',
+                params: that.faceparam
+            })
+            .then(function(res){
+                console.log(res.data);
+                var retCode=res.data.retCode;
+                Indicator.close();
+                if(retCode == '0'){
+                    MessageBox('提示','人脸识别成功');
+                    return;
+                }else if(retCode == '-2'){
+                    MessageBox('提示','该身份证已绑定其他手机号').then(action => {
+                      if(action == 'confirm'){
+                        that.$router.push({
+                            path:'/'+that.changeForm,
+                            name:that.changeForm,
+                            query:{
+                                changeForm:that.changeForm,
+                                isReviewSignup:that.isReviewSignup,
+                                activityType:that.activityType,
+                                activeId:that.activeId,
+                                actName:that.actName,
+                                beginTime:that.beginTime,
+                                location:that.location,
+                            }
+                        })
+                       }else{//取消
+                        return false;
+                      }
+                  });
+                    return;
+                }else if(retCode == '-1'){
+                    MessageBox('提示','系统异常').then(action => {
+                      if(action == 'confirm'){
+                        that.$router.push({
+                            path:'/'+that.changeForm,
+                            name:that.changeForm,
+                            query:{
+                                changeForm:that.changeForm,
+                                isReviewSignup:that.isReviewSignup,
+                                activityType:that.activityType,
+                                activeId:that.activeId,
+                                actName:that.actName,
+                                beginTime:that.beginTime,
+                                location:that.location,
+                            }
+                        })
+                       }else{//取消
+                        return false;
+                      }
+                  });
+                    return;
+                }else if(retCode == '-3'){
+                    MessageBox('提示','人脸识别未通过').then(action => {
+                      if(action == 'confirm'){
+                        that.$router.push({
+                            path:'/'+that.changeForm,
+                            name:that.changeForm,
+                            query:{
+                                changeForm:that.changeForm,
+                                isReviewSignup:that.isReviewSignup,
+                                activityType:that.activityType,
+                                activeId:that.activeId,
+                                actName:that.actName,
+                                beginTime:that.beginTime,
+                                location:that.location,
+                            }
+                        })
+                       }else{//取消
+                        return false;
+                      }
+                  });
+                    return;
+                }else if(retCode == '-4'){
+                    MessageBox('提示','未查询到人脸识别结果').then(action => {
+                      if(action == 'confirm'){
+                        that.$router.push({
+                            path:'/'+that.changeForm,
+                            name:that.changeForm,
+                            query:{
+                                changeForm:that.changeForm,
+                                isReviewSignup:that.isReviewSignup,
+                                activityType:that.activityType,
+                                activeId:that.activeId,
+                                actName:that.actName,
+                                beginTime:that.beginTime,
+                                location:that.location,
+                            }
+                        })
+                       }else{//取消
+                        return false;
+                      }
+                  });
+                    return;
+                }
+            })
+            .catch(function(){
+                MessageBox('提示','获取信息失败').then(action => {
+                      if(action == 'confirm'){
+                        that.$router.push({
+                            path:'/'+that.changeForm,
+                            name:that.changeForm,
+                            query:{
+                                changeForm:that.changeForm,
+                                isReviewSignup:that.isReviewSignup,
+                                activityType:that.activityType,
+                                activeId:that.activeId,
+                                actName:that.actName,
+                                beginTime:that.beginTime,
+                                location:that.location,
+                                city:that.city
+                            }
+                        })
+                       }else{//取消
+                        return false;
+                      }
+                  });
+            })
+        },
         
+    },
+    mounted:function(){
+        //客服报名所需的参数；
+        var that=this;
+        this.changeForm=this.$route.query.changeForm;
+        this.isReviewSignup=this.$route.query.isReviewSignup;
+        this.activityType=this.$route.query.activityType;
+        this.activeId=this.$route.query.activeId;
+        this.actName=this.$route.query.actName;
+        this.beginTime = this.$route.query.beginTime;
+        this.location = this.$route.query.location;
+      //  alert(this.changeForm+'--'+this.activityType+'==='+this.activeId+',,,,'+this.beginTime);
+        //在线申请财富师
+        this.msgCode=this.$route.query.msgCode;
+        this.phone=this.$route.query.routerPhone;
+        this.phone2=this.$route.query.phone2;
+        this.city=this.$route.query.city;
+        this.isFace=this.$route.query.isFace;
+        if(this.isFace==1){//需要人脸验证结果
+            Indicator.open();
+            var bizId=decodeURIComponent(getCookie("bizId"));
+            that.faceparam.bizId = bizId;
+            that.getfaceId();
+        }
+
     }
 }
 </script>

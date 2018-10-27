@@ -50,7 +50,7 @@ export function isValidName (name) {
 }
 //工号的校验
 export function isValidEmpNo (number) {
-  return /^DT[0-9]{7}$/.test(number)
+  return /^[0-9]{7}$/.test(number)
 }
 /**
  *  格式化时间

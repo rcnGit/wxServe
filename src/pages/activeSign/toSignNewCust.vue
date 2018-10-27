@@ -13,26 +13,26 @@
              </div>
             <div class='inpBox'>
                 <input type='hidden' class=''style='padding-right:100px;'maxlength='11' v-model="param.phone" ref='phone' />
-                <input type='text' class=''style='padding-right:100px;'maxlength='11' v-model="phone2" ref='phone2' :disabled="isDisabled2" />
+                <input type='tel' class=''style='padding-right:100px;'maxlength='11' v-model="phone2" ref='phone2' :disabled="isDisabled2" placeholder="请输入联系人电话" />
                 <p class='warn' ref='warnPhone' v-show='true'>{{warnPhone}}</p>
                 <span>联系人电话</span>
                 <span class='inpRchoose fSize13' style='color:#4a90e2;' @click='changeP' v-show='isShow'>变更手机号>></span>
              </div> <!--inpBox-->
               <div class='inpBox'>
-                <input type='text' class='' maxlength='11' v-model="param.verifiCode" ref='verifycode' />
+                <input type='tel' class=''  maxlength='4' v-model="param.verifiCode" ref='verifycode' placeholder="请输入验证码"/>
                 <p class='warn' ref='warnCode'v-show='true'>{{warnCode}}</p>
                 <span>验证码</span>
-                <mt-button type="danger" size="small" class='sendCodeBtn'@click="getM()" v-bind:disabled='Dsiabled'>{{text}}</mt-button>
+                <mt-button type="danger" size="small" class='sendCodeBtn' v-on:click.stop="getM" v-bind:disabled='Dsiabled'>{{text}}</mt-button>
              </div> <!--inpBox-->
              <div class='inpBox'>
-                <input type='text' class='' v-model="param.businessName" :disabled="isDisabled3" ref='businessName' />
+                <input type='text' class='' v-model="param.businessName" :disabled="isDisabled3" ref='businessName' placeholder="非必填"/>
                 <p class='warn' ref='warnbusinessName' v-show='true'>{{warnbusinessName}}</p>
-                <span>理财师</span>
+                <span>财富师</span>
               </div> <!--inpBox-->
               <div class='inpBox'>
-                <input type='text' class='' v-model="param.belongBusiness" :disabled="isDisabled4" ref='belongBusiness' />
+                <input type='tel' class='' v-model="gh" :disabled="isDisabled4" ref='belongBusiness' placeholder="非必填"/>
                 <p class='warn' ref='warnbelongBusiness' v-show='true'>{{warnbelongBusiness}}</p>
-                <span>理财师工号</span>
+                <span>财富师工号DT</span>
               </div> <!--inpBox-->
              
              <mt-button type="danger" size="large" class='sign' @click="toSignUp()">报名</mt-button>
@@ -49,20 +49,25 @@ import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';
 import getcode from '../wealth/getcode';
 import axios from 'axios'
+import { getCookie,setCookie } from '@/common/js/cookie.js'
 import { isValidMobile, isValidxincode, isValidverifycode, isValidName, isValidEmpNo } from '@/common/js/extends.js'
 export default {
     name:'toSignNewCust',
     data:function(){
         return{
             messType:'3',
-            text:'发送验证码',
+            text:'获取验证码',
             Dsiabled:false,
             warnPhone:'',
             warnCode:'',
+            gh:'',
             warnName:'',
             warnbusinessName:'',
             warnbelongBusiness:'',
+            idNo:'',//身份证
             p:1,
+            beginTime:'',
+            location:'',
             isShow:false,
             isDisabled: false,
             isDisabled2: false,
@@ -75,11 +80,12 @@ export default {
             warnShow: false,
             userPhone: '',
             phone2: '',
+            isFaceSuc:'0',//是否人脸识别成功
             param:{
                 realName: '',
                 phone: '',
-                verifiCode: '',
-                activityType: '',
+                verifiCode:'',
+                activityType:'',
                 belongBusiness: '',
                 businessName: '',
                 activeId: '',
@@ -88,7 +94,8 @@ export default {
             },
             backUrl: encodeURIComponent(location.href.split('#')[0]),
             serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxservice?opName=getUserInfo'),//接口
-            paramurl: location.href.split('?')[0]
+            paramurl: location.href.split('?')[0],
+            token:'',
         }
     },
     methods:{
@@ -110,6 +117,7 @@ export default {
                 if(retCode==0){
                     console.log(res.data.userInfo)
                     console.log(res.data.userInfo.isNewRecord)
+                    that.isFaceSuc=res.data.userInfo.authenticFlag;//实名状态
                     if(!res.data.userInfo.phone == false){
                         that.userPhone = res.data.userInfo.phone
                         var Tel = that.userPhone
@@ -119,8 +127,10 @@ export default {
                         that.isShow = true
                         that.isValid = true
                     }
+                    alert(res.data.userInfo.realName);
                     if(!res.data.userInfo.realName == false){
                         that.param.realName = res.data.userInfo.realName
+                        that.idNo= res.data.userInfo.idNo
                         that.isDisabled = true
                     }
                     if(!res.data.userInfo.businessName == false){
@@ -136,12 +146,13 @@ export default {
                         that.asyncSDKConifg(actname,busname)
                     }
                     if(!res.data.userInfo.belongBusiness == false){
-                        that.param.belongBusiness = res.data.userInfo.belongBusiness
+                        var gh=res.data.userInfo.belongBusiness;
+                        that.gh=gh.substr(2,7);
                         that.isDisabled4 = true;
                     }
                 }else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=toSignNewCust#wechat_redirect';
+                window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=toSignNewCust#wechat_redirect';
                 }else{
                     MessageBox('提示',retMsg);
                 }
@@ -160,19 +171,25 @@ export default {
                 this.isValid = false
             }else{
                 this.$refs.warnPhone.style.display='none';
+                this.Dsiabled = true;
                // this.$refs.phone.style='border-bottom:0.5px solid #efefef!important';
                 this.isValid = true
             } 
         },//验证手机号
         getM:function(){
+            this.Dsiabled = true;
             if(this.phoneFn()){
                this.Dsiabled = true
+            }else{
+                this.Dsiabled = false
             }
+
             if(this.userPhone == ''){
                 this.param.phone == this.phone2 
             }else{
                 this.param.phone = this.userPhone
             }
+
             this.$refs.c1.getCodeFn(this.messType,this.param.phone);
         },
         warnCodeFunction:function(warn){
@@ -186,9 +203,13 @@ export default {
            }
         },
          childByValue:function(v){
-            //console.log(v)
-            this.text=v.time;
-           // console.log(v.time)
+            if(v.time!='重新发送'&&v.time!='获取验证码'){
+                this.text=v.time+'s';
+            }else if(v.time==NaN||v.time==undefined||v.time=='NANs'){
+                this.text='重新发送';
+            }else{
+                this.text=v.time
+            }
            this.Dsiabled=v.btnDsiabled;
           
           
@@ -230,7 +251,7 @@ export default {
             }
         },//验证财富师姓名
         belongBusinessFn:function(){
-            if(!isValidEmpNo(this.param.belongBusiness)){
+            if(!isValidEmpNo(this.gh)){
                 this.$refs.warnbelongBusiness.style.display='block';
                 this.warnbelongBusiness='请输入正确的财富师工号';
                 //this.$refs.belongBusiness.style='border-bottom:0.5px solid #df1e1d!important';
@@ -239,24 +260,103 @@ export default {
                 //this.$refs.belongBusiness.style='border-bottom:0.5px solid #efefef!important';
             }
         },//验证财富师工号
-        changeP:function(){
-             this.$router.push({
-                path:'/changephone',
-                name:'changephone',
+        face:function(){
+            alert('拉新face');
+            var that=this;
+            var idCardNo=that.idNo;
+            var idCardName=that.param.realName;
+            alert(that.location)
+            var canshu='changeForm=toSignNewCust&isReviewSignup='+that.param.isReviewSignup+'&activityType='+that.param.activityType+'&activeId='+that.param.activeId+'&actName='+encodeURIComponent(that.param.actName)+'&isFace=1&beginTime='+that.beginTime+'&location='+encodeURIComponent(that.location);
+            alert(canshu);
+            alert(idCardNo+idCardName);
+            Indicator.open();
+            axios({
+                method:'get',
+                url:'/wxservice/wxMemberInfo/getFaceToken',//ning
                 params:{
+                    idCardNo:idCardNo,//身份证号
+                    idCardName:idCardName,//身份证姓名
+                    returnUrl:that.Host+'weixin-h5/index.html#/changePhone?'+canshu,//人脸识别后返回的Url
+                    backUrl: location.href.split('?')[0]
                 }
             })
+            .then(function(res) {//成功之后
+                Indicator.close();
+                console.log(res.data);
+                var retCode=res.data.retCode;
+                alert(retCode);
+                 if(retCode == 400){
+                     var serbackUrl = that.Host+'wxservice/wxMemberInfo/getFaceToken'
+                     window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=faceMsg#wechat_redirect';
+                 }else if(retCode == '-2'){
+                     MessageBox('提示','身份证不合法');
+                     return;
+                 }else if(retCode == '-1'){
+                     MessageBox('提示','系统异常');
+                     return;
+                 }else if(retCode == '-3'){
+                     MessageBox('提示','未获取到token');
+                     return;
+                 }else{
+                     that.token=res.data.data.token;
+                     var bizId=res.data.data.bizId;
+                     alert(bizId);
+                     setCookie('bizId',bizId);
+                     window.location.href='https://api.megvii.com/faceid/lite/do?token='+that.token;
+                
+                 }
+            })
+        },
+        changeP:function(){
+            var that=this;
+            //人脸
+            alert('拉新修改密码')
+            if(that.isFaceSuc==1){
+                that.face();//去人脸
+            }else{
+                //去修改手机号；
+                this.$router.push({
+                    path:'/changephone',
+                    name:'changephone',
+                    query:{
+                        changeForm:'toSignNewCust',
+                        isReviewSignup : that.param.isReviewSignup,//是否需要审核
+                        activityType : that.param.activityType,
+                        activeId : that.param.activeId,
+                        actName : that.param.actName,
+                        beginTime:that.beginTime,
+                        location :that.location,
+                    }
+                })
+            }
+
+
+
+
+
+
+
+
+
+
+           
         },
         toSignUp:function(){
+            alert('拉新');
+            this.phoneFn();
+            this.realnameFn();
+            this.codeFn();
             if(!this.isValid || !this.isValid2 || !this.isValid3){
-                console.log(this.isValid)
-              this.phoneFn();
-              this.realnameFn();
-                this.codeFn();
+                return;
             }else{
-                Indicator.open(this.loadObj);
+                Indicator.open();
                 let that = this;
-                console.log(that.param)
+                console.log(that.param);
+                if(!that.gh==false){
+                    that.param.belongBusiness='DT'+that.gh;
+                }else{
+                    that.param.belongBusiness=that.gh;
+                }
                 axios({
                     method:'get',
                     url:'/wxservice/wxservice?opName=toSignUp',
@@ -266,20 +366,61 @@ export default {
                 })
                 .then(function(res) {//成功之后
                     Indicator.close();
-                    console.log(res.data)
                     var retCode=res.data.retCode;
                     var retMsg=res.data.retMsg;
-                    if(retCode != 0){
-                        console.log(retMsg);
-                        MessageBox('提示',retMsg);
-                    }else if(retCode == 0){   
-                        console.log(that.param.isReviewSignup)
+                    alert(retCode);
+                    if(retCode== 1){
+                        MessageBox('提示','验证码错误');
+                    }else if(retCode== 2){
+                        MessageBox('提示','推送crm系统错误');
+                    }else if(retCode== -1){
+                        MessageBox('提示','系统异常');  
+                    }else if(retCode== -2){
+                        MessageBox('提示','绑定手机号出错');
+                    }else if(retCode== -3){
+                        MessageBox('提示','已绑定线上财富师');
+                    }else if(retCode== -4){
+                        MessageBox('提示','已绑定线下财富师');
+                    }else if(retCode== -5){
+                        MessageBox('提示','财富师工号不存在');
+                    }else if(retCode== -6){
+                        MessageBox('提示','财富师已离职');
+                    }else if(retCode==3){
+                            var crmInfo=res.data.crmInfo;
+                            if(crmInfo.retCode==1){
+                                MessageBox('提示','报名失败，系统错误');
+                            }else if(crmInfo.retCode==3){
+                                MessageBox('提示','此活动已举办');
+                            }else if(crmInfo.retCode==4){
+                                MessageBox('提示','此活动已取消');
+                            }else if(crmInfo.retCode==5){
+                                MessageBox('提示','此活动报名已结束');
+                            }else if(crmInfo.retCode==6){
+                                MessageBox('提示','您已经报过名');
+                            }else if(crmInfo.retCode==7){
+                                MessageBox('提示','客户性质传入值错误');
+                            }else if(crmInfo.retCode==8){
+                                MessageBox('提示','此客户为老客户，请联系此客户专属财富师进行报名');
+                            }else if(crmInfo.retCode==9){
+                                MessageBox('提示','此活动已结束');
+                            }else if(crmInfo.retCode==10){
+                                MessageBox('提示','活动不存在');
+                            }else if(crmInfo.retCode==11){
+                                MessageBox('提示','此财富师不存在');
+                            }
+                            return;
+                    }else if(retCode == 0){ 
+                         alert(that.location+'传入成功也')
                         that.$router.push({
-                            path: '/signSuc',
+                            path: '/signSuc',//
                             name: 'signSuc',
-                            params:{
-                                isReviewSignup: that.param.isReviewSignup,
-                                activeId: that.param.activeId
+                            query:{
+                                isReviewSignup:that.param.isReviewSignup,
+                                activeId: that.param.activeId,
+                                activeId:that.param.activeId,
+                                actName:encodeURIComponent(that.param.actName),
+                                beginTime:that.beginTime,
+                                location :encodeURIComponent(that.location),
                             }
                         })
                     }
@@ -340,10 +481,13 @@ export default {
     },
     created(){
         Indicator.open(this.loadObj);
-        this.param.isReviewSignup = this.$route.params.isReviewSignup;
-        this.param.activityType = this.$route.params.activityType;
-        this.param.activeId = this.$route.params.activeId;
-        this.param.actName = this.$route.params.actName;
+        this.param.isReviewSignup = this.$route.query.isReviewSignup;
+        this.param.activityType = this.$route.query.activityType;
+        this.param.activeId = this.$route.query.activeId;
+        this.param.actName = decodeURIComponent(this.$route.query.actName);
+        this.beginTime = this.$route.query.beginTime;
+        this.location = decodeURIComponent(this.$route.query.location);
+        alert(this.location+'拉新creat');
         this.getData()
     },
     components:{Button,getcode,Field}//使用mint-ui的button的组件

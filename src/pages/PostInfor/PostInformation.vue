@@ -3,7 +3,7 @@
         <div ref='hasData'>
             <div class='postOne'v-for='item in items' v-bind:fileUrl='item.fileurl' @click='open'>
                 <p class='title'>{{item.filename}}</p>
-                <p><span class='text'>{{item.prodName}}prodName</span><span class='date'>{{item.publishtime}}</span></p>
+                <p><span class='text'>{{item.prodName}}</span><span class='date'>{{(item.publishtime)}}</span></p>
             </div>   <!--postOne -->
         </div>
         <div class='noData' ref='nodata' style='display:none;'>
@@ -21,6 +21,7 @@
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
 import axios from 'axios'
+import { getCookie,setCookie } from '@/common/js/cookie.js'
 export default {
     name:'postInfor',
     data:function(){
@@ -39,11 +40,15 @@ export default {
     },
     components:{MessageBox},
     methods:{
+        time:function(t){
+            t=t.substr(0,10);
+            return t;
+        },
         rz:function(){//去实名认证
             this.$router.push({
                     path:'/faceMsg',
                     name:'faceMsg',
-                    params:{
+                    query:{
                         returnUrl:this.Host+'weixin-h5/index.html#/PostInformation'
                     }
                 })
@@ -60,18 +65,23 @@ export default {
                 var retCode=res.data.retCode;
                 if(retCode == '0'){
                     MessageBox('提示','人脸识别成功');
+                    that.getList();//获取数据
                     return;
                 }else if(retCode == '-2'){
                     MessageBox('提示','该身份证已绑定其他手机号');
+                    that.$refs.wz.style.display='block';
                     return;
                 }else if(retCode == '-1'){
                     MessageBox('提示','系统异常');
+                    that.$refs.wz.style.display='block';
                     return;
                 }else if(retCode == '-3'){
                     MessageBox('提示','人脸识别未通过');
+                    that.$refs.wz.style.display='block';
                     return;
                 }else if(retCode == '-4'){
                     MessageBox('提示','未查询到人脸识别结果');
+                    that.$refs.wz.style.display='block';
                     return;
                 }
             })
@@ -89,25 +99,29 @@ export default {
                 Indicator.close();
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
-                 console.log(res.data);
-                if(retCode==-1){
+                 if(retCode==0){
+                    if(res.data.itemList.length<1){
+                        that.$refs.nodata.style.display='block';
+                        that.$refs.hasData.style.display='none';
+                    }else{
+                        that.$refs.nodata.style.display='none';
+                        that.$refs.hasData.style.display='block';
+                    }
+                    that.items=res.data.itemList;
+                 }else if(retCode==-1){
                     MessageBox('提示', '系统错误');
                    return;
                 }else if(retCode==-2){
-                     MessageBox('提示','您还没有购买任何产品哦~');
+                    that.$refs.nodata.style.display='block';
+                    that.$refs.hasData.style.display='none';
+                     //MessageBox('提示','您还没有购买任何产品哦~');
                 }else if(retCode==1){//未认证
                      that.$refs.wz.style.display='block';
                         return;
-                }
-                else if(retCode == 400){
+                }else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=queryPublishInfo'
-                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=PostInformation#wechat_redirect';
+                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=PostInformation#wechat_redirect';
                 }
-                if(that.items.length<1){
-                     that.$refs.nodata.style.display='block';
-                     that.$refs.hasData.style.display='none';
-                }
-                that.items=res.data.itemList;
             });
         },
         open:function(){
@@ -116,15 +130,17 @@ export default {
         }
     },
     created:function(){
-        var bizId=localStorage.getItem('bizId');
-        this.faceparam.bizId = bizId
-        if(!this.$route.query.faceResult == false){
-           this.getfaceId()
-        }
         var that=this;
-         Indicator.open(that.loadObj);
-         that.getList();
-        
+        var bizId=decodeURIComponent(getCookie("bizId"));
+            if(!this.$route.query.faceResult == false){
+                Indicator.open(that.loadObj);
+                this.faceparam.bizId = bizId;
+                this.getfaceId();
+                 return;
+            }else{
+                  Indicator.open(that.loadObj);
+                  that.getList();
+            }
     }
 }
 </script>
@@ -147,6 +163,7 @@ export default {
     text-overflow: ellipsis;
     color:rgb(59,59,59);
     font-size:15px;
+    height:20px;
     text-align: left;
     margin-bottom:18px;
     
