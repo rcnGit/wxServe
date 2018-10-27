@@ -177,7 +177,12 @@ export default {
                 }else if(retCode=='-3'){//请发送验证码
                      MessageBox('提示','请发送验证码');
                 }else if(retCode=='-4'){//该手机号已绑定别的账号,无法重复绑定
-                    MessageBox('提示','该手机号已绑定别的账号,无法重复绑定');
+                   // MessageBox('提示','该手机号已绑定别的账号,无法重复绑定');
+                   MessageBox({
+                        title: '',
+                        message: '该手机号已绑定其他账号，无法重复绑定。如有疑问请咨询客服：400-819-9868',
+                        confirmButtonText: '我知道了'
+                    });
                 }
                  else if(retCode == 400){
                      var serbackUrl = that.Host+'wxservice/wxMemberInfo/changeMobile'

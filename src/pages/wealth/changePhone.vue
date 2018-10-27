@@ -197,8 +197,13 @@ export default {
                 }else if(retCode=='-3'){//请发送验证码
                      MessageBox('提示','请发送验证码');
                 }else if(retCode=='-4'){//该手机号已绑定别的账号,无法重复绑定
-                     MessageBox('提示','该手机号已绑定别的账号,无法重复绑定');
-                }
+                     //MessageBox({'提示','该手机号已绑定其他账号，无法重复绑定。如有疑问请咨询客服：400-819-9868',confirmButtonText});
+                     MessageBox({
+                        title: '',
+                        message: '该手机号已绑定其他账号，无法重复绑定。如有疑问请咨询客服：400-819-9868',
+                        confirmButtonText: '我知道了'
+                    });
+                 }
                  else if(retCode == 400){
                      var serbackUrl = that.Host+'wxservice/wxMemberInfo/changeMobile'
                  window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=changePhone#wechat_redirect';
@@ -253,70 +258,94 @@ export default {
                       }
                   });
                     return;
-                }else if(retCode == '-1'){
-                    MessageBox('提示','系统异常').then(action => {
-                      if(action == 'confirm'){
-                        that.$router.push({
-                            path:'/'+that.changeForm,
-                            name:that.changeForm,
-                            query:{
-                                changeForm:that.changeForm,
-                                isReviewSignup:that.isReviewSignup,
-                                activityType:that.activityType,
-                                activeId:that.activeId,
-                                actName:that.actName,
-                                beginTime:that.beginTime,
-                                location:that.location,
-                            }
-                        })
-                       }else{//取消
-                        return false;
-                      }
-                  });
-                    return;
-                }else if(retCode == '-3'){
-                    MessageBox('提示','人脸识别未通过').then(action => {
-                      if(action == 'confirm'){
-                        that.$router.push({
-                            path:'/'+that.changeForm,
-                            name:that.changeForm,
-                            query:{
-                                changeForm:that.changeForm,
-                                isReviewSignup:that.isReviewSignup,
-                                activityType:that.activityType,
-                                activeId:that.activeId,
-                                actName:that.actName,
-                                beginTime:that.beginTime,
-                                location:that.location,
-                            }
-                        })
-                       }else{//取消
-                        return false;
-                      }
-                  });
-                    return;
-                }else if(retCode == '-4'){
-                    MessageBox('提示','未查询到人脸识别结果').then(action => {
-                      if(action == 'confirm'){
-                        that.$router.push({
-                            path:'/'+that.changeForm,
-                            name:that.changeForm,
-                            query:{
-                                changeForm:that.changeForm,
-                                isReviewSignup:that.isReviewSignup,
-                                activityType:that.activityType,
-                                activeId:that.activeId,
-                                actName:that.actName,
-                                beginTime:that.beginTime,
-                                location:that.location,
-                            }
-                        })
-                       }else{//取消
-                        return false;
-                      }
-                  });
+                }else{
+                    var message = '人脸识别实名认证失败，请重试。若无法完成人脸识别实名认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成实名认证后报名活动。'
+                    MessageBox.confirm('', {
+                        message: message,
+                        title: '',
+                        showConfirmButton:true,
+                        confirmButtonClass:'confirmButton',
+                        confirmButtonText:'重试',
+                    }).then(action => {
+                        if(action == 'confirm'){
+                                //跳转财富师名片页面
+                            that.$router.push({
+                                path:'/faceMsg',
+                                name:'faceMsg',
+                                query:{
+                                returnUrl:returnUrl,
+                                }
+                            })
+                        }
+                    }).catch(() => {
+                        
+                    })
                     return;
                 }
+            //     else if(retCode == '-1'){
+            //         MessageBox('提示','系统异常').then(action => {
+            //           if(action == 'confirm'){
+            //             that.$router.push({
+            //                 path:'/'+that.changeForm,
+            //                 name:that.changeForm,
+            //                 query:{
+            //                     changeForm:that.changeForm,
+            //                     isReviewSignup:that.isReviewSignup,
+            //                     activityType:that.activityType,
+            //                     activeId:that.activeId,
+            //                     actName:that.actName,
+            //                     beginTime:that.beginTime,
+            //                     location:that.location,
+            //                 }
+            //             })
+            //            }else{//取消
+            //             return false;
+            //           }
+            //       });
+            //         return;
+            //     }else if(retCode == '-3'){
+            //         MessageBox('提示','人脸识别未通过').then(action => {
+            //           if(action == 'confirm'){
+            //             that.$router.push({
+            //                 path:'/'+that.changeForm,
+            //                 name:that.changeForm,
+            //                 query:{
+            //                     changeForm:that.changeForm,
+            //                     isReviewSignup:that.isReviewSignup,
+            //                     activityType:that.activityType,
+            //                     activeId:that.activeId,
+            //                     actName:that.actName,
+            //                     beginTime:that.beginTime,
+            //                     location:that.location,
+            //                 }
+            //             })
+            //            }else{//取消
+            //             return false;
+            //           }
+            //       });
+            //         return;
+            //     }else if(retCode == '-4'){
+            //         MessageBox('提示','未查询到人脸识别结果').then(action => {
+            //           if(action == 'confirm'){
+            //             that.$router.push({
+            //                 path:'/'+that.changeForm,
+            //                 name:that.changeForm,
+            //                 query:{
+            //                     changeForm:that.changeForm,
+            //                     isReviewSignup:that.isReviewSignup,
+            //                     activityType:that.activityType,
+            //                     activeId:that.activeId,
+            //                     actName:that.actName,
+            //                     beginTime:that.beginTime,
+            //                     location:that.location,
+            //                 }
+            //             })
+            //            }else{//取消
+            //             return false;
+            //           }
+            //       });
+            //         return;
+            //     }
             })
             .catch(function(){
                 MessageBox('提示','获取信息失败').then(action => {
@@ -380,5 +409,8 @@ export default {
     color:#999;
     line-height:30px;
  }
+ .xiazai{
+    color:#4a90e2;
+}
 </style>
 

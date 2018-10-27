@@ -82,18 +82,55 @@ export default {
                     });
                     return;
                 }else if(retCode == '-2'){
-                   MessageBox('提示','该身份证已绑定其他手机号');
+                    MessageBox('提示','该身份证已绑定其他手机号').then(action => {
+                      if(action == 'confirm'){
+                       //跳转财富师名片页面
+                        that.$router.push({
+                            path:'/faceMsg',
+                            name:'faceMsg',
+                            query:{
+                            returnUrl:returnUrl,
+                            }
+                        })
+                      }else{//取消
+                        console.log('查看订单')
+                      }
+                  });//提示信息
                     return;
-                }else if(retCode == '-1'){
-                    MessageBox('提示','系统异常')                    
-                    return;
-                }else if(retCode == '-3'){
-                    MessageBox('提示','人脸识别未通过');
-                    return;
-                }else if(retCode == '-4'){
-                    MessageBox('提示','未查询到人脸识别结果');
+                }else{
+                    var message = '人脸识别实名认证失败，请重试。若无法完成人脸识别实名认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成实名认证后报名活动。'
+                    MessageBox.confirm('', {
+                        message: message,
+                        title: '',
+                        showConfirmButton:true,
+                        confirmButtonClass:'confirmButton',
+                        confirmButtonText:'重试',
+                    }).then(action => {
+                        if(action == 'confirm'){
+                                //跳转财富师名片页面
+                            that.$router.push({
+                                path:'/faceMsg',
+                                name:'faceMsg',
+                                query:{
+                                returnUrl:returnUrl,
+                                }
+                            })
+                        }
+                    }).catch(() => {
+                        
+                    })
                     return;
                 }
+                // else if(retCode == '-1'){
+                //     MessageBox('提示','系统异常')                    
+                //     return;
+                // }else if(retCode == '-3'){
+                //     MessageBox('提示','人脸识别未通过');
+                //     return;
+                // }else if(retCode == '-4'){
+                //     MessageBox('提示','未查询到人脸识别结果');
+                //     return;
+                // }
             })
         },
         pming:function(){
@@ -235,6 +272,9 @@ html{
 .int_gg{
     margin:0 20px;
     color:#707070;
+}
+.xiazai{
+    color:#4a90e2;
 }
 </style>
 

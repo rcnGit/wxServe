@@ -119,7 +119,27 @@ export default {
                 MessageBox('提示','您的实名信息已绑定其他微信无法重复绑定，如有疑问请拨打客服电话：400-819-9868');
                 return;
             }else if(retCode == '-5'){
-                MessageBox('提示','手机号与已实名的手机号不一致');
+               // MessageBox('提示','手机号与已实名的手机号不一致');
+               var message = '尊敬的客户，您当前绑定手机号与实名信息绑定手机号不一致，请更换一致后再进行身份认证。<br>PS：若想更换实名信息绑定手机号请去'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">大唐财富APP</a>'+'更换'
+                    MessageBox.confirm('', {
+                        message: message,
+                        title: '',
+                        showConfirmButton:true,
+                        confirmButtonClass:'confirmButton',
+                        confirmButtonText:'去更换',
+                    }).then(action => {
+                        if(action == 'confirm'){
+                            this.$router.push({
+                            path:'/changephone',
+                            name:'changephone',
+                            query:{
+                                changeForm:'faceMsg'
+                            }
+                        })
+                        }
+                    }).catch(() => {
+                        
+                    })
                 return;
             }else{
                 that.token=res.data.data.token;
@@ -182,7 +202,9 @@ export default {
      /* padding-top:15px; */
      background: #fff;
  }
- 
+ .mint-msgbox-message{
+     text-align: left
+ }
  .inpBox{
     margin-bottom: 20px;
    
@@ -198,5 +220,8 @@ export default {
  .next{
      width:90%;
     margin: 50px auto;
+ }
+ .xiazai{
+    color:#4a90e2;
  }
 </style>
