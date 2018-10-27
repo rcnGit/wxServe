@@ -1,5 +1,5 @@
 <template>
-    <div id=''>
+    <div id='activeCheckin'>
         <div v-if='ifCheckin'>
             <div class='content'>
                 <div class='tip'>
@@ -36,7 +36,7 @@
                 </div>
             </div> <!--pop_contant -->
             </mt-popup>  
-        <div>
+        </div>
     </div>
 </template>
 <script>
@@ -99,7 +99,6 @@ export default {
                 var retMsg=res.data.retMsg;
                 if(retCode == 0){
                     that.subscribe=res.data.userInfo.subscribe;//是否关注
-                    alert( that.subscribe+'==== that.subscribe')
                     if(that.subscribe==0){//未关注
                         //调连接扫二维码；
                         that.getErweima();

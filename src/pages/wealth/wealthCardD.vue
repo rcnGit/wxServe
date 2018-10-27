@@ -20,6 +20,7 @@
 import axios from 'axios';
 import { MessageBox } from 'mint-ui';//提示框
 import { Indicator } from 'mint-ui';
+import { Toast } from 'mint-ui';
 export default {
     name:'wealthCardD',
     data:function(){
@@ -55,7 +56,12 @@ export default {
                     var serbackUrl = that.Host+'wxservice/wxMemberInfo/checkApplyWealther'
                     window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=wealthCardD#wechat_redirect';
                 }else{//系统异常
-                     MessageBox('提示', retMsg);
+                    // MessageBox('提示', retMsg);
+                     Toast({
+                        message: retMsg,
+                        position: 'center',
+                        duration: 3000
+                    });
                 }
             })
     },

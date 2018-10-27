@@ -5,6 +5,7 @@
 <script>
 import axios from 'axios'
 import { MessageBox } from 'mint-ui';
+import { Toast } from 'mint-ui';
 import cgetcod from './getcode'
 export default {
     name:'getcode',
@@ -73,7 +74,12 @@ export default {
                   var message = retMsg;
                   that.ex.time='获取验证码';
                   that.$emit('childByValue',that.ex);//传到调用页面
-                   MessageBox('提示',message);
+                 //  MessageBox('提示',message);
+                 Toast({
+                        message: message,
+                        position: 'center',
+                        duration: 3000
+                    });
                 }else if(retCode == -2){
                     that.ex.time='获取验证码';
                     that.$emit('childByValue',that.ex);//传到调用页面
