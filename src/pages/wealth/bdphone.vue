@@ -173,26 +173,11 @@ export default {
                        //取消按钮
                     })
                 }else if(retCode=='-2'){//验证码不正确
-                    // MessageBox('提示','验证码不正确');
-                     Toast({
-                        message: '验证码不正确',
-                        position: 'center',
-                        duration: 3000
-                    });
+                    MessageBox('提示','验证码不正确');
                 }else if(retCode=='-3'){//请发送验证码
-                    // MessageBox('提示','请发送验证码');
-                     Toast({
-                        message: '请发送验证码',
-                        position: 'center',
-                        duration: 3000
-                    });
+                     MessageBox('提示','请发送验证码');
                 }else if(retCode=='-4'){//该手机号已绑定别的账号,无法重复绑定
-                    // MessageBox('提示','该手机号已绑定别的账号,无法重复绑定');
-                     Toast({
-                        message: '该手机号已绑定别的账号,无法重复绑定',
-                        position: 'center',
-                        duration: 3000
-                    });
+                    MessageBox('提示','该手机号已绑定别的账号,无法重复绑定');
                 }
                  else if(retCode == 400){
                      var serbackUrl = that.Host+'wxservice/wxMemberInfo/changeMobile'

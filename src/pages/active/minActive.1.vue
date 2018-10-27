@@ -45,6 +45,7 @@
 <script>
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
+import { Toast } from 'mint-ui';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import axios from 'axios';
 import { getCookie,setCookie } from '@/common/js/cookie.js'
@@ -127,7 +128,12 @@ export default {
                     window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=minActive#wechat_redirect';
                 }else{
                     that.isShow = true
-                    MessageBox('提示', retMsg);
+                    //MessageBox('提示', retMsg);
+                    Toast({
+                        message: retMsg,
+                        position: 'center',
+                        duration: 3000
+                    });
                     return;
                 }
                 

@@ -233,19 +233,9 @@ export default {
                             }
                         })
                     }else if(retCode==-2){
-                        //MessageBox('提示', '验证码不正确');
-                        Toast({
-                        message: '验证码不正确',
-                        position: 'center',
-                        duration: 3000
-                    });
+                        MessageBox('提示', '验证码不正确');
                     }else if(retCode==-3){
-                        //MessageBox('提示', '请发送验证码');
-                        Toast({
-                        message: '请发送验证码',
-                        position: 'center',
-                        duration: 3000
-                    });
+                        MessageBox('提示', '请发送验证码');
                     }else if(retCode == 400){
                          var serbackUrl = that.Host+'wxservice/wxMemberInfo/applyWealther'
                          window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=onlineApply#wechat_redirect';

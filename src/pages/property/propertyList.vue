@@ -67,6 +67,7 @@
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
+import { Toast } from 'mint-ui';
 import { getCookie,setCookie } from '@/common/js/cookie.js'
 import axios from 'axios';
 export default {
@@ -122,7 +123,12 @@ export default {
                 var retCode=res.data.retCode;
                 alert(retCode);
                 if(retCode == '0'){
-                    MessageBox('提示','人脸识别成功');
+                    //MessageBox('提示','人脸识别成功');
+                    Toast({
+                        message: '人脸识别成功',
+                        position: 'center',
+                        duration: 3000
+                    });
                      that.getList();
                     return;
                 }else if(retCode == '-2'){
@@ -130,7 +136,12 @@ export default {
                     that.$refs.wz.style.display='block'; 
                     return;
                 }else if(retCode == '-1'){
-                    MessageBox('提示','系统异常');
+                    //MessageBox('提示','系统异常');
+                    Toast({
+                        message: '系统异常',
+                        position: 'center',
+                        duration: 3000
+                    });
                     that.$refs.wz.style.display='block';
                     return;
                 }else if(retCode == '-3'){
@@ -169,7 +180,12 @@ export default {
                         that.$refs.wz.style.display='block';
                         return;
                     }else if(retCode==-1){//系统异常
-                        MessageBox('提示', '系统异常');
+                       // MessageBox('提示', '系统异常');
+                        Toast({
+                            message: '系统异常',
+                            position: 'center',
+                            duration: 3000
+                        });
                     }else if(retCode == 400){
                         var serbackUrl = that.Host+'wxservice/wxMemberInfo/getUserAsset?v='+(new Date()).getTime();
                       window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=propertyList#wechat_redirect';

@@ -20,6 +20,7 @@
 <script>
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
+import { Toast } from 'mint-ui';
 import axios from 'axios'
 import { getCookie,setCookie } from '@/common/js/cookie.js'
 export default {
@@ -64,7 +65,12 @@ export default {
                 console.log(res.data);
                 var retCode=res.data.retCode;
                 if(retCode == '0'){
-                    MessageBox('提示','人脸识别成功');
+                   // MessageBox('提示','人脸识别成功');
+                    Toast({
+                        message: '人脸识别成功',
+                        position: 'center',
+                        duration: 3000
+                    });
                     that.getList();//获取数据
                     return;
                 }else if(retCode == '-2'){
@@ -72,7 +78,12 @@ export default {
                     that.$refs.wz.style.display='block';
                     return;
                 }else if(retCode == '-1'){
-                    MessageBox('提示','系统异常');
+                    //MessageBox('提示','系统异常');
+                    Toast({
+                        message: '系统异常',
+                        position: 'center',
+                        duration: 3000
+                    });
                     that.$refs.wz.style.display='block';
                     return;
                 }else if(retCode == '-3'){
@@ -109,7 +120,12 @@ export default {
                     }
                     that.items=res.data.itemList;
                  }else if(retCode==-1){
-                    MessageBox('提示', '系统错误');
+                   // MessageBox('提示', '系统错误');
+                    Toast({
+                        message: '系统错误',
+                        position: 'center',
+                        duration: 3000
+                    });
                    return;
                 }else if(retCode==-2){
                     that.$refs.nodata.style.display='block';

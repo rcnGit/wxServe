@@ -159,7 +159,7 @@ export default {
                 alert(retCode);
                 var returnUrl = that.$route.query.returnUrl;
                 if(retCode == '0'){
-                    MessageBox('提示','人脸识别成功');
+                   // MessageBox('提示','人脸识别成功');
                     Toast({
                         message: '人脸识别成功',
                         position: 'center',
@@ -438,26 +438,11 @@ export default {
                     }
                     })
               }else if(retCode==-5){
-                  //MessageBox('提示','财富师姓名或工号输入有误');
-                  Toast({
-                        message: '财富师姓名或工号输入有误',
-                        position: 'center',
-                        duration: 3000
-                    });
+                  MessageBox('提示','财富师姓名或工号输入有误');
               }else if(retCode==-6){
-                 // MessageBox('提示','财富师已离职');
-                  Toast({
-                        message: '财富师已离职',
-                        position: 'center',
-                        duration: 3000
-                    });
+                  MessageBox('提示','财富师已离职');
               }else if(retCode==-3){
-                 // MessageBox('提示','您已绑定财富师');
-                  Toast({
-                        message: '您已绑定财富师',
-                        position: 'center',
-                        duration: 3000
-                    });
+                  MessageBox('提示','您已绑定财富师');
               }else if(retCode==-1){
                  // MessageBox('提示','系统错误');
                   Toast({
@@ -529,12 +514,7 @@ export default {
                     }else if(retCode==-1){//-1-系统异常
                         MessageBox.confirm('系统异常，请联系客服', '');
                     }else if(retCode==-3){//-3-已绑定线上财富师
-                         //MessageBox('提示', '已绑定线上财富师');
-                         Toast({
-                            message: '已绑定线上财富师',
-                            position: 'center',
-                            duration: 3000
-                        });
+                         MessageBox('提示', '已绑定线上财富师');
                     }else if(retCode==-4){//-4-已绑定线下财富师（data为已绑定的财富是信息）
                        that.$refs.pop_wealth2.style.display='block';
                        that.$refs.pop_wealth.style.display='none';

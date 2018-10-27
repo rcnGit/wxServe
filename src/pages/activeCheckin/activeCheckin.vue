@@ -44,6 +44,7 @@ import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { Field } from 'mint-ui';
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';
+import { Toast } from 'mint-ui';
 import { Popup } from 'mint-ui';//底部出来的弹框；
 import getcode from '../wealth/getcode';
 import axios from 'axios'
@@ -136,7 +137,12 @@ export default {
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
                 window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=activeCheckin_'+that.param.actId+'#wechat_redirect';
                 }else{
-                    MessageBox('提示',retMsg);
+                   // MessageBox('提示',retMsg);
+                    Toast({
+                        message: retMsg,
+                        position: 'center',
+                        duration: 3000
+                    });
                 }
             });
         },
@@ -285,7 +291,12 @@ export default {
                     })
                 }else{
                     console.log(retMsg);
-                    MessageBox('提示',retMsg);
+                    //MessageBox('提示',retMsg);
+                    Toast({
+                        message: retMsg,
+                        position: 'center',
+                        duration: 3000
+                    });
                 }
             });
         }

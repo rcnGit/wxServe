@@ -82,36 +82,16 @@ export default {
                     });
                     return;
                 }else if(retCode == '-2'){
-                   // MessageBox('提示','该身份证已绑定其他手机号');
-                   Toast({
-                        message: '该身份证已绑定其他手机号',
-                        position: 'center',
-                        duration: 3000
-                    });
+                   MessageBox('提示','该身份证已绑定其他手机号');
                     return;
                 }else if(retCode == '-1'){
-                    //MessageBox('提示','系统异常');
-                    Toast({
-                        message: '系统异常',
-                        position: 'center',
-                        duration: 3000
-                    });
+                    MessageBox('提示','系统异常')                    
                     return;
                 }else if(retCode == '-3'){
-                   // MessageBox('提示','人脸识别未通过');
-                   Toast({
-                        message: '人脸识别未通过',
-                        position: 'center',
-                        duration: 3000
-                    });
+                    MessageBox('提示','人脸识别未通过');
                     return;
                 }else if(retCode == '-4'){
-                   // MessageBox('提示','未查询到人脸识别结果');
-                   Toast({
-                        message: '未查询到人脸识别结果',
-                        position: 'center',
-                        duration: 3000
-                    });
+                    MessageBox('提示','未查询到人脸识别结果');
                     return;
                 }
             })

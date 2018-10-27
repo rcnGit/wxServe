@@ -27,6 +27,7 @@
 import { Indicator } from 'mint-ui';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { MessageBox } from 'mint-ui';//提示框
+import { Toast } from 'mint-ui';
 import { isValidIdCardNo,isValidName} from '@/common/js/extends.js'
 import { getCookie,setCookie } from '@/common/js/cookie.js'
 import axios from 'axios';
@@ -99,10 +100,20 @@ export default {
                 MessageBox('提示','身份证不合法');
                 return;
             }else if(retCode == '-1'){
-                MessageBox('提示','系统异常');
+               // MessageBox('提示','系统异常');
+                Toast({
+                    message: '系统异常',
+                    position: 'center',
+                    duration: 3000
+                });
                 return;
             }else if(retCode == '-3'){
-                MessageBox('提示','当前网络不稳定，请重试');
+                //MessageBox('提示','当前网络不稳定，请重试');
+                Toast({
+                    message: '当前网络不稳定，请重试',
+                    position: 'center',
+                    duration: 3000
+                });
                 return;
             }else if(retCode == '-4'){
                 MessageBox('提示','您的实名信息已绑定其他微信无法重复绑定，如有疑问请拨打客服电话：400-819-9868');
