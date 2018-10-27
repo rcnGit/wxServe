@@ -45,7 +45,9 @@
         
     </div>
 </template>
+<script src=''></script>
 <script>
+let Base64 = require('js-base64').Base64;
 import wx from 'weixin-js-sdk';
 import { Popup } from 'mint-ui';//底部出来的弹框；
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
@@ -331,7 +333,7 @@ export default {
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 if(retCode == 0){
-                    console.log(res.data);
+                   alert(retCode);
                     that.subscribe=res.data.userInfo.subscribe;//是否关注
                     if(that.subscribe==0){//未关注
                         //调连接扫二维码；
@@ -346,13 +348,15 @@ export default {
                         // that.businesscardShow = true
                         that.belongBusiness = res.data.userInfo.belongBusiness
                         var actname = that.businessName+'邀请您参加'+that.actName
-                        var busname = '大唐财富尊享活动'+that.actName+'即将举办，机会难得，邀请你一起参加'
+                        var busname = '大唐财富尊享活动'+that.actName+'即将举办，机会难得，邀请你一起参加';
+                        alert(busname+actname);
                         that.asyncSDKConifg(actname,busname)
                     }else{
                         //that.photoT= res.data.userInfo.headImgUrl;
                         var nickName = res.data.userInfo.nickName;
                         var actname = nickName+'邀请您参加'+that.actName;
                         var busname = '大唐财富尊享活动'+that.actName+'即将举办，要一起参加吗？'
+                         alert(busname+actname);
                         that.asyncSDKConifg(actname,busname)
                     } 
                     return;
@@ -371,12 +375,15 @@ export default {
         },
         getPhoto:function(){
             let that = this;
-            alert(that.$route.query.ghT+'=that.$route.query.ghT')
+            alert(that.$route.query.ghT+'=that.$route.query.ghT');
+            var param=Base64.encode("{'userId':'DT1603225'}");//that.user.userId
+            alert(param);
             axios({
                 method:'get',
                 url:'/tcMp/tcapi/WealthApiController/myCard',//获取客户信息
                 params: {
-                    param:that.user//系统类别
+                    param:param,//系统类别
+                    'osFlag':'3'
                 }
             })
             .then(function(res) {//成功之后
@@ -477,7 +484,6 @@ export default {
                         dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
                         success: function() {
                             // 用户确认分享后执行的回调函数
-                            alert('成功分享给朋友');
                         },
                         cancel: function() {
                             // 用户取消分享后执行的回调函数
@@ -490,7 +496,6 @@ export default {
                             imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
                             success: function() {
                                 // 用户确认分享后执行的回调函数
-                                alert('分享朋友圈');
                             },
                             cancel: function() {
                                 // 用户取消分享后执行的回调函数
@@ -542,10 +547,11 @@ export default {
              }
          }
          that.user.userId = that.$route.query.ghT;
+          that.getPhoto()
          if(!that.user.userId==false){//对方有财富师
             that.businesscardShow=true
              that.headimgShow = true;
-              that.getPhoto()
+             // that.getPhoto()
               that.headImgUrl = that.photo
               that.shareName=that.busNameT;//对方的财富师名字
          }else{
