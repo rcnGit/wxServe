@@ -480,7 +480,11 @@ export default {
         }
     },
     created(){
-        Indicator.open(this.loadObj);
+        Indicator.open();
+        if(!this.$route.query.ghT==false){
+            this.warnbelongBusiness = this.$route.query.ghT;
+            this.warnbusinessName = decodeURIComponent(this.$route.query.busNameT);
+         }
         this.param.isReviewSignup = this.$route.query.isReviewSignup;
         this.param.activityType = this.$route.query.activityType;
         this.param.activeId = this.$route.query.activeId;

@@ -52,6 +52,7 @@ export default {
     name:'minActive',
     data:function(){
         return{
+            allList:[],
             load:true,
             comefrom:'',
             loadObj:{
@@ -62,6 +63,7 @@ export default {
             iSscroll:0,
             isShow:false,
             items:[],
+            rowId:0,
             serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxMemberInfo/getCustActList'),//接口
             paramurl: location.href.split('?')[0]
         }
@@ -89,6 +91,7 @@ export default {
                 method:'get',
                 url:'/wxservice/wxMemberInfo/getCustActList',//获取我的活动    、、comefrom="tangguan"
                 params: {
+                rowId:that.rowId,//系统类别
                 backUrl: that.paramurl
                 }
             })
@@ -97,10 +100,22 @@ export default {
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 var data=res.data.data;
-                alert(retCode+'==='+data.length);
                 if(retCode==0){
-                    if(data.length>=0){
-                        that.items=data
+                    that.iSscroll = 1;
+                    //that.items=data.actList;
+                    that.rowId=data.rowId;
+                    if(that.allList!= ''||data.allList!=''){
+                        that.allList=that.allList.concat(data.actList);//把已获取的数据和新获取的数据合并在放入页面
+                        // if(that.allList.length==0||that.allList==undefined){//
+                        //     that.isShow=true;
+                        //     return;
+                        // }else{
+                        //     that.isShow=false;
+                        // }
+                        that.items=that.allList
+                        if(data.actList&&data.actList.length<10){
+                            that.load=false;
+                        }
                     }else{
                         that.isShow = true;
                     }
@@ -140,8 +155,32 @@ export default {
     created:function(){
          let that = this;
          alert('我的活动')
-          that.getdata();
+          that.getdata('create');
         // 我的活动不用人脸识别
+            window.onscroll = function(){
+                if(that.iSscroll==1){//解决上个页面滚动触发本页面滚动事件
+                    //变量scrollTop是滚动条滚动时，距离顶部的距离
+                    var scrollTop = document.documentElement.scrollTop||document.body.scrollTop;
+                    //变量windowHeight是可视区的高度
+                    var windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
+                    //变量scrollHeight是滚动条的总高度
+                    var scrollHeight = document.documentElement.scrollHeight||document.body.scrollHeight;
+                    //滚动条到底部的条件
+                    console.log(scrollTop+windowHeight==scrollHeight)
+                    if(scrollTop+windowHeight==scrollHeight){//有问题
+                    //写后台加载数据的函数
+                    console.log('到底了'+!that.load)
+                        if(!that.load){
+                            that.$refs.loader.style.display='block';
+                            return;
+                        }
+                        Indicator.open(that.loadObj);
+                        that.getdata('dd');
+                    }   
+                }else if(that.iSscroll==0){
+                    return fasle;
+                }
+            }//scroll
     }
 
 }
