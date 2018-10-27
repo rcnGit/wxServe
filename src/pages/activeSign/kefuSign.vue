@@ -516,12 +516,17 @@ export default {
     },
     components:{Button,getcode,Field},//使用mint-ui的button的组件
     created:function(){
+        Indicator.open();
         var that=this;
          var bizId=decodeURIComponent(getCookie("bizId"));
          that.params.bizId=bizId;
-      //this.getResult();
-       Indicator.open(this.loadObj);
-       alert(this.$route.query.isReviewSignup+'this.$route.query.isReviewSignup'+'====this.$route.query.activityType='+this.$route.query.activityType+'=='+this.$route.query.actName)
+         //分享方的财富师
+         if(!this.$route.query.ghT==false){
+            this.warnbelongBusiness = this.$route.query.ghT;
+            this.warnbusinessName = decodeURIComponent(this.$route.query.busNameT);
+         }
+         
+
         this.param.isReviewSignup = this.$route.query.isReviewSignup;
         this.param.activityType = this.$route.query.activityType;
         this.param.activeId = this.$route.query.activeId;

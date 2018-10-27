@@ -236,7 +236,6 @@ export default {
         },
         getData:function(){
             let that = this;
-            console.log(that.param)
             axios({
                 method:'get',
                 url:'/wxservice/wxservice?opName=getactiveinfo',//调取活动列表和详情的接口
@@ -245,13 +244,14 @@ export default {
                 }
             })
             .then(function(res) {//成功之后
-                console.log(res)
                 Indicator.close();
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
+                alert(retCode+'获取活动状态');
                 if(retCode!=0){
                     MessageBox('提示', '系统错误');
                 }else if(retCode == 0){
+                    alert(res.data.itemList.length+'===res.data.itemList.length')
                     if(res.data.itemList.length<=0){
                     // that.$refs.nodata.style.display='block';
                     that.contentShow = true
@@ -270,9 +270,9 @@ export default {
                             that.isShow=false;
                             return;
                         }
-                        // alert(res.data.actCanSignUp);
+                        alert(res.data.actCanSignUp+'====res.data.actCanSignUp');
                         if(res.data.actCanSignUp==1){//that.actStatusCode == '进行中' || that.actStatusCode == '延期中'
-                            alert(that.actStatus);
+                            
                             if(res.data.canSignUp == '0'){
                                 that.isShow = true
                                 that.actStatus= '我要报名';
@@ -307,14 +307,13 @@ export default {
             .then(function(res) {
                  Indicator.close();
                 var retCode=res.data.retCode;
-                alert(retCode+'请求弹框的状态');
                 if(retCode==0){
                     //获取二维码成功
                     var url=res.data.url;
                     that.popupVisible=true;//出现弹框
                     that.erweima=url;
                 }else{
-                    alert('获取二维码失败');
+                   
                 }
                 })//
         },
@@ -331,7 +330,6 @@ export default {
                 Indicator.close();
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
-                alert('获取客户信息'+retCode);
                 if(retCode == 0){
                     console.log(res.data);
                     that.subscribe=res.data.userInfo.subscribe;//是否关注
@@ -343,22 +341,18 @@ export default {
                     that.userphone = res.data.userInfo.phone;
                     that.realName = res.data.userInfo.realName;
                     that.paramOnly.realName=res.data.userInfo.realName;
-                    alert(!res.data.userInfo.businessName==false);
                     if(!res.data.userInfo.businessName==false){//我的财富师
                         that.businessName = '财富师'+res.data.userInfo.businessName
                         // that.businesscardShow = true
                         that.belongBusiness = res.data.userInfo.belongBusiness
                         var actname = that.businessName+'邀请您参加'+that.actName
                         var busname = '大唐财富尊享活动'+that.actName+'即将举办，机会难得，邀请你一起参加'
-                        alert(actname+'==='+busname);
                         that.asyncSDKConifg(actname,busname)
                     }else{
-                        that.photoT= res.data.userInfo.headImgUrl;
+                        //that.photoT= res.data.userInfo.headImgUrl;
                         var nickName = res.data.userInfo.nickName;
                         var actname = nickName+'邀请您参加'+that.actName;
                         var busname = '大唐财富尊享活动'+that.actName+'即将举办，要一起参加吗？'
-                        alert(actname);
-                        alert(busname);
                         that.asyncSDKConifg(actname,busname)
                     } 
                     return;
@@ -380,21 +374,23 @@ export default {
             alert(that.$route.query.ghT+'=that.$route.query.ghT')
             axios({
                 method:'get',
-                url:'/tcapi/WealthApiController/myCard',//获取客户信息
+                url:'/tcMp/tcapi/WealthApiController/myCard',//获取客户信息
                 params: {
                     param:that.user//系统类别
                 }
             })
             .then(function(res) {//成功之后
                 Indicator.close();
-                console.log(res.data)
+                alert('===财富师的信息')
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
+                alert(retCode+'===财富师的信息')
                 if(retCode!=0){
                     MessageBox('提示', retMsg);
                 }else if(retCode == 0){
-                    that.photo = res.data.userInfo.photo
-                    that.busNameT = res.data.userInfo.name; //对方财富师的名字
+                    alert(res.data.photo+'==='+res.data.name)
+                    that.photo = res.data.photo
+                    that.busNameT = res.data.name; //对方财富师的名字
                     // that.userphone = res.data.userInfo.userphone
                     
                 }
@@ -415,7 +411,9 @@ export default {
                             activeId: that.param.activeId,
                             actName: that.actName,
                             beginTime:that.beginTime,
-                            location :that.location ,
+                            location :that.location,
+                            ghT:that.ghT,
+                            busNameT:that.busNameT,
                         }
                     })
                 }else{
@@ -442,7 +440,9 @@ export default {
                             isReviewSignup: this.isReviewSignup,
                             activityType: this.activityType,
                             activeId: this.param.activeId,
-                            actName: this.actName
+                            actName: this.actName,
+                            ghT:that.ghT,
+                            busNameT:that.busNameT,
                         }
                     })
                 }
@@ -542,13 +542,14 @@ export default {
              }
          }
          that.user.userId = that.$route.query.ghT;
-         alert(that.$route.query.ghT+'ghT');
          if(!that.user.userId==false){//对方有财富师
+            that.businesscardShow=true
              that.headimgShow = true;
               that.getPhoto()
               that.headImgUrl = that.photo
               that.shareName=that.busNameT;//对方的财富师名字
          }else{
+             that.businesscardShow=false;
              that.headimgShow = false;
          }
             
