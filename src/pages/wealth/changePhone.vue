@@ -21,6 +21,7 @@
 <script>
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
+import { Toast } from 'mint-ui';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import axios from 'axios';
 import getcode from './getcode'
@@ -203,7 +204,12 @@ export default {
                  window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=changePhone#wechat_redirect';
                  }
                 else{
-                    MessageBox('提示','系统异常');
+                   // MessageBox('提示','系统异常');
+                    Toast({
+                        message: '系统异常',
+                        position: 'center',
+                        duration: 3000
+                    });
                 }
             })
         },
@@ -219,7 +225,12 @@ export default {
                 var retCode=res.data.retCode;
                 Indicator.close();
                 if(retCode == '0'){
-                    MessageBox('提示','人脸识别成功');
+                   // MessageBox('提示','人脸识别成功');
+                    Toast({
+                        message: '人脸识别成功',
+                        position: 'center',
+                        duration: 3000
+                    });
                     return;
                 }else if(retCode == '-2'){
                     MessageBox('提示','该身份证已绑定其他手机号').then(action => {

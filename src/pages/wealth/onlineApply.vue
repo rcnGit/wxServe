@@ -40,6 +40,7 @@
 import getcode from './getcode'
 import axios from 'axios';
 import { MessageBox } from 'mint-ui';//提示框
+import { Toast } from 'mint-ui';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { isValidMobile,isValidverifycode } from '@/common/js/extends.js';//引入mint-ui的button组件文件包
 
@@ -217,7 +218,12 @@ export default {
                     var retCode=res.data.retCode;
                     
                     if(retCode==0){
-                        MessageBox('提示', '申请成功');
+                       // MessageBox('提示', '申请成功');
+                       Toast({
+                        message: '申请成功',
+                        position: 'center',
+                        duration: 3000
+                    });
                         that.exeTime=res.data.data.exeTime
                             that.$router.push({
                             path:'/applysuc',
@@ -269,7 +275,12 @@ export default {
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
                 window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=toSignNewCust#wechat_redirect';
                 }else{
-                    MessageBox('提示',retMsg);
+                   // MessageBox('提示',retMsg);
+                    Toast({
+                        message: retMsg,
+                        position: 'center',
+                        duration: 3000
+                    });
                 }
             });
         },

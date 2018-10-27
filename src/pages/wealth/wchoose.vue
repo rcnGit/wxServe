@@ -21,6 +21,7 @@
 import axios from 'axios';
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
+import { Toast } from 'mint-ui';
 import { getCookie,setCookie } from '@/common/js/cookie.js'
 export default {
     name:'wchoose',
@@ -73,13 +74,18 @@ export default {
                  Indicator.close();
                 var retCode=res.data.retCode;
                 if(retCode == '0'){
-                    MessageBox('提示','人脸识别成功');
+                    //MessageBox('提示','人脸识别成功');
+                    Toast({
+                        message: '人脸识别成功',
+                        position: 'center',
+                        duration: 3000
+                    });
                     return;
                 }else if(retCode == '-2'){
-                    MessageBox('提示','该身份证已绑定其他手机号');
+                   MessageBox('提示','该身份证已绑定其他手机号');
                     return;
                 }else if(retCode == '-1'){
-                    MessageBox('提示','系统异常');
+                    MessageBox('提示','系统异常')                    
                     return;
                 }else if(retCode == '-3'){
                     MessageBox('提示','人脸识别未通过');
@@ -103,7 +109,12 @@ export default {
                 console.log(res.data);
                 var retCode=res.data.retCode;
                 if(retCode=='-1'){//系统异常
-                    MessageBox('提示', '系统异常');
+                   // MessageBox('提示', '系统异常');
+                    Toast({
+                        message: '系统异常',
+                        position: 'center',
+                        duration: 3000
+                    });
                 }else{
                     var mployment=res.data.data.mployment;
                     that.$refs.pic.src='res.data.data.photo'//财富师头像
@@ -172,7 +183,12 @@ export default {
                        window.location.href='https://test-interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+belongBusiness;
                     }
                 }else if(retCode=='-1'){//系统异常
-                    MessageBox('提示', '系统异常');
+                    //MessageBox('提示', '系统异常');
+                    Toast({
+                        message: '系统异常',
+                        position: 'center',
+                        duration: 3000
+                    });
                 }else if(retCode=='-2'){//此客户未购买任何产品
 
                 }

@@ -24,6 +24,7 @@
 <script>
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
+import { Toast } from 'mint-ui';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import axios from 'axios';
 import getcode from './getcode'
@@ -172,18 +173,23 @@ export default {
                        //取消按钮
                     })
                 }else if(retCode=='-2'){//验证码不正确
-                     MessageBox('提示','验证码不正确');
+                    MessageBox('提示','验证码不正确');
                 }else if(retCode=='-3'){//请发送验证码
                      MessageBox('提示','请发送验证码');
                 }else if(retCode=='-4'){//该手机号已绑定别的账号,无法重复绑定
-                     MessageBox('提示','该手机号已绑定别的账号,无法重复绑定');
+                    MessageBox('提示','该手机号已绑定别的账号,无法重复绑定');
                 }
                  else if(retCode == 400){
                      var serbackUrl = that.Host+'wxservice/wxMemberInfo/changeMobile'
                  window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=changePhone#wechat_redirect';
                  }
                 else{
-                    MessageBox('提示','系统异常');
+                   // MessageBox('提示','系统异常');
+                    Toast({
+                        message: '系统异常',
+                        position: 'center',
+                        duration: 3000
+                    });
                 }
             })
         }

@@ -83,6 +83,7 @@
 import { Indicator } from 'mint-ui';
 import { Popup } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
+import { Toast } from 'mint-ui';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { isValidName } from '@/common/js/extends.js';//引入mint-ui的button组件文件包
 import {handleClipboard } from '@/common/js/clipboard.js'//vue 复制功能
@@ -158,7 +159,12 @@ export default {
                 alert(retCode);
                 var returnUrl = that.$route.query.returnUrl;
                 if(retCode == '0'){
-                    MessageBox('提示','人脸识别成功');
+                   // MessageBox('提示','人脸识别成功');
+                    Toast({
+                        message: '人脸识别成功',
+                        position: 'center',
+                        duration: 3000
+                    });
                     that.getuserName();//获取用户姓名
                     return;
                 }else if(retCode == '-2'){
@@ -269,7 +275,12 @@ export default {
                   window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=appointW#wechat_redirect';
                 }
                 else{
-                    MessageBox('提示',retMsg);
+                  // MessageBox('提示',retMsg);
+                    Toast({
+                        message: retMsg,
+                        position: 'center',
+                        duration: 3000
+                    });
                 }
             })
         },
@@ -433,7 +444,12 @@ export default {
               }else if(retCode==-3){
                   MessageBox('提示','您已绑定财富师');
               }else if(retCode==-1){
-                  MessageBox('提示','系统错误');
+                 // MessageBox('提示','系统错误');
+                  Toast({
+                        message: '系统错误',
+                        position: 'center',
+                        duration: 3000
+                    });
                   
               }
               
@@ -464,7 +480,12 @@ export default {
                   }
               });
                 }else if(retCode==-1){
-                    MessageBox('提示', '系统异常');
+                   // MessageBox('提示', '系统异常');
+                    Toast({
+                        message: '系统异常',
+                        position: 'center',
+                        duration: 3000
+                    });
                 }
                 
                 //  Indicator.close();
