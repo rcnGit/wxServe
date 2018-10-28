@@ -164,57 +164,54 @@ export default {
         },
         onlineW:function(){
              var that=this;
-            this.param.province=this.routerCity;
-            if(this.param.phone==''||this.param.phone==undefined||this.param.phone==null){
-                 this.param.phone=this.ipNo;
+            that.param.province=that.routerCity;
+            if(that.param.phone==''||that.param.phone==undefined||that.param.phone==null){
+                 that.param.phone=that.ipNo;
             }
             
-            if(this.param.phone==''||this.param.phone==undefined){
-                this.$refs.phWarn.style.display='block';
-               // this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important'
-                this.phWarn='请输入手机号';
+            if(that.param.phone==''||that.param.phone==undefined){
+                that.$refs.phWarn.style.display='block';
+               // that.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important'
+                that.phWarn='请输入手机号';
                 return;
                 
-            }else if(!isValidMobile(this.param.phone)){
-                this.$refs.phWarn.style.display='block';
-               // this.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important'
-                this.phWarn='请输入正确的手机号';
+            }else if(!isValidMobile(that.param.phone)){
+                that.$refs.phWarn.style.display='block';
+               // that.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important'
+                that.phWarn='请输入正确的手机号';
                 return;
             }else{
-               
-                this.$refs.phWarn.style.display='none';
-                this.$refs.ph.style='border-bottom:0.5px solid #efefef!important';
+                that.$refs.phWarn.style.display='none';
+               // that.$refs.ph.style='border-bottom:0.5px solid #efefef!important';
                
             }
-           
             if(that.ifSendMa){
-                alert(that.ifSendMa+ '=============that.ifSendMa')
-                if(this.msgCode==''){
-                    this.$refs.codeWarn.style.display='block';
-                   // this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important'
-                    this.codeWarn='请输入验证码';
+                if(that.msgCode==''){
+                    that.$refs.codeWarn.style.display='block';
+                   // that.$refs.code.style='border-bottom:0.5px solid #df1e1d!important'
+                    that.codeWarn='请输入验证码';
                     return;
-                }else if(this.msgCode.length!=4){
-                    this.$refs.codeWarn.style.display='block';
-                   // this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important'
-                    this.codeWarn='请输入四位的验证码';
+                }else if(that.msgCode.length!=4){
+                    that.$refs.codeWarn.style.display='block';
+                   // that.$refs.code.style='border-bottom:0.5px solid #df1e1d!important'
+                    that.codeWarn='请输入四位的验证码';
                      return;
                 }else{
-                    this.$refs.codeWarn.style.display='none';
-                    //this.$refs.code.style='border-bottom:0.5px solid #efefef!important';
-                    this.param.msgCode=this.msgCode;
+                    that.$refs.codeWarn.style.display='none';
+                    //that.$refs.code.style='border-bottom:0.5px solid #efefef!important';
+                    that.param.msgCode=that.msgCode;
                 }
-                return
+
             }
 
             
-            if(this.param.province==''||this.param.province==undefined){
-                this.$refs.provWarn.style.display='block';
-                //this.$refs.prov.style='border-bottom:0.5px solid #df1e1d!important'
-                this.provWarn='请选择城市';
+            if(that.param.province==''||that.param.province==undefined){
+                that.$refs.provWarn.style.display='block';
+                //that.$refs.prov.style='border-bottom:0.5px solid #df1e1d!important'
+                that.provWarn='请选择城市';
                 return;
             }else{
-                this.$refs.provWarn.style.display='none';
+                that.$refs.provWarn.style.display='none';
                 //this.$refs.prov.style='border-bottom:0.5px solid #efefef!important';
             }
            
@@ -308,8 +305,8 @@ export default {
       //  MessageBox('在线申请财富师','请输入正确的验证码');
       var that=this;
       that.getData();
-      if(this.$route.query.msgCode!=undefined){
-           this.msgCode = this.$route.query.msgCode;
+      if(that.$route.query.msgCode!=undefined){
+           that.msgCode = that.$route.query.msgCode;
       }
      
         that.routerPhone = that.$route.query.phone;//本人已有的手机号
@@ -331,10 +328,10 @@ export default {
         //this.pnFn();
        // this.codeFn()
          
-          var routerCity = this.$route.query.city;
+          var routerCity = that.$route.query.city;
          
             if(routerCity!=''&&routerCity!=undefined){
-               this.routerCity=routerCity;
+               that.routerCity=routerCity;
                // this.$route.query.city='';
                 return;
             }

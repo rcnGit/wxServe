@@ -307,7 +307,7 @@ export default {
                 params: {
                     param:{
                         actId:that.OaActId,
-                        sign:0,//报名
+                        sign:'0',//报名
                     }
                 }
             })
