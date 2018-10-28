@@ -35,7 +35,7 @@
             <img src='./img/nomessage@2x.png'/>
             <p class='fSize16'>您还没有参与活动哦~</p>
           </div>
-          <div class='wz'ref='wz' style="background:#fff;display:none;" >
+          <div class='wz' style="background:#fff;" v-show='wzIfShow'>
             <img src='../../common/img/wr.png'  style='width:40%;margin:80px auto 30px;'/>
             <p class='fSize16' style='color:rgb(59,59,59)'>绑定手机号可查看我的活动哦~</p>
         <mt-button type="danger" size="large" class='next' @click='bd()' style='margin-top:81px;'>去绑定手机号</mt-button>
@@ -62,6 +62,7 @@ export default {
             },
             iSscroll:0,
             isShow:false,
+            wzIfShow:false,
             items:[],
             serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxMemberInfo/getCustActList'),//接口
             paramurl: location.href.split('?')[0]
@@ -83,9 +84,11 @@ export default {
                     }
                 })
         },
-        getdata:function(d){
+        getdata:function(){
+            alert('axio')
              var that=this;
              Indicator.open();
+             alert('axio2')
             axios({
                 method:'get',
                 url:'/wxservice/wxMemberInfo/getCustActList',//获取我的活动    、、comefrom="tangguan"
@@ -97,22 +100,30 @@ export default {
                 Indicator.close();
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
+                alert(retCode);
+                 alert(retCode==-2)
                 var data=res.data.data;
-                alert(retCode+'==='+data.length);
+                alert(data.length+'==data.length')
                 if(retCode==0){
-                    if(data.length>=0){
+                     alert('3')
+                    if(data.length>0){
                         that.items=data
+                        return;
                     }else{
-                        that.isShow = true;
+                        that.isShow=true;
+                        return;
                     }
                 }else if(retCode==-2){
-                    that.$refs.wz.style.display='block';
+                    alert('ffffff');
+                    that.wzIfShow=true;
                         return;
                 }else if(retCode == 400){
+                     alert('2')
                     var serbackUrl = that.Host+'wxservice/wxMemberInfo/getCustActList'
                     window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=minActive#wechat_redirect';
                 }else{
-                    that.isShow = true
+                    alert('1');
+                    that.isShow = true;
                    // MessageBox('提示', retMsg);
                     Toast({
                         message: retMsg,

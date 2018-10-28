@@ -224,6 +224,7 @@ export default {
                         position: 'center',
                         duration: 3000
                     });
+                    alert(res.data.data.exeTime+'===res.data.data.exeTime');
                         that.exeTime=res.data.data.exeTime
                             that.$router.push({
                             path:'/applysuc',

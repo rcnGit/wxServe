@@ -547,9 +547,11 @@ export default {
          var bizId=decodeURIComponent(getCookie("bizId"));
          that.params.bizId=bizId;
          //分享方的财富师
+         alert(this.$route.query.ghT+'=====')
          if(!this.$route.query.ghT==false){
-            this.warnbelongBusiness = this.$route.query.ghT;
-            this.warnbusinessName = decodeURIComponent(this.$route.query.busNameT);
+            this.gh= this.$route.query.ghT;
+            this.gh=this.gh.substr(2,7);
+           this.param.businessName = decodeURIComponent(this.$route.query.busNameT);
          }
          
 

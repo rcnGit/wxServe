@@ -101,6 +101,7 @@ export default {
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 var data=res.data.data;
+                 alert(retCode+'我的活动请求状态');
                 if(retCode==0){
                     that.iSscroll = 1;
                     //that.items=data.actList;
@@ -121,6 +122,7 @@ export default {
                         that.isShow = true;
                     }
                 }else if(retCode==-2){
+                   
                     that.$refs.wz.style.display='block';
                         return;
                 }else if(retCode == 400){

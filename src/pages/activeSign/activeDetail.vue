@@ -6,7 +6,7 @@
                 <img src='./img/man_head_img@2x.png' v-else/>
             </div>
             <div class='bus_C'>
-                <p class='position_name'>{{shareName}}</p>
+                <p class='position_name'>财富师{{shareName}}</p>
                 <p class='Invitation'>邀您参加大唐财富尊享活动</p>
             </div>
             <div class='bus_R' @click="toBusiness()"><img src='./img/rightBtn_img@2x.png'/></div>
@@ -249,11 +249,9 @@ export default {
                 Indicator.close();
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
-                alert(retCode+'获取活动状态');
                 if(retCode!=0){
                     MessageBox('提示', '系统错误');
                 }else if(retCode == 0){
-                    alert(res.data.itemList.length+'===res.data.itemList.length')
                     if(res.data.itemList.length<=0){
                     // that.$refs.nodata.style.display='block';
                     that.contentShow = true
@@ -272,7 +270,6 @@ export default {
                             that.isShow=false;
                             return;
                         }
-                        alert(res.data.actCanSignUp+'====res.data.actCanSignUp');
                         if(res.data.actCanSignUp==1){//that.actStatusCode == '进行中' || that.actStatusCode == '延期中'
                             
                             if(res.data.canSignUp == '0'){
@@ -333,7 +330,6 @@ export default {
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 if(retCode == 0){
-                   alert(retCode);
                     that.subscribe=res.data.userInfo.subscribe;//是否关注
                     if(that.subscribe==0){//未关注
                         //调连接扫二维码；
@@ -349,14 +345,12 @@ export default {
                         that.belongBusiness = res.data.userInfo.belongBusiness
                         var actname = that.businessName+'邀请您参加'+that.actName
                         var busname = '大唐财富尊享活动'+that.actName+'即将举办，机会难得，邀请你一起参加';
-                        alert(busname+actname);
                         that.asyncSDKConifg(actname,busname)
                     }else{
                         //that.photoT= res.data.userInfo.headImgUrl;
                         var nickName = res.data.userInfo.nickName;
                         var actname = nickName+'邀请您参加'+that.actName;
                         var busname = '大唐财富尊享活动'+that.actName+'即将举办，要一起参加吗？'
-                         alert(busname+actname);
                         that.asyncSDKConifg(actname,busname)
                     } 
                     return;
@@ -375,32 +369,32 @@ export default {
         },
         getPhoto:function(){
             let that = this;
-            alert(that.$route.query.ghT+'=that.$route.query.ghT');
+            alert(that.$route.query.ghT+'=that.$route.query.ghT222222222');
             var param=Base64.encode("{'userId':'DT1603225'}");//that.user.userId
             alert(param);
             axios({
                 method:'get',
-                url:'/tcMp/tcapi/WealthApiController/myCard',//获取客户信息
-                params: {
-                    param:param,//系统类别
-                    'osFlag':'3'
+                url:'/wxservice/wxexternal?opName=getTCmycard&versionNo=30',//获取客户信息
+                params:{
+                    param:param,
+                    osFlag:'3'
                 }
             })
             .then(function(res) {//成功之后
                 Indicator.close();
-                alert('===财富师的信息')
-                var retCode=res.data.retCode;
-                var retMsg=res.data.retMsg;
-                alert(retCode+'===财富师的信息')
-                if(retCode!=0){
-                    MessageBox('提示', retMsg);
-                }else if(retCode == 0){
-                    alert(res.data.photo+'==='+res.data.name)
-                    that.photo = res.data.photo
-                    that.busNameT = res.data.name; //对方财富师的名字
-                    // that.userphone = res.data.userInfo.userphone
+                var data=Base64.decode(res.data);
+                alert(data)
+                data=jQuery.parseJSON(data);
+                that.photo = data.photo;
+                that.ghT=data.userId;
+                alert(data.userId)
+                that.busNameT = data.userName; //对方财富师的名字
+                alert(that.busNameT);
+                that.headImgUrl = that.photo
+                that.shareName=that.busNameT;//对方的财富师名字
+                // that.userphone = res.data.userInfo.userphone
                     
-                }
+                
             })
         },
             
@@ -461,6 +455,7 @@ export default {
         },
         async asyncSDKConifg (actName,businessName) {
             let that = this;
+            alert(actName+businessName);
             axios.get('/wxservice/core/getJSSDKConfigure.mm?pageUrl='+this.backUrl)
                 .then(function (res) {
                 wx.config({
@@ -484,6 +479,7 @@ export default {
                         dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
                         success: function() {
                             // 用户确认分享后执行的回调函数
+                            alert('chenggong')
                         },
                         cancel: function() {
                             // 用户取消分享后执行的回调函数
@@ -547,13 +543,11 @@ export default {
              }
          }
          that.user.userId = that.$route.query.ghT;
-          that.getPhoto()
          if(!that.user.userId==false){//对方有财富师
             that.businesscardShow=true
              that.headimgShow = true;
-             // that.getPhoto()
-              that.headImgUrl = that.photo
-              that.shareName=that.busNameT;//对方的财富师名字
+              that.getPhoto()
+              
          }else{
              that.businesscardShow=false;
              that.headimgShow = false;
@@ -596,17 +590,20 @@ export default {
     width:45px;
     height:100%;
     float: left;
+    padding-right:20px;
 }
 .bus_L img{
     width:50px;
+    height:50px;
     margin-top:6px;
-    border-radius: 25px;
+    border-radius: 100%;
 }
 .business_Card .bus_C{
     height:100%;
      flex: 1; 
      box-sizing: border-box;
      padding: 14px 0 0px 15px;
+     text-align: left;
 } 
 .business_Card .bus_R{
     width:20px;
@@ -682,7 +679,7 @@ export default {
     width:90%;
     margin:22px auto 0;
     position: fixed;
-    bottom:130px;
+    bottom:13px;
     left:50%;
     transform: translateX(-50%);
 }

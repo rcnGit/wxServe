@@ -19,7 +19,7 @@ export default{
     }
   },
  created () {
-   this.asyncSDKConifg(this.meatTitle)
+   //this.asyncSDKConifg(this.meatTitle)
    //console.log(location.href.split('?')[0]+'?ifcard=1')
   },
   components:{comfooter},

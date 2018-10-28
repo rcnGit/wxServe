@@ -47,7 +47,6 @@ import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { Field } from 'mint-ui';
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';
-import { Toast } from 'mint-ui';
 import getcode from '../wealth/getcode';
 import axios from 'axios'
 import { getCookie,setCookie } from '@/common/js/cookie.js'
@@ -155,12 +154,7 @@ export default {
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
                 window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=toSignNewCust#wechat_redirect';
                 }else{
-                   // MessageBox('提示',retMsg);
-                    Toast({
-                        message: retMsg,
-                        position: 'center',
-                        duration: 3000
-                    });
+                    MessageBox('提示',retMsg);
                 }
             });
         },
@@ -298,20 +292,10 @@ export default {
                      MessageBox('提示','身份证不合法');
                      return;
                  }else if(retCode == '-1'){
-                    // MessageBox('提示','系统异常');
-                     Toast({
-                        message: '系统异常',
-                        position: 'center',
-                        duration: 3000
-                    });
+                     MessageBox('提示','系统异常');
                      return;
                  }else if(retCode == '-3'){
-                    // MessageBox('提示','当前网络不稳定，请重试');
-                     Toast({
-                        message: '当前网络不稳定，请重试',
-                        position: 'center',
-                        duration: 3000
-                    });
+                     MessageBox('提示','未获取到token');
                      return;
                  }else{
                      that.token=res.data.data.token;
@@ -388,19 +372,9 @@ export default {
                     if(retCode== 1){
                         MessageBox('提示','验证码错误');
                     }else if(retCode== 2){
-                       // MessageBox('提示','推送crm系统错误');
-                        Toast({
-                            message: '系统错误',
-                            position: 'center',
-                            duration: 3000
-                        });
+                        MessageBox('提示','推送crm系统错误');
                     }else if(retCode== -1){
-                       // MessageBox('提示','系统异常'); 
-                        Toast({
-                            message: '系统异常',
-                            position: 'center',
-                            duration: 3000
-                        }); 
+                        MessageBox('提示','系统异常');  
                     }else if(retCode== -2){
                         MessageBox('提示','绑定手机号出错');
                     }else if(retCode== -3){
@@ -508,8 +482,9 @@ export default {
     created(){
         Indicator.open();
         if(!this.$route.query.ghT==false){
-            this.warnbelongBusiness = this.$route.query.ghT;
-            this.warnbusinessName = decodeURIComponent(this.$route.query.busNameT);
+            this.gh = this.$route.query.ghT;
+            this.gh=this.gh.substr(2,7);
+            this.param.businessName = decodeURIComponent(this.$route.query.busNameT);
          }
         this.param.isReviewSignup = this.$route.query.isReviewSignup;
         this.param.activityType = this.$route.query.activityType;
