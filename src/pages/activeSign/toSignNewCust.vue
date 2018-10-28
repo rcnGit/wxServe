@@ -295,7 +295,12 @@ export default {
                      MessageBox('提示','系统异常');
                      return;
                  }else if(retCode == '-3'){
-                     MessageBox('提示','未获取到token');
+                    // MessageBox('提示','未获取到token');
+                     Toast({
+                        message: '当前网络不稳定，请重试',
+                        position: 'center',
+                        duration: 3000
+                    });
                      return;
                  }else{
                      that.token=res.data.data.token;
