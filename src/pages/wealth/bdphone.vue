@@ -19,6 +19,7 @@
              <mt-button type="danger" size="large" class='sign' @click="changeP()">确定</mt-button>
         </div>
         <getcode ref='c1' v-on:childByValue="childByValue"></getcode>
+        <comfooter></comfooter>
     </div>
 </template>
 <script>
@@ -28,6 +29,7 @@ import { Toast } from 'mint-ui';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import axios from 'axios';
 import getcode from './getcode'
+import comfooter from '../../components/footer'
 import { isValidName,isValidMobile ,isValidverifycode} from '@/common/js/extends.js';//引入mint-ui的button组件文件包
 export default {
     name:'changephone',
@@ -45,7 +47,7 @@ export default {
             paramurl: location.href.split('?')[0]
         }
     },
-    components:{getcode,MessageBox,Button},
+    components:{getcode,MessageBox,Button,comfooter},
     mounted:function(){
         var that=this;
         that.bdfrom =this.$route.query.bdfrom;
@@ -211,6 +213,10 @@ export default {
      left:78%!important;
     color:#999;
     line-height:30px;
+ }
+ .comfooter{
+     position: fixed;
+     bottom: 0;
  }
 </style>
 

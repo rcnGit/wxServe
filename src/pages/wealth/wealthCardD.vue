@@ -13,7 +13,7 @@
                 
            
             <mt-button type="danger" size="large" class=''@click='zixun()' style='width:50%!important;margin-top:50px!important;'>电话咨询</mt-button>
-        
+            <comfooter></comfooter>
     </div>
 </template>
 <script>
@@ -21,6 +21,7 @@ import axios from 'axios';
 import { MessageBox } from 'mint-ui';//提示框
 import { Indicator } from 'mint-ui';
 import { Toast } from 'mint-ui';
+import comfooter from '../../components/footer'
 export default {
     name:'wealthCardD',
     data:function(){
@@ -65,7 +66,7 @@ export default {
                 }
             })
     },
-    components:{MessageBox,Indicator}
+    components:{MessageBox,Indicator,comfooter}
 }
 </script>
 <style>
@@ -94,6 +95,10 @@ html{
      font-size: 14px;
     color:rgb(59,59,59);
 }
+.comfooter{
+     position: fixed;
+     bottom: 0;
+ }
 </style>
 
 

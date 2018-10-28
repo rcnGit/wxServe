@@ -1,9 +1,9 @@
 <template>
     <div class='comfooter' ref='comfooter' v-if='dibu'>
-        <p style='padding-top:13px;'>中国证监会批准的大唐官方基金销售平台</p>
+        <p style='padding-top:.1rem'>中国证监会批准的大唐官方基金销售平台</p>
         <!-- <p>销售资格证书编号：000000333</p> -->
         <p>过往业绩不代表未来，市场有风险需谨慎</p>
-        <p style='padding-bottom:13px;margin-top:20px; '>
+        <p style='padding-bottom:.12rem;margin-top:.16rem; '>
             <a href='tel:400-819-9868'><span style="margin-right:10px">客服电话</span></a>|<span style="margin-left:10px" @click='downApp()'>APP下载</span>
         </p> 
     </div>
@@ -60,9 +60,9 @@ export default {
      /* background:#18171D; */
 }
  .comfooter p{
-    font-size: 13px;
-    color:rgb(53,53,53);
-    margin-bottom:12px;
+    font-size: .3rem;
+    margin-bottom: .26rem;
+    color: #9b9b9b;
 }
 .comfooter span{
     font-size: 14px;
