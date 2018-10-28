@@ -11,7 +11,7 @@ body{
 }
 .content{
     background: #fff;
-    padding:20px 15px 30px;
+    padding:.266667rem .4rem .4rem;
     /* height:95%; */
 }
 .tip{
@@ -31,15 +31,19 @@ body{
     height:50px;
     margin-bottom:10px;
 }
+input::-webkit-input-placeholder {
+    color: #ececec;        
+}
 .inpBox input{
     width:100%;
-    height:100%;
+    height:48px;
+    line-height: 50px;
     border:none;
     border-bottom: 1px solid #efefef;
     background:#fff;
     padding-left:30%;
     font-size:15px;
-    color:rgb(10,20,50);
+    color:#333;
     border-radius: 0;
 }
 input:focus{
@@ -54,7 +58,7 @@ input:focus{
     height:50px;
     line-height: 50px;
     width:30%;
-    color:rgb(57,66,89);
+    color:#333;
     font-size: 15px;
     text-align:left;
 }
@@ -74,17 +78,17 @@ input:focus{
     top:15px;
 }
 .inpBox .chooseR{
-    top:15px;
-    width:12px;
-    right:10px;
+    top:.4rem;
+    width:.38rem;
+    right:.4rem;
 }
 .sendCodeBtn{
     position:absolute;
-    right:10px;
+    right:.1rem;
     top:6px;
     width:28%!important;
     margin-top:0;
     font-size: 13px!important;
-    border-radius: 10px!important;
+    border-radius: 20px!important;
     height:34px!important;
 }

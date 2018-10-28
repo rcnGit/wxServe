@@ -16,6 +16,7 @@
              <mt-button type="danger" size="large" class='sign' @click="changeP()">确定</mt-button>
         </div>
         <getcode ref='c1' v-on:childByValue="childByValue"></getcode>
+        <comfooter></comfooter>
     </div>
 </template>
 <script>
@@ -25,6 +26,7 @@ import { Toast } from 'mint-ui';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import axios from 'axios';
 import getcode from './getcode'
+import comfooter from '../../components/footer'
 import { getCookie,setCookie } from '@/common/js/cookie.js'
 import { isValidName,isValidMobile ,isValidverifycode} from '@/common/js/extends.js';//引入mint-ui的button组件文件包
 export default {
@@ -58,7 +60,7 @@ export default {
             }
         }
     },
-    components:{getcode,MessageBox,Button},
+    components:{getcode,MessageBox,Button,comfooter},
     methods:{
         phFn:function(){//实时校验手机号
             if(this.ipNo==''){
@@ -412,5 +414,9 @@ export default {
  .xiazai{
     color:#4a90e2;
 }
+.comfooter{
+     position: fixed;
+     bottom: 0;
+ }
 </style>
 

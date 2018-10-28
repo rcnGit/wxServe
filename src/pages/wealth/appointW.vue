@@ -76,7 +76,7 @@
                 </div>
            </div>
          </mt-popup>
-
+         <comfooter></comfooter>
     </div>
 </template>
 <script>
@@ -89,6 +89,7 @@ import { isValidName } from '@/common/js/extends.js';//引入mint-ui的button组
 import {handleClipboard } from '@/common/js/clipboard.js'//vue 复制功能
 import clip from '@/common/js/clipboard.js'//vue 复制功能
 import { getCookie,setCookie } from '@/common/js/cookie.js'
+import comfooter from '../../components/footer'
 import axios from 'axios';
 export default {
     name:'appointW',
@@ -125,7 +126,7 @@ export default {
         }
         
     },
-    component:{Button,axios,Popup,MessageBox},
+    component:{Button,axios,Popup,MessageBox,comfooter},
     created:function(){
         var bizId=decodeURIComponent(getCookie("bizId"));
         this.faceparam.bizId = bizId
@@ -632,5 +633,9 @@ export default {
 .xiazai{
     color:#4a90e2;
 }
+.comfooter{
+     position: fixed;
+     bottom: 0;
+ }
 </style>
 

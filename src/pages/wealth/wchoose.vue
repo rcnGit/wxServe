@@ -15,6 +15,7 @@
             
                 <mt-button type="danger" size="large" class=''@click='zhid()' style='width:58%!important;margin-top:50px!important;'>立即指定您的专属财富师</mt-button>
          </div>  <!--show-->
+         <comfooter></comfooter>
     </div>
 </template>
 <script>
@@ -22,6 +23,7 @@ import axios from 'axios';
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
 import { Toast } from 'mint-ui';
+import comfooter from '../../components/footer'
 import { getCookie,setCookie } from '@/common/js/cookie.js'
 export default {
     name:'wchoose',
@@ -191,14 +193,13 @@ export default {
                     });
                 }else if(retCode=='-2'){//此客户未购买任何产品
 
-                }
-                else if(retCode == 400){
+                }else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
                   window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=wchoose#wechat_redirect';
                 }
             })
     },
-    components:{Indicator,MessageBox}
+    components:{Indicator,MessageBox,comfooter}
 }
 </script>
 <style>
@@ -236,6 +237,10 @@ html{
     margin:0 20px;
     color:#707070;
 }
+.comfooter{
+     position: fixed;
+     bottom: 0;
+ }
 </style>
 
 

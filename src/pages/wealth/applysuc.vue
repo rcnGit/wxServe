@@ -13,9 +13,11 @@
             <p style='font-size:15px;margin-bottom:3px;'>400-819-9868</p>
             <p style='padding-bottom:50px;'>8:30 - 17:30</p>
         </div>
+        <comfooter></comfooter>
     </div>
 </template>
 <script>
+import comfooter from '../../components/footer'
 export default {
     name:'applysuc',
     data:function(){
@@ -23,6 +25,7 @@ export default {
             exeTime:''
         }
     },
+    components:{comfooter},
     methods:{
 
     },
@@ -48,5 +51,9 @@ export default {
     font-size: 13px;
     color:rgb(153,153,153);
 }
+.comfooter{
+     position: fixed;
+     bottom: 0;
+ }
 </style>
 

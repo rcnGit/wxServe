@@ -21,11 +21,11 @@
                 <input type='text' class=''v-model='routerCity'ref='prov' placeholder="请选择所在地" disabled=true style='border-bottom:1px solid #efefef;opacity: 1;background:#fff;'/>
                 <p ref='provWarn' class='warn' >{{provWarn}}</p>
                 <span>所在地</span>
-                <span class='inpRchoose fSize13'style='text-align:center;color:#c5c5c5;'@click='chooseAdd'>去选择<img src='../../common/img/chooseR.png' class='chooseR'/></span>
+                <span class='inpRchoose fSize13'style='text-align:center;color:#333;line-height:52px;'@click='chooseAdd'>去选择<img src='../../common/img/chooseR.png' class='chooseR'/></span>
               </div> <!--inpBox-->
               
              <mt-button type="danger" size="large" class='sign'@click='onlineW()'>申请</mt-button>
-             <p class='fSize13' style='color:rgb(54,54,54);line-height:50px;'>输入您的手机号和所在地，提交申请，客服会在24小时内联系您~</p>
+             <p class='fSize13' style='color:#333;line-height: .58rem;font-size: .346rem;padding: .5rem .8rem 0;'>输入您的手机号和所在地，提交申请，客服会在24小时内联系您~</p>
         </div>
         <getcode ref='c1' v-on:childByValue="childByValue"></getcode>
 
@@ -336,6 +336,10 @@ export default {
      left:74%!important;
     color:#999;
     line-height:30px;
+ }
+ .comfooter{
+     position: fixed;
+     bottom: 0;
  }
 </style>
 

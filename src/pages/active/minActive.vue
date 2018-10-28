@@ -1,9 +1,10 @@
 <template>
     <div class='minActive' style="min-height:200px;">
         <div class='mineOne' v-for="item in items" :oaActId='item.actId' :actName='item.actName' @click='en_details($event)'>
-            <div class='stateB redState'v-show='!item.cancelReasonFlag&&!item.reasonFlag&&!cancelSignupReasonFlag'>{{item.statusValue}}111</div>
-            <div class='stateB grayState'v-show='item.reasonFlag'>{{item.statusValue}}222</div>
-            <div class='stateB grayState'v-show='item.cancelReasonFlag'>{{item.statusValue}}333</div>
+            <div class='stateB redState'v-show='!item.cancelReasonFlag&&!item.reasonFlag&&!cancelSignupReasonFlag'>{{item.statusValue}}</div>
+            <div class='stateB grayState'v-show='item.reasonFlag'>{{item.statusValue}}</div>
+            <div class='stateB grayState'v-show='item.cancelReasonFlag'>{{item.statusValue}}</div>
+            <div class='stateB grayState'v-show='item.cancelSignupReasonFlag'>{{item.statusValue}}</div>
             <p class='pTitle'>{{item.actName}}</p>
             <p class='pDate'>活动时间：<span class='dataSp'>{{item.beginTime}}</span></p>
             <p class='pAdd'>活动地点：<span class='addSp'>{{item.location}}</span></p>
