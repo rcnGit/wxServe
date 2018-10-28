@@ -29,16 +29,16 @@
                  <img src='./img/nodataImg@2x.png'/>
                  <p>暂无活动介绍</p>
             </div>
-           <div v-else><img :src='content' class='imgEvent'/></div>
+           <div v-else><img :src='content' class='imgEvent' width='100%'/></div>
         </div>
          <mt-button type="danger" size="large" class='toSign' @click='sign()' v-show='isShow' :disabled="isDisabled">{{actStatus}}</mt-button>
         <!-- 底部提示框 -->
         <mt-popup v-model="popupVisible" position="center" pop-transition="popup-fade">
            <div class='pop_contant' ref='pop_contant'>
-               <p class='pop_title'>大唐财富服务号</p>
                <div class='popImgBox'>
-                   <img :src='erweima' style='width:80%;margin:20px auto 10px;'/>
-                   <p style='color:rgb(59,59,59);font-size:14px;line-height:20px;margin-bottom:20px;text-align:center;'>扫码关注大唐财富服务号后完成报名</p>
+                   <img :src='erweima' style='width:180px;height:180px;margin:94px auto 10px;'/>
+                   <p style='color:#333;font-size:14px;text-align:center;margin: 24px auto 8px;'>长按二维码</p>
+                   <p style='color:#333;font-size:14px;text-align:center;'>关注大唐财富服务号后完成报名</p>
                </div>
            </div> <!--pop_contant -->
          </mt-popup>  
@@ -67,7 +67,7 @@ export default {
             location:'',//活动地点
             subscribe:'',//是否关注
             erweima:'',
-            popupVisible:false,//是否出现二维码的弹框
+            popupVisible:true,//是否出现二维码的弹框
             content:'',
             isReviewSignup:'',
             activityType: '',
@@ -365,6 +365,7 @@ export default {
                     } 
                     return;
                 }else if(retCode == 400){
+                    return;
                     if(that.param.comefrom =='tangguan'){
                         return;
                     }else{
@@ -720,6 +721,15 @@ export default {
     height:18px;
     margin-right: 7px;
     float: left;
+}
+.pop_contant{
+background:url(img/weimaBg.png) no-repeat;
+width:280px;
+background-size:cover;
+height:360px;
+}
+.mint-popup.mint-popup-center{
+    border-radius: 10px;
 }
 </style>
 
