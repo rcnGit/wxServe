@@ -53,7 +53,6 @@ export default {
                 
             }
             //ajax提交
-            var that=this;
             that.param={
                 mobileNo:ipNo,
                 messType:type,
@@ -105,11 +104,18 @@ export default {
                     })
                 }else if(retCode == 0){
                     that.subTime();
+                }else if(retCode == -3){
+                    Toast({
+                        message: '该手机号与当前绑定的手机号相同',
+                        position: 'center',
+                        duration: 3000
+                    });
                 }
             });
         },//fn,
         subTime:function(){ 
             var that=this;
+            that.ex.btnDsiabled=true;
             that.ex.time=60;
              var g=setInterval(function(){
                 that.ex.time=parseInt(that.ex.time-1);

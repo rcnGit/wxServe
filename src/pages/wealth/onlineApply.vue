@@ -103,15 +103,25 @@ export default {
                 }
         },
         getM:function(){
-            var p=''
-           
-            if(this.param.phone==''||this.param.phone==undefined){
-                p=this.ipNo;
+            var that=this;
+            that.Dsiabled=true;
+            if(that.ipNo==''){
+                that.$refs.phWarn.style.display='block';
+                that.phWarn='请输入手机号码';
+                //that.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important';
+                that.Dsiabled=false;
+                return;
+            }else if(!isValidMobile(that.ipNo)){
+                that.$refs.phWarn.style.display='block';
+                that.phWarn='请输入正确的手机号码';
+                //that.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important';
+                that.Dsiabled=false;
+                return;
             }else{
-                p=this.param.phone;
+                that.$refs.phWarn.style.display='none';
+               // that.$refs.ph.style='border-bottom:0.5px solid #efefef!important';
             }
-            
-            this.$refs.c1.getCodeFn(this.messType,p);
+            that.$refs.c1.getCodeFn(that.messType,that.ipNo);
         },
         changeP:function(){
              this.$router.push({
@@ -178,6 +188,7 @@ export default {
             }
            
             if(that.ifSendMa){
+                alert(that.ifSendMa+ '=============that.ifSendMa')
                 if(this.msgCode==''){
                     this.$refs.codeWarn.style.display='block';
                    // this.$refs.code.style='border-bottom:0.5px solid #df1e1d!important'
@@ -193,7 +204,7 @@ export default {
                     //this.$refs.code.style='border-bottom:0.5px solid #efefef!important';
                     this.param.msgCode=this.msgCode;
                 }
-
+                return
             }
 
             
@@ -224,7 +235,7 @@ export default {
                         position: 'center',
                         duration: 3000
                     });
-                    alert(res.data.data.exeTime+'===res.data.data.exeTime');
+                    //alert(res.data.data.exeTime+'===res.data.data.exeTime');
                         that.exeTime=res.data.data.exeTime
                             that.$router.push({
                             path:'/applysuc',
