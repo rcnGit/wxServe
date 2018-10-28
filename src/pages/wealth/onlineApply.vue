@@ -33,17 +33,18 @@
 
 
        
-
+        <comfooter></comfooter>
     </div>
 </template>
 <script>
 import getcode from './getcode'
 import axios from 'axios';
+import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
 import { Toast } from 'mint-ui';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { isValidMobile,isValidverifycode } from '@/common/js/extends.js';//引入mint-ui的button组件文件包
-
+import comfooter from '../../components/footer'
 export default {
     name:'onlineApply',
     data:function(){
@@ -70,7 +71,7 @@ export default {
             serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxMemberInfo/applyWealther'),//接口
         }
     },
-    components:{getcode,isValidMobile,MessageBox,isValidverifycode},
+    components:{getcode,isValidMobile,MessageBox,isValidverifycode,comfooter},
     methods:{
         pnFn:function(){
            
@@ -323,7 +324,7 @@ export default {
             }
         
     },
-    
+
 }
 </script>
 
