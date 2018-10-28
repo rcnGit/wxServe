@@ -2,8 +2,8 @@
     <div class='pushW'>
         <img src='./img/signSuc.png' width='28%'/>
         <p style="font-size:15px;margin-bottom:20px;font-weight:700;">您的参与意愿已推送给您的财富师</p> 
-        <p>该活动需要您的财富师为您申请参与资格。我们已将您的</p>
-        <p>推送给您的财富师<span>{{Wname}}</span><span style='color:#4a90e2;'@click='toMingpian()'>联系我的财富师>></span></p>
+        <p>该活动需要您的财富师为您申请参与资格。我们已将您的意愿</p>
+        <p>推送给您的财富师<span>{{Wname}}&nbsp;&nbsp;</span><span style='color:#4a90e2;'@click='toMingpian()'>联系我的财富师>></span></p>
         <div>
             <mt-button type="danger" size="large" class='sure' @click='toActiveDetail()'>确定</mt-button>
             <mt-button type="danger" size="large" class='inMinAct' @click='toActive()'>进入我的活动</mt-button>
