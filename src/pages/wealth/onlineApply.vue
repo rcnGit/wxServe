@@ -153,7 +153,6 @@ export default {
            // console.log(this.Dsiabled);
         },
         onlineW:function(){
-          
              var that=this;
             this.param.province=this.routerCity;
             if(this.param.phone==''||this.param.phone==undefined||this.param.phone==null){
@@ -217,7 +216,7 @@ export default {
                 .then(function(res) {
                     console.log(res.data);
                     var retCode=res.data.retCode;
-                    
+                    var retMsg=res.data.retMsg;
                     if(retCode==0){
                        // MessageBox('提示', '申请成功');
                        Toast({
@@ -241,6 +240,12 @@ export default {
                     }else if(retCode == 400){
                          var serbackUrl = that.Host+'wxservice/wxMemberInfo/applyWealther'
                          window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=onlineApply#wechat_redirect';
+                    }else{
+                        Toast({
+                            message: retMsg,
+                            position: 'center',
+                            duration: 3000
+                        }); 
                     }
                 })
         },
