@@ -6,7 +6,7 @@
             <p class='pTitle'>{{item.actName}}</p>
             <p class='pDate'>活动时间：<span class='dataSp'>{{item.beginTime}}</span></p>
             <p class='pAdd'>活动地点：<span class='addSp'>{{item.location}}</span></p>
-            <p class='pState' v-if='item.qpplyFlag'  @click.stop='openCFScard(item.businessCode)'>您的申请意愿已提交给财富师<span class='hrefWealth'>{{item.businessName}}</span></p>
+            <p class='pState' v-if='item.applyFlag'  @click.stop='openCFScard(item.businessCode)'>活动状态：您的申请意愿已提交给财富师<span class='hrefWealth'>{{item.businessName}}</span></p>
             <p class='pState' v-if='item.businessFlag'  @click.stop='openCFScard(item.businessCode)'>邀请财富师<span class='hrefWealth'>{{item.businessName}}</span></p>
             <p class='pState' v-show='item.cancelReasonFlag'>失败原因：{{item.cancelReason}}</p>
         </div>  <!--mineOne-->
@@ -85,10 +85,8 @@ export default {
                 })
         },
         getdata:function(){
-            alert('axio')
              var that=this;
              Indicator.open();
-             alert('axio2')
             axios({
                 method:'get',
                 url:'/wxservice/wxMemberInfo/getCustActList',//获取我的活动    、、comefrom="tangguan"
@@ -100,12 +98,8 @@ export default {
                 Indicator.close();
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
-                alert(retCode);
-                 alert(retCode==-2)
                 var data=res.data.data;
-                alert(data.length+'==data.length')
                 if(retCode==0){
-                     alert('3')
                     if(data.length>0){
                         that.items=data
                         return;
@@ -114,15 +108,12 @@ export default {
                         return;
                     }
                 }else if(retCode==-2){
-                    alert('ffffff');
                     that.wzIfShow=true;
                         return;
                 }else if(retCode == 400){
-                     alert('2')
                     var serbackUrl = that.Host+'wxservice/wxMemberInfo/getCustActList'
                     window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=minActive#wechat_redirect';
                 }else{
-                    alert('1');
                     that.isShow = true;
                    // MessageBox('提示', retMsg);
                     Toast({

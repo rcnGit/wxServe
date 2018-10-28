@@ -372,7 +372,7 @@ export default {
                 that.kefuAxio();
                 return;
             }
-            var message = '报名该活动需先指定财富师，是否指定'+that.param.businessName+'为您的服务财富师？您可指定一名服务理财师，并拥有更换权力。'
+            var message = '报名该活动需先指定财富师，是否指定'+that.param.businessName+'为您的服务财富师？您可指定一名服务财富师，并拥有更换权力。'
                 MessageBox.confirm('', {
                     message: message,
                     title: ''

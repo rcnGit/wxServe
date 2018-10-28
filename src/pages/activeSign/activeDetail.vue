@@ -128,7 +128,26 @@ export default {
     methods:{
         zhijieSign:function(){
             var that=this;
-               axios({
+             var message = '您确定报名此活动？'
+                    MessageBox.confirm('',{
+                    message: message,
+                    title: '',
+                    }).then(action => {
+                    if(action == 'confirm'){
+                        that.zhijieAjax();
+                    }else{
+                        
+                    }
+                    }).catch(() => {
+                   
+                    })
+
+
+              
+        },
+        zhijieAjax:function(){
+            var that=this;
+             axios({
                 method:'get',
                 url:'/wxservice/wxservice?opName=toSignUp',
                 params:{
@@ -155,30 +174,17 @@ export default {
                 }else if(retCode== -6){
                     MessageBox('提示','财富师已离职');
                 }else if(retCode == 0){
-                    var message = '您确定报名此活动？'
-                    MessageBox.confirm('',{
-                    message: message,
-                    title: '',
-                    }).then(action => {
-                    if(action == 'confirm'){
-                        that.$router.push({
-                            path: '/signSuc',
-                            name: 'signSuc',
-                            query:{
-                                isReviewSignup:that.isReviewSignup,
-                                activeId:that.param.activeId,
-                                actName:that.param.actName,
-                                beginTime:that.beginTime,
-                                location :that.location ,
-                            }
-                        })
-                    }else{
-                       // alert('取消');
-                    }
-                    }).catch(() => {
-                   
+                    that.$router.push({
+                        path: '/signSuc',
+                        name: 'signSuc',
+                        query:{
+                            isReviewSignup:that.isReviewSignup,
+                            activeId:that.param.activeId,
+                            actName:that.param.actName,
+                            beginTime:that.beginTime,
+                            location :that.location ,
+                        }
                     })
-
                 }else if(retCode == 3){
                     var crmInfo=res.data.crmInfo;
                     if(crmInfo.retCode==1){
