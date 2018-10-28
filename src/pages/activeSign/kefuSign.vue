@@ -16,7 +16,7 @@
                         <input type='tel'  class=''style='padding-right:100px;'maxlength='11' v-model="phone2" ref='phone2' :disabled="isDisabled2" placeholder="请输入联系人电话"/>
                     <p class='warn' ref='warnPhone' v-show='true'>{{warnPhone}}</p>
                     <span>联系人电话</span>
-                    <span class='inpRchoose fSize13' style='color:#4a90e2;' @click='changeP()' v-show='isShow'>变更手机号>></span>
+                    <span class='inpRchoose fSize13' style='color:#4a90e2;' @click='tishi_changeP()' v-show='isShow'>变更手机号>></span>
                  </div> <!--inpBox-->
                   <div class='inpBox'>
                     <input type='tel' class='' maxlength='4' v-model="param.verifiCode" ref='verifycode' placeholder="请输入验证码"/>
@@ -112,7 +112,6 @@ export default {
         //     })
         // },
         getData:function(){
-            alert('getData')
             let that = this;
             //console.log(that.param)
             axios({
@@ -127,10 +126,8 @@ export default {
                 Indicator.close();
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
-               // alert(retCode)
                 if(retCode == 0){
                     that.isFaceSuc=res.data.userInfo.authenticFlag;
-                   // alert(res.data.userInfo.authenticFlag+'===res.data.userInfo.authenticFlag')
                     if(!res.data.userInfo.phone == false){
                         that.userPhone = res.data.userInfo.phone
                         var Tel = that.userPhone
@@ -140,7 +137,6 @@ export default {
                         that.isShow = true
                         that.isValid = true
                     }
-                   // alert(res.data.userInfo.realName);
                     if(!res.data.userInfo.realName == false){
                         that.param.realName = res.data.userInfo.realName;
                         that.idNo = res.data.userInfo.idNo;//身份证
@@ -285,6 +281,23 @@ export default {
                 this.isValid5 = true
             }
         },//验证财富师工号
+        tishi_changeP:function(){
+            var that=this;
+             var message = '更换手机号需先通过人脸识别验证是本人操作'
+                    MessageBox.confirm('',{
+                    message: message,
+                    title: '',
+                    confirmButtonText:'去验证',
+                    }).then(action => {
+                    if(action == 'confirm'){
+                        that.changeP();
+                    }else{
+                        
+                    }
+                    }).catch(() => {
+                   
+                    })
+        },
         changeP:function(){
             //人脸
             var that=this;
@@ -311,13 +324,11 @@ export default {
          
         },
         face:function(){
-            alert('face2');
             var that=this;
             var idCardNo=that.idNo;
             var idCardName=that.param.realName;
             var canshu='changeForm=kefuSign&isReviewSignup='+that.param.isReviewSignup+'&activityType='+that.param.activityType+'&activeId='+that.param.activeId+'&actName='+encodeURIComponent(that.param.actName)+'&isFace=1';
             //alert(canshu);
-            alert(idCardNo+idCardName);
             Indicator.open();
             axios({
                 method:'get',
@@ -333,7 +344,6 @@ export default {
                 Indicator.close();
                 console.log(res.data);
                 var retCode=res.data.retCode;
-                alert(retCode);
                  if(retCode == 400){
                      var serbackUrl = that.Host+'wxservice/wxMemberInfo/getFaceToken'
                      window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=faceMsg#wechat_redirect';
@@ -359,7 +369,6 @@ export default {
                  }else{
                      that.token=res.data.data.token;
                      var bizId=res.data.data.bizId;
-                     alert(bizId);
                      setCookie('bizId',bizId);
                      window.location.href='https://api.megvii.com/faceid/lite/do?token='+that.token;
                 
@@ -547,7 +556,6 @@ export default {
          var bizId=decodeURIComponent(getCookie("bizId"));
          that.params.bizId=bizId;
          //分享方的财富师
-         alert(this.$route.query.ghT+'=====')
          if(!this.$route.query.ghT==false){
             this.gh= this.$route.query.ghT;
             this.gh=this.gh.substr(2,7);
