@@ -375,9 +375,7 @@ export default {
         },
         getPhoto:function(){
             let that = this;
-            alert(that.$route.query.ghT+'=that.$route.query.ghT222222222');
             var param=Base64.encode("{'userId':'DT1603225'}");//that.user.userId
-            alert(param);
             axios({
                 method:'get',
                 url:'/wxservice/wxexternal?opName=getTCmycard&versionNo=30',//获取客户信息
@@ -389,13 +387,10 @@ export default {
             .then(function(res) {//成功之后
                 Indicator.close();
                 var data=Base64.decode(res.data);
-                alert(data)
                 data=jQuery.parseJSON(data);
                 that.photo = data.photo;
                 that.ghT=data.userId;
-                alert(data.userId)
                 that.busNameT = data.userName; //对方财富师的名字
-                alert(that.busNameT);
                 that.headImgUrl = that.photo
                 that.shareName=that.busNameT;//对方的财富师名字
                 // that.userphone = res.data.userInfo.userphone
@@ -427,10 +422,8 @@ export default {
                     that.zhijieSign();
                 }  //直接报名
             }else if(that.activityType == 'KF'){
-                alert(that.activityType);
                 that.authentic()
                 if(that.authenticFlag == 0){
-                    alert(that.authenticFlag)
                     that.actName=encodeURIComponent(that.actName);
                     that.$router.push({
                         path: '/faceMsg',
@@ -461,7 +454,6 @@ export default {
         },
         async asyncSDKConifg (actName,businessName) {
             let that = this;
-            alert(actName+businessName);
             axios.get('/wxservice/core/getJSSDKConfigure.mm?pageUrl='+this.backUrl)
                 .then(function (res) {
                 wx.config({
@@ -485,7 +477,7 @@ export default {
                         dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
                         success: function() {
                             // 用户确认分享后执行的回调函数
-                            alert('chenggong')
+                            //('chenggong')
                         },
                         cancel: function() {
                             // 用户取消分享后执行的回调函数
@@ -519,6 +511,7 @@ export default {
         if(that.$route.query.comefrom=='tangguan'||that.$route.params.comefrom=='tangguan'){
             that.param.comefrom ='tangguan';
         }
+        
         document.body.scrollTop = document.documentElement.scrollTop = 0;//回到顶部；
         var bizId=decodeURIComponent(getCookie("bizId"));
         that.faceparam.bizId = bizId;
@@ -535,12 +528,24 @@ export default {
             Activiy = JSON.parse(Activiy)
             oaActId = Activiy.huoId
             actName = Activiy.huoName
-        }else{
-           
         }
         this.OaActId = oaActId
         this.actName = decodeURIComponent(actName);
         Indicator.open(that.loadObj);
+   
+
+        if(oaActId!=''&&oaActId!=undefined){
+            that.param.activeId=oaActId;
+            that.param.actName=actName;
+            that.paramOnly.activeId=oaActId;
+            that.paramOnly.actName=actName;
+            console.log(that.param.activeId);
+            that.getData();
+        }
+
+
+
+
         var ifCard=this.$route.query.ifCard;
          if(ifCard!=''&&ifCard!=undefined){
              console.log('ifCard==='+ifCard);
@@ -559,33 +564,20 @@ export default {
              that.headimgShow = false;
          }
             
-       
-
-
-
-
-
-        if(oaActId!=''&&oaActId!=undefined){
-            that.param.activeId=oaActId;
-            that.param.actName=actName;
-            that.paramOnly.activeId=oaActId;
-            that.paramOnly.actName=actName;
-            console.log(that.param.activeId);
-            that.getData();
-        }
+    
         
         
     },
-    beforeRouteLeave(to, from, next) {
-        alert('返回')
-        alert(from.path == "/acitve");
-      if (true) {
-        from.meta.keepAlive = true;
-      } else {
-        to.meta.keepAlive = false;
-      }
-      next();
-    }
+    // beforeRouteLeave(to, from, next) {
+    //     alert('返回')
+    //     alert(from.path == "/acitve");
+    //   if (true) {
+    //     from.meta.keepAlive = true;
+    //   } else {
+    //     to.meta.keepAlive = false;
+    //   }
+    //   next();
+    // }
 
 }
 

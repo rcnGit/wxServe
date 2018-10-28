@@ -148,6 +148,7 @@ export default {
             // console.log(event.target.getAttribute('oaactid'))//点击到的元素
             var oaActId=event.currentTarget.getAttribute('oaActId');//绑定事件的元素
             var actName=event.currentTarget.getAttribute('actName');//绑定事件的元素
+            alert(oaActId+'====oaActId我的活动')
             that.$router.push({
                 path:'/ActiveDetail',
                 name:'ActiveDetail',
