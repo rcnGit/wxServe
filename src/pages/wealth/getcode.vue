@@ -82,6 +82,7 @@ export default {
                     });
                 }else if(retCode == -2){
                     that.ex.time='获取验证码';
+                    that.ex.btnDsiabled=false;
                     that.$emit('childByValue',that.ex);//传到调用页面
                     var message = '该手机号已绑定其他账号，无法重复绑定。如有疑问请咨询客服：400-819-9868';
                     // if(authenticFlag =="0"){
