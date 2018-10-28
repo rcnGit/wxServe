@@ -1,14 +1,17 @@
 <template>
     <div class='minActive' style="min-height:200px;">
         <div class='mineOne' v-for="item in items" :oaActId='item.actId' :actName='item.actName' @click='en_details($event)'>
-            <div class='stateB redState'v-show='!item.reasonFlag'>{{item.statusValue}}</div>
-            <div class='stateB grayState'v-show='item.reasonFlag'>{{item.statusValue}}</div>
+            <div class='stateB redState'v-show='!item.cancelReasonFlag&&!item.reasonFlag&&!cancelSignupReasonFlag'>{{item.statusValue}}111</div>
+            <div class='stateB grayState'v-show='item.reasonFlag'>{{item.statusValue}}222</div>
+            <div class='stateB grayState'v-show='item.cancelReasonFlag'>{{item.statusValue}}333</div>
             <p class='pTitle'>{{item.actName}}</p>
             <p class='pDate'>活动时间：<span class='dataSp'>{{item.beginTime}}</span></p>
             <p class='pAdd'>活动地点：<span class='addSp'>{{item.location}}</span></p>
             <p class='pState' v-if='item.applyFlag'  @click.stop='openCFScard(item.businessCode)'>活动状态：您的申请意愿已提交给财富师<span class='hrefWealth'>{{item.businessName}}</span></p>
-            <p class='pState' v-if='item.businessFlag'  @click.stop='openCFScard(item.businessCode)'>邀请财富师<span class='hrefWealth'>{{item.businessName}}</span></p>
-            <p class='pState' v-show='item.cancelReasonFlag'>失败原因：{{item.cancelReason}}</p>
+            <p class='pState' v-if='item.businessFlag'  @click.stop='openCFScard(item.businessCode)'>邀请财富师<span class='hrefWealth'>{{item.businessName}}</span></p>           
+            <p class='pState' v-show='item.reasonFlag'>失败原因：{{reason(item.reason)}}</p>
+            <p class='pState' v-show='item.cancelReasonFlag' style="overflow:auto;">取消原因：{{item.cancelReason}}</p>
+            <p class='pState' v-show='item.cancelSignupReasonFlag' style="overflow:auto;">取消原因：{{item.cancelSignupReason}}</p>
         </div>  <!--mineOne-->
         <!-- <div class='mineOne'>
             <div class='stateB grayState'>报名成功</div>
@@ -69,6 +72,17 @@ export default {
         }
     },
     methods:{
+        reason:function(r){
+            var str;
+            if(r==0){
+                str='名额已满';
+            }else if(r==1){
+                str='不符合报名条件';
+            }else if(r==2){
+                str='其他';
+            }
+            return str;
+        },
         openCFScard:function(id){
             //打开我的财富师名片
             alert(id)

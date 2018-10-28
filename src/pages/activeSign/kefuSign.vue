@@ -25,14 +25,14 @@
                     <mt-button type="danger" size="small" class='sendCodeBtn'@click="getM()" v-bind:disabled='Dsiabled'>{{text}}</mt-button>
                  </div> <!--inpBox-->
                  <div class='inpBox'>
-                    <input type='text' class='' v-model="param.businessName" :disabled="isDisabled3" ref='businessName' placeholder="请输入理财师姓名"/>
+                    <input type='text' class='' v-model="param.businessName" :disabled="isDisabled3" ref='businessName' placeholder="请输入财富师姓名"/>
                     <p class='warn' ref='warnbusinessName' v-show='true'>{{warnbusinessName}}</p>
                     <span>财富师</span>
                   </div> <!--inpBox-->
                   <div class='inpBox'>
-                    <input type='tel' class='' v-model="gh" :disabled="isDisabled4" ref='belongBusiness'placeholder="请输入理财师工号" maxlength="7"/>
+                    <input type='tel' class='' v-model="gh" :disabled="isDisabled4" ref='belongBusiness'placeholder="请输入财富师工号" maxlength="7"/>
                     <p class='warn' ref='warnbelongBusiness' v-show='true'>{{warnbelongBusiness}}</p>
-                    <span>理财师工号DT</span>
+                    <span>财富师工号DT</span>
                   </div> <!--inpBox-->
              
              <mt-button type="danger" size="large" class='sign' @click="toSignUp()">报名</mt-button>

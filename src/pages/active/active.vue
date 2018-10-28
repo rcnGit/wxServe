@@ -2,8 +2,6 @@
     <div class='active'>
         <div class='act_head'>
           <div class="act_h_left">
-            <!-- <router-link to='/provinceList'><span>全国</span><img src='./img/upBtn_img@2x.png'/>
-            </router-link> -->
           </div>
           <div class="act_h_right">
             <input placeholder="请输入活动名称关键字" class='searchInput'ref='name'/>
@@ -38,8 +36,6 @@
           <div class='loader'ref='loader' style="font-size:14px;color:#685F57;line-height:50px;display:none;">
             已经到底了
           </div>
-
-            
         </div><!--active_content-->
         
     </div>
@@ -137,6 +133,7 @@ export default {
             Indicator.close();
             var retCode=res.data.retCode
             var retMsg=res.data.retMsg;
+            alert(retMsg);
             if(retCode == 0){
               if(res.data.itemList != ''){
                // alert(that.allList.length);

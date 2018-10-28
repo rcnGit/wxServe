@@ -575,7 +575,17 @@ export default {
         }
         
         
-    } 
+    },
+    beforeRouteLeave(to, from, next) {
+        alert('返回')
+        alert(from.path == "/acitve");
+      if (true) {
+        from.meta.keepAlive = true;
+      } else {
+        to.meta.keepAlive = false;
+      }
+      next();
+    }
 
 }
 

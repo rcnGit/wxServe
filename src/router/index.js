@@ -22,6 +22,7 @@ import activeCheckin from '@/pages/activeCheckin/activeCheckin'//签到
 import SuccCheckin from '@/pages/activeCheckin/SuccCheckin'//签到成功
 import wealthCardD from '@/pages/wealth/wealthCardD'//没有财富师名片的，代理名片
 import wchoose from '@/pages/wealth/wchoose'//没有财富师名片的，代理名片
+//import historyTrail from '@/pages/monitoring/history'
 Vue.use(Router)
 
 export default new Router({
@@ -31,7 +32,8 @@ export default new Router({
       path: '/provinceList',
       name: 'provinceList',
       meta: {
-        title: '省份选择'
+        title: '省份选择',
+        keepAlive: false // 不需要缓存
       },
       component: provinceList//使用这个组件
     },
@@ -39,7 +41,8 @@ export default new Router({
       path: '/active',
       name: 'active',
       meta: {
-        title: '尊享活动'
+        title: '尊享活动',
+        keepAlive: false // 首次不需要被缓存
       },
       component: active
     },
@@ -47,7 +50,8 @@ export default new Router({
       path: '/ActiveDetail',
       name: 'ActiveDetail',
       meta: {
-        title: '活动详情'
+        title: '活动详情',
+        keepAlive: false // 不需要缓存
       },
       component: ActiveDetail//使用这个组件
     },
@@ -55,7 +59,8 @@ export default new Router({
       path: '/toSignNewCust',
       name: 'toSignNewCust',
       meta: {
-        title: '拉新活动个人报名'
+        title: '拉新活动个人报名',
+        keepAlive: false // 不需要缓存
       },
       component: toSignNewCust//使用这个组件
     },
@@ -63,14 +68,16 @@ export default new Router({
       path: '/faceMsg',
       name: 'faceMsg',
       meta: {
-        title: '人脸识别'
+        title: '人脸识别',
+        keepAlive: false // 不需要缓存
       },
       component: faceMsg//使用这个组件---客户福利个人报名
     },{
       path: '/pushW',
       name: 'pushW',
       meta: {
-        title: '大唐盛宴活动'
+        title: '大唐盛宴活动',
+        keepAlive: false // 不需要缓存
       },
       component: pushW//使用这个组件
     },
@@ -78,14 +85,16 @@ export default new Router({
       path: '/activeCheckin',
       name: 'activeCheckin',
       meta: {
-        title: '大唐盛宴活动'
+        title: '大唐盛宴活动',
+        keepAlive: false // 不需要缓存
       },
       component: activeCheckin//使用这个组件---客户福利个人报名
     },{
       path: '/SuccCheckin',
       name: 'SuccCheckin',
       meta: {
-        title: '大唐盛宴活动'
+        title: '大唐盛宴活动',
+        keepAlive: false // 不需要缓存
       },
       component: SuccCheckin//使用这个组件
     },
@@ -93,7 +102,8 @@ export default new Router({
       path: '/kefuSign',
       name: 'kefuSign',
       meta: {
-        title: '客户福利个人报名'
+        title: '客户福利个人报名',
+        keepAlive: false // 不需要缓存
       },
       component: kefuSign//使用这个组件
     },
@@ -101,7 +111,8 @@ export default new Router({
       path: '/signSuc',
       name: 'signSuc',
       meta: {
-        title: '大唐盛宴活动'
+        title: '大唐盛宴活动',
+        keepAlive: false // 不需要缓存
       },
       component: signSuc//使用这个组件
     },
@@ -109,7 +120,8 @@ export default new Router({
       path: '/propertyList',
       name: 'propertyList',
       meta: {
-        title: '我的资产'
+        title: '我的资产',
+        keepAlive: false // 不需要缓存
       },
       component: propertyList//使用这个组件
     },
@@ -117,7 +129,8 @@ export default new Router({
       path: '/minActive',
       name: 'minActive',
       meta: {
-        title: '我的活动'
+        title: '我的活动',
+        keepAlive: false // 不需要缓存
       },
       component: minActive//使用这个组件
     },
@@ -125,7 +138,8 @@ export default new Router({
       path: '/PostInformation',
       name: 'postInfor',
       meta: {
-        title: '投后消息'
+        title: '投后消息',
+        keepAlive: false // 不需要缓存
       },
       component: postInfor//使用这个组件
     },
@@ -133,7 +147,8 @@ export default new Router({
       path: '/appointW',
       name: 'appointW',
       meta: {
-        title: '指定财富师'
+        title: '指定财富师',
+        keepAlive: false // 不需要缓存
       },
       component: appointW//使用这个组件onlineApply
     },
@@ -141,7 +156,8 @@ export default new Router({
       path: '/getcode',
       name: 'getcode',
       meta: {
-        title: '获取验证码'
+        title: '获取验证码',
+        keepAlive: false // 不需要缓存
       },
       component: getcode//使用这个组件
     },
@@ -149,7 +165,8 @@ export default new Router({
       path: '/onlineApply',
       name: 'onlineApply',
       meta: {
-        title: '在线申请'
+        title: '在线申请',
+        keepAlive: false // 不需要缓存
       },
       component: onlineApply//使用这个组件
     },
@@ -157,7 +174,8 @@ export default new Router({
       path: '/changephone',
       name: 'changephone',
       meta: {
-        title: '修改手机号'
+        title: '修改手机号',
+        keepAlive: false // 不需要缓存
       },
       component: changephone//使用这个组件
     },
@@ -165,7 +183,8 @@ export default new Router({
       path: '/bdphone',
       name: 'bdphone',
       meta: {
-        title: '绑定手机号'
+        title: '绑定手机号',
+        keepAlive: false // 不需要缓存
       },
       component: bdphone//使用这个组件
     },
@@ -173,7 +192,8 @@ export default new Router({
       path: '/applysuc',
       name: 'applysuc',
       meta: {
-        title: '申请成功'
+        title: '申请成功',
+        keepAlive: false // 不需要缓存
       },
       component: applysuc//使用这个组件
     },
@@ -181,7 +201,8 @@ export default new Router({
       path: '/wealthCardD',
       name: 'wealthCardD',
       meta: {
-        title: '财富师名片'
+        title: '财富师名片',
+        keepAlive: false // 不需要缓存
       },
       component: wealthCardD//使用这个组件
     },
@@ -189,7 +210,8 @@ export default new Router({
       path: '/wchoose',
       name: 'wchoose',
       meta: {
-        title: '专属财富师'
+        title: '专属财富师',
+        keepAlive: false // 不需要缓存
       },
       component: wchoose//使用这个组件
     }
