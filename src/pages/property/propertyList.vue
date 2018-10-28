@@ -144,20 +144,44 @@ export default {
                     });
                     that.$refs.wz.style.display='block';
                     return;
-                }else if(retCode == '-3'){
-                    MessageBox('提示','人脸识别未通过');
-                    that.$refs.wz.style.display='block';
-                    return;
-                }else if(retCode == '-4'){
-                    MessageBox('提示','未查询到人脸识别结果');
-                    that.$refs.wz.style.display='block';
-                        
-                    return;
                 }else{
-                     MessageBox('提示','未查询到人脸识别结果');
-                    that.$refs.wz.style.display='block';
+                    var message = '人脸识别实名认证失败，请重试。若无法完成人脸识别实名认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成实名认证后报名活动。'
+                    MessageBox.confirm('', {
+                        message: message,
+                        title: '',
+                        showConfirmButton:true,
+                        confirmButtonClass:'confirmButton',
+                        confirmButtonText:'重试',
+                    }).then(action => {
+                        if(action == 'confirm'){
+                                //跳转财富师名片页面
+                            that.$router.push({
+                                path:'/faceMsg',
+                                name:'faceMsg',
+                                query:{
+                                returnUrl:returnUrl,
+                                }
+                            })
+                        }
+                    }).catch(() => {
+                        
+                    })
                     return;
                 }
+                // else if(retCode == '-3'){
+                //     MessageBox('提示','人脸识别未通过');
+                //     that.$refs.wz.style.display='block';
+                //     return;
+                // }else if(retCode == '-4'){
+                //     MessageBox('提示','未查询到人脸识别结果');
+                //     that.$refs.wz.style.display='block';
+                        
+                //     return;
+                // }else{
+                //      MessageBox('提示','未查询到人脸识别结果');
+                //     that.$refs.wz.style.display='block';
+                //     return;
+                // }
             })
         },
         getList:function(){
@@ -288,6 +312,9 @@ export default {
 .noData p{
     color:rgb(197,197,197);
     margin-top:30px;
+}
+.xiazai{
+    color:#4a90e2;
 }
 </style>
 

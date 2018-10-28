@@ -183,71 +183,79 @@ export default {
                       }
                   });//提示信息
                     return;
-                }else if(retCode == '-1'){
-                    MessageBox('提示','系统异常').then(action => {
-                      if(action == 'confirm'){
-                       //跳转财富师名片页面
-                        that.$router.push({
-                            path:'/faceMsg',
-                            name:'faceMsg',
-                            query:{
-                            returnUrl:returnUrl,
-                            }
-                        })
-                      }else{//取消
-                        console.log('查看订单')
-                      }
-                  });//提示信息
-                    return;
-                }else if(retCode == '-3'){
-                    MessageBox('提示','人脸识别未通过').then(action => {
-                      if(action == 'confirm'){
-                       //跳转财富师名片页面
-                        that.$router.push({
-                            path:'/faceMsg',
-                            name:'faceMsg',
-                            query:{
-                            returnUrl:returnUrl,
-                            }
-                        })
-                      }else{//取消
-                        console.log('查看订单')
-                      }
-                  });//提示信息
-                    return;
-                }else if(retCode == '-4'){
-                    MessageBox('提示','未查询到人脸识别结果').then(action => {
-                      if(action == 'confirm'){
-                       //跳转财富师名片页面
-                        that.$router.push({
-                            path:'/faceMsg',
-                            name:'faceMsg',
-                            query:{
-                            returnUrl:returnUrl,
-                            }
-                        })
-                      }else{//取消
-                        console.log('查看订单')
-                      }
-                  });//提示信息
-                    return;
                 }else{
-                    MessageBox('提示','请重新进行人脸识别').then(action => {
-                      if(action == 'confirm'){
-                       //跳转财富师名片页面
-                        that.$router.push({
-                            path:'/faceMsg',
-                            name:'faceMsg',
-                            query:{
-                            returnUrl:returnUrl,
-                            }
-                        })
-                      }else{//取消
-                        console.log('查看订单')
-                      }
-                  });//提示信息
+                    var message = '人脸识别实名认证失败，请重试。若无法完成人脸识别实名认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成实名认证后报名活动。'
+                    MessageBox.confirm('', {
+                        message: message,
+                        title: '',
+                        showConfirmButton:true,
+                        confirmButtonClass:'confirmButton',
+                        confirmButtonText:'重试',
+                    }).then(action => {
+                        if(action == 'confirm'){
+                                //跳转财富师名片页面
+                            that.$router.push({
+                                path:'/faceMsg',
+                                name:'faceMsg',
+                                query:{
+                                returnUrl:returnUrl,
+                                }
+                            })
+                        }
+                    }).catch(() => {
+                        
+                    })
                     return;
                 }
+            //     else if(retCode == '-3'){
+            //         MessageBox('提示','人脸识别未通过').then(action => {
+            //           if(action == 'confirm'){
+            //            //跳转财富师名片页面
+            //             that.$router.push({
+            //                 path:'/faceMsg',
+            //                 name:'faceMsg',
+            //                 query:{
+            //                 returnUrl:returnUrl,
+            //                 }
+            //             })
+            //           }else{//取消
+            //             console.log('查看订单')
+            //           }
+            //       });//提示信息
+            //         return;
+            //     }else if(retCode == '-4'){
+            //         MessageBox('提示','未查询到人脸识别结果').then(action => {
+            //           if(action == 'confirm'){
+            //            //跳转财富师名片页面
+            //             that.$router.push({
+            //                 path:'/faceMsg',
+            //                 name:'faceMsg',
+            //                 query:{
+            //                 returnUrl:returnUrl,
+            //                 }
+            //             })
+            //           }else{//取消
+            //             console.log('查看订单')
+            //           }
+            //       });//提示信息
+            //         return;
+            //     }else{
+            //         MessageBox('提示','请重新进行人脸识别').then(action => {
+            //           if(action == 'confirm'){
+            //            //跳转财富师名片页面
+            //             that.$router.push({
+            //                 path:'/faceMsg',
+            //                 name:'faceMsg',
+            //                 query:{
+            //                 returnUrl:returnUrl,
+            //                 }
+            //             })
+            //           }else{//取消
+            //             console.log('查看订单')
+            //           }
+            //       });//提示信息
+            //         return;
+            //     }
             })
         },
         getuserName:function(){
@@ -273,8 +281,7 @@ export default {
                 }else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
                   window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=appointW#wechat_redirect';
-                }
-                else{
+                }else{
                   // MessageBox('提示',retMsg);
                     Toast({
                         message: retMsg,
@@ -312,7 +319,12 @@ export default {
             
         },//send
         sendweixin:function(){
-            alert('已复制，请找到财富师微信并粘贴内容');
+           // alert('已复制，请找到财富师微信并粘贴内容');
+            Toast({
+                message: '已复制，请找到财富师微信并粘贴内容',
+                position: 'center',
+                duration: 3000
+            });
             this.copy();
            // MessageBox('提示', '已复制，立即发给您想指定的财富师吧~');
         },
@@ -616,6 +628,9 @@ export default {
 .wimg{
     width:35%;
     margin:50px auto 30px;
+}
+.xiazai{
+    color:#4a90e2;
 }
 </style>
 
