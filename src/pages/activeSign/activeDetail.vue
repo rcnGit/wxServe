@@ -29,7 +29,7 @@
                  <img src='./img/nodataImg@2x.png'/>
                  <p>暂无活动介绍</p>
             </div>
-           <div v-else>{{content}}</div>
+           <div v-else><img :src='content' class='imgEvent'/></div>
         </div>
          <mt-button type="danger" size="large" class='toSign' @click='sign()' v-show='isShow' :disabled="isDisabled">{{actStatus}}</mt-button>
         <!-- 底部提示框 -->
@@ -270,7 +270,7 @@ export default {
                         that.beginTime=obj.beginTime;
                         that.endTime=obj.endTime;
                         that.location=obj.location;
-                        that.content=obj.content;
+                        that.content=obj.bulletinFile;
                         that.actStatusCode=obj.actStatus;
                         if(that.param.comefrom=='tangguan'){
                             that.isShow=false;
@@ -297,6 +297,8 @@ export default {
             });
         },
         getErweima:function(){
+            alert('erweima')
+            var that=this;
              Indicator.open();
             var that=this;
             axios({
@@ -312,6 +314,7 @@ export default {
             .then(function(res) {
                  Indicator.close();
                 var retCode=res.data.retCode;
+                alert(retCode)
                 if(retCode==0){
                     //获取二维码成功
                     var url=res.data.url;
@@ -337,6 +340,7 @@ export default {
                 var retMsg=res.data.retMsg;
                 if(retCode == 0){
                     that.subscribe=res.data.userInfo.subscribe;//是否关注
+                    alert(that.subscribe+'====that.subscribe');
                     if(that.subscribe==0){//未关注
                         //调连接扫二维码；
                         that.getErweima();
@@ -584,9 +588,12 @@ export default {
  	   
 </script>
 <style>
-    .activeSign{
-        padding-bottom:50px;
-    }
+.imgEvent{
+    pointer-events: all;
+}
+.activeSign{
+    padding-bottom:50px;
+}
  .business_Card{
     box-sizing: border-box;
     padding:0 20px;
