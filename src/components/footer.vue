@@ -57,7 +57,7 @@ export default {
 <style>
  .comfooter{
      width: 100%;
-     background:#18171D;
+     /* background:#18171D; */
 }
  .comfooter p{
     font-size: 13px;
