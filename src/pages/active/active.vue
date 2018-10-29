@@ -13,7 +13,7 @@
           <p class='fSize16'>现在还没有活动哦</p>
         </div>
         <div id='active_content'>
-          <div style='height:20px;background:#18171D;'></div>
+          <div style='height:20px;background:#f8f8f8;'></div>
            <div v-for="item in items" class="active_demo" @click='en_details($event)' :oaActId='item.oaActId' :ActName='item.actName'>
                <div style="position:relative;">
                  <img v-bind:src="item.bulletinPicture" width='100%' style='min-height:180px;max-height:200px;'/>
@@ -149,8 +149,7 @@ export default {
             }else if(retCode == 400){
               var serbackUrl = that.Host+'wxservice/wxexternal?opName=getactiveinfo'
               window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
-            }
-            else{
+            }else{
               //MessageBox('提示', retMsg);
               Toast({
                   message: retMsg,
@@ -247,7 +246,7 @@ export default {
   display:flex; /*父元素声明弹性盒*/
   position: fixed;
   top: 0;
-  background:#18171D;
+  background:#f8f8f8;
   z-index: 999999999;
 }
 .act_h_left{
@@ -305,7 +304,7 @@ color: #808080;
   right:10px;
 }
 #active_content{
-  background:#18171D;
+  background:#f8f8f8;
   margin-top:55px;
   padding: 0 10px;
   /* margin-bottom:50px; */

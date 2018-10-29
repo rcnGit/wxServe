@@ -15,6 +15,7 @@
             <p class='fSize16' style='color:rgb(59,59,59)'>实名认证后可查看投后消息哦~</p>
         <mt-button type="danger" size="large" class='next' @click='rz()' style='margin-top:81px;'>去人脸识别实名认证</mt-button>
         </div>
+        <comfooter></comfooter>
     </div>
 </template>
 <script>
@@ -22,6 +23,7 @@ import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
 import { Toast } from 'mint-ui';
 import axios from 'axios'
+import comfooter from '../../components/footer'
 import { getCookie,setCookie } from '@/common/js/cookie.js'
 export default {
     name:'postInfor',
@@ -39,7 +41,7 @@ export default {
             serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxservice?opName=queryPublishInfo'),//接口
         }
     },
-    components:{MessageBox},
+    components:{MessageBox,comfooter},
     methods:{
         time:function(t){
             t=t.substr(0,10);
@@ -237,6 +239,10 @@ export default {
 .xiazai{
     color:#4a90e2;
 }
+.comfooter{
+     position: fixed;
+     bottom: 0;
+ }
 </style>
 
 

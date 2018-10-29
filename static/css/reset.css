@@ -155,10 +155,36 @@
 
 /* 覆盖mintui弹框样式 */
 .mint-msgbox-confirm{
-    background:#df1e1d!important;
+    /* background:#df1e1d!important; */
     color:#fff!important;
     font-size: 14px;
 }
+.mint-msgbox-content{
+    border-bottom:1px solid #efefef!important;
+    padding-bottom:.7rem!important;
+    padding-top:1.1rem!important;
+}
 .mint-msgbox-cancel{
     font-size: 14px;
+}
+.mint-msgbox{
+    width: 7.2rem!important;
+    /* height:3.73rem; */
+    border-radius:0.16rem!important;
+}
+.mint-msgbox-confirm{
+    color: #ef2727!important;
+    font-size:.426667rem!important;
+}
+.mint-msgbox-message{
+    line-height: .6rem !important;
+    color: #333!important;
+}
+.mint-msgbox-btns{
+    line-height: .4rem!important;
+    padding: .05rem 0 .05rem!important;
+    height: auto!important;
+}
+.mint-msgbox-btn{
+    line-height: 1.2rem!important;
 }
