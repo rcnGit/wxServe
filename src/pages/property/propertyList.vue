@@ -1,5 +1,5 @@
 <template>
-    <div class='propertyList fColorFFF' style='min-height:430px;'>
+    <div class='propertyList fColorFFF' style='min-height:430px;background: #fff;'>
         <div class='headContent'>
                 <p class='fSize13 pp1'>总金额（元）</p>
                 <p class='pp2'>{{totalAsset}}</p> <!--在数字上加逗号 -->
@@ -17,8 +17,8 @@
         </div>
         <div class='noData' ref='nodata' style="display:none;">
                 <img src='./img/noprop.png'/>
-                <p class='fSize16'>您还没在大唐开启投资之旅哦</p>
-                 <mt-button type="danger" size="large" class='next' @click='downApp ()'>去投资</mt-button>
+                <p class='fSize16' style="font-size: .3733rem">您还没在大唐开启投资之旅哦</p>
+                 <mt-button type="danger" size="large" class='next' @click='downApp ()' style="margin-top:0.72222rem;">去投资</mt-button>
          </div>
         <div class='proContent' ref='contant' style='display:none;'>
             <div class='proDemo'>
@@ -28,31 +28,31 @@
                 </div>
                 <div style='clear:both'></div>
                 <div class='proBot'>
-                    <span class='floatLeft smP'>金额&nbsp;<em>{{privateTotalAsset}}</em></span>
+                    <span class='floatLeft smP'>金额&nbsp;<em class="smp-number">{{privateTotalAsset}}</em></span>
                 </div>
             </div>  <!-- proDemo -->
              <div class='proDemo'>
                 <div class='proTop'>
                     <img  class='floatLeft' src='./img/gLogo.png' />
                     <span class='floatLeft bigP'>公募</span>
-                    <span class='floatRight'>更新日期：<em>{{publicDate}}</em></span>
+                    <span class='floatRight xindate'>更新日期：<em>{{publicDate}}</em></span>
                 </div>
                 <div style='clear:both'></div>
                 <div class='proBot'>
-                    <span class='floatLeft smP'>金额&nbsp;<em>{{publicTotalAsset}}</em></span>
-                    <span class='floatRight'>最新收益<em :class='gC'>{{publicYestIncome}}</em></span>
+                    <span class='floatLeft smP'>金额&nbsp;<em class="smp-number">{{publicTotalAsset}}</em></span>
+                    <span class='floatRight shouyi'>最新收益<em :class='gC'>{{publicYestIncome}}</em></span>
                 </div>
             </div>  <!-- proDemo -->
              <div class='proDemo'>
                 <div class='proTop'>
                     <img  class='floatLeft'src='./img/dLogo.png'/>
                     <span class='floatLeft bigP'>资管理财</span>
-                    <span class='floatRight'>更新日期：<em>{{securitiesDate}}</em></span>
+                    <span class='floatRight xindate'>更新日期：<em>{{securitiesDate}}</em></span>
                 </div>
                 <div style='clear:both'></div>
                 <div class='proBot'>
-                    <span class='floatLeft smP'>金额&nbsp;<em>{{securitiesAddIncome}}</em></span>
-                    <span class='floatRight'>最新收益<em :class='ziC'>{{securitiesYestIncome}}</em></span>
+                    <span class='floatLeft smP'>金额&nbsp;<em class="smp-number">{{securitiesAddIncome}}</em></span>
+                    <span class='floatRight shouyi'>最新收益<em :class='ziC'>{{securitiesYestIncome}}</em></span>
                 </div>
             </div>  <!-- proDemo -->
         </div>
@@ -61,6 +61,7 @@
             <p class='fSize16' style='color:rgb(59,59,59)'>实名认证后可查看我的资产哦~</p>
         <mt-button type="danger" size="large" class='next' @click='rz()' style='margin-top:81px;'>去人脸识别实名认证</mt-button>
         </div>
+        <comfooter></comfooter>
     </div>
 </template>
 <script>
@@ -68,6 +69,7 @@ import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
 import { Toast } from 'mint-ui';
+import comfooter from '../../components/footer'
 import { getCookie,setCookie } from '@/common/js/cookie.js'
 import axios from 'axios';
 export default {
@@ -99,7 +101,7 @@ export default {
             paramurl: location.href.split('?')[0]
         }
     },
-    components:{Button,axios,Indicator,MessageBox},//使用mint-ui的button的组件
+    components:{Button,axios,Indicator,MessageBox,comfooter},//使用mint-ui的button的组件
     methods:{
         rz:function(){//去实名认证
             this.$router.push({
@@ -213,8 +215,7 @@ export default {
                     }else if(retCode == 400){
                         var serbackUrl = that.Host+'wxservice/wxMemberInfo/getUserAsset?v='+(new Date()).getTime();
                       window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=propertyList#wechat_redirect';
-                    }
-                   var d=res.data.data;
+                    }var d=res.data.data;
                     that.totalAsset=that.money(d.totalAsset)//总资产
                     that.privateTotalAsset=that.money(d.privateTotalAsset)//私募总资产
                     that.privateToConfirmAsset=that.money(d.privateToConfirmAsset)//私募待确认
@@ -296,9 +297,6 @@ export default {
 </script>
 <style>
 @import 'propetry.css'; /* 引入toSign.css文件*/
-.red{
-    color:rgb(239,39,39);
-}
 .green{
     color:rgb(11,124,10);
 }
@@ -306,16 +304,20 @@ export default {
     background:#fff;
 }
 .noData img{
-    width:40%;
-    margin:80px auto 0;
+    width:2.24rem;
+    margin:3rem auto 0;
 }
 .noData p{
-    color:rgb(197,197,197);
-    margin-top:30px;
+    color:#757575;
+    margin-top:.373333rem;
 }
 .xiazai{
     color:#4a90e2;
 }
+.comfooter{
+     position: fixed;
+     bottom: 0;
+ }
 </style>
 
 

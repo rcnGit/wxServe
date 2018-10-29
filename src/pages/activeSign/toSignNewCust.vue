@@ -39,6 +39,7 @@
              <p style='font-size:12px;color:rgb(153,153,153);line-height:40px;'>此页面仅供个人客户自行报名，机构客户可联系您的专属财富师为您服务</p>
         </div>
         <getcode ref='c1' v-on:childByValue="childByValue" v-on:warnCodeFunction="warnCodeFunction"></getcode>
+        <comfooter></comfooter>
     </div>
 </template>
 <script>
@@ -48,6 +49,7 @@ import { Field } from 'mint-ui';
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';
 import getcode from '../wealth/getcode';
+import comfooter from '../../components/footer'
 import axios from 'axios'
 import { getCookie,setCookie } from '@/common/js/cookie.js'
 import { isValidMobile, isValidxincode, isValidverifycode, isValidName, isValidEmpNo } from '@/common/js/extends.js'
@@ -505,7 +507,7 @@ export default {
         this.location = decodeURIComponent(this.$route.query.location);
         this.getData()
     },
-    components:{Button,getcode,Field}//使用mint-ui的button的组件
+    components:{Button,getcode,Field,comfooter}//使用mint-ui的button的组件
 }
 </script>
 <style>
@@ -535,5 +537,9 @@ export default {
      left:74%!important;
     color:#999;
     line-height:30px;
+ }
+ .comfooter{
+     position: fixed;
+     bottom: 0;
  }
 </style>
