@@ -79,9 +79,6 @@ export default {
     }
   },
   methods:{
-    openProvincsList:function(){
-      alert('打开省市列表');
-    },
     subTime:function(time){
       time=time.substr(0,10);
       return time;
@@ -133,10 +130,8 @@ export default {
             Indicator.close();
             var retCode=res.data.retCode
             var retMsg=res.data.retMsg;
-            alert(retMsg);
             if(retCode == 0){
               if(res.data.itemList != ''){
-               // alert(that.allList.length);
                 that.allList=that.allList.concat(res.data.itemList);//把已获取的数据和新获取的数据合并在放入页面
                 that.items=that.allList;
                 if(that.allList.length==0||that.allList==undefined){
@@ -192,7 +187,6 @@ export default {
      Indicator.open(that.loadObj);
      if(that.$route.query.comefrom=='tangguan'||that.$route.params.comefrom=='tangguan'){
         that.param.comefrom ='tangguan';
-        alert('tangguan');
         
     }
      var routerCity = this.$route.query.city;

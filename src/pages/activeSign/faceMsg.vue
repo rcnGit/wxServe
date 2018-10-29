@@ -102,7 +102,7 @@ export default {
             }else if(retCode == '-1'){
                // MessageBox('提示','系统异常');
                 Toast({
-                    message: '系统异常',
+                    message: '系统异常', 
                     position: 'center',
                     duration: 3000
                 });

@@ -18,7 +18,7 @@
                     <span>联系人电话</span>
                     <span class='inpRchoose fSize13' style='color:#4a90e2;' @click='tishi_changeP()' v-show='isShow'>变更手机号>></span>
                  </div> <!--inpBox-->
-                  <div class='inpBox'>
+                  <div class='inpBox' v-show="yanzhengmaIsShow">
                     <input type='tel' class='' maxlength='4' v-model="param.verifiCode" ref='verifycode' placeholder="请输入验证码"/>
                     <p class='warn' ref='warnCode'v-show='true'>{{warnCode}}</p>
                     <span>验证码</span>
@@ -63,6 +63,7 @@ export default {
             warnPhone:'',
             warnCode:'',
             warnName:'',
+            yanzhengmaIsShow:false,
             warnbusinessName:'',
             warnbelongBusiness:'',
             ifCaiFu:false,//之前没有财富师
@@ -134,8 +135,11 @@ export default {
                         var mtel = Tel.substr(0, 3) + '****' + Tel.substr(7);
                        that.phone2 = mtel
                         that.isDisabled2 = true;
+                        that.yanzhengmaIsShow=false;//隐藏掉验证码
                         that.isShow = true
                         that.isValid = true
+                    }else{
+                        that.yanzhengmaIsShow=true;//显示验证码
                     }
                     if(!res.data.userInfo.realName == false){
                         that.param.realName = res.data.userInfo.realName;
@@ -486,9 +490,14 @@ export default {
             });
         },//报名走的接口
         toSignUp:function(){ 
+            var that=this;
             // Indicator.open();   
             this.phoneFn()
-            this.codeFn()
+            if(that.yanzhengmaIsShow){
+                this.codeFn()
+            }else{
+                this.isValid2=true;
+            }
             this.realnameFn()
             this.businessNameFn()
             this.belongBusinessFn();//检验工号 

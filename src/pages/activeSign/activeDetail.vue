@@ -67,7 +67,7 @@ export default {
             location:'',//活动地点
             subscribe:'',//是否关注
             erweima:'',
-            popupVisible:true,//是否出现二维码的弹框
+            popupVisible:false,//是否出现二维码的弹框
             content:'',
             isReviewSignup:'',
             activityType: '',
@@ -243,6 +243,7 @@ export default {
             })
         },
         getData:function(){
+            alert('getData')
             let that = this;
             axios({
                 method:'get',
@@ -276,8 +277,9 @@ export default {
                             that.isShow=false;
                             return;
                         }
+                        alert(res.data.actCanSignUp+'=]===res.data.actCanSignUp')
                         if(res.data.actCanSignUp==1){//that.actStatusCode == '进行中' || that.actStatusCode == '延期中'
-                            
+                            alert(res.data.canSignUp+'====res.data.canSignUp')
                             if(res.data.canSignUp == '0'){
                                 that.isShow = true
                                 that.actStatus= '我要报名';
@@ -300,13 +302,13 @@ export default {
             alert('erweima')
             var that=this;
              Indicator.open();
-            var that=this;
+            alert(this.$route.query.oaActId)
             axios({
                 method:'get',
                 url:'/wxservice/wxexternal?opName=cSignSQRCode',//获取客户信息
                 params: {
                     param:{
-                        actId:that.OaActId,
+                        actId:that.$route.query.oaActId,
                         sign:'0',//报名
                     }
                 }
@@ -314,7 +316,7 @@ export default {
             .then(function(res) {
                  Indicator.close();
                 var retCode=res.data.retCode;
-                alert(retCode)
+                alert(retCode);
                 if(retCode==0){
                     //获取二维码成功
                     var url=res.data.url;
@@ -337,14 +339,13 @@ export default {
             .then(function(res) {//成功之后
                 Indicator.close();
                 var retCode=res.data.retCode;
+                alert('authentic')
                 var retMsg=res.data.retMsg;
                 if(retCode == 0){
+                    that.getData();
                     that.subscribe=res.data.userInfo.subscribe;//是否关注
                     alert(that.subscribe+'====that.subscribe');
-                    if(that.subscribe==0){//未关注
-                        //调连接扫二维码；
-                        that.getErweima();
-                    }
+                    
                     that.authenticFlag = res.data.userInfo.authenticFlag//是否人脸
                     that.userphone = res.data.userInfo.phone;
                     that.realName = res.data.userInfo.realName;
@@ -365,7 +366,6 @@ export default {
                     } 
                     return;
                 }else if(retCode == 400){
-                    return;
                     if(that.param.comefrom =='tangguan'){
                         return;
                     }else{
@@ -406,6 +406,12 @@ export default {
             
         sign:function(){
             var that=this; 
+            alert(that.subscribe)
+            if(that.subscribe==0){//未关注
+                //调连接扫二维码；
+                that.getErweima();
+                return;
+            }
             that.paramOnly.activityType=that.activityType;
             if(that.activityType == 'YX'){
                 if(!that.realName || !that.userphone || !that.belongBusiness){
@@ -520,9 +526,11 @@ export default {
         document.body.scrollTop = document.documentElement.scrollTop = 0;//回到顶部；
         var bizId=decodeURIComponent(getCookie("bizId"));
         that.faceparam.bizId = bizId;
+        alert(!this.$route.query.faceResult == false||bizId==null+'========')
          if(!this.$route.query.faceResult == false||bizId==null){
             that.getfaceId();
          }else{
+
              that.authentic()//获取客户信息
          }
          //================
@@ -545,7 +553,7 @@ export default {
             that.paramOnly.activeId=oaActId;
             that.paramOnly.actName=actName;
             console.log(that.param.activeId);
-            that.getData();
+           // that.getData();
         }
 
 
@@ -573,16 +581,22 @@ export default {
         
         
     },
-    // beforeRouteLeave(to, from, next) {
-    //     alert('返回')
-    //     alert(from.path == "/acitve");
-    //   if (true) {
-    //     from.meta.keepAlive = true;
-    //   } else {
-    //     to.meta.keepAlive = false;
-    //   }
-    //   next();
-    // }
+     beforeRouteLeave(to, from, next) {
+         alert('返回');
+         console.log(to);
+         console.log(from);
+         console.log(next);
+         alert(to.path == "/active");
+       if (to.path == "/active") {
+         from.meta.keepAlive = true;//走缓存
+         to.meta.keepAlive = true;
+         alert('1111')
+       } else {
+         to.meta.keepAlive = false;
+         from.meta.keepAlive = false;
+       }
+       next();
+     }
 
 }
 
@@ -723,7 +737,7 @@ export default {
     float: left;
 }
 .pop_contant{
-background:url(img/weimaBg.png) no-repeat;
+background:url(./img/weimaBg.png) no-repeat;
 width:280px;
 background-size:cover;
 height:360px;

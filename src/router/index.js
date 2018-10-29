@@ -22,7 +22,6 @@ import activeCheckin from '@/pages/activeCheckin/activeCheckin'//签到
 import SuccCheckin from '@/pages/activeCheckin/SuccCheckin'//签到成功
 import wealthCardD from '@/pages/wealth/wealthCardD'//没有财富师名片的，代理名片
 import wchoose from '@/pages/wealth/wchoose'//没有财富师名片的，代理名片
-//import historyTrail from '@/pages/monitoring/history'
 Vue.use(Router)
 
 export default new Router({
@@ -59,7 +58,7 @@ export default new Router({
       path: '/toSignNewCust',
       name: 'toSignNewCust',
       meta: {
-        title: '拉新活动个人报名',
+        title: '拉新活动报名',
         keepAlive: false // 不需要缓存
       },
       component: toSignNewCust//使用这个组件
@@ -68,7 +67,7 @@ export default new Router({
       path: '/faceMsg',
       name: 'faceMsg',
       meta: {
-        title: '人脸识别',
+        title: '实名认证',
         keepAlive: false // 不需要缓存
       },
       component: faceMsg//使用这个组件---客户福利个人报名
@@ -76,7 +75,7 @@ export default new Router({
       path: '/pushW',
       name: 'pushW',
       meta: {
-        title: '大唐盛宴活动',
+        title: '活动报名成功',
         keepAlive: false // 不需要缓存
       },
       component: pushW//使用这个组件
@@ -85,7 +84,7 @@ export default new Router({
       path: '/activeCheckin',
       name: 'activeCheckin',
       meta: {
-        title: '大唐盛宴活动',
+        title: '活动签到',
         keepAlive: false // 不需要缓存
       },
       component: activeCheckin//使用这个组件---客户福利个人报名
@@ -93,7 +92,7 @@ export default new Router({
       path: '/SuccCheckin',
       name: 'SuccCheckin',
       meta: {
-        title: '大唐盛宴活动',
+        title: '活动签到成功',
         keepAlive: false // 不需要缓存
       },
       component: SuccCheckin//使用这个组件
@@ -102,7 +101,7 @@ export default new Router({
       path: '/kefuSign',
       name: 'kefuSign',
       meta: {
-        title: '客户福利个人报名',
+        title: '客服活动报名',
         keepAlive: false // 不需要缓存
       },
       component: kefuSign//使用这个组件
@@ -111,7 +110,7 @@ export default new Router({
       path: '/signSuc',
       name: 'signSuc',
       meta: {
-        title: '大唐盛宴活动',
+        title: '报名成功',
         keepAlive: false // 不需要缓存
       },
       component: signSuc//使用这个组件
@@ -165,7 +164,7 @@ export default new Router({
       path: '/onlineApply',
       name: 'onlineApply',
       meta: {
-        title: '在线申请',
+        title: '在线申请财富师',
         keepAlive: false // 不需要缓存
       },
       component: onlineApply//使用这个组件
@@ -192,7 +191,7 @@ export default new Router({
       path: '/applysuc',
       name: 'applysuc',
       meta: {
-        title: '申请成功',
+        title: '财富师申请成功',
         keepAlive: false // 不需要缓存
       },
       component: applysuc//使用这个组件
@@ -210,7 +209,7 @@ export default new Router({
       path: '/wchoose',
       name: 'wchoose',
       meta: {
-        title: '专属财富师',
+        title: '财富师',
         keepAlive: false // 不需要缓存
       },
       component: wchoose//使用这个组件

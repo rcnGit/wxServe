@@ -310,7 +310,8 @@ export default {
       }
      
         that.routerPhone = that.$route.query.phone;//本人已有的手机号
-        if(that.param.phone==''||that.param.phone==undefined){
+        alert(that.routerPhone+'that.routerPhone');
+        if(that.routerPhone==''||that.param.phone==undefined){
            that.ifSendMa=true;
              if(that.$route.query.phone2!=''&&that.$route.query.phone2!=undefined){
                 that.ipNo = that.$route.query.phone2; //手输入的手机号

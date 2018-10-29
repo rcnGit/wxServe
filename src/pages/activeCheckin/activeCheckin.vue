@@ -278,7 +278,7 @@ export default {
                     // }).catch(() => {
                         
                     // })
-                }else if(retCode == 0 || retCode == 1){   
+                }else if(retCode == 0){   
                     console.log(retCode)
                     that.$router.push({
                         path: '/SuccCheckin',
@@ -289,6 +289,12 @@ export default {
                             phone: that.userPhone
                         }
                     })
+                }else if(retCode == 1){
+                    Toast({
+                        message: '当前网络不稳定，请重试',
+                        position: 'center',
+                        duration: 3000
+                    });
                 }else{
                     console.log(retMsg);
                     //MessageBox('提示',retMsg);
