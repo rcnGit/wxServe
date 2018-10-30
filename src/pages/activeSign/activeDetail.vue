@@ -466,7 +466,7 @@ export default {
         },
         async asyncSDKConifg (actName,businessName) {
             let that = this;
-            axios.get('/wxservice/core/getJSSDKConfigure.mm?pageUrl='+this.backUrl)
+            axios.get('/wxservice/core/getJSSDKConfigure.mm?pageUrl='+that.backUrl)
                 .then(function (res) {
                 wx.config({
                     debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
@@ -482,7 +482,7 @@ export default {
                     wx.onMenuShareAppMessage({ // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用 
                         title: actName, // 分享标题
                         desc: businessName, // 分享描述
-                        link: location.href.split('?')[0]+'?ghT='+that.belongBusiness, // 分享链接
+                        link: location.href.split('?')[0]+'?ghT='+that.belongBusiness+'&oaActId='+that.OaActId+'&actName='+that.actName, // 分享链接
                         //link:window.location.href.split('#')[0] + 'static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href),
                         imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
                         type: '', // 分享类型,music、video或link，不填默认为link
@@ -498,7 +498,7 @@ export default {
                         });
                         wx.onMenuShareTimeline({ //分享朋友圈
                             title: actName, // 分享标题
-                            link: location.href.split('?')[0]+'?ifcard=1',
+                            link: location.href.split('?')[0]+'?ghT='+that.belongBusiness,
                             imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
                             success: function() {
                                 // 用户确认分享后执行的回调函数
