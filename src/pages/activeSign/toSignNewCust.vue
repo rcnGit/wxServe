@@ -348,6 +348,8 @@ export default {
                         actName : that.param.actName,
                         beginTime:that.beginTime,
                         location :that.location,
+                        ghT:that.$route.query.ghT,
+                        busNameT:that.$route.query.busNameT,
                     }
                 })
             }

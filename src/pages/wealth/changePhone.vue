@@ -54,6 +54,8 @@ export default {
             phone2:'',
             city:'',
             isFace:'0',
+            ghT:'',
+            busNameT:'',
             faceparam:{
                 bizId: '',
                 backUrl: location.href.split('?')[0]
@@ -253,6 +255,8 @@ export default {
                                 actName:that.actName,
                                 beginTime:that.beginTime,
                                 location:that.location,
+                                ghT:that.ghT,
+                                busNameT:that.busNameT,
                             }
                         })
                        }else{//取消
@@ -261,17 +265,25 @@ export default {
                   });
                     return;
                 }else{
-                    var message = '人脸识别实名认证失败，请重试。若无法完成人脸识别实名认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成实名认证后报名活动。'
+                    var message = '人脸识别实名认证失败，请重试。通过绑卡完成实名认证后报名活动。'
                     MessageBox('', message).then(action => {
                         if(action == 'confirm'){
                                 //跳转财富师名片页面
                             that.$router.push({
-                                path:'/faceMsg',
-                                name:'faceMsg',
-                                query:{
-                                returnUrl:that.$route.query.returnUrl,
-                                }
-                            })
+                            path:'/'+that.changeForm,
+                            name:that.changeForm,
+                            query:{
+                                changeForm:that.changeForm,
+                                isReviewSignup:that.isReviewSignup,
+                                activityType:that.activityType,
+                                activeId:that.activeId,
+                                actName:that.actName,
+                                beginTime:that.beginTime,
+                                location:that.location,
+                                ghT:that.ghT,
+                                busNameT:that.busNameT,
+                            }
+                        })
                         }
                     }).catch(() => {
                         
@@ -384,6 +396,8 @@ export default {
         this.phone2=this.$route.query.phone2;
         this.city=this.$route.query.city;
         this.isFace=this.$route.query.isFace;
+        that.ghT=that.$route.query.ghT;
+        that.busNameT=that.$route.query.busNameT;
         if(this.isFace==1){//需要人脸验证结果
             Indicator.open();
             var bizId=decodeURIComponent(getCookie("bizId"));
