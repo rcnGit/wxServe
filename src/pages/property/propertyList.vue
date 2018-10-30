@@ -57,9 +57,9 @@
             </div>  <!-- proDemo -->
         </div>
         <div class='wz'ref='wz' style="background:#fff;display:none;" >
-            <img src='../../common/img/wr.png'  style='width:40%;margin:80px auto 30px;'/>
-            <p class='fSize16' style='color:rgb(59,59,59)'>实名认证后可查看我的资产哦~</p>
-        <mt-button type="danger" size="large" class='next' @click='rz()' style='margin-top:81px;'>去人脸识别实名认证</mt-button>
+            <img src='../../common/img/wr.png'  style='width:22%;margin:3.4rem auto 0.5rem;'/>
+            <p class='fSize16' style='color:#333'>实名认证后可查看我的资产哦~</p>
+        <mt-button type="danger" size="large" class='next' @click='rz()' style='margin-top:1.4rem;'>去人脸识别实名认证</mt-button>
         </div>
         <comfooter></comfooter>
     </div>

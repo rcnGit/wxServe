@@ -160,7 +160,7 @@ export default {
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
                 window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=toSignNewCust#wechat_redirect';
                 }else{
-                    MessageBox('提示',retMsg);
+                    MessageBox(' ',retMsg);
                 }
             });
         },
@@ -291,13 +291,13 @@ export default {
                      var serbackUrl = that.Host+'wxservice/wxMemberInfo/getFaceToken'
                      window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=faceMsg#wechat_redirect';
                  }else if(retCode == '-2'){
-                     MessageBox('提示','身份证不合法');
+                     MessageBox(' ','身份证不合法');
                      return;
                  }else if(retCode == '-1'){
-                     MessageBox('提示','系统异常');
+                     MessageBox(' ','系统异常');
                      return;
                  }else if(retCode == '-3'){
-                    // MessageBox('提示','未获取到token');
+                    // MessageBox(' ','未获取到token');
                      Toast({
                         message: '当前网络不稳定，请重试',
                         position: 'center',
@@ -399,43 +399,43 @@ export default {
                     that.Dsiabled=false;
                     alert(retCode+'====')
                     if(retCode== 1){
-                        MessageBox('提示','验证码错误');
+                        MessageBox(' ','验证码错误');
                     }else if(retCode== 2){
-                        MessageBox('提示','推送crm系统错误');
+                        MessageBox(' ','推送crm系统错误');
                     }else if(retCode== -1){
-                        MessageBox('提示','系统异常');  
+                        MessageBox(' ','系统异常');  
                     }else if(retCode== -2){
-                        MessageBox('提示','绑定手机号出错');
+                        MessageBox(' ','绑定手机号出错');
                     }else if(retCode== -3){
-                        MessageBox('提示','已绑定线上财富师');
+                        MessageBox(' ','已绑定线上财富师');
                     }else if(retCode== -4){
-                        MessageBox('提示','已绑定线下财富师');
+                        MessageBox(' ','已绑定线下财富师');
                     }else if(retCode== -5){
-                        MessageBox('提示','财富师工号不存在');
+                        MessageBox(' ','财富师工号不存在');
                     }else if(retCode== -6){
-                        MessageBox('提示','财富师已离职');
+                        MessageBox(' ','财富师已离职');
                     }else if(retCode==3){
                             var crmInfo=res.data.crmInfo;
                             if(crmInfo.retCode==1){
-                                MessageBox('提示','报名失败，系统错误');
+                                MessageBox(' ','报名失败，系统错误');
                             }else if(crmInfo.retCode==3){
-                                MessageBox('提示','此活动已举办');
+                                MessageBox(' ','此活动已举办');
                             }else if(crmInfo.retCode==4){
-                                MessageBox('提示','此活动已取消');
+                                MessageBox(' ','此活动已取消');
                             }else if(crmInfo.retCode==5){
-                                MessageBox('提示','此活动报名已结束');
+                                MessageBox(' ','此活动报名已结束');
                             }else if(crmInfo.retCode==6){
-                                MessageBox('提示','您已经报过名');
+                                MessageBox(' ','您已经报过名');
                             }else if(crmInfo.retCode==7){
-                                MessageBox('提示','客户性质传入值错误');
+                                MessageBox(' ','客户性质传入值错误');
                             }else if(crmInfo.retCode==8){
-                                MessageBox('提示','此客户为老客户，请联系此客户专属财富师进行报名');
+                                MessageBox(' ','此客户为老客户，请联系此客户专属财富师进行报名');
                             }else if(crmInfo.retCode==9){
-                                MessageBox('提示','此活动已结束');
+                                MessageBox(' ','此活动已结束');
                             }else if(crmInfo.retCode==10){
-                                MessageBox('提示','活动不存在');
+                                MessageBox(' ','活动不存在');
                             }else if(crmInfo.retCode==11){
-                                MessageBox('提示','此财富师不存在');
+                                MessageBox(' ','此财富师不存在');
                             }
                             return;
                     }else if(retCode == 0){ 
@@ -533,7 +533,7 @@ export default {
  .sendCodeBtn{
      position:absolute;
      right:10px;
-     top:8.5px;
+     top:6px;
      width:28%!important;
      margin-top:0;
      font-size: 13px!important;

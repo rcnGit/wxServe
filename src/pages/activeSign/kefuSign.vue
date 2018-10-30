@@ -36,7 +36,8 @@
                   </div> <!--inpBox-->
              
              <mt-button type="danger" size="large" class='sign' @click="toSignUp()">报名</mt-button>
-             <p style='font-size:12px;color:rgb(153,153,153);line-height:40px;'>此页面仅供个人客户自行报名，机构客户可联系您的专属财富师为您服务</p>
+              <p style='font-size:13px;color:rgb(153,153,153);line-height:30px;margin-top:10px;'>此页面仅供个人客户自行报名</p>
+             <p style='font-size:13px;color:rgb(153,153,153);'>机构客户可联系您的专属财富师为您服务</p>
         </div>
         <getcode ref='c1' v-on:childByValue="childByValue" v-on:warnCodeFunction="warnCodeFunction"></getcode>
     </div>
@@ -583,13 +584,10 @@ export default {
 </script>
 <style>
  @import 'toSign.css'; /* 引入toSign.css文件*/
- #kefuSign{
-     padding-top:15px;
- }
  .sendCodeBtn{
      position:absolute;
      right:10px;
-     top:8.5px;
+     top:6px;
      width:28%!important;
      margin-top:0;
      font-size: 13px!important;

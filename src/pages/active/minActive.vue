@@ -1,5 +1,5 @@
 <template>
-    <div class='minActive' style="min-height:200px;">
+    <div class='minActive' style="min-height:480px;">
         <div class='mineOne' v-for="item in items" :oaActId='item.actId' :actName='item.actName' @click='en_details($event)'>
             <div class='stateB redState'v-show='!item.cancelReasonFlag&&!item.reasonFlag&&!cancelSignupReasonFlag'>{{item.statusValue}}</div>
             <div class='stateB grayState'v-show='item.reasonFlag'>{{item.statusValue}}</div>
@@ -39,15 +39,18 @@
             <img src='./img/nomessage@2x.png'/>
             <p class='fSize16'>您还没有参与活动哦~</p>
           </div>
+          <!-- wzIfShow -->
           <div class='wz' style="background:#fff;" v-show='wzIfShow'>
-            <img src='../../common/img/wr.png'  style='width:40%;margin:80px auto 30px;'/>
-            <p class='fSize16' style='color:rgb(59,59,59)'>绑定手机号可查看我的活动哦~</p>
-        <mt-button type="danger" size="large" class='next' @click='bd()' style='margin-top:81px;'>去绑定手机号</mt-button>
+            <img src='./img/bdImg.png'  style='width:22%;margin:3.4rem auto 0.5rem;'/>
+            <p class='fSize16' style='color:#333'>绑定手机号可查看我的活动哦~</p>
+        <mt-button type="danger" size="large" class='next' @click='bd()' style='margin-top:1.4rem;'>去绑定手机号</mt-button>
         </div>
+        <comfooter></comfooter>
     </div>
 </template>
 <script>
 import { Indicator } from 'mint-ui';
+import comfooter from '../../components/footer'
 import { MessageBox } from 'mint-ui';//提示框
 import { Toast } from 'mint-ui';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
@@ -163,7 +166,6 @@ export default {
     },
     created:function(){
          let that = this;
-         alert('我的活动')
           that.getdata();
         // 我的活动不用人脸识别
     }
@@ -173,7 +175,7 @@ export default {
 <style>
 body{
     width:100%;
-    background:#f2f2f2;
+    background:#fff;
 }
 .mineOne{
     width:100%;
@@ -229,12 +231,11 @@ body{
 }
 .noData img{
     width:40%;
-    margin:80px auto 0;
+     margin:3.4rem auto 0.5rem;
    
 }
 .noData p{
-    color:rgb(197,197,197);
-    margin-top:30px;
+    color:#333;
 }
 </style>
 
