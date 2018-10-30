@@ -5,15 +5,17 @@
             <p class='p1'>签到成功</p>
         </div>
         <div class="ReviewF" v-else>
+            <p class='p4' style='padding-top:1rem;'>您在大唐财富平台绑定的手机号<span class="phone">{{phone}}</span>未报名该活动，请先报名</p>
             <img src='./img/signFail@2x.png' class='ztw'/>
             <p class='p1'>签到失败</p>
-            <p class='p4'>您在大唐财富平台绑定的手机号<span class="phone">{{phone}}</span>未报名该活动，请先报名</p>
+           
             <mt-button type="danger" size="large" class='sure' @click='toActiveDetail()'>去报名</mt-button>
         </div>    
     </div>
 </template>
 <script>
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
+import { MessageBox } from 'mint-ui';//  框
 export default {
     name:'SuccCheckin',
     components:{Button},//使用mint-ui的button的组件
@@ -74,29 +76,30 @@ export default {
 </script>
 <style>
 .ztw{
-    width:100px;
-    margin-top:118px;
-    margin-bottom: 30px;
+    width:22%;
+    margin-top:2rem;
+    margin-bottom: 10px;
 
 }
 .p1{
     font-size: 17px;
-    color:rgb(53,55,57);
+    color:#333;
     line-height: 30px;
-    font-weight: 700;
+    font-weight:100;
     margin-bottom:20px;
 }
 .p2{
     font-size: 13px;
-    color:rgb(53,55,57);
+    color:#333;
     line-height: 35px;
 }
 .p4{
-    font-size: 13px;
-    color:rgb(53,55,57);
+    font-size: 0.37rem;
+    color:#333;
     line-height: 22px;
-    padding: 0 40px;
+    padding: 0 0px;
     text-align: left;
+    text-align: center
 }
 .progress{
     color: #08c;

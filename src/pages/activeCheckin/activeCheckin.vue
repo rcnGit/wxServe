@@ -26,7 +26,8 @@
             </div>
             <getcode ref='c1' v-on:childByValue="childByValue" v-on:warnCodeFunction="warnCodeFunction"></getcode>
         
-            <!-- 底部提示框 -->
+        </div>
+         <!-- 底部提示框 -->
             <mt-popup v-model="popupVisible" position="center" pop-transition="popup-fade">
             <div class='pop_contant' ref='pop_contant'>
                 <p class='pop_title'>大唐财富服务号</p>
@@ -36,7 +37,6 @@
                 </div>
             </div> <!--pop_contant -->
             </mt-popup>  
-        </div>
     </div>
 </template>
 <script>
@@ -84,7 +84,6 @@ export default {
     },
     methods:{
         getData:function(){
-            alert('data')
             Indicator.open(this.loadObj);
             let that = this;
             //console.log(that.param)
@@ -101,7 +100,6 @@ export default {
                 var retMsg=res.data.retMsg;
                 if(retCode == 0){
                     that.subscribe=res.data.userInfo.subscribe;//是否关注
-                    alert(that.subscribe+'====that.subscribe');
                     if(that.subscribe==0){//未关注
                         //调连接扫二维码；
                         that.getErweima();
@@ -149,7 +147,6 @@ export default {
             });
         },
         getErweima:function(){
-            alert('getErweima');
              Indicator.open();
             var that=this;
             axios({
@@ -165,14 +162,12 @@ export default {
             .then(function(res) {
                  Indicator.close();
                 var retCode=res.data.retCode;
-                alert(retCode+'请求弹框的状态');
                 if(retCode==0){
                     //获取二维码成功
                     var url=res.data.url;
                     that.popupVisible=true;//出现弹框
                     that.erweima=url;
                 }else{
-                    alert('获取二维码失败');
                 }
                 })//
         },
@@ -313,7 +308,6 @@ export default {
     created(){
        Indicator.open(this.loadObj);
        //手动授权
-       alert(this.$route.query.actId+'---')
       this.param.actId = this.$route.query.actId;
       this.actName = this.$route.query.actName;
       if(this.param.actId){
@@ -332,7 +326,7 @@ export default {
  .sendCodeBtn{
      position:absolute;
      right:10px;
-     top:8.5px;
+     top:6px;
      width:28%!important;
      margin-top:0;
      font-size: 13px!important;
