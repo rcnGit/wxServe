@@ -11,7 +11,7 @@
                 <p class='fSize16'>暂无投后消息</p>
          </div>
          <div class='wz'ref='wz' style="background:#fff;display:none;" >
-            <img src='../../common/img/wr.png'  style='width:22%;margin:3.4rem auto 0.5rem;'/>
+            <img src='../../common/img/wr.png'  style='width:27%;margin:2.8rem auto 0.5rem;'/>
             <p class='fSize16' style='color:#333'>实名认证后可查看投后消息哦~</p>
         <mt-button type="danger" size="large" class='next' @click='rz()' style='margin-top:1.4rem;'>去人脸识别实名认证</mt-button>
         </div>
@@ -20,7 +20,7 @@
 </template>
 <script>
 import { Indicator } from 'mint-ui';
-import { MessageBox } from 'mint-ui';//提示框
+import { MessageBox } from 'mint-ui';//  框
 import { Toast } from 'mint-ui';
 import axios from 'axios'
 import comfooter from '../../components/footer'
@@ -67,7 +67,7 @@ export default {
                 console.log(res.data);
                 var retCode=res.data.retCode;
                 if(retCode == '0'){
-                   // MessageBox('提示','人脸识别成功');
+                   // MessageBox('  ','人脸识别成功');
                     Toast({
                         message: '人脸识别成功',
                         position: 'center',
@@ -76,11 +76,11 @@ export default {
                     that.getList();//获取数据
                     return;
                 }else if(retCode == '-2'){
-                    MessageBox('提示','该身份证已绑定其他手机号');
+                    MessageBox('  ','该身份证已绑定其他手机号');
                     that.$refs.wz.style.display='block';
                     return;
                 }else if(retCode == '-1'){
-                    //MessageBox('提示','系统异常');
+                    //MessageBox('  ','系统异常');
                     Toast({
                         message: '系统异常',
                         position: 'center',
@@ -122,11 +122,11 @@ export default {
                     return;
                 }
                 // else if(retCode == '-3'){
-                //     MessageBox('提示','人脸识别未通过');
+                //     MessageBox('  ','人脸识别未通过');
                 //     that.$refs.wz.style.display='block';
                 //     return;
                 // }else if(retCode == '-4'){
-                //     MessageBox('提示','未查询到人脸识别结果');
+                //     MessageBox('  ','未查询到人脸识别结果');
                 //     that.$refs.wz.style.display='block';
                 //     return;
                 // }
@@ -155,7 +155,7 @@ export default {
                     }
                     that.items=res.data.itemList;
                  }else if(retCode==-1){
-                   // MessageBox('提示', '系统错误');
+                   // MessageBox('  ', '系统错误');
                     Toast({
                         message: '系统错误',
                         position: 'center',
@@ -165,7 +165,7 @@ export default {
                 }else if(retCode==-2){
                     that.$refs.nodata.style.display='block';
                     that.$refs.hasData.style.display='none';
-                     //MessageBox('提示','您还没有购买任何产品哦~');
+                     //MessageBox('  ','您还没有购买任何产品哦~');
                 }else if(retCode==1){//未认证
                      that.$refs.wz.style.display='block';
                         return;
@@ -177,7 +177,7 @@ export default {
         },
         open:function(){
               var fileUrl=event.currentTarget.getAttribute('fileUrl');//绑定事件的元素
-              alert(fileUrl);
+              fileUrl=decodeURIComponent(fileUrl)
              window.location.href=fileUrl;
         }
     },
@@ -239,8 +239,8 @@ export default {
     background:#fff;
 }
 .noData img{
-    width:22%;
-    margin:3.4rem auto 0.5rem;
+    width:2.24rem;
+    margin:2.5rem auto 0;
 }
 .noData p{
     color:#333;

@@ -37,7 +37,7 @@
             已经到底了
           </div>
         </div><!--active_content-->
-        <comfooter></comfooter>
+        <!-- <comfooter></comfooter> -->
     </div>
     
 </template>

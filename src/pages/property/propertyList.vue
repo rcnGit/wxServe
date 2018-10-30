@@ -23,7 +23,7 @@
         <div class='proContent' ref='contant' style='display:none;'>
             <div class='proDemo'>
                 <div class='proTop'>
-                    <img  class='floatLeft'src='./img/sLogo.png'/>
+                    <!-- <img  class='floatLeft'src='./img/sLogo.png'/> -->
                     <span class='floatLeft bigP'>私募</span>
                 </div>
                 <div style='clear:both'></div>
@@ -33,7 +33,7 @@
             </div>  <!-- proDemo -->
              <div class='proDemo'>
                 <div class='proTop'>
-                    <img  class='floatLeft' src='./img/gLogo.png' />
+                    <!-- <img  class='floatLeft' src='./img/gLogo.png' /> -->
                     <span class='floatLeft bigP'>公募</span>
                     <span class='floatRight xindate'>更新日期：<em>{{publicDate}}</em></span>
                 </div>
@@ -45,7 +45,7 @@
             </div>  <!-- proDemo -->
              <div class='proDemo'>
                 <div class='proTop'>
-                    <img  class='floatLeft'src='./img/dLogo.png'/>
+                    <!-- <img  class='floatLeft'src='./img/dLogo.png'/> -->
                     <span class='floatLeft bigP'>资管理财</span>
                     <span class='floatRight xindate'>更新日期：<em>{{securitiesDate}}</em></span>
                 </div>
@@ -57,7 +57,7 @@
             </div>  <!-- proDemo -->
         </div>
         <div class='wz'ref='wz' style="background:#fff;display:none;" >
-            <img src='../../common/img/wr.png'  style='width:22%;margin:3.4rem auto 0.5rem;'/>
+            <img src='../../common/img/wr.png'  style='width:27%;margin:2.8rem auto 0.5rem;'/>
             <p class='fSize16' style='color:#333'>实名认证后可查看我的资产哦~</p>
         <mt-button type="danger" size="large" class='next' @click='rz()' style='margin-top:1.4rem;'>去人脸识别实名认证</mt-button>
         </div>
@@ -113,7 +113,6 @@ export default {
                 })
         },
         getfaceId:function(){
-            alert('getfaceId');
             var that=this;
             axios({
                 method:'get',
@@ -226,7 +225,7 @@ export default {
                       window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=propertyList#wechat_redirect';
                     }var d=res.data.data;
                    // that.totalAsset=that.money(d.totalAsset)//总资产
-                     that.totalAsset=d.totalAsset//总资产
+                     that.totalAsset=that.money(d.totalAsset)//总资产
                     that.privateTotalAsset=that.money(d.privateTotalAsset)//私募总资产
                     that.privateToConfirmAsset=that.money(d.privateToConfirmAsset)//私募待确认
                     that. publicTotalAsset=that.money(d.publicTotalAsset)//公募总资产
@@ -315,7 +314,7 @@ export default {
 }
 .noData img{
     width:2.24rem;
-    margin:3rem auto 0;
+    margin:2.5rem auto 0;
 }
 .noData p{
     color:#757575;
