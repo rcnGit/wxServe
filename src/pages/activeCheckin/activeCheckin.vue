@@ -98,6 +98,7 @@ export default {
                 Indicator.close();
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
+                alert(retCode)
                 if(retCode == 0){
                     that.subscribe=res.data.userInfo.subscribe;//是否关注
                     if(that.subscribe==0){//未关注

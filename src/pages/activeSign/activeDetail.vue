@@ -67,7 +67,7 @@ export default {
             location:'',//活动地点
             subscribe:'',//是否关注
             erweima:'',
-            popupVisible:false,//是否出现二维码的弹框
+            popupVisible:true,//是否出现二维码的弹框
             content:'',
             isReviewSignup:'',
             activityType: '',
@@ -316,11 +316,12 @@ export default {
             .then(function(res) {
                  Indicator.close();
                 var retCode=res.data.retCode;
-                alert(retCode);
+                alert(retCode+'erweimcode');
                 if(retCode==0){
                     //获取二维码成功
                     var url=res.data.url;
                     that.popupVisible=true;//出现弹框
+                    alert(that.popupVisible+'========popupVisible');
                     that.erweima=url;
                 }else{
                    
@@ -366,22 +367,25 @@ export default {
                         that.asyncSDKConifg(actname,busname)
                     } 
                     return;
-                }else if(retCode == 400){
-                    if(that.param.comefrom =='tangguan'){
-                        return;
-                    }else{
-                            var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=activeDetail#wechat_redirect';
-                    }
+                }
+                // else if(retCode == 400){
+                //     if(that.param.comefrom =='tangguan'){
+                //         return;
+                //     }else{
+                //             var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
+                //         window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=activeDetail#wechat_redirect';
+                //     }
                     
-                }else{
+                // }
+                else{
                     MessageBox('   ', retMsg); 
                 }
             })
         },
-        getPhoto:function(){
+        getPhoto:function(){ 
             let that = this;
-            var param=Base64.encode("{'userId':'DT1603225'}");//that.user.userId
+            var param=Base64.encode("{'userId':"+that.user.userId+"}");//that.user.userId
+            alert(param)
             axios({
                 method:'get',
                 url:'/wxservice/wxexternal?opName=getTCmycard&versionNo=30',//获取客户信息
@@ -407,7 +411,7 @@ export default {
             
         sign:function(){
             var that=this; 
-            alert(that.subscribe)
+            alert(that.subscribe+ '=====that.subscribe')
             if(that.subscribe==0){//未关注
                 //调连接扫二维码；
                 that.getErweima();
