@@ -368,15 +368,15 @@ export default {
                     } 
                     return;
                 }
-                // else if(retCode == 400){
-                //     if(that.param.comefrom =='tangguan'){
-                //         return;
-                //     }else{
-                //             var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                //         window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=activeDetail#wechat_redirect';
-                //     }
+                else if(retCode == 400){
+                    if(that.param.comefrom =='tangguan'){
+                        return;
+                    }else{
+                            var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
+                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=activeDetail#wechat_redirect';
+                    }
                     
-                // }
+                }
                 else{
                     MessageBox('   ', retMsg); 
                 }
