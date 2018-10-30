@@ -322,6 +322,8 @@ export default {
                          activityType:this.param.activityType,
                          activeId:this.param.activeId,
                          actName:this.param.actName,
+                         ghT:this.$route.query.ghT,
+                         busNameT:this.$route.query.busNameT,
                      }
                  })
             }
@@ -562,7 +564,7 @@ export default {
     components:{Button,getcode,Field},//使用mint-ui的button的组件
     created:function(){
         Indicator.open();
-        var that=this;
+        var that=this; 
          var bizId=decodeURIComponent(getCookie("bizId"));
          that.params.bizId=bizId;
          //分享方的财富师

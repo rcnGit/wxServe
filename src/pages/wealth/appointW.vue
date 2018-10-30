@@ -515,7 +515,7 @@ export default {
         },
         onlineApplyV:function(){
             var that=this;
-            console.log('onlineApplyV');
+            Indicator.open();
                axios({
                     method:'get',
                     url:'/wxservice/wxMemberInfo/checkApplyWealther',//申请财富师之前校验财富师
@@ -523,8 +523,9 @@ export default {
                 .then(function(res) {//成功之后
                     var retCode=res.data.retCode;
                     var retMsg=res.data.retMsg;
-                    console.log(res.data);
+                    Indicator.close();
                     var data=res.data.data;
+                    alert(retCode);
                     if(retCode==0){//0-可以申请（data为客户手机号）   //跳转在线申请页面    
                         that.$router.push({
                             path:'/onlineApply',
