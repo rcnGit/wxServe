@@ -34,7 +34,7 @@ input::-webkit-input-placeholder {
 }
 .inpBox input{
     width:100%;
-    height:26px;
+    height:41px;
     line-height: 26px;
     border:none;
     border-bottom: 1px solid #efefef;
@@ -58,7 +58,7 @@ input:focus{
 .inpBox span{
     position:absolute;
     left:0;
-    top:-5px;
+    top:2px;
     height:20px;
     line-height: 20px;
     width:30%;

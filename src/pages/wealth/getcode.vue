@@ -25,6 +25,7 @@ export default {
     },
     methods:{
         getCodeFn:function(type,ipNo,authenticFlag){
+            alert(type+ipNo+authenticFlag)
             var that=this;
             if(type==3||type=='3'){
                 that.messText='活动报名';

@@ -29,11 +29,11 @@
         </div>
          <!-- 底部提示框 -->
             <mt-popup v-model="popupVisible" position="center" pop-transition="popup-fade">
-            <div class='pop_contant' ref='pop_contant'>
-                <p class='pop_title'>大唐财富服务号</p>
+            <div class='pop_contant pop_contant_A' ref='pop_contant'>
+                <!-- <p class='pop_title'>大唐财富服务号</p> -->
                 <div class='popImgBox'>
-                    <img :src='erweima' style='width:80%;margin:20px auto 10px;'/>
-                    <p style='color:rgb(59,59,59);font-size:14px;line-height:20px;margin-bottom:20px;text-align:center;'>扫码关注大唐财富服务号后完成签到</p>
+                    <img :src='erweima' style='width:180px;height:180px;margin:94px auto 10px;'/>
+                    <p style='color:rgb(59,59,59);font-size:14px;line-height:20px;margin-bottom:20px;text-align:center;margin-top: 30px;'>扫码关注大唐财富服务号后完成签到</p>
                 </div>
             </div> <!--pop_contant -->
             </mt-popup>  
@@ -101,6 +101,7 @@ export default {
                 alert(retCode)
                 if(retCode == 0){
                     that.subscribe=res.data.userInfo.subscribe;//是否关注
+                    alert(that.subscribe+'====that.subscribe')
                     if(that.subscribe==0){//未关注
                         //调连接扫二维码；
                         that.getErweima();
@@ -185,10 +186,16 @@ export default {
             } 
         },//验证手机号
         getM:function(){
-           if(this.phoneFn()){
+            alert('mu')
+            this.Dsiabled = true;
+            if(this.phoneFn()){
                this.Dsiabled = true
-           }
-            this.$refs.c1.getCodeFn(this.messType,this.param.mobile,this.authenticFlag);
+            }else{
+                this.Dsiabled = false
+            }
+            alert('qu')
+
+            this.$refs.c1.getCodeFn(this.messType,this.param.mobile);
         },
         warnCodeFunction:function(warn){
              this.warnPhone=warn;
@@ -200,8 +207,8 @@ export default {
             //  this.$refs.mobile.style='border-bottom:0.5px solid #efefef!important';
            }
         },
-         childByValue:function(v){
-             if(v.time!='重新发送'&&v.time!='获取验证码'){
+        childByValue:function(v){
+            if(v.time!='重新发送'&&v.time!='获取验证码'){
                 this.text=v.time+'s';
             }else if(v.time==NaN||v.time==undefined||v.time=='NANs'){
                 this.text='重新发送';
@@ -347,4 +354,13 @@ export default {
     color:#999;
     line-height:30px;
  }
+ .pop_contant_A{
+background:url(./img/weimaBg.png) no-repeat!important;
+width:280px!important;
+background-size:cover!important;
+height:360px!important;
+}
+.mint-popup.mint-popup-center{
+    border-radius: 10px;
+}
 </style>

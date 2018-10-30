@@ -34,7 +34,7 @@
          <mt-button type="danger" size="large" class='toSign' @click='sign()' v-show='isShow' :disabled="isDisabled">{{actStatus}}</mt-button>
         <!-- 底部   框 -->
         <mt-popup v-model="popupVisible" position="center" pop-transition="popup-fade">
-           <div class='pop_contant' ref='pop_contant'>
+           <div class='pop_contant pop_contant_A' ref='pop_contant'>
                <div class='popImgBox'>
                    <img :src='erweima' style='width:180px;height:180px;margin:94px auto 10px;'/>
                    <p style='color:#333;font-size:14px;text-align:center;margin: 24px auto 8px;'>长按二维码</p>
@@ -67,7 +67,7 @@ export default {
             location:'',//活动地点
             subscribe:'',//是否关注
             erweima:'',
-            popupVisible:true,//是否出现二维码的弹框
+            popupVisible:false,//是否出现二维码的弹框
             content:'',
             isReviewSignup:'',
             activityType: '',
@@ -119,7 +119,7 @@ export default {
                 bizId: '',
                 backUrl: location.href.split('?')[0]
             },
-            backUrl: location.href.split('#')[0],//微信分享
+            backUrl: encodeURIComponent(location.href.split('#')[0]),//微信分享
             serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxservice?opName=getUserInfo'),//接口
             paramurl: location.href.split('?')[0]
         }
@@ -244,7 +244,7 @@ export default {
         },
         getData:function(){
              let that = this;
-            alert(that.param.activeId+'data')
+             that.param.activeId=that.$route.query.actId;
             axios({
                 method:'get',
                 url:'/wxservice/wxservice?opName=getactiveinfo',//调取活动列表和详情的接口
@@ -277,9 +277,9 @@ export default {
                             that.isShow=false;
                             return;
                         }
-                        alert(res.data.actCanSignUp+'====res.data.actCanSignUp')
+                       
                         if(res.data.actCanSignUp==1){//that.actStatusCode == '进行中' || that.actStatusCode == '延期中'
-                            alert(res.data.canSignUp+'====res.data.canSignUp')
+                           
                             if(res.data.canSignUp == '0'){
                                 that.isShow = true
                                 that.actStatus= '我要报名';
@@ -299,16 +299,14 @@ export default {
             });
         },
         getErweima:function(){
-            alert('erweima')
             var that=this;
              Indicator.open();
-            alert(this.$route.query.oaActId)
             axios({
                 method:'get',
                 url:'/wxservice/wxexternal?opName=cSignSQRCode',//获取客户信息
                 params: {
                     param:{
-                        actId:that.$route.query.oaActId,
+                        actId:that.$route.query.actId,
                         sign:'0',//报名
                     }
                 }
@@ -316,12 +314,10 @@ export default {
             .then(function(res) {
                  Indicator.close();
                 var retCode=res.data.retCode;
-                alert(retCode+'erweimcode');
                 if(retCode==0){
                     //获取二维码成功
                     var url=res.data.url;
                     that.popupVisible=true;//出现弹框
-                    alert(that.popupVisible+'========popupVisible');
                     that.erweima=url;
                 }else{
                    
@@ -340,13 +336,10 @@ export default {
             .then(function(res) {//成功之后
                 Indicator.close();
                 var retCode=res.data.retCode;
-                alert('authentic')
                 var retMsg=res.data.retMsg;
-                alert('authentic='+retCode)
                 if(retCode == 0){
                     that.getData();
                     that.subscribe=res.data.userInfo.subscribe;//是否关注
-                    alert(that.subscribe+'====that.subscribe');
                     
                     that.authenticFlag = res.data.userInfo.authenticFlag//是否人脸
                     that.userphone = res.data.userInfo.phone;
@@ -385,7 +378,6 @@ export default {
         getPhoto:function(){ 
             let that = this;
             var param=Base64.encode("{'userId':"+that.user.userId+"}");//that.user.userId
-            alert(param)
             axios({
                 method:'get',
                 url:'/wxservice/wxexternal?opName=getTCmycard&versionNo=30',//获取客户信息
@@ -411,7 +403,6 @@ export default {
             
         sign:function(){
             var that=this; 
-            alert(that.subscribe+ '=====that.subscribe')
             if(that.subscribe==0){//未关注
                 //调连接扫二维码；
                 that.getErweima();
@@ -430,7 +421,7 @@ export default {
                             actName: that.actName,
                             beginTime:that.beginTime,
                             location :that.location,
-                            ghT:that.ghT,
+                            ghT:that.$route.query.ghT,
                             busNameT:that.busNameT,
                         }
                     })
@@ -445,19 +436,19 @@ export default {
                         path: '/faceMsg',
                         name: 'faceMsg',
                         query:{
-                            returnUrl: that.Host+'weixin-h5/index.html#/ActiveDetail?oaActId='+that.OaActId+'&actName='+that.actName
+                            returnUrl: that.Host+'weixin-h5/index.html#/ActiveDetail?actId='+that.OaActId+'&actName='+that.actName
                         }
                     })
                 }else{
-                    this.$router.push({
+                    that.$router.push({
                         path: '/kefuSign',
                         name: 'kefuSign',
                         query:{
-                            isReviewSignup: this.isReviewSignup,
-                            activityType: this.activityType,
-                            activeId: this.param.activeId,
-                            actName: this.actName,
-                            ghT:that.ghT,
+                            isReviewSignup: that.isReviewSignup,
+                            activityType: that.activityType,
+                            activeId: that.param.activeId,
+                            actName: that.actName,
+                            ghT:that.$route.query.ghT,
                             busNameT:that.busNameT,
                         }
                     })
@@ -486,7 +477,7 @@ export default {
                     wx.onMenuShareAppMessage({ // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用 
                         title: actName, // 分享标题
                         desc: businessName, // 分享描述
-                        link: location.href.split('?')[0]+'?ghT='+that.belongBusiness+'&oaActId='+that.OaActId+'&actName='+that.actName, // 分享链接
+                        link: location.href.split('?')[0]+'?ghT='+that.belongBusiness+'&actId='+that.$route.query.actId+'&actName='+that.actName, // 分享链接
                         //link:window.location.href.split('#')[0] + 'static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href),
                         imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
                         type: '', // 分享类型,music、video或link，不填默认为link
@@ -502,7 +493,7 @@ export default {
                         });
                         wx.onMenuShareTimeline({ //分享朋友圈
                             title: actName, // 分享标题
-                            link: location.href.split('?')[0]+'?ghT='+that.belongBusiness,
+                            link: location.href.split('?')[0]+'?ghT='+that.belongBusiness+'&actId='+that.$route.query.actId+'&actName='+that.actName,
                             imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
                             success: function() {
                                 // 用户确认分享后执行的回调函数
@@ -531,26 +522,24 @@ export default {
         document.body.scrollTop = document.documentElement.scrollTop = 0;//回到顶部；
         var bizId=decodeURIComponent(getCookie("bizId"));
         that.faceparam.bizId = bizId;
-         if(!this.$route.query.faceResult == false||bizId==null){
+         if(!that.$route.query.faceResult == false||bizId==null){
             that.getfaceId();
          }else{
              that.authentic()//获取客户信息
          }
          //================
-        var oaActId =this.$route.params.oaActId || this.$route.query.oaActId; 
-        var actName =this.$route.params.actName || this.$route.query.actName;
+        var oaActId =that.$route.params.actId || that.$route.query.actId; 
+        var actName =that.$route.params.actName || that.$route.query.actName;
         that.param.activeId=oaActId;
-        alert(that.param.activeId+'that.param.activeId')
         if(!oaActId == true){ 
             var Activiy = localStorage.getItem('activiy')
             Activiy = JSON.parse(Activiy)
             oaActId = Activiy.huoId
             actName = Activiy.huoName
         }
-        this.OaActId = oaActId
-        this.actName = decodeURIComponent(actName);
+        that.OaActId = oaActId
+        that.actName = decodeURIComponent(actName);
         Indicator.open(that.loadObj);
-   
 
         if(oaActId!=''&&oaActId!=undefined){
             that.param.activeId=oaActId;
@@ -564,11 +553,11 @@ export default {
 
 
 
-        var ifCard=this.$route.query.ifCard;
+        var ifCard=that.$route.query.ifCard;
          if(ifCard!=''&&ifCard!=undefined){
              console.log('ifCard==='+ifCard);
              if(ifCard==1){
-                 this.$refs.card.style.display='flex';
+                 that.$refs.card.style.display='flex';
              }
          }
          that.user.userId = that.$route.query.ghT;
@@ -741,14 +730,17 @@ export default {
     margin-right: 7px;
     float: left;
 }
-.pop_contant{
-background:url(./img/weimaBg.png) no-repeat;
-width:280px;
-background-size:cover;
-height:360px;
+.pop_contant_A{
+background:url(./img/weimaBg.png) no-repeat!important;
+width:280px!important;
+background-size:cover!important;
+height:360px!important;
 }
 .mint-popup.mint-popup-center{
     border-radius: 10px;
+}
+.popImgBox{
+    padding: 0!important;
 }
 </style>
 

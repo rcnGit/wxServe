@@ -90,12 +90,12 @@ export default {
      // console.log(event.target);
      // console.log(event.target.getAttribute('oaactid'))//点击到的元素
        var oaActId=event.currentTarget.getAttribute('oaactid');//绑定事件的元素
-       var ActName=event.currentTarget.getAttribute('ActName');//绑定事件的元素
+       var ActName=event.currentTarget.getAttribute('ActName');//绑定事件的元素   
        this.$router.push({
           path:'/ActiveDetail',
           name:'ActiveDetail',
           query:{
-            oaActId : oaActId,
+            actId: oaActId,
             actName : ActName,
             comefrom:that.param.comefrom,//是否糖罐进入
           }

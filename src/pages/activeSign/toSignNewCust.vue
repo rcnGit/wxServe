@@ -115,6 +115,7 @@ export default {
                 }
             })
             .then(function(res) {//成功之后
+               
                 Indicator.close();
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
@@ -508,12 +509,13 @@ export default {
         }
     },
     created(){
-        return;
         Indicator.open();
+        alert(this.$route.query.ghT)
         if(!this.$route.query.ghT==false){
             this.gh = this.$route.query.ghT;
             this.gh=this.gh.substr(2,7);
             this.param.businessName = decodeURIComponent(this.$route.query.busNameT);
+            alert(this.param.businessName)
          }
         this.param.isReviewSignup = this.$route.query.isReviewSignup;
         this.param.activityType = this.$route.query.activityType;
