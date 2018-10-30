@@ -17,7 +17,7 @@ body{
 .tip{
     text-align: left;
     /* margin-top:20px;    */
-    margin-bottom:20px;
+    margin-bottom:40px;
     line-height: 18px; 
 }
 .tip span{ 
@@ -34,8 +34,8 @@ input::-webkit-input-placeholder {
 }
 .inpBox input{
     width:100%;
-    height:48px;
-    line-height: 50px;
+    height:26px;
+    line-height: 26px;
     border:none;
     border-bottom: 1px solid #efefef;
     background:#fff;
@@ -43,6 +43,7 @@ input::-webkit-input-placeholder {
     font-size:15px;
     color:#333;
     border-radius: 0;
+    padding-bottom:15px!important;
 }
 .inpBox input:disabled{
     background:#fff;
@@ -57,9 +58,9 @@ input:focus{
 .inpBox span{
     position:absolute;
     left:0;
-    top:0;
-    height:50px;
-    line-height: 50px;
+    top:-5px;
+    height:20px;
+    line-height: 20px;
     width:30%;
     color:#333;
     font-size: 15px;

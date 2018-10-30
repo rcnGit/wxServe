@@ -11,7 +11,7 @@ export default {
     
         Vue.prototype.money = function (value) {//Vue自定义过滤器格式化数字三位加一逗号
             if(!value) return '0.00';
-            var intPart = Number(value).toFixed(0); //获取整数部分
+            var intPart = parseInt(value); //获取整数部分
             var intPartFormat = intPart.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'); //将整数部分逢三一断
             var floatPart = ".00"; //预定义小数部分
             var value2Array = value.split(".");

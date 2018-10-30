@@ -36,7 +36,7 @@ body{
     /* border-top:0.5px solid #efefef;
     border-bottom:0.5px solid #efefef; */
     color:rgb(122,122,122);
-    padding:16px 20px;
+    padding:16px 0.4rem 0 0.56rem;
     height: 2.5rem;
     background:url(./img/juxing.png) no-repeat center;
     background-size: 100% 2.729333rem;
@@ -64,7 +64,7 @@ em{
     line-height: .36rem;
 }
 .smP{
-    padding-left:0.86667rem;
+    padding-left:0.21rem;
     padding-top:0.19rem;
     font-size: .36rem;
 }

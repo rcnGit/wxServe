@@ -508,6 +508,7 @@ export default {
         }
     },
     created(){
+        return;
         Indicator.open();
         if(!this.$route.query.ghT==false){
             this.gh = this.$route.query.ghT;

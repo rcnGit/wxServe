@@ -144,7 +144,7 @@ export default {
                     })
                 return;
             }else if(retCode == '-6'){
-                var message = '尊敬的客户，同一手机号不可同时绑定不同的身份证'
+                var message = '您当前账户绑定的手机号已绑定其他实名信息，请更换手机号后重新认证。'
                     MessageBox.confirm('', {
                         message: message,
                         title: '',
@@ -153,7 +153,14 @@ export default {
                         confirmButtonText:'去更换',
                     }).then(action => {
                         if(action == 'confirm'){
-                            
+                            that.$router.push({
+                                path:'/changephone',
+                                name:'changephone',
+                                query:{
+                                    changeForm:'faceMsg',
+                                    returnUrl:that.$route.query.returnUrl,
+                                }
+                            })
                         }
                     }).catch(() => {
                         

@@ -262,13 +262,7 @@ export default {
                     return;
                 }else{
                     var message = '人脸识别实名认证失败，请重试。若无法完成人脸识别实名认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成实名认证后报名活动。'
-                    MessageBox.confirm('', {
-                        message: message,
-                        title: '',
-                        showConfirmButton:true,
-                        confirmButtonClass:'confirmButton',
-                        confirmButtonText:'重试',
-                    }).then(action => {
+                    MessageBox('', message).then(action => {
                         if(action == 'confirm'){
                                 //跳转财富师名片页面
                             that.$router.push({
@@ -276,15 +270,6 @@ export default {
                                 name:'faceMsg',
                                 query:{
                                 returnUrl:that.$route.query.returnUrl,
-                                }
-                            })
-                        }else{
-                            //跳转财富师名片页面
-                            that.$router.push({
-                                path:'/faceMsg',
-                                name:'faceMsg',
-                                query:{
-                                returnUrl:returnUrl,
                                 }
                             })
                         }
