@@ -377,7 +377,7 @@ export default {
         },
         getPhoto:function(){ 
             let that = this;
-            var param=Base64.encode("{'userId':"+that.user.userId+"}");//that.user.userId
+            var param=Base64.encode('{"userId":"'+that.user.userId+'"}');//that.user.userId
             axios({
                 method:'get',
                 url:'/wxservice/wxexternal?opName=getTCmycard&versionNo=30',//获取客户信息
