@@ -377,6 +377,8 @@ export default {
         },
         getPhoto:function(){ 
             let that = this;
+            alert('getPhoto')
+            alert(that.user.userId)
             var param=Base64.encode('{"userId":"'+that.user.userId+'"}');//that.user.userId
             axios({
                 method:'get',
@@ -388,10 +390,14 @@ export default {
             })
             .then(function(res) {//成功之后
                 Indicator.close();
+                alert('结束')
+                alert(res.data)
                 var data=Base64.decode(res.data);
+                alert(data)
                 data=jQuery.parseJSON(data);
                 that.photo = data.photo;
                 that.ghT=data.userId;
+                alert(data.userId+'===data.userId')
                 that.busNameT = data.userName; //对方财富师的名字
                 that.headImgUrl = that.photo
                 that.shareName=that.busNameT;//对方的财富师名字
@@ -561,6 +567,7 @@ export default {
              }
          }
          that.user.userId = that.$route.query.ghT;
+         alert(that.$route.query.ghT+'that.$route.query.ghT')
          if(!that.user.userId==false){//对方有财富师
             that.businesscardShow=true
              that.headimgShow = true;

@@ -82,7 +82,7 @@
  
  html, body {
      width: 100%;
-     background:#fff;
+     background:#fff!important;
  }
  
  body {
