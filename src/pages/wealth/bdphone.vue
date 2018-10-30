@@ -215,7 +215,7 @@ export default {
     line-height:30px;
  }
  .comfooter{
-     position: fixed;
+     position: relative;
      bottom: 0;
  }
 </style>

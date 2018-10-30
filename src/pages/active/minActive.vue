@@ -89,7 +89,6 @@ export default {
         },
         openCFScard:function(id){
             //打开我的财富师名片
-            alert(id)
             window.location.href='http://172.16.6.59:8887/tcapi/HTML5/html/shared_card.html?userId='+id;
         },
         bd:function(){//去实名认证
@@ -151,7 +150,6 @@ export default {
             // console.log(event.target.getAttribute('oaactid'))//点击到的元素
             var oaActId=event.currentTarget.getAttribute('oaActId');//绑定事件的元素
             var actName=event.currentTarget.getAttribute('actName');//绑定事件的元素
-            alert(oaActId+'====oaActId我的活动')
             that.$router.push({
                 path:'/ActiveDetail',
                 name:'ActiveDetail',

@@ -59,7 +59,7 @@ export default {
     name:'ActiveDetail',
     data:function (){
         return{
-            OaActId:'',
+            actId:'',
             actName:'',
             actStatus:'',
             beginTime:'',
@@ -244,7 +244,7 @@ export default {
         },
         getData:function(){
              let that = this;
-             that.param.activeId=that.$route.query.actId;
+             that.param.activeId=that.actId;
             axios({
                 method:'get',
                 url:'/wxservice/wxservice?opName=getactiveinfo',//调取活动列表和详情的接口
@@ -306,8 +306,9 @@ export default {
                 url:'/wxservice/wxexternal?opName=cSignSQRCode',//获取客户信息
                 params: {
                     param:{
-                        actId:that.$route.query.actId,
+                        actId:that.actId,
                         sign:'0',//报名
+                        ghT:that.ghT,
                     }
                 }
             })
@@ -336,8 +337,19 @@ export default {
             .then(function(res) {//成功之后
                 Indicator.close();
                 var retCode=res.data.retCode;
-                var retMsg=res.data.retMsg;
+                var retMsg=res.data.retMsg; 
                 if(retCode == 0){
+                    if(!that.ghT==false){//对方有财富师
+                        that.businesscardShow=true
+                        that.headimgShow = true;
+                        that.getPhoto()
+                        
+                    }else{
+                        that.businesscardShow=false;
+                        that.headimgShow = false;
+                    }
+
+         //=========================
                     that.getData();
                     that.subscribe=res.data.userInfo.subscribe;//是否关注
                     
@@ -366,7 +378,7 @@ export default {
                         return;
                     }else{
                             var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=activeDetail#wechat_redirect';
+                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=activeDetail_'+that.actId+','+that.ghT+'#wechat_redirect';
                     }
                     
                 }
@@ -377,8 +389,6 @@ export default {
         },
         getPhoto:function(){ 
             let that = this;
-            alert('getPhoto')
-            alert(that.user.userId)
             var param=Base64.encode('{"userId":"'+that.user.userId+'"}');//that.user.userId
             axios({
                 method:'get',
@@ -390,16 +400,14 @@ export default {
             })
             .then(function(res) {//成功之后
                 Indicator.close();
-                alert('结束')
-                alert(res.data)
                 var data=Base64.decode(res.data);
-                alert(data)
                 data=jQuery.parseJSON(data);
                 that.photo = data.photo;
                 that.ghT=data.userId;
-                alert(data.userId+'===data.userId')
                 that.busNameT = data.userName; //对方财富师的名字
-                that.headImgUrl = that.photo
+                if(!that.photo==false){
+                    that.headImgUrl = that.photo
+                }
                 that.shareName=that.busNameT;//对方的财富师名字
                 // that.userphone = res.data.userInfo.userphone
                     
@@ -423,11 +431,11 @@ export default {
                         query:{
                             isReviewSignup: that.isReviewSignup,
                             activityType: that.activityType,
-                            activeId: that.param.activeId,
+                            activeId: that.actId,
                             actName: that.actName,
                             beginTime:that.beginTime,
                             location :that.location,
-                            ghT:that.$route.query.ghT,
+                            ghT:that.ghT,
                             busNameT:that.busNameT,
                         }
                     })
@@ -442,7 +450,7 @@ export default {
                         path: '/faceMsg',
                         name: 'faceMsg',
                         query:{
-                            returnUrl: that.Host+'weixin-h5/index.html#/ActiveDetail?actId='+that.OaActId+'&actName='+that.actName
+                            returnUrl: that.Host+'weixin-h5/index.html#/ActiveDetail?actId='+that.actId+'&actName='+that.actName
                         }
                     })
                 }else{
@@ -452,9 +460,9 @@ export default {
                         query:{
                             isReviewSignup: that.isReviewSignup,
                             activityType: that.activityType,
-                            activeId: that.param.activeId,
+                            activeId:that.actId,
                             actName: that.actName,
-                            ghT:that.$route.query.ghT,
+                            ghT:that.ghT,
                             busNameT:that.busNameT,
                         }
                     })
@@ -470,7 +478,7 @@ export default {
             axios.get('/wxservice/core/getJSSDKConfigure.mm?pageUrl='+that.backUrl)
                 .then(function (res) {
                 wx.config({
-                    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
                     appId: res.data.appId, // 必填，公众号的唯一标识
                     timestamp: res.data.timestamp, // 必填，生成签名的时间戳
                     nonceStr: res.data.nonceStr, // 必填，生成签名的随机串
@@ -483,7 +491,7 @@ export default {
                     wx.onMenuShareAppMessage({ // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用 
                         title: actName, // 分享标题
                         desc: businessName, // 分享描述
-                        link: location.href.split('?')[0]+'?ghT='+that.belongBusiness+'&actId='+that.$route.query.actId+'&actName='+that.actName, // 分享链接
+                        link: location.href.split('?')[0]+'?ghT='+that.belongBusiness+'&actId='+that.actId+'&actName='+that.actName, // 分享链接
                         //link:window.location.href.split('#')[0] + 'static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href),
                         imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
                         type: '', // 分享类型,music、video或link，不填默认为link
@@ -499,7 +507,7 @@ export default {
                         });
                         wx.onMenuShareTimeline({ //分享朋友圈
                             title: actName, // 分享标题
-                            link: location.href.split('?')[0]+'?ghT='+that.belongBusiness+'&actId='+that.$route.query.actId+'&actName='+that.actName,
+                            link: location.href.split('?')[0]+'?ghT='+that.belongBusiness+'&actId='+that.actId+'&actName='+that.actName,
                             imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
                             success: function() {
                                 // 用户确认分享后执行的回调函数
@@ -534,28 +542,34 @@ export default {
              that.authentic()//获取客户信息
          }
          //================
-        var oaActId =that.$route.params.actId || that.$route.query.actId; 
-        var actName =that.$route.params.actName || that.$route.query.actName;
-        that.param.activeId=oaActId;
-        if(!oaActId == true){ 
+        var wxstr =that.$route.query.actId; 
+        var actId=wxstr.split(",")[0];
+        that.actId=wxstr.split(",")[0];
+       
+        if(!that.$route.query.ghT==false){
+            that.ghT=that.$route.query.ghT;
+        }else{
+            that.ghT=wxstr.split(",")[1];
+        }
+        var actName =that.$route.query.actName;
+        that.param.activeId=actId;
+        if(!actId == true){ 
             var Activiy = localStorage.getItem('activiy')
             Activiy = JSON.parse(Activiy)
-            oaActId = Activiy.huoId
+            actId = Activiy.huoId
             actName = Activiy.huoName
         }
-        that.OaActId = oaActId
         that.actName = decodeURIComponent(actName);
         Indicator.open(that.loadObj);
 
-        if(oaActId!=''&&oaActId!=undefined){
-            that.param.activeId=oaActId;
+        if(actId!=''&&actId!=undefined){
+            that.param.activeId=actId;
             that.param.actName=actName;
-            that.paramOnly.activeId=oaActId;
+            that.paramOnly.activeId=actId;
             that.paramOnly.actName=actName;
-            console.log(that.param.activeId);
            // that.getData();
         }
-
+       // that.actId = that.$route.query.actId
 
 
 
@@ -567,16 +581,7 @@ export default {
              }
          }
          that.user.userId = that.$route.query.ghT;
-         alert(that.$route.query.ghT+'that.$route.query.ghT')
-         if(!that.user.userId==false){//对方有财富师
-            that.businesscardShow=true
-             that.headimgShow = true;
-              that.getPhoto()
-              
-         }else{
-             that.businesscardShow=false;
-             that.headimgShow = false;
-         }
+         
             
     
         

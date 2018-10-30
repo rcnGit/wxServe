@@ -58,6 +58,7 @@ export default {
     name:'toSignNewCust',
     data:function(){
         return{
+            ghT:'',//对方财富师工号
             messType:'3',
             text:'获取验证码',
             Dsiabled:false,
@@ -367,11 +368,9 @@ export default {
            
         },
         toSignUp:function(){
-            alert('toSignUp');
             var that=this;
             this.phoneFn();
             this.realnameFn();
-             alert(that.yanzhengmaIsShow);
             if(that.yanzhengmaIsShow){
                 this.codeFn();
             }else{
@@ -400,7 +399,6 @@ export default {
                     var retCode=res.data.retCode;
                     var retMsg=res.data.retMsg;
                     that.Dsiabled=false;
-                    alert(retCode+'====')
                     if(retCode== 1){
                         MessageBox(' ','验证码错误');
                     }else if(retCode== 2){
@@ -447,7 +445,6 @@ export default {
                             name: 'signSuc',
                             query:{
                                 isReviewSignup:that.param.isReviewSignup,
-                                activeId: that.param.activeId,
                                 activeId:that.param.activeId,
                                 actName:encodeURIComponent(that.param.actName),
                                 beginTime:that.beginTime,
@@ -512,12 +509,10 @@ export default {
     },
     created(){
         Indicator.open();
-        alert(this.$route.query.ghT)
         if(!this.$route.query.ghT==false){
             this.gh = this.$route.query.ghT;
             this.gh=this.gh.substr(2,7);
             this.param.businessName = decodeURIComponent(this.$route.query.busNameT);
-            alert(this.param.businessName)
          }
         this.param.isReviewSignup = this.$route.query.isReviewSignup;
         this.param.activityType = this.$route.query.activityType;

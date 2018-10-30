@@ -122,7 +122,6 @@ export default {
             .then(function(res){
                 console.log(res.data);
                 var retCode=res.data.retCode;
-                alert(retCode);
                 if(retCode == '0'){
                     //MessageBox('提示','人脸识别成功');
                     Toast({

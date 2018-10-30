@@ -45,7 +45,7 @@ export default {
     created:function(){
         var that=this;
         if(that.$route.query.comefrom=='tangguan'||that.$route.params.comefrom=='tangguan'){
-            alert('tangguan2222222222');
+           
             that.dibu=false;
         }else{
              that.dibu=true;

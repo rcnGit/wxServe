@@ -98,10 +98,8 @@ export default {
                 Indicator.close();
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
-                alert(retCode)
                 if(retCode == 0){
                     that.subscribe=res.data.userInfo.subscribe;//是否关注
-                    alert(that.subscribe+'====that.subscribe')
                     if(that.subscribe==0){//未关注
                         //调连接扫二维码；
                         that.getErweima();
@@ -186,14 +184,12 @@ export default {
             } 
         },//验证手机号
         getM:function(){
-            alert('mu')
             this.Dsiabled = true;
             if(this.phoneFn()){
                this.Dsiabled = true
             }else{
                 this.Dsiabled = false
             }
-            alert('qu')
 
             this.$refs.c1.getCodeFn(this.messType,this.param.mobile);
         },

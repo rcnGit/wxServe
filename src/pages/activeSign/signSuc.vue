@@ -44,7 +44,6 @@ export default {
         this.actName = decodeURIComponent(this.$route.query.actName);
         this.beginTime=this.$route.query.beginTime;
         this.location =decodeURIComponent(this.$route.query.location);
-        alert(this.location+'suc解码后');
         // 将数据放在当前组件的数据内
         if(isReviewSignup == '1'){//用审核
             this.result='报名申请提交';
@@ -63,7 +62,7 @@ export default {
           path:'/ActiveDetail',
           name:'ActiveDetail',
           query:{
-            oaActId:that.activeId,
+            actId:that.activeId,
             actName:that.actName
           }
         })

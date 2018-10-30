@@ -72,7 +72,7 @@ export default {
     methods:{
         openCFScard:function(id){
             //打开我的财富师名片
-            alert(id)
+        
             window.location.href='http://172.16.6.59:8887/tcapi/HTML5/html/shared_card.html?userId='+id;
         },
         bd:function(){//去实名认证
@@ -101,7 +101,7 @@ export default {
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 var data=res.data.data;
-                 alert(retCode+'我的活动请求状态');
+                
                 if(retCode==0){
                     that.iSscroll = 1;
                     //that.items=data.actList;
@@ -162,7 +162,7 @@ export default {
     },
     created:function(){
          let that = this;
-         alert('我的活动')
+        
           that.getdata('create');
         // 我的活动不用人脸识别
             window.onscroll = function(){

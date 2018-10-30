@@ -265,7 +265,7 @@ export default {
                   });
                     return;
                 }else{
-                    var message = '人脸识别实名认证失败，请重试。通过绑卡完成实名认证后报名活动。'
+                    var message = '人脸识别实名认证失败，请重试。'
                     MessageBox('', message).then(action => {
                         if(action == 'confirm'){
                                 //跳转财富师名片页面
@@ -422,7 +422,7 @@ export default {
     color:#4a90e2;
 }
 .comfooter{
-     position: fixed;
+     position: relative;
      bottom: 0;
  }
 </style>

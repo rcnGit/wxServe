@@ -180,6 +180,7 @@
 .mint-msgbox-message{
     line-height: .6rem !important;
     color: #333!important;
+    text-align: center!important;
 }
 .mint-msgbox-btns{
     line-height: .4rem!important;

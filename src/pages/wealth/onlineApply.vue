@@ -232,7 +232,6 @@ export default {
                         position: 'center',
                         duration: 3000
                     });
-                    //alert(res.data.data.exeTime+'===res.data.data.exeTime');
                        // that.exeTime=res.data.data.exeTime
                             that.$router.push({
                             path:'/applysuc',
@@ -310,7 +309,6 @@ export default {
       }
      
         that.routerPhone = that.$route.query.phone;//本人已有的手机号
-        alert(that.routerPhone+'that.routerPhone');
         if(that.routerPhone==''||that.param.phone==undefined){
            that.ifSendMa=true;
              if(that.$route.query.phone2!=''&&that.$route.query.phone2!=undefined){

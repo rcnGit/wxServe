@@ -148,7 +148,6 @@ export default {
            this.handleCopy(text,event); 
         },
         getfaceId:function(){
-            alert('getfaceId');
             var that=this;
             axios({
                 method:'get',
@@ -157,7 +156,6 @@ export default {
             })
             .then(function(res){
                 var retCode=res.data.retCode;
-                alert(retCode);
                 var returnUrl = that.$route.query.returnUrl;
                 if(retCode == '0'){
                    // MessageBox('提示','人脸识别成功');
@@ -525,7 +523,6 @@ export default {
                     var retMsg=res.data.retMsg;
                     Indicator.close();
                     var data=res.data.data;
-                    alert(retCode);
                     if(retCode==0){//0-可以申请（data为客户手机号）   //跳转在线申请页面    
                         that.$router.push({
                             path:'/onlineApply',
@@ -622,7 +619,8 @@ export default {
 }
 .popImgBox{
     width:100%;
-    padding:30px 2.40rem 0;
+    padding:.4rem 2.40rem 0!important;
+    overflow: hidden;
 }
 .popImgBox img{
     width:62px;

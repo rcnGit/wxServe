@@ -35,7 +35,6 @@ export default {
        this.activeId = this.$route.query.activeId
        this.Wname = this.$route.query.businessName;
        this.belongBusiness = this.$route.query.belongBusiness
-       alert(this.belongBusiness);
        // var routerParams = '0'
         // 将数据放在当前组件的数据内
        

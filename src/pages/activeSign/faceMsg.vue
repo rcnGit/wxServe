@@ -83,7 +83,6 @@ export default {
         console.log(this.param)
         var that=this;
         Indicator.open();
-        alert(that.param.returnUrl);
         axios({
             method:'get',
             url:'/wxservice/wxMemberInfo/getFaceToken',//ning
@@ -169,7 +168,6 @@ export default {
             }else{
                 that.token=res.data.data.token;
                 var bizId=res.data.data.bizId;
-                alert(bizId+'成功');
                 setCookie('bizId',bizId);
                window.location.href='https://api.megvii.com/faceid/lite/do?token='+that.token;
                
@@ -207,7 +205,6 @@ export default {
     created:function(){
        var that = this;
       var returnUrl = that.$route.query.returnUrl;
-      alert(returnUrl+'开始')
        if(returnUrl&&returnUrl!=undefined){
            if(returnUrl.indexOf("?") != -1){
                that.param.returnUrl=returnUrl+'&faceResult=1';
