@@ -192,7 +192,7 @@ body{
 }
 .pDate,.pAdd,.pState{
      font-size: 13px;
-     height:15px;
+     min-height:15px;
     color:rgb(99,99,99);
 }
 .pDate{

@@ -93,7 +93,7 @@ export default {
                     // }        
                     MessageBox.confirm('', {
                         message: message,
-                        title: '提示',
+                        title: '',
                         showConfirmButton:true,
                         confirmButtonText:'去联系',
                         cancelButtonText:'取消',

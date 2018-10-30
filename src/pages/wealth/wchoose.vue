@@ -84,16 +84,16 @@ export default {
                     });
                     return;
                 }else if(retCode == '-2'){
-                   MessageBox('提示','该身份证已绑定其他手机号');
+                   MessageBox('','该身份证已绑定其他手机号');
                     return;
                 }else if(retCode == '-1'){
-                    MessageBox('提示','系统异常')                    
+                    MessageBox('','系统异常')                    
                     return;
                 }else if(retCode == '-3'){
-                    MessageBox('提示','人脸识别未通过');
+                    MessageBox('','人脸识别未通过');
                     return;
                 }else if(retCode == '-4'){
-                    MessageBox('提示','未查询到人脸识别结果');
+                    MessageBox('','未查询到人脸识别结果');
                     return;
                 }
             })
