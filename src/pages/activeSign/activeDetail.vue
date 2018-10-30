@@ -32,7 +32,7 @@
            <div v-else><img :src='content' class='imgEvent' width='100%'/></div>
         </div>
          <mt-button type="danger" size="large" class='toSign' @click='sign()' v-show='isShow' :disabled="isDisabled">{{actStatus}}</mt-button>
-        <!-- 底部提示框 -->
+        <!-- 底部   框 -->
         <mt-popup v-model="popupVisible" position="center" pop-transition="popup-fade">
            <div class='pop_contant' ref='pop_contant'>
                <div class='popImgBox'>
@@ -52,7 +52,7 @@ import wx from 'weixin-js-sdk';
 import { Popup } from 'mint-ui';//底部出来的弹框；
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { Indicator } from 'mint-ui';
-import { MessageBox } from 'mint-ui';//提示框
+import { MessageBox } from 'mint-ui';//   框
 import { getCookie,setCookie } from '@/common/js/cookie.js'
 import axios from 'axios'
 export default {
@@ -158,21 +158,21 @@ export default {
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 if(retCode== 1){
-                    MessageBox('提示','验证码错误');
+                    MessageBox('   ','验证码错误');
                 }else if(retCode== 2){
-                    MessageBox('提示','推送crm系统错误');
+                    MessageBox('   ','推送crm系统错误');
                 }else if(retCode== -1){
-                    MessageBox('提示','系统异常');  
+                    MessageBox('   ','系统异常');  
                 }else if(retCode== -2){
-                    MessageBox('提示','绑定手机号出错');
+                    MessageBox('   ','绑定手机号出错');
                 }else if(retCode== -3){
-                    MessageBox('提示','已绑定线上财富师');
+                    MessageBox('   ','已绑定线上财富师');
                 }else if(retCode== -4){
-                    MessageBox('提示','已绑定线下财富师');
+                    MessageBox('   ','已绑定线下财富师');
                 }else if(retCode== -5){
-                    MessageBox('提示','财富师工号不存在');
+                    MessageBox('   ','财富师工号不存在');
                 }else if(retCode== -6){
-                    MessageBox('提示','财富师已离职');
+                    MessageBox('   ','财富师已离职');
                 }else if(retCode == 0){
                     that.$router.push({
                         path: '/signSuc',
@@ -188,25 +188,25 @@ export default {
                 }else if(retCode == 3){
                     var crmInfo=res.data.crmInfo;
                     if(crmInfo.retCode==1){
-                         MessageBox('提示','报名失败，系统错误');
+                         MessageBox('   ','报名失败，系统错误');
                     }else if(crmInfo.retCode==3){
-                        MessageBox('提示','此活动已举办');
+                        MessageBox('   ','此活动已举办');
                     }else if(crmInfo.retCode==4){
-                        MessageBox('提示','此活动已取消');
+                        MessageBox('   ','此活动已取消');
                     }else if(crmInfo.retCode==5){
-                        MessageBox('提示','此活动报名已结束');
+                        MessageBox('   ','此活动报名已结束');
                     }else if(crmInfo.retCode==6){
-                        MessageBox('提示','您已经报过名');
+                        MessageBox('   ','您已经报过名');
                     }else if(crmInfo.retCode==7){
-                        MessageBox('提示','客户性质传入值错误');
+                        MessageBox('   ','客户性质传入值错误');
                     }else if(crmInfo.retCode==8){
-                        MessageBox('提示','此客户为老客户，请联系此客户专属财富师进行报名');
+                        MessageBox('   ','此客户为老客户，请联系此客户专属财富师进行报名');
                     }else if(crmInfo.retCode==9){
-                        MessageBox('提示','此活动已结束');
+                        MessageBox('   ','此活动已结束');
                     }else if(crmInfo.retCode==10){
-                        MessageBox('提示','活动不存在');
+                        MessageBox('   ','活动不存在');
                     }else if(crmInfo.retCode==11){
-                        MessageBox('提示','此财富师不存在');
+                        MessageBox('   ','此财富师不存在');
                     }
                     return;
                 }//状态为三；
@@ -224,27 +224,27 @@ export default {
                 console.log(res.data);
                 var retCode=res.data.retCode;
                 if(retCode == '0'){
-                    MessageBox('提示','人脸识别成功');
+                    MessageBox('   ','人脸识别成功');
                     that.authentic()
                     return;
                 }else if(retCode == '-2'){
-                    MessageBox('提示','该身份证已绑定其他手机号');
+                    MessageBox('   ','该身份证已绑定其他手机号');
                     return;
                 }else if(retCode == '-1'){
-                    //MessageBox('提示','系统异常');
+                    MessageBox('   ','系统异常');
                     return;
                 }else if(retCode == '-3'){
-                    MessageBox('提示','人脸识别未通过');
+                    MessageBox('   ','人脸识别未通过');
                     return;
                 }else if(retCode == '-4'){
-                    MessageBox('提示','未查询到人脸识别结果');
+                    MessageBox('   ','未查询到人脸识别结果');
                     return;
                 }
             })
         },
         getData:function(){
-            alert('getData')
-            let that = this;
+             let that = this;
+            alert(that.param.activeId+'data')
             axios({
                 method:'get',
                 url:'/wxservice/wxservice?opName=getactiveinfo',//调取活动列表和详情的接口
@@ -257,7 +257,7 @@ export default {
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 if(retCode!=0){
-                    MessageBox('提示', '系统错误');
+                    MessageBox('   ', '系统错误');
                 }else if(retCode == 0){
                     if(res.data.itemList.length<=0){
                     // that.$refs.nodata.style.display='block';
@@ -277,7 +277,7 @@ export default {
                             that.isShow=false;
                             return;
                         }
-                        alert(res.data.actCanSignUp+'=]===res.data.actCanSignUp')
+                        alert(res.data.actCanSignUp+'====res.data.actCanSignUp')
                         if(res.data.actCanSignUp==1){//that.actStatusCode == '进行中' || that.actStatusCode == '延期中'
                             alert(res.data.canSignUp+'====res.data.canSignUp')
                             if(res.data.canSignUp == '0'){
@@ -341,6 +341,7 @@ export default {
                 var retCode=res.data.retCode;
                 alert('authentic')
                 var retMsg=res.data.retMsg;
+                alert('authentic='+retCode)
                 if(retCode == 0){
                     that.getData();
                     that.subscribe=res.data.userInfo.subscribe;//是否关注
@@ -374,7 +375,7 @@ export default {
                     }
                     
                 }else{
-                    MessageBox('提示', retMsg); 
+                    MessageBox('   ', retMsg); 
                 }
             })
         },
@@ -516,7 +517,7 @@ export default {
 
     },
     created(){
-        //this.asyncSDKConifg();
+        this.asyncSDKConifg();
         //是否糖罐入口
         var that=this;
         if(that.$route.query.comefrom=='tangguan'||that.$route.params.comefrom=='tangguan'){
@@ -526,16 +527,16 @@ export default {
         document.body.scrollTop = document.documentElement.scrollTop = 0;//回到顶部；
         var bizId=decodeURIComponent(getCookie("bizId"));
         that.faceparam.bizId = bizId;
-        alert(!this.$route.query.faceResult == false||bizId==null+'========')
          if(!this.$route.query.faceResult == false||bizId==null){
             that.getfaceId();
          }else{
-
              that.authentic()//获取客户信息
          }
          //================
         var oaActId =this.$route.params.oaActId || this.$route.query.oaActId; 
         var actName =this.$route.params.actName || this.$route.query.actName;
+        that.param.activeId=oaActId;
+        alert(that.param.activeId+'that.param.activeId')
         if(!oaActId == true){ 
             var Activiy = localStorage.getItem('activiy')
             Activiy = JSON.parse(Activiy)
@@ -581,22 +582,22 @@ export default {
         
         
     },
-     beforeRouteLeave(to, from, next) {
-         alert('返回');
-         console.log(to);
-         console.log(from);
-         console.log(next);
-         alert(to.path == "/active");
-       if (to.path == "/active") {
-         from.meta.keepAlive = true;//走缓存
-         to.meta.keepAlive = true;
-         alert('1111')
-       } else {
-         to.meta.keepAlive = false;
-         from.meta.keepAlive = false;
-       }
-       next();
-     }
+    //  beforeRouteLeave(to, from, next) {
+    //      alert('返回');
+    //      console.log(to);
+    //      console.log(from);
+    //      console.log(next);
+    //      alert(to.path == "/active");
+    //    if (to.path == "/active") {
+    //      from.meta.keepAlive = true;//走缓存
+    //      to.meta.keepAlive = true;
+    //      alert('1111')
+    //    } else {
+    //      to.meta.keepAlive = false;
+    //      from.meta.keepAlive = false;
+    //    }
+    //    next();
+    //  }
 
 }
 

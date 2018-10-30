@@ -26,7 +26,7 @@
 <script>
 import { Indicator } from 'mint-ui';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
-import { MessageBox } from 'mint-ui';//提示框
+import { MessageBox } from 'mint-ui';// 框
 import { Toast } from 'mint-ui';
 import { isValidIdCardNo,isValidName} from '@/common/js/extends.js'
 import { getCookie,setCookie } from '@/common/js/cookie.js'
@@ -47,7 +47,7 @@ export default {
            serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxMemberInfo/getFaceToken')
        }
    },
-    components:{Button,axios},//使用mint-ui的button的组件
+    components:{Button,axios,Toast},//使用mint-ui的button的组件
     methods:{
         shenJ:function(){
            this.param.idCardNo=this.param.idCardNo.replace(/[\W]/g,'');
@@ -97,10 +97,10 @@ export default {
                 var serbackUrl = that.Host+'wxservice/wxMemberInfo/getFaceToken'
                 window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=faceMsg#wechat_redirect';
             }else if(retCode == '-2'){
-                MessageBox('提示','身份证不合法');
+                MessageBox(' ','身份证不合法');
                 return;
             }else if(retCode == '-1'){
-               // MessageBox('提示','系统异常');
+               // MessageBox(' ','系统异常');
                 Toast({
                     message: '系统异常', 
                     position: 'center',
@@ -108,7 +108,7 @@ export default {
                 });
                 return;
             }else if(retCode == '-3'){
-                //MessageBox('提示','当前网络不稳定，请重试');
+                //MessageBox(' ','当前网络不稳定，请重试');
                 Toast({
                     message: '当前网络不稳定，请重试',
                     position: 'center',
@@ -116,11 +116,12 @@ export default {
                 });
                 return;
             }else if(retCode == '-4'){
-                MessageBox('提示','您的实名信息已绑定其他微信无法重复绑定，如有疑问请拨打客服电话：400-819-9868');
+                MessageBox(' ','您的实名信息已绑定其他微信无法重复绑定，如有疑问请拨打客服电话：400-819-9868');
                 return;
             }else if(retCode == '-5'){
-               // MessageBox('提示','手机号与已实名的手机号不一致');
-               var message = '尊敬的客户，您当前绑定手机号与实名信息绑定手机号不一致，请更换一致后再进行身份认证。<br>PS：若想更换实名信息绑定手机号请去'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">大唐财富APP</a>'+'更换'
+                var tgPhone=res.data.tgPhone;
+               // MessageBox(' ','手机号与已实名的手机号不一致');
+               var message = '尊敬的客户，您当前绑定手机号与实名信息绑定手机号（尾号'+tgPhone+'）不一致，请更换一致后再进行身份认证。<br>PS：若想更换实名信息绑定手机号请去'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">大唐财富APP</a>'+'更换'
                     MessageBox.confirm('', {
                         message: message,
                         title: '',
@@ -129,13 +130,30 @@ export default {
                         confirmButtonText:'去更换',
                     }).then(action => {
                         if(action == 'confirm'){
-                            this.$router.push({
-                            path:'/changephone',
-                            name:'changephone',
-                            query:{
-                                changeForm:'faceMsg'
-                            }
-                        })
+                            that.$router.push({
+                                path:'/changephone',
+                                name:'changephone',
+                                query:{
+                                    changeForm:'faceMsg',
+                                    returnUrl:that.$route.query.returnUrl,
+                                }
+                            })
+                        }
+                    }).catch(() => {
+                        
+                    })
+                return;
+            }else if(retCode == '-6'){
+                var message = '尊敬的客户，同一手机号不可同时绑定不同的身份证'
+                    MessageBox.confirm('', {
+                        message: message,
+                        title: '',
+                        showConfirmButton:true,
+                        confirmButtonClass:'confirmButton',
+                        confirmButtonText:'去更换',
+                    }).then(action => {
+                        if(action == 'confirm'){
+                            
                         }
                     }).catch(() => {
                         

@@ -9,7 +9,7 @@
                 <!-- <input type='tel' class=''placeholder="请输入手机号码" maxlength='11' v-model="ipNo" ref='ph'v-bind:disabled='ifdisabledPh'/>
                 <P ref='phWarn' class='warn'>{{phWarn}}</P> -->
                 <span>手机号</span>
-                <span class='inpRchoose fSize13' style='color:#4a90e2;' @click='changeP' ref='changeSP' v-if='!ifSendMa'>变更手机号>></span>
+                <span class='inpRchoose fSize13' style='color:#4a90e2;text-align:center;' @click='changeP' ref='changeSP' v-if='!ifSendMa'>变更手机号</span>
              </div> <!--inpBox-->
               <div class='inpBox' ref='sendCode' style='' v-if='ifSendMa'>
                 <input type='tel' class='' v-model="msgCode" ref='code' placeholder="请输入验证码" maxlength="4"/>
@@ -24,8 +24,8 @@
                 <span class='inpRchoose fSize13'style='text-align:center;color:#333;line-height:52px;'@click='chooseAdd'>去选择<img src='../../common/img/chooseR.png' class='chooseR'/></span>
               </div> <!--inpBox-->
               
-             <mt-button type="danger" size="large" class='sign'@click='onlineW()'>申请</mt-button>
-             <p class='fSize13' style='color:#333;line-height: .58rem;font-size: .346rem;padding: .5rem .8rem 0;'>输入您的手机号和所在地，提交申请，客服会在24小时内联系您~</p>
+             <mt-button type="danger" size="large" class='sign'@click='onlineW()' style='margin-top:2rem'>申请</mt-button>
+             <p class='fSize13' style='color:#999;line-height: .58rem;font-size: .3rem;padding: .5rem 0rem 0;'>输入您的手机号和所在地，提交申请，客服会在24小时内联系您~</p>
         </div>
         <getcode ref='c1' v-on:childByValue="childByValue"></getcode>
 
@@ -40,7 +40,7 @@
 import getcode from './getcode'
 import axios from 'axios';
 import { Indicator } from 'mint-ui';
-import { MessageBox } from 'mint-ui';//提示框
+import { MessageBox } from 'mint-ui';//  框
 import { Toast } from 'mint-ui';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { isValidMobile,isValidverifycode } from '@/common/js/extends.js';//引入mint-ui的button组件文件包
@@ -52,10 +52,10 @@ export default {
             messType:'5',
             ipNo:'',
             text:'获取验证码',
-            phWarn:'',//校验是否输入手机号的提示
-            codeWarn:'',//校验是否输入手机号的提示
-            provWarn:'',//校验是否输入手机号的提示
-            exeTime:'',//存储申请成功后的时间戳
+            phWarn:'',//校验是否输入手机号的  
+            codeWarn:'',//校验是否输入手机号的  
+            provWarn:'',//校验是否输入手机号的  
+          //  exeTime:'',//存储申请成功后的时间戳
             Dsiabled:false,
             ifSendMa:false,//是否发送验证码
             routerCity:'',
@@ -226,25 +226,25 @@ export default {
                     var retCode=res.data.retCode;
                     var retMsg=res.data.retMsg;
                     if(retCode==0){
-                       // MessageBox('提示', '申请成功');
+                       // MessageBox('  ', '申请成功');
                        Toast({
                         message: '申请成功',
                         position: 'center',
                         duration: 3000
                     });
                     //alert(res.data.data.exeTime+'===res.data.data.exeTime');
-                        that.exeTime=res.data.data.exeTime
+                       // that.exeTime=res.data.data.exeTime
                             that.$router.push({
                             path:'/applysuc',
                             name:'applysuc',
                             query:{
-                                exeTime:that.exeTime
+                               // exeTime:that.exeTime
                             }
                         })
                     }else if(retCode==-2){
-                        MessageBox('提示', '验证码不正确');
+                        MessageBox('  ', '验证码不正确');
                     }else if(retCode==-3){
-                        MessageBox('提示', '请发送验证码');
+                        MessageBox('  ', '请发送验证码');
                     }else if(retCode == 400){
                          var serbackUrl = that.Host+'wxservice/wxMemberInfo/applyWealther'
                          window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=onlineApply#wechat_redirect';
@@ -290,7 +290,7 @@ export default {
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
                 window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=toSignNewCust#wechat_redirect';
                 }else{
-                   // MessageBox('提示',retMsg);
+                   // MessageBox('  ',retMsg);
                     Toast({
                         message: retMsg,
                         position: 'center',

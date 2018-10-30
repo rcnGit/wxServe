@@ -11,7 +11,7 @@ body{
 }
 .content{
     background: #fff;
-    padding:.266667rem .4rem .4rem;
+    padding:1rem .4rem .4rem 0.5rem;
     /* height:95%; */
 }
 .tip{
@@ -20,11 +20,9 @@ body{
     margin-bottom:20px;
     line-height: 18px; 
 }
-.tip span{
-    border-left:3px solid #cf432e;
-    padding-left:10px;
-    color:rgb(57,66,09);
-    font-size: 16px;
+.tip span{ 
+    color:#333;
+    font-size:0.38rem;
 }
 .inpBox{
     position: relative;
@@ -32,7 +30,7 @@ body{
     margin-bottom:10px;
 }
 input::-webkit-input-placeholder {
-    color: #ececec;        
+    color: #d2cfcf;        
 }
 .inpBox input{
     width:100%;
@@ -45,6 +43,11 @@ input::-webkit-input-placeholder {
     font-size:15px;
     color:#333;
     border-radius: 0;
+}
+.inpBox input:disabled{
+    background:#fff;
+    opacity: 1;
+    color:#333!important;
 }
 input:focus{
     outline:0;

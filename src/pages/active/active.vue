@@ -13,7 +13,7 @@
           <p class='fSize16'>现在还没有活动哦</p>
         </div>
         <div id='active_content'>
-          <div style='height:20px;background:#f8f8f8;'></div>
+          <div style='height:20px;background:#f1f1f1;'></div>
            <div v-for="item in items" class="active_demo" @click='en_details($event)' :oaActId='item.oaActId' :ActName='item.actName'>
                <div style="position:relative;">
                  <img v-bind:src="item.bulletinPicture" width='100%' style='min-height:180px;max-height:200px;'/>
@@ -37,7 +37,7 @@
             已经到底了
           </div>
         </div><!--active_content-->
-        
+        <comfooter></comfooter>
     </div>
     
 </template>
@@ -47,6 +47,7 @@ import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
 import { Toast } from 'mint-ui';
 import axios from 'axios'
+import comfooter from '../../components/footer'
 import { getCookie,setCookie} from '@/common/js/cookie.js'
 var arrData=[];
 export default {
@@ -78,6 +79,7 @@ export default {
       items:[]
     }
   },
+  components:{MessageBox,comfooter},
   methods:{
     subTime:function(time){
       time=time.substr(0,10);
@@ -242,11 +244,11 @@ export default {
   width: 100%;
   box-sizing: border-box;
   padding:20px 13px 10px;
-  line-height: 40px; 
+  line-height: 1rem; 
   display:flex; /*父元素声明弹性盒*/
   position: fixed;
   top: 0;
-  background:#f8f8f8;
+  background:#f1f1f1;
   z-index: 999999999;
 }
 .act_h_left{
@@ -274,10 +276,10 @@ export default {
   height:100%;
   border:1px solid #e4e5e7;
   background:#fff;
-  border-radius: 4px;
-  padding:3px 30px 3px 10px;
+  border-radius:30px;
+  padding:3px 30px 3px 20px;
   box-sizing: border-box;
-  font-size: 14px;
+  font-size: 0.37rem;
   color:rgb(57,66,89);
   box-shadow: none;
   outline-color: invert ;
@@ -293,20 +295,21 @@ export default {
   opacity: 1;
 }
 input::-webkit-input-placeholder { /* WebKit browsers */ 
-color: #808080; 
+color: #d2cfcf; 
 } 
 
 
 .search_img{
-  width:20px;
+  width:0.45rem;
   position: absolute;
-  top:10px;
-  right:10px;
+  top:0.25rem;
+  right:14px;
 }
 #active_content{
-  background:#f8f8f8;
+  background:#f1f1f1;
   margin-top:55px;
   padding: 0 10px;
+  min-height:12.2rem;
   /* margin-bottom:50px; */
 }
 .textMain{

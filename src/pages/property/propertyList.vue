@@ -51,7 +51,7 @@
                 </div>
                 <div style='clear:both'></div>
                 <div class='proBot'>
-                    <span class='floatLeft smP'>金额&nbsp;<em class="smp-number">{{securitiesAddIncome}}</em></span>
+                    <span class='floatLeft smP'>金额&nbsp;<em class="smp-number">{{securitiesTotalAsset}}</em></span>
                     <span class='floatRight shouyi'>最新收益<em :class='ziC'>{{securitiesYestIncome}}</em></span>
                 </div>
             </div>  <!-- proDemo -->
@@ -164,6 +164,15 @@ export default {
                                 returnUrl:returnUrl,
                                 }
                             })
+                        }else{
+                            //跳转财富师名片页面
+                            that.$router.push({
+                                path:'/faceMsg',
+                                name:'faceMsg',
+                                query:{
+                                returnUrl:returnUrl,
+                                }
+                            })
                         }
                     }).catch(() => {
                         
@@ -216,7 +225,8 @@ export default {
                         var serbackUrl = that.Host+'wxservice/wxMemberInfo/getUserAsset?v='+(new Date()).getTime();
                       window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=propertyList#wechat_redirect';
                     }var d=res.data.data;
-                    that.totalAsset=that.money(d.totalAsset)//总资产
+                   // that.totalAsset=that.money(d.totalAsset)//总资产
+                     that.totalAsset=d.totalAsset//总资产
                     that.privateTotalAsset=that.money(d.privateTotalAsset)//私募总资产
                     that.privateToConfirmAsset=that.money(d.privateToConfirmAsset)//私募待确认
                     that. publicTotalAsset=that.money(d.publicTotalAsset)//公募总资产

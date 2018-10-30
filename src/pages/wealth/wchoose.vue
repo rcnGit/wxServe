@@ -2,8 +2,8 @@
     <div class='wealthCardD' >
         <div v-if="ifCardShow">
             <div class='bg'>
-                <p style='font-size:16px;color:rgb(53,53,53);padding-top:20px;font-weight:700;'>专属财富师</p>
-                <p style='font-size:13px;color:rgb(99,99,99);margin: 20px auto 0;'>您还未指定财富师，立即指定，尊享贴身服务</p>
+                <!-- <p style='font-size:16px;color:rgb(53,53,53);padding-top:20px;font-weight:700;'>专属财富师</p> -->
+                <p style='font-size:0.37rem;color:#333;padding-top: 1.1rem;text-align:center;'>您还未指定财富师，立即指定，尊享贴身服务</p>
                 <img src="./img/w.png" class='wImg' ref='pic'/>
                     <div style='margin:24px auto 20px;'>
                         
@@ -13,7 +13,7 @@
             </div>        
                     
             
-                <mt-button type="danger" size="large" class=''@click='zhid()' style='width:58%!important;margin-top:50px!important;'>立即指定您的专属财富师</mt-button>
+                <mt-button type="danger" size="large" class=''@click='zhid()' style='width:7.6rem!important;margin-top:1.33rem!important;'>立即指定您的专属财富师</mt-button>
          </div>  <!--show-->
          <comfooter></comfooter>
     </div>
@@ -137,7 +137,6 @@ export default {
 
     },
     created:function(){
-        alert('123');
           var that=this;
 
            Indicator.open();
@@ -217,11 +216,10 @@ html{
 .bg{
       background:url(./img/bg_new@2x.png)no-repeat;
       background-size:100%;
-      padding-bottom:20px;
 }
 .wImg{
-    width:28%;
-    padding-top:50px;
+    width:2.67rem;
+    padding-top:1.17rem;
 }
 .wname{
     font-size: 16px;
@@ -229,9 +227,9 @@ html{
     margin:0 28px;
 }
 .intr{
-    margin-top:20px;
+    margin-top:0.83rem;
      font-size: 14px;
-    color:#986a3c;
+    color:#999;
 }
 .int_gg{
     margin:0 20px;

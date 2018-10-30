@@ -70,6 +70,7 @@ export default {
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 if(retCode == -1){
+                that.ex.btnDsiabled=false;
                   var message = retMsg;
                   that.ex.time='获取验证码';
                   that.$emit('childByValue',that.ex);//传到调用页面
@@ -105,11 +106,19 @@ export default {
                 }else if(retCode == 0){
                     that.subTime();
                 }else if(retCode == -3){
+                    that.ex.btnDsiabled=false;
                     Toast({
                         message: '该手机号与当前绑定的手机号相同',
                         position: 'center',
                         duration: 3000
                     });
+                }else{
+                    Toast({
+                        message: retMsg,
+                        position: 'center',
+                        duration: 3000
+                    });
+                    that.ex.btnDsiabled=false;
                 }
             });
         },//fn,

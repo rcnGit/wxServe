@@ -55,7 +55,7 @@ module.exports = {
     },
 
     // Various Dev Server settings 各种DEV服务器设置
-    host: 'localhost', // can be overwritten by process.env.HOST localhost
+    host: '192.168.131.253', // can be overwritten by process.env.HOST http://localhost
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,//运行后项目是否自动启动
     errorOverlay: true,

@@ -21,7 +21,7 @@
 </template>
 <script>
 import { Indicator } from 'mint-ui';
-import { MessageBox } from 'mint-ui';//提示框
+import { MessageBox } from 'mint-ui';//    框
 import { Toast } from 'mint-ui';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import axios from 'axios';
@@ -92,7 +92,7 @@ export default {
                // that.$refs.code.style='border-bottom:0.5px solid #efefef!important';
             }
         },
-        getM:function(){ 
+        getM:function(){
             var that=this;
             that.Dsiabled=true;
             if(that.ipNo==''){
@@ -172,8 +172,8 @@ export default {
                 console.log(res.data);
                 var retCode=res.data.retCode;
                 if(retCode=='0'){//更改成功
-                     //MessageBox('提示','手机号码更改成功');
-                    MessageBox('提示', '手机号码更改成功').then(action => {
+                     //MessageBox('    ','手机号码更改成功');
+                    MessageBox('    ', '手机号码更改成功').then(action => {
                       if(action == 'confirm'){
                         that.$router.push({
                             path:'/'+that.changeForm,
@@ -195,11 +195,11 @@ export default {
                       }
                   });
                 }else if(retCode=='-2'){//验证码不正确
-                     MessageBox('提示','验证码不正确');
+                     MessageBox('    ','验证码不正确');
                 }else if(retCode=='-3'){//请发送验证码
-                     MessageBox('提示','请发送验证码');
+                     MessageBox('    ','请发送验证码');
                 }else if(retCode=='-4'){//该手机号已绑定别的账号,无法重复绑定
-                     //MessageBox({'提示','该手机号已绑定其他账号，无法重复绑定。如有疑问请咨询客服：400-819-9868',confirmButtonText});
+                     //MessageBox({'    ','该手机号已绑定其他账号，无法重复绑定。如有疑问请咨询客服：400-819-9868',confirmButtonText});
                      MessageBox({
                         title: '',
                         message: '该手机号已绑定其他账号，无法重复绑定。如有疑问请咨询客服：400-819-9868',
@@ -211,7 +211,7 @@ export default {
                  window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=changePhone#wechat_redirect';
                  }
                 else{
-                   // MessageBox('提示','系统异常');
+                   // MessageBox('    ','系统异常');
                     Toast({
                         message: '系统异常',
                         position: 'center',
@@ -232,7 +232,7 @@ export default {
                 var retCode=res.data.retCode;
                 Indicator.close();
                 if(retCode == '0'){
-                   // MessageBox('提示','人脸识别成功');
+                   // MessageBox('    ','人脸识别成功');
                     Toast({
                         message: '人脸识别成功',
                         position: 'center',
@@ -240,7 +240,7 @@ export default {
                     });
                     return;
                 }else if(retCode == '-2'){
-                    MessageBox('提示','该身份证已绑定其他手机号').then(action => {
+                    MessageBox('    ','该身份证已绑定其他手机号').then(action => {
                       if(action == 'confirm'){
                         that.$router.push({
                             path:'/'+that.changeForm,
@@ -275,6 +275,15 @@ export default {
                                 path:'/faceMsg',
                                 name:'faceMsg',
                                 query:{
+                                returnUrl:that.$route.query.returnUrl,
+                                }
+                            })
+                        }else{
+                            //跳转财富师名片页面
+                            that.$router.push({
+                                path:'/faceMsg',
+                                name:'faceMsg',
+                                query:{
                                 returnUrl:returnUrl,
                                 }
                             })
@@ -285,7 +294,7 @@ export default {
                     return;
                 }
             //     else if(retCode == '-1'){
-            //         MessageBox('提示','系统异常').then(action => {
+            //         MessageBox('    ','系统异常').then(action => {
             //           if(action == 'confirm'){
             //             that.$router.push({
             //                 path:'/'+that.changeForm,
@@ -306,7 +315,7 @@ export default {
             //       });
             //         return;
             //     }else if(retCode == '-3'){
-            //         MessageBox('提示','人脸识别未通过').then(action => {
+            //         MessageBox('    ','人脸识别未通过').then(action => {
             //           if(action == 'confirm'){
             //             that.$router.push({
             //                 path:'/'+that.changeForm,
@@ -327,7 +336,7 @@ export default {
             //       });
             //         return;
             //     }else if(retCode == '-4'){
-            //         MessageBox('提示','未查询到人脸识别结果').then(action => {
+            //         MessageBox('    ','未查询到人脸识别结果').then(action => {
             //           if(action == 'confirm'){
             //             that.$router.push({
             //                 path:'/'+that.changeForm,
@@ -350,7 +359,7 @@ export default {
             //     }
             })
             .catch(function(){
-                MessageBox('提示','获取信息失败').then(action => {
+                MessageBox('    ','获取信息失败').then(action => {
                       if(action == 'confirm'){
                         that.$router.push({
                             path:'/'+that.changeForm,
@@ -374,7 +383,7 @@ export default {
         },
         
     },
-    mounted:function(){
+    created:function(){
         //客服报名所需的参数；
         var that=this;
         this.changeForm=this.$route.query.changeForm;
@@ -384,7 +393,6 @@ export default {
         this.actName=this.$route.query.actName;
         this.beginTime = this.$route.query.beginTime;
         this.location = this.$route.query.location;
-      //  alert(this.changeForm+'--'+this.activityType+'==='+this.activeId+',,,,'+this.beginTime);
         //在线申请财富师
         this.msgCode=this.$route.query.msgCode;
         this.phone=this.$route.query.routerPhone;

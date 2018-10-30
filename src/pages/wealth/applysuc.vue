@@ -1,17 +1,19 @@
 <template>
     <div class='applysuc'>
+        <div style='height:1px;width:100%;'></div>
         <div class='t1'>
-            <img src='../../common/img/suc.png'style='width:28%;margin-top:20px;margin-bottom:20px;'/>
-            <p>您的在线申请已提交，我们会在24小时内</p>
-            <p style='margin-bottom:14px;margin-top:5px;'>({{exeTime}}前)联系您</p>
-            <p style='padding-bottom:50px;'>感谢您的信任</p>
+           
+            <img src='./img/signSuc.png'style='width:22%;margin-top:40px;margin-bottom:18px;'/>
+            <p style='margin-bottom:7px;'>您的在线申请已提交</p>
+            <p style='margin-bottom:7px;margin-top:5px;'>我们会在2个工作日内联系您</p>
+            <p style='padding-bottom:30px;'>感谢您的信任</p>
         </div>
         <div class='t2'>
-            <p style="padding-top:30px;">您还可以</p>
-            <p style='margin:10px 0 20px;'>立即拨打客服电话申请专属财富师</p>
-            <img src='./img/kefu.png' style='width:28%;padding-bottom:14px;'/>
-            <p style='font-size:15px;margin-bottom:3px;'>400-819-9868</p>
-            <p style='padding-bottom:50px;'>8:30 - 17:30</p>
+            <p style="padding-top:30px;color:#333;font-size:15px;">您还可以</p>
+            <p style='margin:10px 0 30px;font-size:15px;'>立即拨打客服电话申请专属财富师</p>
+            <img src='./img/kefu.png' style='width:22%;padding-bottom:15px;'/>
+            <p style='font-size:16px;margin-bottom:3px;color:#333;margin-bottom:7px;'>400-819-9868</p>
+            <p style='padding-bottom:20px;color:#999'>8:30 - 17:30</p>
         </div>
         <comfooter></comfooter>
     </div>
@@ -30,7 +32,7 @@ export default {
 
     },
     mounted:function(){
-        this.exeTime = this.$route.query.exeTime;
+       // this.exeTime = this.$route.query.exeTime;
         console.log(this.exeTime);
     }
 }
@@ -48,8 +50,13 @@ export default {
     margin-top:10px;
 }
 .t1 p,.t2 p{
-    font-size: 13px;
-    color:rgb(153,153,153);
+    font-size: 14px;
+}
+.t1{
+    color:#333;
+}
+.t2{
+    color:#333;
 }
 .comfooter{
      position: fixed;

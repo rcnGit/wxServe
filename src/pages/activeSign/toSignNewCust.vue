@@ -6,7 +6,7 @@
               <!-- <img src='./img/left_img@2x.png' class='left_img'/>   -->
             </div>
             <div class='inpBox'>
-                <input type='text' class='' v-model="param.realName" :disabled="isDisabled" ref="realName" />
+                <input type='text' class='' v-model="param.realName" :disabled="isDisabled" ref="realName" placeholder="请输入联系人姓名"/>
                 <p class='warn' ref='warnName' v-show='warnShow'>{{warnName}}</p>
                 <span>联系人姓名</span>
                  <!-- <img src='./img/card_img@2x.png' class='clear' style='right:33%;'/>  -->
@@ -36,7 +36,8 @@
               </div> <!--inpBox-->
              
              <mt-button type="danger" size="large" class='sign' @click="toSignUp()">报名</mt-button>
-             <p style='font-size:12px;color:rgb(153,153,153);line-height:40px;'>此页面仅供个人客户自行报名，机构客户可联系您的专属财富师为您服务</p>
+             <p style='font-size:13px;color:rgb(153,153,153);line-height:30px;margin-top:10px;'>此页面仅供个人客户自行报名</p>
+             <p style='font-size:13px;color:rgb(153,153,153);'>机构客户可联系您的专属财富师为您服务</p>
         </div>
         <getcode ref='c1' v-on:childByValue="childByValue" v-on:warnCodeFunction="warnCodeFunction"></getcode>
         <comfooter></comfooter>
@@ -227,6 +228,7 @@ export default {
                 this.warnCode='请输入正确的验证码';
                 //this.$refs.verifycode.style='border-bottom:0.5px solid #df1e1d!important';
                 this.isValid2 = false
+                that.Dsiabled=false;
             }else{
                 this.$refs.warnCode.style.display='none';
                 //this.$refs.verifycode.style='border-bottom:0.5px solid #efefef!important';
@@ -394,6 +396,8 @@ export default {
                     Indicator.close();
                     var retCode=res.data.retCode;
                     var retMsg=res.data.retMsg;
+                    that.Dsiabled=false;
+                    alert(retCode+'====')
                     if(retCode== 1){
                         MessageBox('提示','验证码错误');
                     }else if(retCode== 2){

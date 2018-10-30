@@ -41,7 +41,7 @@ export default new Router({
       name: 'active',
       meta: {
         title: '尊享活动',
-        keepAlive: false // 首次不需要被缓存
+        keepAlive: true // 首次不需要被缓存
       },
       component: active
     },

@@ -1,9 +1,9 @@
 <template>
     <div class='postInfor'>
         <div ref='hasData'>
-            <div class='postOne'v-for='item in items' v-bind:fileUrl='item.fileurl' @click='open'>
+            <div class='postOne'v-for='item in items' v-bind:fileUrl='item.fileurl' @click.stop='open'>
                 <p class='title'>{{item.filename}}</p>
-                <p><span class='text'>{{item.prodName}}</span><span class='date'>{{(item.publishtime)}}</span></p>
+                <p><span class='text'>{{item.prodName}}</span><span class='date'>{{time(item.publishtime)}}</span></p>
             </div>   <!--postOne -->
         </div>
         <div class='noData' ref='nodata' style='display:none;'>
@@ -106,6 +106,15 @@ export default {
                                 returnUrl:returnUrl,
                                 }
                             })
+                        }else{
+                             //跳转财富师名片页面
+                            that.$router.push({
+                                path:'/faceMsg',
+                                name:'faceMsg',
+                                query:{
+                                returnUrl:returnUrl,
+                                }
+                            })
                         }
                     }).catch(() => {
                         
@@ -168,7 +177,8 @@ export default {
         },
         open:function(){
               var fileUrl=event.currentTarget.getAttribute('fileUrl');//绑定事件的元素
-             location.href=fileUrl;
+              alert(fileUrl);
+             window.location.href=fileUrl;
         }
     },
     created:function(){

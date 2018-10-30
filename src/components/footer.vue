@@ -57,6 +57,7 @@ export default {
 <style>
  .comfooter{
      width: 100%;
+     background:#fff;
      /* background:#18171D; */
 }
  .comfooter p{

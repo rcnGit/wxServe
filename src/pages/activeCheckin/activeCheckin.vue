@@ -84,6 +84,7 @@ export default {
     },
     methods:{
         getData:function(){
+            alert('data')
             Indicator.open(this.loadObj);
             let that = this;
             //console.log(that.param)
@@ -100,6 +101,7 @@ export default {
                 var retMsg=res.data.retMsg;
                 if(retCode == 0){
                     that.subscribe=res.data.userInfo.subscribe;//是否关注
+                    alert(that.subscribe+'====that.subscribe');
                     if(that.subscribe==0){//未关注
                         //调连接扫二维码；
                         that.getErweima();
@@ -147,6 +149,7 @@ export default {
             });
         },
         getErweima:function(){
+            alert('getErweima');
              Indicator.open();
             var that=this;
             axios({
@@ -154,7 +157,7 @@ export default {
                 url:'/wxservice/wxexternal?opName=cSignSQRCode',//获取客户信息
                 params: {
                     param:{
-                        actId:that.param.actId,
+                        actId:that.$route.query.actId,
                         sign:1,//报名
                     }
                 }
@@ -310,7 +313,7 @@ export default {
     created(){
        Indicator.open(this.loadObj);
        //手动授权
-       alert(this.$route.query.actId)
+       alert(this.$route.query.actId+'---')
       this.param.actId = this.$route.query.actId;
       this.actName = this.$route.query.actName;
       if(this.param.actId){

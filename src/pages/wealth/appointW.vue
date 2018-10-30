@@ -19,14 +19,14 @@
                 <!-- <img src='./img/card_img@2x.png' class='clear'/> -->
              </div> <!--inpBox-->             
              <div style='clear:both'></div>
-             <mt-button type="danger" size="large" class='next' @click='appW()'>确认</mt-button>
+             <mt-button type="danger" size="large" class='next' @click='appW()'style='width:7.6rem;height:1.06rem;'>确认</mt-button>
              <div class='sendM' @click='sendWX()'>不清楚工号，给财富师发微信/短信索取工号&nbsp;&nbsp;></div>
          </div> <!--content-->
          <div style='width:100%;height:10px;background:#f9f9f9;'></div>
          <div class='content' style='padding:0;'>
              <div class='applyLine'>
                  <p>若无心仪财富师可联系客服为您推荐财富师</p>
-                 <mt-button type="danger" size="large" class='next' @click='onlineApplyV()' style='background:#fff!important;color:#df1e1d;border:1px solid #df1e1d!important;width:50%!important;margin-top:20px!important;'>在线申请</mt-button>
+                 <mt-button type="danger" size="large" class='next' @click='onlineApplyV()' style='background:#fff!important;color:#df1e1d;border:1px solid #df1e1d!important;width:50%!important;margin-top:20px!important;height:1rem!important;'>在线申请</mt-button>
              </div>
            
          </div>
@@ -41,12 +41,12 @@
                <div class='popTxt'>
                    <img src='./img/popBg.png' width='100%'/>
                    <div class='popTxt_contant'>
-                       <textarea rows="4" id='textSms' ref='textSms' style='width:90%;border:none;outline:0;color:rgb(54,54,54);font-size:14px;padding:10px 15px;line-height:20px;'>{{msg1}}{{msg2}}{{msg3}}</textarea>
+                       <textarea rows="4" id='textSms' ref='textSms' style='width:90%;border:none;outline:0;color:rgb(54,54,54);font-size:14px;padding:0.6rem 15px;line-height:20px;'>{{msg1}}{{msg2}}{{msg3}}</textarea>
                         <div style='margin-top:15%;' >
-                            <mt-button type="danger" size="large" class=''@click='sendweixin()'  style='width:50%!important;margin-top:0px!important;'>复制并发送微信</mt-button>
+                            <mt-button type="danger" size="large" class=''@click='sendweixin()'  style='width:5.49rem!important;margin-top:0px!important;'>复制并发送微信</mt-button>
                         </div>
-                        <div style='margin-top:7%;'>
-                            <mt-button type="danger" size="large" class=''@click='sendMSG()' style='background:#fff!important;color:#df1e1d;border:1px solid #df1e1d!important;width:50%!important;margin-top:0px!important;'>复制并发送短信</mt-button>
+                        <div style='margin-top:8%;'>
+                            <mt-button type="danger" size="large" class=''@click='sendMSG()' style='background:#fff!important;color:#df1e1d;border:1px solid #df1e1d!important;width:5.49rem!important;margin-top:0px!important;'>复制并发送短信</mt-button>
                         </div>
                    </div><!-- popTxt_contant  -->
                    
@@ -57,22 +57,22 @@
                <img v-bind:src='srcImg' class='wimg' v-if="headimgShow"/>
                <img src='./img/w.png' class='wimg' v-else/>
                <p class="dtname">{{dtName}}</p>
-               <p>是否确定他（她）为我的专属财富师</p>
+               <p style="font-size:0.374rem;color:#333;">是否确定他（她）为我的专属财富师</p>
                <div style='margin-top:15%;'>
-                    <mt-button type="danger" size="large" class=''@click='zhiding()' style='width:50%!important;margin-top:0px!important;'>确定</mt-button>
+                    <mt-button type="danger" size="large" class=''@click='zhiding()' style='width:5.49rem!important;margin-top:0px!important;'>确定</mt-button>
                 </div>
-                <div style='margin-top:7%;'>
-                    <mt-button type="danger"@click='closeB()' size="large" class='' style='background:#fff!important;color:rgb(153,153,153);border:1px solid rgb(153,153,153)!important;width:50%!important;margin-top:0px!important;'>放弃指定</mt-button>
+                <div style='margin-top:8%;'>
+                    <mt-button type="danger"@click='closeB()' size="large" class='' style='background:#fff!important;color:#df1e1d;border:1px solid #df1e1d!important;width:5.49rem!important;margin-top:0px!important;'>放弃指定</mt-button>
                 </div>
            </div>
 
-           <div class='pop_wealth2' ref='pop_wealth2'>
+           <div class='pop_wealth2' ref='pop_wealth2' style="display:none">
                <img v-bind:src='srcImg2' class='wimg' v-if="headimgShow2"/>
                <img src='./img/w.png' class='wimg' v-else/>
                <p class="dtname">{{dtName2}}</p>
-               <p>您已线下指定了专属财富师</p>
+               <p style="font-size:0.374rem;color:#333;">您已线下指定了专属财富师</p>
                <div style='margin-top:15%;'>
-                    <mt-button type="danger" size="large" class=''@click='closeB()' style='width:50%!important;margin-top:0px!important;'>确定</mt-button>
+                    <mt-button type="danger" size="large" class=''@click='closeB()' style='width:5.49rem!important;margin-top:0px!important;'>确定</mt-button>
                 </div>
            </div>
          </mt-popup>
@@ -126,7 +126,7 @@ export default {
         }
         
     },
-    component:{Button,axios,Popup,MessageBox,comfooter},
+    component:{Button,axios,Popup,MessageBox,comfooter,Toast},
     created:function(){
         var bizId=decodeURIComponent(getCookie("bizId"));
         this.faceparam.bizId = bizId
@@ -195,6 +195,15 @@ export default {
                     }).then(action => {
                         if(action == 'confirm'){
                                 //跳转财富师名片页面
+                            that.$router.push({
+                                path:'/faceMsg',
+                                name:'faceMsg',
+                                query:{
+                                returnUrl:returnUrl,
+                                }
+                            })
+                        }else{
+                             //跳转财富师名片页面
                             that.$router.push({
                                 path:'/faceMsg',
                                 name:'faceMsg',
@@ -580,12 +589,18 @@ export default {
     background:none;
 }
  .pop_contant,.pop_wealth,.pop_wealth2{height:75%;background:#fff;width:92%;margin:0 auto 20px;border-radius: 10px;} 
+.pop_wealth,.pop_wealth2{
+    width:8.13rem;
+    height:9.6rem;
+    background:url(./img/wbg.png) no-repeat;
+    background-size:cover;
+}
 .sendM{
-    color:#7a7a7a;
-    font-size: 12px;
+    color:#757575;
+    font-size:0.35rem;
     height:35px;
     margin-top:5px;
-    line-height: 35px;
+    line-height:1rem;
 }
 .applyLine{
     width:100%;
@@ -594,18 +609,19 @@ export default {
     background-size:100%;
 }
 .applyLine p{
-    color:#595959;
-    font-size: 13px;
+    color:#757575;
+    font-size: 14px;
     padding-top:28px;
 }
 .pop_title{
     color:rgb(59,59,59);
-    font-size: 16px;
-    padding-top:20px;
+    font-size: 0.42rem;
+    padding-top:0.62rem;
+    font-weight: 700;
 }
 .popImgBox{
     width:100%;
-    padding:30px 20% 0;
+    padding:30px 2.40rem 0;
 }
 .popImgBox img{
     width:62px;
@@ -627,8 +643,8 @@ export default {
     line-height: 22px;
 }
 .wimg{
-    width:35%;
-    margin:50px auto 30px;
+    width:2.67rem;
+    margin:0.987rem auto 0.53rem;
 }
 .xiazai{
     color:#4a90e2;
