@@ -18,33 +18,31 @@ export default {
         return{
             Wname:'',
             isReviewSignup:'',
-            activeId: '',
+            activeId:'',
             belongBusiness:'',//财富师工号
         }
     },
-    created(){
-       this.getParams();
+    created:function(){
+        // 取到路由带过来的参数 
+        var that=this;
+      var routerParams = that.$route.query.isReviewSignup
+       that.activeId = that.$route.query.activeId
+       that.Wname = that.$route.query.businessName;
+       that.belongBusiness = that.$route.query.belongBusiness
+       // var routerParams = '0'
+        // 将数据放在当前组件的数据内
          window.onscroll = function(){
                 return;  
             }
     },
     methods: {
-      getParams () {
-        // 取到路由带过来的参数 
-      var routerParams = this.$route.query.isReviewSignup
-       this.activeId = this.$route.query.activeId
-       this.Wname = this.$route.query.businessName;
-       this.belongBusiness = this.$route.query.belongBusiness
-       // var routerParams = '0'
-        // 将数据放在当前组件的数据内
-       
-      },
       toActiveDetail:function(){
+          var that=this;
         this.$router.push({
           path:'/ActiveDetail',
           name:'ActiveDetail',
           query:{
-            oaActId : this.activeId
+            actId : this.activeId
           }
         })
       },
@@ -57,7 +55,7 @@ export default {
         })
       },
       toMingpian:function(){
-          window.location.href='http://172.16.6.59:8887/tcapi/HTML5/html/shared_card.html?userId='+this.belongBusiness;
+          window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+this.belongBusiness;
       }
     },
     watch: {

@@ -1,21 +1,28 @@
 <template>
     <div class='postInfor'>
-        <div ref='hasData'>
-            <div class='postOne'v-for='item in items' v-bind:fileUrl='item.fileurl' @click.stop='open'>
-                <p class='title'>{{item.filename}}</p>
-                <p><span class='text'>{{item.prodName}}</span><span class='date'>{{time(item.publishtime)}}</span></p>
-            </div>   <!--postOne -->
+        <div class='content_s' style='padding-left:0!important;padding-right:0!important;padding-top:0!important;'>
+            <div ref='hasData'>
+                <div v-for='item in items'>
+                    <div class='postOne' v-bind:fileUrl='item.fileurl' @click.stop='open'>
+                        <p class='title'>{{item.filename}}</p>
+                        <p><span class='text'>{{item.prodName}}</span><span class='date'>{{time(item.publishtime)}}</span></p>
+                        <div style='clear:both;'></div>
+                    </div>   <!--postOne -->
+                    <div style='width:100%;height:10px;background:#f2f2f2;'></div>
+                </div>
+                
+            </div>
+            <div class='noData' ref='nodata' style='display:none;min-height:300px;'>
+                    <img src='./img/nomsg.png'/>
+                    <p class='fSize16'>暂无投后消息</p>
+            </div>
+            <div class='wz'ref='wz' style="background:#fff;display:none;min-height:300px;" >
+                <img src='../../common/img/wr.png'  style='width:27%;margin:2.8rem auto 0.5rem;'/>
+                <p class='fSize16' style='color:#333'>实名认证后可查看投后消息哦~</p>
+            <mt-button type="danger" size="large" class='next' @click='rz()' style='margin-top:1.4rem;'>去人脸识别实名认证</mt-button>
+            </div>
         </div>
-        <div class='noData' ref='nodata' style='display:none;'>
-                <img src='./img/nomsg.png'/>
-                <p class='fSize16'>暂无投后消息</p>
-         </div>
-         <div class='wz'ref='wz' style="background:#fff;display:none;" >
-            <img src='../../common/img/wr.png'  style='width:27%;margin:2.8rem auto 0.5rem;'/>
-            <p class='fSize16' style='color:#333'>实名认证后可查看投后消息哦~</p>
-        <mt-button type="danger" size="large" class='next' @click='rz()' style='margin-top:1.4rem;'>去人脸识别实名认证</mt-button>
-        </div>
-        <comfooter></comfooter>
+        <div class="comfooter_a"><comfooter></comfooter></div>
     </div>
 </template>
 <script>
@@ -200,13 +207,15 @@ export default {
 .postInfor{
     width:100%;
     height:100%;
-    background:#fff;
-    padding-bottom:50px;
+     background:#fff!important;
 }
 .postOne{
+    width:100%;
+    min-height:70px;
     background:#fff;
     margin-top:10px;
     padding:20px 15px 16px;
+     margin-bottom:20px;
 }
 .title{
     width:100%;
@@ -248,8 +257,9 @@ export default {
 .xiazai{
     color:#4a90e2;
 }
-.comfooter{
-     position: fixed;
+
+ .comfooter_a .comfooter{
+    position: static;
      bottom: 0;
  }
 </style>

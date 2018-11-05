@@ -73,7 +73,7 @@ export default {
         openCFScard:function(id){
             //打开我的财富师名片
         
-            window.location.href='http://172.16.6.59:8887/tcapi/HTML5/html/shared_card.html?userId='+id;
+            window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+id;
         },
         bd:function(){//去实名认证
             this.$router.push({

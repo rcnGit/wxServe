@@ -184,24 +184,9 @@ export default {
                     return;
                 }else{
                     var message = '人脸识别实名认证失败，请重试。若无法完成人脸识别实名认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成实名认证后报名活动。'
-                    MessageBox.confirm('', {
-                        message: message,
-                        title: '',
-                        showConfirmButton:true,
-                        confirmButtonClass:'confirmButton',
-                        confirmButtonText:'重试',
-                    }).then(action => {
+                    MessageBox('', message).then(action => {
                         if(action == 'confirm'){
                                 //跳转财富师名片页面
-                            that.$router.push({
-                                path:'/faceMsg',
-                                name:'faceMsg',
-                                query:{
-                                returnUrl:returnUrl,
-                                }
-                            })
-                        }else{
-                             //跳转财富师名片页面
                             that.$router.push({
                                 path:'/faceMsg',
                                 name:'faceMsg',
@@ -284,7 +269,7 @@ export default {
                     that.msg2=userInfo.realName;
                     if(userInfo.belongBusiness!=''&&userInfo.belongBusiness!=null&&userInfo.belongBusiness!=undefined){
                         //打开财富师页面
-                         window.location.href='http://172.16.6.59:8887/tcapi/HTML5/html/shared_card.html?userId='+userInfo.belongBusiness;
+                         window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+userInfo.belongBusiness;
                     }
                 }else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
@@ -491,10 +476,10 @@ export default {
                 console.log(res.data);
                 var data=res.data.data;
                 if(retCode==0){//指定成功    跳转财富师名片页面
-                   MessageBox('提示', '指定财富师成功').then(action => {
+                   MessageBox('', '指定财富师成功').then(action => {
                   if(action == 'confirm'){
                    //跳转财富师名片页面
-                    window.location.href='https://test-interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+that.param.dtNo;
+                    window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+that.param.dtNo;
                   }else{//取消
                     console.log('查看订单')
                   }
@@ -648,9 +633,9 @@ export default {
 .xiazai{
     color:#4a90e2;
 }
-.comfooter{
+.appointW .comfooter{
      position: fixed;
      bottom: 0;
- }
+ } 
 </style>
 

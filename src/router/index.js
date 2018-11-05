@@ -58,7 +58,7 @@ export default new Router({
       path: '/toSignNewCust',
       name: 'toSignNewCust',
       meta: {
-        title: '拉新活动报名',
+        title: '活动报名',
         keepAlive: false // 不需要缓存
       },
       component: toSignNewCust//使用这个组件
@@ -101,7 +101,7 @@ export default new Router({
       path: '/kefuSign',
       name: 'kefuSign',
       meta: {
-        title: '客服活动报名',
+        title: '活动报名',
         keepAlive: false // 不需要缓存
       },
       component: kefuSign//使用这个组件

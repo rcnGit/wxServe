@@ -31,7 +31,7 @@
             <mt-popup v-model="popupVisible" position="center" pop-transition="popup-fade">
             <div class='pop_contant pop_contant_A' ref='pop_contant'>
                 <!-- <p class='pop_title'>大唐财富服务号</p> -->
-                <div class='popImgBox'>
+                <div class='popImgBox_A'>
                     <img :src='erweima' style='width:180px;height:180px;margin:94px auto 10px;'/>
                     <p style='color:rgb(59,59,59);font-size:14px;line-height:20px;margin-bottom:20px;text-align:center;margin-top: 30px;'>扫码关注大唐财富服务号后完成签到</p>
                 </div>
@@ -103,6 +103,7 @@ export default {
                     if(that.subscribe==0){//未关注
                         //调连接扫二维码；
                         that.getErweima();
+                        return;
                     }else{//已关注
                         var phone=res.data.userInfo.phone;
                         if(!phone==false){
@@ -259,7 +260,7 @@ export default {
                     var mobile=that.param.mobile;//用户手机号；
                     var actId=that.param.actId;//活动ID
                      var actName=that.actName;//活动ID
-                    window.location.href="http://interface.tdyhfund.com/tgweb/static/ctp/html5/activitySign/weiKeqian.html?mobile="+mobile+"&actId="+actId+"&title="+actName+"&custype=0";
+                    window.location.href="https://interface.tdyhfund.com/tgweb/static/ctp/html5/activitySign/weiKeqian.html?mobile="+mobile+"&actId="+actId+"&title="+actName+"&custype=0";
                     // var message = '您未报名该活动，需要重新报名。'
                     // MessageBox.confirm('', {
                     //     message: message,

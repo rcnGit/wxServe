@@ -95,10 +95,10 @@ html{
      font-size: 14px;
     color:rgb(59,59,59);
 }
-.comfooter{
+/* .comfooter{
      position: fixed;
      bottom: 0;
- }
+ } */
 </style>
 
 

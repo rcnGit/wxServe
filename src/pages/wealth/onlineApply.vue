@@ -21,7 +21,7 @@
                 <input type='text' class=''v-model='routerCity'ref='prov' placeholder="请选择所在地" disabled=true style='border-bottom:1px solid #efefef;opacity: 1;background:#fff;'/>
                 <p ref='provWarn' class='warn' >{{provWarn}}</p>
                 <span>所在地</span>
-                <span class='inpRchoose fSize13'style='text-align:center;color:#333;line-height:52px;'@click='chooseAdd'>去选择<img src='../../common/img/chooseR.png' class='chooseR'/></span>
+                <span class='inpRchoose fSize13'style='text-align:center;color:#333;'@click='chooseAdd'>去选择<img src='../../common/img/chooseR.png' class='chooseR' style="top:.05rem;"/></span>
               </div> <!--inpBox-->
               
              <mt-button type="danger" size="large" class='sign'@click='onlineW()' style='margin-top:2rem'>申请</mt-button>
@@ -33,7 +33,7 @@
 
 
        
-        <comfooter></comfooter>
+        <comfooter class="footers"></comfooter>
     </div>
 </template>
 <script>
@@ -42,6 +42,7 @@ import axios from 'axios';
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//  框
 import { Toast } from 'mint-ui';
+import { getCookie,setCookie } from '@/common/js/cookie.js'
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { isValidMobile,isValidverifycode } from '@/common/js/extends.js';//引入mint-ui的button组件文件包
 import comfooter from '../../components/footer'
@@ -59,7 +60,11 @@ export default {
             Dsiabled:false,
             ifSendMa:false,//是否发送验证码
             routerCity:'',
+            isFaceSuc:'',
+            token:'',
             routerPhone:'',
+            idNo:'',//身份信息
+            realName:'',//真实姓名
             msgCode:'',
             ifdisabledPh:false,//手机号是否禁止更改fa'l'se可以更改
             param:{
@@ -123,18 +128,87 @@ export default {
             }
             that.$refs.c1.getCodeFn(that.messType,that.ipNo);
         },
-        changeP:function(){
-             this.$router.push({
-                path:'/changephone',
-                name:'changephone',
-                query:{
-                    changeForm:'onlineApply',
-                    msgCode:this.msgCode,
-                    phone:this.routerPhone,
-                    phone2:this.ipNo,
-                    city:this.routerCity,
+        face:function(){
+            var that=this;
+            var idCardNo=that.idNo;
+            var idCardName=that.realName;
+            var canshu='changeForm=onlineApply&msgCode='+that.msgCode+'&phone='+that.routerPhone+'&phone2='+that.ipNo+'&city='+that.routerCity+'&isFace=1';
+            Indicator.open();
+            axios({
+                method:'get',
+                url:'/wxservice/wxMemberInfo/getFaceToken',//ning
+                params:{
+                    idCardNo:idCardNo,//身份证号
+                    idCardName:idCardName,//身份证姓名
+                    returnUrl:that.Host+'weixin-h5/index.html#/changePhone?'+canshu,//人脸识别后返回的Url
+                    backUrl: location.href.split('?')[0]
                 }
             })
+            .then(function(res) {//成功之后
+                Indicator.close();
+                console.log(res.data);
+                var retCode=res.data.retCode;
+                 if(retCode == 400){
+                     var serbackUrl = that.Host+'wxservice/wxMemberInfo/getFaceToken'
+                     window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=faceMsg#wechat_redirect';
+                 }else if(retCode == '-2'){
+                     MessageBox(' ','身份证不合法');
+                     return;
+                 }else if(retCode == '-1'){
+                     MessageBox(' ','系统异常');
+                     return;
+                 }else if(retCode == '-3'){
+                    // MessageBox(' ','未获取到token');
+                     Toast({
+                        message: '当前网络不稳定，请重试',
+                        position: 'center',
+                        duration: 3000
+                    });
+                     return;
+                 }else{
+                     that.token=res.data.data.token;
+                     var bizId=res.data.data.bizId;
+                     setCookie('bizId',bizId);
+                     window.location.href='https://api.megvii.com/faceid/lite/do?token='+that.token;
+                
+                 }
+            })
+        },
+        tishi_changeP:function(){
+            var that=this;
+             var message = '更换手机号需先通过人脸识别验证是本人操作'
+                    MessageBox.confirm('',{
+                    message: message,
+                    title: '',
+                    confirmButtonText:'去验证',
+                    }).then(action => {
+                    if(action == 'confirm'){
+                        that.face();//去人脸
+                    }else{
+                        
+                    }
+                    }).catch(() => {
+                   
+                    })
+        },
+        changeP:function(){
+            var that=this;
+            if(that.isFaceSuc==1){
+                that.tishi_changeP();//去人脸
+            }else{
+                this.$router.push({
+                    path:'/changephone',
+                    name:'changephone',
+                    query:{
+                        changeForm:'onlineApply',
+                        msgCode:this.msgCode,
+                        phone:this.routerPhone,
+                        phone2:this.ipNo,
+                        city:this.routerCity,
+                    }
+                })
+            }//else
+           
         },
         chooseAdd:function(){
             this.$router.push({
@@ -273,15 +347,21 @@ export default {
                 var retMsg=res.data.retMsg;
                 if(retCode==0){
                     that.isFaceSuc=res.data.userInfo.authenticFlag;//实名状态
+                    if(!res.data.userInfo.realName == false){
+                        that.realName = res.data.userInfo.realName
+                        that.idNo= res.data.userInfo.idNo
+                    }
                     if(!res.data.userInfo.phone == false){
+                        that.ifSendMa=false;
                         that.param.phone=res.data.userInfo.phone;
                         var Tel = that.param.phone;
                         var mtel = Tel.substr(0, 3) + '****' + Tel.substr(7);
                         that.ipNo = mtel;
-                       
                         that.ifdisabledPh = true;
                         that.isShow = true
                         that.isValid = true
+                    }else{
+                        that.ifSendMa=true;
                     }
                    
                     
@@ -329,8 +409,9 @@ export default {
          
           var routerCity = that.$route.query.city;
          
-            if(routerCity!=''&&routerCity!=undefined){
-               that.routerCity=routerCity;
+            if(routerCity!=''&&routerCity!=undefined&&routerCity!='undefined'){
+                alert(that.$route.query.city);
+               that.routerCity=decodeURIComponent(routerCity);
                // this.$route.query.city='';
                 return;
             }
@@ -349,7 +430,7 @@ export default {
     color:#999;
     line-height:30px;
  }
- .comfooter{
+ .footers{
      position: fixed;
      bottom: 0;
  }

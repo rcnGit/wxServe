@@ -1,6 +1,6 @@
 <template>
     <div class='changephone'>
-        <div class='content'>
+        <div class='content_s'>
             <div class='tip'>
                     <span style='line-height:20px;'>该手机号将作为您在大唐财富的注册手机号，号码在系统中将加密以保障号码安全，请输入您的常用手机号</span>
                 </div>
@@ -214,7 +214,12 @@ export default {
     color:#999;
     line-height:30px;
  }
- .comfooter{
+ .content_s{
+     min-height: 13rem;
+     background: #fff;
+    padding:1rem .4rem .4rem 0.5rem;
+ }
+.changephone .comfooter{
      position: relative;
      bottom: 0;
  }

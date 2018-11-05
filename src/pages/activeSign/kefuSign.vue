@@ -61,6 +61,7 @@ export default {
             text:'获取验证码',
             Dsiabled:false,
             gh:'',
+            gongH:'',
             warnPhone:'',
             warnCode:'',
             warnName:'',
@@ -156,17 +157,21 @@ export default {
                         var busname = '大唐财富尊享活动'+that.param.actName+'即将举办，机会难得，邀请你一起参加'
                         that.asyncSDKConifg(actname,busname)
                     }else{
-                        var businName = res.data.userInfo.nickname
-                        var actname = businName+'邀请您参加'+that.param.actName
-                        var busname = '大唐财富尊享活动'+that.param.actName+'即将举办，要一起参加吗？'
-                        that.asyncSDKConifg(actname,busname)
+                        if(!res.data.userInfo.nickName==false){
+                            var businName = res.data.userInfo.nickname
+                            var actname = businName+'邀请您参加'+that.param.actName
+                            var busname = '大唐财富尊享活动'+that.param.actName+'即将举办，要一起参加吗？'
+                            that.asyncSDKConifg(actname,busname)
+                        }else{
+                            var businName = ''
+                        }
                     }
                     if(!res.data.userInfo.belongBusiness == false){
                         //已经有财富师不是自己输入的
                         that.ifCaiFu=true;
                         //that.gh = res.data.userInfo.belongBusiness
-                        var gh=res.data.userInfo.belongBusiness;
-                        that.gh=gh.substr(2,7);
+                        that.gongH=res.data.userInfo.belongBusiness;
+                        that.gh=that.gongH.substr(2,7);
                         that.isDisabled4 = true;
                           that.isValid5 = true
                     }
@@ -295,7 +300,7 @@ export default {
                     confirmButtonText:'去验证',
                     }).then(action => {
                     if(action == 'confirm'){
-                        that.changeP();
+                        that.face();//去人脸
                     }else{
                         
                     }
@@ -310,7 +315,7 @@ export default {
             //var bizId=decodeURIComponent(getCookie("bizId"));
             //alert(bizId+'changeP');
             if(that.isFaceSuc==1){
-                that.face();//去人脸
+                that.tishi_changeP();
             }else{
                 //去修改手机号；
                   this.$router.push({
@@ -397,7 +402,7 @@ export default {
                         that.kefuAxio();
                     }
                 }).catch(() => {
-                    //console.log(2);
+                    return;
                 })//
             
         },//signup
@@ -417,13 +422,14 @@ export default {
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;                  
                 if(retCode==0){ 
+                   // alert(that.param.activeId)
                     if(that.isDisabled3 == false ){
                                 that.$router.push({
                                     path: '/pushW',
                                     name: 'pushW',
                                     query:{
                                         isReviewSignup: that.param.isReviewSignup,
-                                        activeId: that.param.activeId,
+                                        activeId:that.param.activeId,
                                         businessName: that.param.businessName,
                                         belongBusiness:that.param.belongBusiness,
                                     }
@@ -507,8 +513,7 @@ export default {
             if(this.isValid == false || this.isValid2 == false || this.isValid3 == false || this.isValid4 == false || this.isValid5 == false){
                  return;
             }else{
-                 Indicator.open()
-                this.signup();
+                 that.signup();
             }
         },
         async asyncSDKConifg (actName,businessName) {
@@ -530,7 +535,7 @@ export default {
                     title: actName, // 分享标题
                     desc: businessName, // 分享描述
                     link: location.href.split('?')[0]+'?ifcard=1', // 分享链接
-                    imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
+                    imgUrl: 'http://file0.datangwealth.com/g1/M00/0F/56/rBAeX1vYo1-AYmqbAAAIn3unB5w639.jpg?filename=share_img.jpg', // 分享图标
                     type: '', // 分享类型,music、video或link，不填默认为link
                     dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
                     success: function() {
@@ -545,7 +550,7 @@ export default {
                     wx.onMenuShareTimeline({ //分享朋友圈
                     title: actName, // 分享标题
                     link: location.href.split('?')[0]+'?ifcard=1',
-                    imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
+                    imgUrl: 'http://file0.datangwealth.com/g1/M00/0F/56/rBAeX1vYo1-AYmqbAAAIn3unB5w639.jpg?filename=share_img.jpg', // 分享图标
                     success: function() {
                         // 用户确认分享后执行的回调函数
                     },
@@ -575,11 +580,12 @@ export default {
          }
          
 
-        this.param.isReviewSignup = this.$route.query.isReviewSignup;
-        this.param.activityType = this.$route.query.activityType;
-        this.param.activeId = this.$route.query.activeId;
-        this.param.actName = decodeURIComponent(this.$route.query.actName);
-        this.getData()
+        that.param.isReviewSignup = that.$route.query.isReviewSignup;
+        that.param.activityType = that.$route.query.activityType;
+        //alert(that.$route.query.activeId+'===客服初次')
+        that.param.activeId = that.$route.query.activeId;
+        that.param.actName = decodeURIComponent(that.$route.query.actName);
+        that.getData()
     }
 
 }

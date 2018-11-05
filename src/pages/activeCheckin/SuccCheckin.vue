@@ -28,11 +28,7 @@ export default {
         }
     },
     created(){
-       this.getParams()
-    },
-    methods: {
-      getParams () {
-          console.log(this.$route)
+        var that=this;
         // 取到路由带过来的参数 
         var routerParams = this.$route.query.retCode
        this.activeId = this.$route.query.activeId
@@ -44,18 +40,21 @@ export default {
        if(routerParams == '0'){
            this.isshow = true
            setTimeout(() => {
-            this.toActiveDetail()
+           // this.toActiveDetail()
+           WeixinJSBridge.call('closeWindow');
             }, 3000)
        }else{
             this.isshow = false 
        }
-      },
+    },
+    methods: {
       toActiveDetail:function(){
+          var that=this;
         this.$router.push({
           path:'/ActiveDetail',
           name:'ActiveDetail',
-          params:{
-            oaActId : this.activeId
+          query:{
+            actId: that.activeId
           }
         })
       },

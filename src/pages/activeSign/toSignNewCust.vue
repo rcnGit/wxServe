@@ -16,7 +16,7 @@
                 <input type='tel' class=''style='padding-right:100px;'maxlength='11' v-model="phone2" ref='phone2' :disabled="isDisabled2" placeholder="请输入联系人电话" />
                 <p class='warn' ref='warnPhone' v-show='true'>{{warnPhone}}</p>
                 <span>联系人电话</span>
-                <span class='inpRchoose fSize13' style='color:#4a90e2;' @click='tishi_changeP()' v-show='isShow'>变更手机号>></span>
+                <span class='inpRchoose fSize13' style='color:#4a90e2;' @click='changeP()' v-show='isShow'>变更手机号>></span>
              </div> <!--inpBox-->
               <div class='inpBox' v-show="yanzhengmaIsShow">
                 <input type='tel' class=''  maxlength='4' v-model="param.verifiCode" ref='verifycode' placeholder="请输入验证码"/>
@@ -40,7 +40,7 @@
              <p style='font-size:13px;color:rgb(153,153,153);'>机构客户可联系您的专属财富师为您服务</p>
         </div>
         <getcode ref='c1' v-on:childByValue="childByValue" v-on:warnCodeFunction="warnCodeFunction"></getcode>
-        <comfooter></comfooter>
+       
     </div>
 </template>
 <script>
@@ -50,7 +50,7 @@ import { Field } from 'mint-ui';
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';
 import getcode from '../wealth/getcode';
-import comfooter from '../../components/footer'
+
 import axios from 'axios'
 import { getCookie,setCookie } from '@/common/js/cookie.js'
 import { isValidMobile, isValidxincode, isValidverifycode, isValidName, isValidEmpNo } from '@/common/js/extends.js'
@@ -66,6 +66,7 @@ export default {
             warnCode:'',
             yanzhengmaIsShow:false,
             gh:'',
+            gongH:'',
             warnName:'',
             warnbusinessName:'',
             warnbelongBusiness:'',
@@ -148,14 +149,18 @@ export default {
                         var busname = '大唐财富尊享活动'+that.param.actName+'即将举办，机会难得，邀请你一起参加'
                         that.asyncSDKConifg(actname,busname)
                     }else{
-                        var businName = res.data.userInfo.nickname
-                        var actname = businName+'邀请您参加'+that.param.actName
-                        var busname = '大唐财富尊享活动'+that.param.actName+'即将举办，要一起参加吗？'
-                        that.asyncSDKConifg(actname,busname)
+                        if(!res.data.userInfo.nickName==false){
+                            var businName = res.data.userInfo.nickname
+                            var actname = businName+'邀请您参加'+that.param.actName
+                            var busname = '大唐财富尊享活动'+that.param.actName+'即将举办，要一起参加吗？'
+                            that.asyncSDKConifg(actname,busname)
+                        }else{
+                            var businName = ''
+                        }
                     }
                     if(!res.data.userInfo.belongBusiness == false){
-                        var gh=res.data.userInfo.belongBusiness;
-                        that.gh=gh.substr(2,7);
+                        that.gongH=res.data.userInfo.belongBusiness;
+                        that.gh=that.gongH.substr(2,7);
                         that.isDisabled4 = true;
                     }
                 }else if(retCode == 400){
@@ -324,7 +329,7 @@ export default {
                     confirmButtonText:'去验证',
                     }).then(action => {
                     if(action == 'confirm'){
-                        that.changeP();
+                        that.face();//去人脸
                     }else{
                         
                     }
@@ -336,7 +341,7 @@ export default {
             var that=this;
             //人脸
             if(that.isFaceSuc==1){
-                that.face();//去人脸
+                that.tishi_changeP();//去人脸
             }else{
                 //去修改手机号；
                 this.$router.push({
@@ -355,16 +360,6 @@ export default {
                     }
                 })
             }
-
-
-
-
-
-
-
-
-
-
            
         },
         toSignUp:function(){
@@ -476,7 +471,7 @@ export default {
                     title: actName, // 分享标题
                     desc: businessName, // 分享描述
                     link: location.href.split('?')[0]+'?ifcard=1', // 分享链接
-                    imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
+                    imgUrl: 'http://file0.datangwealth.com/g1/M00/0F/56/rBAeX1vYo1-AYmqbAAAIn3unB5w639.jpg?filename=share_img.jpg', // 分享图标
                     type: '', // 分享类型,music、video或link，不填默认为link
                     dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
                     success: function() {
@@ -491,7 +486,7 @@ export default {
                     wx.onMenuShareTimeline({ //分享朋友圈
                     title: actName, // 分享标题
                     link: location.href.split('?')[0]+'?ifcard=1',
-                    imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
+                    imgUrl: 'http://file0.datangwealth.com/g1/M00/0F/56/rBAeX1vYo1-AYmqbAAAIn3unB5w639.jpg?filename=share_img.jpg', // 分享图标
                     success: function() {
                         // 用户确认分享后执行的回调函数
                     },
@@ -513,7 +508,8 @@ export default {
             this.gh = this.$route.query.ghT;
             this.gh=this.gh.substr(2,7);
             this.param.businessName = decodeURIComponent(this.$route.query.busNameT);
-         }
+         }  
+       
         this.param.isReviewSignup = this.$route.query.isReviewSignup;
         this.param.activityType = this.$route.query.activityType;
         this.param.activeId = this.$route.query.activeId;
@@ -522,7 +518,7 @@ export default {
         this.location = decodeURIComponent(this.$route.query.location);
         this.getData()
     },
-    components:{Button,getcode,Field,comfooter}//使用mint-ui的button的组件
+    components:{Button,getcode,Field}//使用mint-ui的button的组件
 }
 </script>
 <style>
@@ -553,8 +549,5 @@ export default {
     color:#999;
     line-height:30px;
  }
- .comfooter{
-     position: fixed;
-     bottom: 0;
- }
+ 
 </style>

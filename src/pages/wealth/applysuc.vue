@@ -58,7 +58,7 @@ export default {
 .t2{
     color:#333;
 }
-.comfooter{
+.applysuc .comfooter{
      position: fixed;
      bottom: 0;
  }

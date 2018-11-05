@@ -54,7 +54,7 @@ export default{
               title: '大唐财富'+meatTitle, // 分享标题
               desc: '中国私人银行服务的领航者，诚邀您开启财富之旅', // 分享描述
               link:location.href.split('?')[0]+'?ifcard=1', // 分享链接
-              imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
+              imgUrl: 'http://file0.datangwealth.com/g1/M00/0F/56/rBAeX1vYo1-AYmqbAAAIn3unB5w639.jpg?filename=share_img.jpg', // 分享图标
               type: '', // 分享类型,music、video或link，不填默认为link
               dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
               success: function() {
@@ -67,7 +67,7 @@ export default{
               wx.onMenuShareTimeline({ //分享朋友圈
               title: '大唐财富'+meatTitle, // 分享标题
               link: location.href.split('?')[0]+'?ifcard=1',
-              imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
+              imgUrl: 'http://file0.datangwealth.com/g1/M00/0F/56/rBAeX1vYo1-AYmqbAAAIn3unB5w639.jpg?filename=share_img.jpg', // 分享图标
               success: function() {
                   // 用户确认分享后执行的回调函数
               },

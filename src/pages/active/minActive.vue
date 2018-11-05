@@ -35,12 +35,12 @@
             已经到底了
           </div>
 
-          <div class='noData' ref='nodata' v-if='isShow' style="padding-bottom:50px;">
+          <div class='noData' ref='nodata' v-if='isShow' style="min-height:500px;">
             <img src='./img/nomessage@2x.png'/>
             <p class='fSize16'>您还没有参与活动哦~</p>
           </div>
           <!-- wzIfShow -->
-          <div class='wz' style="background:#fff;" v-show='wzIfShow'>
+          <div class='wz' style="background:#fff;min-height:500px;" v-show='wzIfShow'>
             <img src='./img/bdImg.png'  style='width:22%;margin:3.4rem auto 0.5rem;'/>
             <p class='fSize16' style='color:#333'>绑定手机号可查看我的活动哦~</p>
         <mt-button type="danger" size="large" class='next' @click='bd()' style='margin-top:1.4rem;'>去绑定手机号</mt-button>
@@ -89,7 +89,7 @@ export default {
         },
         openCFScard:function(id){
             //打开我的财富师名片
-            window.location.href='http://172.16.6.59:8887/tcapi/HTML5/html/shared_card.html?userId='+id;
+            window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+id;
         },
         bd:function(){//去实名认证
             this.$router.push({
@@ -171,9 +171,9 @@ export default {
 }
 </script>
 <style>
-body{
+.minActive{
     width:100%;
-    background:#fff;
+    background:#f2f2f2;
 }
 .mineOne{
     width:100%;

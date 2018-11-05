@@ -121,7 +121,7 @@ export default {
                     var mployment=res.data.data.mployment;
                     that.$refs.pic.src='res.data.data.photo'//财富师头像
                      if(mployment==0){//有名片
-                         window.location.href='https://test-interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+that.cgh;
+                         window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+that.cgh;
                      }else{//没有名片
                          that.$router.push({//跳入本地名片代理页面
                              path:'/wealthCardD',
@@ -181,7 +181,7 @@ export default {
                          that.ifCardShow=false;
                         that.wname=res.data.userInfo.businessName;
                        // that.pming();
-                       window.location.href='https://test-interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+belongBusiness;
+                       window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+belongBusiness;
                     }
                 }else if(retCode=='-1'){//系统异常
                     //MessageBox('提示', '系统异常');
@@ -235,10 +235,10 @@ html{
     margin:0 20px;
     color:#707070;
 }
-.comfooter{
+.wealthCardD .comfooter{
      position: fixed;
      bottom: 0;
- }
+ } 
 </style>
 
 

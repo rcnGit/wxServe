@@ -105,13 +105,17 @@ export default {
                     })
                 }else if(retCode == 0){
                     that.subTime();
+                    return;
                 }else if(retCode == -3){
+                    that.ex.time='获取验证码';
                     that.ex.btnDsiabled=false;
+                    that.$emit('childByValue',that.ex);//传到调用页面
                     Toast({
                         message: '该手机号与当前绑定的手机号相同',
                         position: 'center',
                         duration: 3000
                     });
+                    return;
                 }else{
                     Toast({
                         message: retMsg,
@@ -119,6 +123,7 @@ export default {
                         duration: 3000
                     });
                     that.ex.btnDsiabled=false;
+                    that.$emit('childByValue',that.ex);//传到调用页面
                 }
             });
         },//fn,

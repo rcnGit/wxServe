@@ -144,13 +144,15 @@
 }
 .warn{
     position: absolute;
-    bottom: -38px;
+    /* bottom: -1rem; */
+    top:55px!important;
     left:0;
     color:#df1e1d;
     z-index: 999;
     text-align: left;
-    font-size: 12px;
-    width:100%;
+    font-size: 12px!important;
+    /* width:100%; */
+    line-height: 14px!important;
 }
 
 /* 覆盖mintui弹框样式 */

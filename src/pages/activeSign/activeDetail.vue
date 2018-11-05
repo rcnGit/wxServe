@@ -3,7 +3,7 @@
          <div class='business_Card' ref="card" v-show="businesscardShow">
             <div class='bus_L'>
                 <img :src="headImgUrl" v-if="headimgShow"/>
-                <img src='./img/man_head_img@2x.png' v-else/>
+                <img src='../wealth/img/w.png' v-else/>
             </div>
             <div class='bus_C'>
                 <p class='position_name'>财富师{{shareName}}</p>
@@ -35,7 +35,7 @@
         <!-- 底部   框 -->
         <mt-popup v-model="popupVisible" position="center" pop-transition="popup-fade">
            <div class='pop_contant pop_contant_A' ref='pop_contant'>
-               <div class='popImgBox'>
+               <div class='popImgBox_A'>
                    <img :src='erweima' style='width:180px;height:180px;margin:94px auto 10px;'/>
                    <p style='color:#333;font-size:14px;text-align:center;margin: 24px auto 8px;'>长按二维码</p>
                    <p style='color:#333;font-size:14px;text-align:center;'>关注大唐财富服务号后完成报名</p>
@@ -366,10 +366,14 @@ export default {
                         that.asyncSDKConifg(actname,busname)
                     }else{
                         //that.photoT= res.data.userInfo.headImgUrl;
-                        var nickName = res.data.userInfo.nickName;
-                        var actname = nickName+'邀请您参加'+that.actName;
-                        var busname = '大唐财富尊享活动'+that.actName+'即将举办，要一起参加吗？'
-                        that.asyncSDKConifg(actname,busname)
+                        if(!res.data.userInfo.nickName==false){
+                            var nickName = res.data.userInfo.nickName;
+                            var actname = nickName+'邀请您参加'+that.actName;
+                            var busname = '大唐财富尊享活动'+that.actName+'即将举办，要一起参加吗？'
+                            that.asyncSDKConifg(actname,busname)
+                        }else{
+                            var nickName = ''
+                        }
                     } 
                     return;
                 }
@@ -389,7 +393,8 @@ export default {
         },
         getPhoto:function(){ 
             let that = this;
-            var param=Base64.encode('{"userId":"'+that.user.userId+'"}');//that.user.userId
+            Indicator.open();
+            var param=Base64.encode('{"userId":"'+that.ghT+'"}');//that.user.userId
             axios({
                 method:'get',
                 url:'/wxservice/wxexternal?opName=getTCmycard&versionNo=30',//获取客户信息
@@ -407,6 +412,8 @@ export default {
                 that.busNameT = data.userName; //对方财富师的名字
                 if(!that.photo==false){
                     that.headImgUrl = that.photo
+                }else{
+                    that.headimgShow=false;
                 }
                 that.shareName=that.busNameT;//对方的财富师名字
                 // that.userphone = res.data.userInfo.userphone
@@ -471,29 +478,29 @@ export default {
             }
         },
         toBusiness:function(){
-            window.location.href='https://test-interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+this.belongBusiness;
+            window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+this.belongBusiness;
         },
         async asyncSDKConifg (actName,businessName) {
             let that = this;
-            axios.get('/wxservice/core/getJSSDKConfigure.mm?pageUrl='+that.backUrl)
-                .then(function (res) {
-                wx.config({
-                    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-                    appId: res.data.appId, // 必填，公众号的唯一标识
-                    timestamp: res.data.timestamp, // 必填，生成签名的时间戳
-                    nonceStr: res.data.nonceStr, // 必填，生成签名的随机串
-                    signature: res.data.signature, // 必填，签名
-                    jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage'] // 必填，需要使用的JS接口列表
-                })
-                wx.ready(function(res) { //通过ready接口处理成功验证
-                    console.log(businessName)
+            // axios.get('/wxservice/core/getJSSDKConfigure.mm?pageUrl='+that.backUrl)
+            //     .then(function (res) {
+            //     wx.config({
+            //         debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            //         appId: res.data.appId, // 必填，公众号的唯一标识
+            //         timestamp: res.data.timestamp, // 必填，生成签名的时间戳
+            //         nonceStr: res.data.nonceStr, // 必填，生成签名的随机串
+            //         signature: res.data.signature, // 必填，签名
+            //         jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage'] // 必填，需要使用的JS接口列表
+            //     })
+            //     wx.ready(function(res) { //通过ready接口处理成功验证
+            //         console.log(businessName)
                     // config信息验证成功后会执行ready方法
                     wx.onMenuShareAppMessage({ // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用 
                         title: actName, // 分享标题
                         desc: businessName, // 分享描述
                         link: location.href.split('?')[0]+'?ghT='+that.belongBusiness+'&actId='+that.actId+'&actName='+that.actName, // 分享链接
                         //link:window.location.href.split('#')[0] + 'static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href),
-                        imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
+                        imgUrl: 'http://file0.datangwealth.com/g1/M00/0F/56/rBAeX1vYo1-AYmqbAAAIn3unB5w639.jpg?filename=share_img.jpg', // 分享图标
                         type: '', // 分享类型,music、video或link，不填默认为link
                         dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
                         success: function() {
@@ -508,7 +515,7 @@ export default {
                         wx.onMenuShareTimeline({ //分享朋友圈
                             title: actName, // 分享标题
                             link: location.href.split('?')[0]+'?ghT='+that.belongBusiness+'&actId='+that.actId+'&actName='+that.actName,
-                            imgUrl: 'https://www.zhizhudj.com/weChat-public/spider-sign-up/static/lgoo.png?20180821', // 分享图标
+                            imgUrl: 'http://file0.datangwealth.com/g1/M00/0F/56/rBAeX1vYo1-AYmqbAAAIn3unB5w639.jpg?filename=share_img.jpg', // 分享图标
                             success: function() {
                                 // 用户确认分享后执行的回调函数
                             },
@@ -516,12 +523,12 @@ export default {
                                 // 用户取消分享后执行的回调函数
                             }
                         });
-                });
-                // end
-            })
-            wx.error(function(res){//通过error接口处理失败验证
-                // config信息验证失败会执行error函数
-            });
+            //     });
+            //     // end
+            // })
+            // wx.error(function(res){//通过error接口处理失败验证
+            //     // config信息验证失败会执行error函数
+            // });
         }
 
     },
@@ -545,7 +552,7 @@ export default {
         var wxstr =that.$route.query.actId; 
         var actId=wxstr.split(",")[0];
         that.actId=wxstr.split(",")[0];
-       
+        //alert(that.$route.query.actId+'===='+that.actId)
         if(!that.$route.query.ghT==false){
             that.ghT=that.$route.query.ghT;
         }else{
@@ -751,8 +758,10 @@ height:360px!important;
 .mint-popup.mint-popup-center{
     border-radius: 10px;
 }
-.popImgBox{
+.popImgBox_A{
     padding: 0!important;
+    width:100%;
+    overflow: hidden
 }
 </style>
 

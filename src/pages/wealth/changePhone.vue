@@ -1,6 +1,6 @@
 <template>
     <div class='changephone'>
-        <div class='content'>
+        <div class='content_s'>
             <div class='inpBox'>
                 <input type='tel' class='' maxlength='11' v-model="ipNo" ref='ph' placeholder="请输入手机号码" />
                 <p class='warn' ref='phwarn'>{{phwarn}}</p>
@@ -418,10 +418,14 @@ export default {
     color:#999;
     line-height:30px;
  }
+ .content_s{
+     min-height: 13rem;
+    padding:1rem .4rem .4rem 0.5rem;
+ }
  .xiazai{
     color:#4a90e2;
 }
-.comfooter{
+.changephone .comfooter{
      position: relative;
      bottom: 0;
  }

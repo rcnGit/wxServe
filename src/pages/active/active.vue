@@ -59,13 +59,14 @@ export default {
       allList:[],
       cd:true,
       load:true,
+      ifSearch:false,
       isShow:false,
       loadObj:{
         text: '加载中...',
         spinnerType: 'triple-bounce'
       },
       backurl: location.href.split('?')[0],
-      backUrl: encodeURIComponent('https://weixin-test-interface.tdyhfund.com/wxservice/wxexternal?opName=getactiveinfo'),
+      backUrl: encodeURIComponent('https://interface.tdyhfund.com/wxservice/wxexternal?opName=getactiveinfo'),
       param:{
           pageNo:1,
           city:'',
@@ -79,7 +80,7 @@ export default {
       items:[]
     }
   },
-  components:{MessageBox,comfooter},
+  components:{MessageBox,comfooter,Toast},
   methods:{
     subTime:function(time){
       time=time.substr(0,10);
@@ -108,6 +109,7 @@ export default {
     },
     search:function(){
       var that=this;
+      that.ifSearch=true;
        Indicator.open(that.loadObj);
       var name=that.$refs.name.value;//ref的dom操作
       that.allList=[];
@@ -133,6 +135,15 @@ export default {
             var retCode=res.data.retCode
             var retMsg=res.data.retMsg;
             if(retCode == 0){
+              if(that.ifSearch&&res.data.itemList.length==0){
+                  //提示搜索为空
+                  Toast({
+                        message: '暂未搜索到相关结果～',
+                        position: 'center',
+                        duration: 3000
+                    });
+                    that.ifSearch=false;
+              }
               if(res.data.itemList != ''){
                 that.allList=that.allList.concat(res.data.itemList);//把已获取的数据和新获取的数据合并在放入页面
                 that.items=that.allList;
