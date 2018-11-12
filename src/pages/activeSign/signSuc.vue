@@ -32,6 +32,7 @@ export default {
         }
     },
     created(){
+        this.GasyncSDKConifg()
        this.getParams()
     },
     methods: {
@@ -59,8 +60,8 @@ export default {
       toActiveDetail:function(){
           var that=this;
         that.$router.push({
-          path:'/ActiveDetail',
-          name:'ActiveDetail',
+          path:'/activeDetail',
+          name:'activeDetail',
           query:{
             actId:that.activeId,
             actName:that.actName

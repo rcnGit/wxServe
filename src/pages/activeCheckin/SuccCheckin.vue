@@ -28,6 +28,7 @@ export default {
         }
     },
     created(){
+        this.GasyncSDKConifg()
         var that=this;
         // 取到路由带过来的参数 
         var routerParams = this.$route.query.retCode
@@ -51,8 +52,8 @@ export default {
       toActiveDetail:function(){
           var that=this;
         this.$router.push({
-          path:'/ActiveDetail',
-          name:'ActiveDetail',
+          path:'/activeDetail',
+          name:'activeDetail',
           query:{
             actId: that.activeId
           }

@@ -215,6 +215,7 @@ export default {
             }else{
                 this.param.phone = this.userPhone
             }
+            this.trafficStatistics('006')//自定义埋点
             this.$refs.c1.getCodeFn(this.messType,this.param.phone);
         },
         warnCodeFunction:function(warn){
@@ -407,6 +408,7 @@ export default {
             
         },//signup
         kefuAxio:function(){
+            this.trafficStatistics('007')//自定义埋点客服报名
             var that=this;
             //that.param.belongBusiness='DT'+that.param.belongBusiness;
             that.param.belongBusiness='DT'+that.gh;
@@ -549,6 +551,7 @@ export default {
                     });
                     wx.onMenuShareTimeline({ //分享朋友圈
                     title: actName, // 分享标题
+                    desc: businessName, // 分享描述
                     link: location.href.split('?')[0]+'?ifcard=1',
                     imgUrl: 'http://file0.datangwealth.com/g1/M00/0F/56/rBAeX1vYo1-AYmqbAAAIn3unB5w639.jpg?filename=share_img.jpg', // 分享图标
                     success: function() {

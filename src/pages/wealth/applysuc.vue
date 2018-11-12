@@ -32,6 +32,7 @@ export default {
 
     },
     mounted:function(){
+        this.GasyncSDKConifg()
        // this.exeTime = this.$route.query.exeTime;
         console.log(this.exeTime);
     }

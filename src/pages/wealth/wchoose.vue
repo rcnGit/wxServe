@@ -76,6 +76,7 @@ export default {
                  Indicator.close();
                 var retCode=res.data.retCode;
                 if(retCode == '0'){
+                    that.trafficStatistics('019')
                     //MessageBox('提示','人脸识别成功');
                     Toast({
                         message: '人脸识别成功',
@@ -84,18 +85,61 @@ export default {
                     });
                     return;
                 }else if(retCode == '-2'){
+                    that.trafficStatistics('017')
+                    that.trafficStatistics('020')
                    MessageBox('','该身份证已绑定其他手机号');
                     return;
                 }else if(retCode == '-1'){
-                    MessageBox('','系统异常')                    
+                    that.trafficStatistics('020')
+                    Toast({
+                        message: '系统异常',
+                        position: 'center',
+                        duration: 3000
+                    });                    
                     return;
-                }else if(retCode == '-3'){
-                    MessageBox('','人脸识别未通过');
-                    return;
-                }else if(retCode == '-4'){
-                    MessageBox('','未查询到人脸识别结果');
+                }else{
+                    that.trafficStatistics('020')
+                    var message = '人脸识别实名认证失败，请重试。若无法完成人脸识别实名认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成实名认证后报名活动。'
+                    MessageBox.confirm('', {
+                        message: message,
+                        title: '',
+                        showConfirmButton:true,
+                        confirmButtonClass:'confirmButton',
+                        confirmButtonText:'重试',
+                    }).then(action => {
+                        if(action == 'confirm'){
+                                //跳转财富师名片页面
+                            that.$router.push({
+                                path:'/faceMsg',
+                                name:'faceMsg',
+                                query:{
+                                returnUrl:returnUrl,
+                                }
+                            })
+                        }else{
+                             //跳转财富师名片页面
+                            that.$router.push({
+                                path:'/faceMsg',
+                                name:'faceMsg',
+                                query:{
+                                returnUrl:returnUrl,
+                                }
+                            })
+                        }
+                    }).catch(() => {
+                        
+                    })
                     return;
                 }
+                // else if(retCode == '-3'){
+                //     that.trafficStatistics('020')
+                //     MessageBox('','人脸识别未通过');
+                //     return;
+                // }else if(retCode == '-4'){
+                //     that.trafficStatistics('020')
+                //     MessageBox('','未查询到人脸识别结果');
+                //     return;
+                // }
             })
         },
         pming:function(){
@@ -137,6 +181,7 @@ export default {
 
     },
     created:function(){
+        this.GasyncSDKConifg()
           var that=this;
 
            Indicator.open();

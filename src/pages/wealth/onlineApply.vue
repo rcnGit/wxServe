@@ -381,6 +381,7 @@ export default {
         
     },
     created:function(){
+        this.GasyncSDKConifg()
       //  MessageBox('在线申请财富师','请输入正确的验证码');
       var that=this;
       that.getData();

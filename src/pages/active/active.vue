@@ -92,9 +92,9 @@ export default {
      // console.log(event.target.getAttribute('oaactid'))//点击到的元素
        var oaActId=event.currentTarget.getAttribute('oaactid');//绑定事件的元素
        var ActName=event.currentTarget.getAttribute('ActName');//绑定事件的元素   
-       this.$router.push({
-          path:'/ActiveDetail',
-          name:'ActiveDetail',
+       that.$router.push({
+          path:'/activeDetail',
+          name:'activeDetail',
           query:{
             actId: oaActId,
             actName : ActName,
@@ -108,18 +108,19 @@ export default {
         localStorage.setItem('activiy',actObj)
     },
     search:function(){
+      this.trafficStatistics('001')//自定义埋点
       var that=this;
       that.ifSearch=true;
        Indicator.open(that.loadObj);
       var name=that.$refs.name.value;//ref的dom操作
       that.allList=[];
-      this.param={
+      that.param={
           pageNo:1,
           city:'',
           actName:name,
           comefrom:that.param.comefrom
         }
-     this.getData();
+     that.getData();
     },
     getData:function(){
         let that = this;
@@ -157,7 +158,7 @@ export default {
                     that.load=false;
                 }
               }else{
-                this.isShow = true;
+                that.isShow = true;
               }
             }else if(retCode == 400){
               var serbackUrl = that.Host+'wxservice/wxexternal?opName=getactiveinfo'
@@ -201,7 +202,7 @@ export default {
         that.param.comefrom ='tangguan';
         
     }
-     var routerCity = this.$route.query.city;
+     var routerCity = that.$route.query.city;
      if(routerCity!=''&&routerCity!=undefined){
          that.allList=[];
            that.param={
@@ -210,13 +211,14 @@ export default {
             actName:''
           }
          that.getData();
-          this.$route.query.city='';
+          that.$route.query.city='';
           return;
      }
      
      that.getData();
    },
    created(){
+     this.GasyncSDKConifg()
      let that = this;
      window.onscroll = function(){
        	//变量scrollTop是滚动条滚动时，距离顶部的距离

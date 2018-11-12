@@ -113,6 +113,7 @@ export default {
                 that.$refs.phwarn.style.display='none';
                // that.$refs.ph.style='border-bottom:0.5px solid #efefef!important';
             }
+            that.trafficStatistics('021')//自定义埋点
             that.$refs.c1.getCodeFn(that.messType,that.ipNo);
         },
         childByValue:function(v){
@@ -202,6 +203,7 @@ export default {
                      MessageBox('    ','请发送验证码');
                 }else if(retCode=='-4'){//该手机号已绑定别的账号,无法重复绑定
                      //MessageBox({'    ','该手机号已绑定其他账号，无法重复绑定。如有疑问请咨询客服：400-819-9868',confirmButtonText});
+                     that.trafficStatistics('022')//自定义埋点
                      MessageBox({
                         title: '',
                         message: '该手机号已绑定其他账号，无法重复绑定。如有疑问请咨询客服：400-819-9868',
@@ -234,6 +236,7 @@ export default {
                 var retCode=res.data.retCode;
                 Indicator.close();
                 if(retCode == '0'){
+                    that.trafficStatistics('019')
                    // MessageBox('    ','人脸识别成功');
                     Toast({
                         message: '人脸识别成功',
@@ -242,6 +245,8 @@ export default {
                     });
                     return;
                 }else if(retCode == '-2'){
+                    that.trafficStatistics('017')
+                    that.trafficStatistics('020')
                     MessageBox('    ','该身份证已绑定其他手机号').then(action => {
                       if(action == 'confirm'){
                         that.$router.push({
@@ -265,6 +270,7 @@ export default {
                   });
                     return;
                 }else{
+                    that.trafficStatistics('020')
                     var message = '人脸识别实名认证失败，请重试。'
                     MessageBox('', message).then(action => {
                         if(action == 'confirm'){
@@ -381,6 +387,7 @@ export default {
         
     },
     created:function(){
+        this.GasyncSDKConifg()
         //客服报名所需的参数；
         var that=this;
         this.changeForm=this.$route.query.changeForm;

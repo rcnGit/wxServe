@@ -79,7 +79,7 @@ export default {
         }else{
             this.$refs.warnIdcard.style.display='none'
         }
-
+        this.trafficStatistics('016')//自定义埋点
         console.log(this.param)
         var that=this;
         Indicator.open();
@@ -120,6 +120,7 @@ export default {
             }else if(retCode == '-5'){
                 var tgPhone=res.data.tgPhone;
                // MessageBox(' ','手机号与已实名的手机号不一致');
+               that.trafficStatistics('018')//自定义埋点
                var message = '尊敬的客户，您当前绑定手机号与实名信息绑定手机号（尾号'+tgPhone+'）不一致，请更换一致后再进行身份认证。<br>PS：若想更换实名信息绑定手机号请去'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">大唐财富APP</a>'+'更换'
                     MessageBox.confirm('', {
                         message: message,
@@ -143,6 +144,7 @@ export default {
                     })
                 return;
             }else if(retCode == '-6'){
+                that.trafficStatistics('018')//自定义埋点
                 var message = '您当前账户绑定的手机号已绑定其他实名信息，请更换手机号后重新认证。'
                     MessageBox.confirm('', {
                         message: message,
@@ -203,6 +205,7 @@ export default {
         },
     },
     created:function(){
+    this.GasyncSDKConifg()
        var that = this;
       var returnUrl = that.$route.query.returnUrl;
        if(returnUrl&&returnUrl!=undefined){

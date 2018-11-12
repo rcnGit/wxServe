@@ -23,6 +23,7 @@ export default {
         }
     },
     created:function(){
+        this.GasyncSDKConifg()
         // 取到路由带过来的参数 
         var that=this;
       var routerParams = that.$route.query.isReviewSignup
@@ -39,8 +40,8 @@ export default {
       toActiveDetail:function(){
           var that=this;
         this.$router.push({
-          path:'/ActiveDetail',
-          name:'ActiveDetail',
+          path:'/activeDetail',
+          name:'activeDetail',
           query:{
             actId : this.activeId
           }
@@ -55,7 +56,8 @@ export default {
         })
       },
       toMingpian:function(){
-          window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+this.belongBusiness;
+        this.trafficStatistics('008')//自定义埋点客服活动跳转到指定理财师页面的数量
+        window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+this.belongBusiness;
       }
     },
     watch: {

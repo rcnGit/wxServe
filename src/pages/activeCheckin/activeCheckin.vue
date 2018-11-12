@@ -271,8 +271,8 @@ export default {
                     // }).then(action => {
                     //     if(action == 'confirm'){
                     //         that.$router.push({
-                    //             path:'/ActiveDetail',
-                    //             name:'ActiveDetail',
+                    //             path:'/activeDetail',
+                    //             name:'activeDetail',
                     //             query:{
                     //                 oaActId : that.param.actId,
                     //             }
@@ -311,6 +311,7 @@ export default {
         }
     },
     created(){
+        this.GasyncSDKConifg()
        Indicator.open(this.loadObj);
        //手动授权
       this.param.actId = this.$route.query.actId;

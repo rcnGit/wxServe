@@ -202,7 +202,7 @@ export default {
             }else{
                 this.param.phone = this.userPhone
             }
-
+            this.trafficStatistics('004')//自定义埋点获取验证码
             this.$refs.c1.getCodeFn(this.messType,this.param.phone);
         },
         warnCodeFunction:function(warn){
@@ -363,25 +363,27 @@ export default {
            
         },
         toSignUp:function(){
+
             var that=this;
-            this.phoneFn();
-            this.realnameFn();
+            that.phoneFn();
+            that.realnameFn();
             if(that.yanzhengmaIsShow){
-                this.codeFn();
+                that.codeFn();
             }else{
-                this.isValid2=true;
+                that.isValid2=true;
             }
-            if(!this.isValid || !this.isValid2 || !this.isValid3){
+            if(!that.isValid || !that.isValid2 || !that.isValid3){
                 return;
             }else{
                 Indicator.open();
-                let that = this;
+                //let that = this;
                 console.log(that.param);
                 if(!that.gh==false){
                     that.param.belongBusiness='DT'+that.gh;
                 }else{
                     that.param.belongBusiness=that.gh;
                 }
+                that.trafficStatistics('005')//自定义埋点
                 axios({
                     method:'get',
                     url:'/wxservice/wxservice?opName=toSignUp',
@@ -485,6 +487,7 @@ export default {
                     });
                     wx.onMenuShareTimeline({ //分享朋友圈
                     title: actName, // 分享标题
+                    desc: businessName, // 分享描述
                     link: location.href.split('?')[0]+'?ifcard=1',
                     imgUrl: 'http://file0.datangwealth.com/g1/M00/0F/56/rBAeX1vYo1-AYmqbAAAIn3unB5w639.jpg?filename=share_img.jpg', // 分享图标
                     success: function() {
@@ -505,9 +508,13 @@ export default {
     created(){
         Indicator.open();
         if(!this.$route.query.ghT==false){
-            this.gh = this.$route.query.ghT;
-            this.gh=this.gh.substr(2,7);
-            this.param.businessName = decodeURIComponent(this.$route.query.busNameT);
+            if(this.$route.query.ghT=='undefined'){   
+            }else{
+                this.gh = this.$route.query.ghT;
+                this.gh=this.gh.substr(2,7);
+                this.param.businessName = decodeURIComponent(this.$route.query.busNameT);
+            }
+            
          }  
        
         this.param.isReviewSignup = this.$route.query.isReviewSignup;

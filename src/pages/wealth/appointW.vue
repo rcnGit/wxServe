@@ -128,6 +128,7 @@ export default {
     },
     component:{Button,axios,Popup,MessageBox,comfooter,Toast},
     created:function(){
+        this.GasyncSDKConifg()
         var bizId=decodeURIComponent(getCookie("bizId"));
         this.faceparam.bizId = bizId
         if(!this.$route.query.faceResult == false){
@@ -158,6 +159,7 @@ export default {
                 var retCode=res.data.retCode;
                 var returnUrl = that.$route.query.returnUrl;
                 if(retCode == '0'){
+                    that.trafficStatistics('019')
                    // MessageBox('提示','人脸识别成功');
                     Toast({
                         message: '人脸识别成功',
@@ -167,6 +169,8 @@ export default {
                     that.getuserName();//获取用户姓名
                     return;
                 }else if(retCode == '-2'){
+                    that.trafficStatistics('017')
+                    that.trafficStatistics('020')
                     MessageBox('提示','该身份证已绑定其他手机号').then(action => {
                       if(action == 'confirm'){
                        //跳转财富师名片页面
@@ -183,6 +187,7 @@ export default {
                   });//提示信息
                     return;
                 }else{
+                    that.trafficStatistics('020')
                     var message = '人脸识别实名认证失败，请重试。若无法完成人脸识别实名认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成实名认证后报名活动。'
                     MessageBox('', message).then(action => {
                         if(action == 'confirm'){
@@ -285,6 +290,7 @@ export default {
             })
         },
         sendMSG:function(){
+            this.trafficStatistics('012')//自定义埋点
             var that=this;
             let ua = navigator.userAgent.toLowerCase();
             //android终端
@@ -312,6 +318,7 @@ export default {
             
         },//send
         sendweixin:function(){
+            this.trafficStatistics('012')//自定义埋点
            // alert('已复制，请找到财富师微信并粘贴内容');
             Toast({
                 message: '已复制，请找到财富师微信并粘贴内容',
@@ -393,6 +400,7 @@ export default {
             this.param.dtNo='DT'+this.gh;
             this.param.dtName=this.wName;
             Indicator.open();
+            this.trafficStatistics('009')//自行输入姓名、财富师工号绑定财富师的用户数
             this.valiW();
         },
         valiW:function(){
@@ -497,6 +505,7 @@ export default {
             });
         },
         onlineApplyV:function(){
+            this.trafficStatistics('011')//自定义埋点在线申请
             var that=this;
             Indicator.open();
                axios({

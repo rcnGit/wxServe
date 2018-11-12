@@ -88,6 +88,7 @@ export default {
             return str;
         },
         openCFScard:function(id){
+            this.trafficStatistics('014')//自定义埋点
             //打开我的财富师名片
             window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+id;
         },
@@ -151,8 +152,8 @@ export default {
             var oaActId=event.currentTarget.getAttribute('oaActId');//绑定事件的元素
             var actName=event.currentTarget.getAttribute('actName');//绑定事件的元素
             that.$router.push({
-                path:'/ActiveDetail',
-                name:'ActiveDetail',
+                path:'/activeDetail',
+                name:'activeDetail',
                 query:{
                     oaActId:oaActId,
                     actName:actName,
@@ -163,6 +164,7 @@ export default {
             },
     },
     created:function(){
+        this.GasyncSDKConifg()
          let that = this;
           that.getdata();
         // 我的活动不用人脸识别

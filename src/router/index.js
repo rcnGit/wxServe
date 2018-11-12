@@ -5,7 +5,7 @@ import active from '@/pages/active/active'
 import provinceList from '@/pages/active/provinceList'
 import postInfor from '@/pages/PostInfor/PostInformation'
 import minActive from '@/pages/active/minActive'
-import ActiveDetail from '@/pages/activeSign/ActiveDetail'
+import activeDetail from '@/pages/activeSign/activeDetail'
 import toSignNewCust from '@/pages/activeSign/toSignNewCust'
 import faceMsg from '@/pages/activeSign/faceMsg'//人脸识别，录身份信息
 import pushW from '@/pages/activeSign/pushW'//客服报名有财富师的跳转页面
@@ -46,13 +46,13 @@ export default new Router({
       component: active
     },
     {
-      path: '/ActiveDetail',
-      name: 'ActiveDetail',
+      path: '/activeDetail',
+      name: 'activeDetail',
       meta: {
         title: '活动详情',
         keepAlive: false // 不需要缓存
       },
-      component: ActiveDetail//使用这个组件
+      component: activeDetail//使用这个组件
     },
     {
       path: '/toSignNewCust',

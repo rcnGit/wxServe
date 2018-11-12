@@ -149,8 +149,8 @@ export default {
             var oaActId=event.currentTarget.getAttribute('oaActId');//绑定事件的元素
             var actName=event.currentTarget.getAttribute('actName');//绑定事件的元素
             that.$router.push({
-                path:'/ActiveDetail',
-                name:'ActiveDetail',
+                path:'/activeDetail',
+                name:'activeDetail',
                 query:{
                     oaActId:oaActId,
                     actName:actName,

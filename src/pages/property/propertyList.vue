@@ -123,6 +123,7 @@ export default {
                 console.log(res.data);
                 var retCode=res.data.retCode;
                 if(retCode == '0'){
+                    that.trafficStatistics('019')
                     //MessageBox('提示','人脸识别成功');
                     Toast({
                         message: '人脸识别成功',
@@ -132,10 +133,13 @@ export default {
                      that.getList();
                     return;
                 }else if(retCode == '-2'){
+                    that.trafficStatistics('017')
+                    that.trafficStatistics('020')
                     MessageBox('提示','该身份证已绑定其他手机号');
                     that.$refs.wz.style.display='block'; 
                     return;
                 }else if(retCode == '-1'){
+                    that.trafficStatistics('020')
                     //MessageBox('提示','系统异常');
                     Toast({
                         message: '系统异常',
@@ -145,6 +149,7 @@ export default {
                     that.$refs.wz.style.display='block';
                     return;
                 }else{
+                    that.trafficStatistics('020')
                     var message = '人脸识别实名认证失败，请重试。若无法完成人脸识别实名认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成实名认证后报名活动。'
                     MessageBox.confirm('', {
                         message: message,
@@ -266,6 +271,7 @@ export default {
                 });
         },
         downApp:function() {
+            this.trafficStatistics('013')//自定义埋点
                 let ua = navigator.userAgent.toLowerCase();
                 //android终端
                 let isAndroid = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1;  　　//ios终端
@@ -290,6 +296,7 @@ export default {
         }
     },
     created:function(){
+        this.GasyncSDKConifg()
         if(!this.$route.query.faceResult == false){
              //var bizId=localStorage.getItem('bizId');
             var bizId=decodeURIComponent(getCookie("bizId"));

@@ -38,6 +38,7 @@ export default {
         }
     },
     mounted:function(){
+        this.GasyncSDKConifg()
         var that=this;
          axios({
                 method:'get',

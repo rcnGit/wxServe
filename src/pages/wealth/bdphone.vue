@@ -49,6 +49,7 @@ export default {
     },
     components:{getcode,MessageBox,Button,comfooter},
     mounted:function(){
+        this.GasyncSDKConifg()
         var that=this;
         that.bdfrom =this.$route.query.bdfrom;
     },
