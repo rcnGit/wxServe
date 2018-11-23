@@ -2,17 +2,20 @@
     <div class='active'>
         <div class='act_head'>
           <div class="act_h_left">
+              <router-link to='/cityList'><span>{{pcity}}</span><img src='./img/upBtn_img@2x.png'/>
+              </router-link>
           </div>
           <div class="act_h_right">
             <input placeholder="请输入活动名称关键字" class='searchInput'ref='name'/>
-            <img src='./img/search_img.png' class='search_img' @click.stop='search'/>
+            <img src='./img/search@2x.png' class='search_img' @click.stop='search'/>
           </div>
         </div><!--act_head-->
         <div class='noData' ref='nodata' v-if='isShow'>
-          <img src='./img/nomessage@2x.png'/>
-          <p class='fSize16'>现在还没有活动哦</p>
+          <img src='./img/noactive@2x.png'/>
+          <p class='fSize16' style="padding-top: 1.066667rem"> 暂未搜索到相关结果</p>
+          <p class='fSize16' @click="Loadpage" style="color:#DF1E1D;padding-top: .266667rem">先看看其他精彩活动吧>></p>
         </div>
-        <div id='active_content'>
+        <div id='active_content' v-else>
           <div style='height:20px;background:#f1f1f1;'></div>
            <div v-for="item in items" class="active_demo" @click='en_details($event)' :oaActId='item.oaActId' :ActName='item.actName'>
                <div style="position:relative;">
@@ -20,7 +23,7 @@
                  <div class='meng'><img src='./img/img_meng.png'width='100%' height='100%'/></div> 
                </div>
               <div class='textMain'>
-                <p class='active_title' style='padding-bottom:15px;'>{{item.location}}</p>
+                <p class='active_title' style='padding-bottom:8px;'>{{item.location}}</p>
                 <p class='active_demo_content' style='padding-bottom:10px;'>{{item.content}}</p>
               </div>
               
@@ -38,11 +41,15 @@
           </div>
         </div><!--active_content-->
         <!-- <comfooter></comfooter> -->
+        <keep-alive>
+          <router-view v-if="$route.meta.keepAlive"></router-view>
+        </keep-alive>
+        <router-view v-if="!$route.meta.keepAlive"></router-view>
     </div>
     
 </template>
 <script>
-import provinceList from './provinceList.vue'
+import cityList from './cityList.vue'
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
 import { Toast } from 'mint-ui';
@@ -61,6 +68,7 @@ export default {
       load:true,
       ifSearch:false,
       isShow:false,
+      pcity:"全国",
       loadObj:{
         text: '加载中...',
         spinnerType: 'triple-bounce'
@@ -93,8 +101,8 @@ export default {
        var oaActId=event.currentTarget.getAttribute('oaactid');//绑定事件的元素
        var ActName=event.currentTarget.getAttribute('ActName');//绑定事件的元素   
        that.$router.push({
-          path:'/activeDetail',
-          name:'activeDetail',
+          path:'/activeDetails',
+          name:'activeDetails',
           query:{
             actId: oaActId,
             actName : ActName,
@@ -116,14 +124,24 @@ export default {
       that.allList=[];
       that.param={
           pageNo:1,
-          city:'',
+          city:that.$route.query.city,
           actName:name,
           comefrom:that.param.comefrom
         }
      that.getData();
     },
+    Loadpage:function(){
+      this.param={
+          pageNo:1,
+          city:'',
+          actName:"",
+          comefrom:this.param.comefrom
+        }
+      this.getData()
+    },
     getData:function(){
         let that = this;
+        console.log(that.param)
         axios({
             method:'get',
             url:'/wxservice/wxexternal?opName=getactiveinfo',
@@ -160,10 +178,12 @@ export default {
               }else{
                 that.isShow = true;
               }
-            }else if(retCode == 400){
+            }
+            else if(retCode == 400){
               var serbackUrl = that.Host+'wxservice/wxexternal?opName=getactiveinfo'
               window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
-            }else{
+            }
+            else{
               //MessageBox('提示', retMsg);
               Toast({
                   message: retMsg,
@@ -202,7 +222,11 @@ export default {
         that.param.comefrom ='tangguan';
         
     }
+    alert(that.$route.query.city)
      var routerCity = that.$route.query.city;
+     if(!that.$route.query.city == false){
+       that.pcity = routerCity
+     }
      if(routerCity!=''&&routerCity!=undefined){
          that.allList=[];
            that.param={
@@ -211,7 +235,7 @@ export default {
             actName:''
           }
          that.getData();
-          that.$route.query.city='';
+         // that.$route.query.city='';
           return;
      }
      
@@ -256,41 +280,49 @@ export default {
   /* height:40px; */
   width: 100%;
   box-sizing: border-box;
-  padding:20px 13px 10px;
+  padding: .36667rem .173333rem .1633333rem;
   line-height: 1rem; 
   display:flex; /*父元素声明弹性盒*/
   position: fixed;
   top: 0;
-  background:#f1f1f1;
+  background:#fff;
   z-index: 999999999;
 }
-.act_h_left{
-  /* width:60px; */
+.act_h_left{ 
   float: left;
+  line-height: 1rem;
+  padding-right: .2rem;
 }
 .act_h_left span{
   float: left;
-  font-size:14px;
+  font-size: .373333rem;
+  overflow : hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 1;/*此为两行，设置行数*/
+	-webkit-box-orient: vertical;/*子元素垂直排列*/
+	max-width: 1.5rem; 
 }
 .act_h_left img{
   display: block;
-  width:14px;
+  width: .23667rem;
   float: left;
-  margin-left:5px;
-  margin-top:17px;
+  margin-left: .066667rem;
+  margin-top: .38667rem
 }
 .act_h_right{
   flex: 1;
   float: left;
   position: relative;
+  border: 1px solid rgba(230,230,230,1);
+  border-radius: .133333rem;
 }
 .act_h_right .searchInput{
   width:100%;
-  height:100%;
   border:1px solid #e4e5e7;
   background:#fff;
   border-radius:30px;
-  padding:3px 30px 3px 20px;
+  padding: .286667rem .4rem .038667rem .266667rem;
   box-sizing: border-box;
   font-size: 0.37rem;
   color:rgb(57,66,89);
@@ -315,14 +347,14 @@ color: #d2cfcf;
 .search_img{
   width:0.45rem;
   position: absolute;
-  top:0.25rem;
+  top:0.27rem;
   right:14px;
 }
 #active_content{
   background:#f1f1f1;
   margin-top:55px;
   padding: 0 10px;
-  min-height:12.2rem;
+  min-height:16.8rem;
   /* margin-bottom:50px; */
 }
 .textMain{
@@ -361,18 +393,20 @@ color: #d2cfcf;
   font-weight: 700;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 20px;
+  font-size: .53333rem;
+  line-height: .58rem;
   margin-top: 8%;
 }
 .img_active_date{
-  font-size: 15px;
+  font-size: .4rem;
   letter-spacing: 1px;
 }
 .active_title{
-  font-size: 15px;
+  font-size: .4rem;
+  line-height: .5rem;
   color:rgb(18,28,50);
   text-align: left;
-  margin:15px 0 10px;
+  margin:13px 0 8px;
    white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -389,14 +423,15 @@ color: #d2cfcf;
 }
 .noData{
   background:#fff;
+  padding-top: 4.773333rem
 }
 .noData img{
-    width:40%;
-    margin:80px auto 0;
+    width: 2.493333rem;
+    margin:0 auto;
 }
 .noData p{
     color:rgb(197,197,197);
-    margin-top:30px;
+    font-size: .4rem;
 }
 </style>
 

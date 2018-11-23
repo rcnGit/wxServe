@@ -14,14 +14,17 @@
         <div class='addressBox'>
           <div class='ad_m'>
               <p class='ad_tit'>{{actName}}</p>
-              <div class="ad_d">
-                <img src='./img/date@2x.png' class="add_icon"/>
-                <p class='ad_date'>{{beginTime}} — {{endTime}}</p>
-              </div>
-              <div class="ad_d">
-                <img src='./img/address@2x.png' class="date_icon"/>
-                <p class='ad_address'>{{location}}</p>
-              </div>
+              <div class="lines"></div>
+              <div class="add_D">
+                <div class="ad_d">
+                    <img src='./img/date@2x.png' class="add_icon"/>
+                    <p class='ad_date'>{{beginTime}} — {{endTime}}</p>
+                </div>
+                <div class="ad_d">
+                    <img src='./img/address@2x.png' class="date_icon"/>
+                    <p class='ad_address'>{{location}}</p>
+                </div>
+                </div>
           </div>
         </div>
         <div class='actDe'>
@@ -627,7 +630,6 @@ export default {
              that.authentic()//获取客户信息
          }
          //================
-        
         var wxstr =decodeURIComponent(that.$route.query.actId); 
         var actId=wxstr.split(",")[0];
         that.actId=wxstr.split(",")[0];
@@ -761,23 +763,21 @@ export default {
 }
 .addressBox{
     width:100%;
-    height:149px;
+    min-height: 4.253333rem;
+    border-bottom: .333333rem solid #F9F9F9;
 }
 .ad_m{
-    width:96%;
-    margin:10px auto;
+    width:100%;
     height:100%;    
-    padding: 0 20px 0px;
-    padding-top:20px;
     text-align: left;
-    background:url(./img/activeDbg@2x.png)no-repeat;
-    background-size:cover;
+    
 }
 .ad_tit{
-    font-size: 18px;
-    color:#000;
+    padding: .733333rem .4rem 0;
+    font-size: .48rem;
+    color:#333;
     margin-bottom:20px;
-    line-height:23px;
+    line-height: .72rem;
      overflow:hidden; 
     text-overflow:ellipsis;
     display:-webkit-box; 
@@ -804,11 +804,8 @@ export default {
     line-height: 20px;
 }
 .actDe{
-    width:96%;
+    width:100%;
     min-height:370px;
-    margin:10px auto;
-    border:1px solid #efefef;
-    padding: 10px;
 }
 .toSign{
     width:90%;
@@ -825,6 +822,9 @@ export default {
 .nodata p{
     font-size: 16px;
     color:rgb(57,66,89);
+}
+.add_D{
+    padding: .453333rem .4rem;
 }
 .ad_d{
     overflow: hidden;
@@ -854,6 +854,11 @@ height:360px!important;
     padding: 0!important;
     width:100%;
     overflow: hidden
+}
+.lines{
+    width: 100%;
+    height: 1px;
+    background: #E6E6E6;
 }
 </style>
 

@@ -8,14 +8,14 @@
             <div class='inpBox'>
                     <input type='text' class='' v-model="param.realName" :disabled="isDisabled" ref="realName"/>
                     <p class='warn' ref='warnName' v-show='true'>{{warnName}}</p>
-                    <span>联系人姓名</span>
+                    <span>姓名</span>
                      <!-- <img src='./img/card_img@2x.png' class='clear' style='right:33%;'/>  -->
                  </div>
                 <div class='inpBox'>
                         <input type='hidden' class=''style='padding-right:100px;'maxlength='11' v-model="param.phone" ref='phone' />
                         <input type='tel'  class=''style='padding-right:100px;'maxlength='11' v-model="phone2" ref='phone2' :disabled="isDisabled2" placeholder="请输入联系人电话"/>
                     <p class='warn' ref='warnPhone' v-show='true'>{{warnPhone}}</p>
-                    <span>联系人电话</span>
+                    <span>电话</span>
                     <span class='inpRchoose fSize13' style='color:#4a90e2;' @click='tishi_changeP()' v-show='isShow'>变更手机号>></span>
                  </div> <!--inpBox-->
                   <div class='inpBox' v-show="yanzhengmaIsShow">
@@ -361,7 +361,7 @@ export default {
                      var serbackUrl = that.Host+'wxservice/wxMemberInfo/getFaceToken'
                      window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=faceMsg#wechat_redirect';
                  }else if(retCode == '-2'){
-                     MessageBox('提示','身份证不合法');
+                     MessageBox('','身份证不合法');
                      return;
                  }else if(retCode == '-1'){
                     // MessageBox('提示','系统异常');
@@ -450,29 +450,29 @@ export default {
                 }else if(retCode==3){
                     var crmInfo=res.data.crmInfo;
                     if(crmInfo.retCode==1){
-                         MessageBox('提示','报名失败，系统错误');
+                         MessageBox('','报名失败，系统错误');
                     }else if(crmInfo.retCode==3){
-                        MessageBox('提示','此活动已举办');
+                        MessageBox('','此活动已举办');
                     }else if(crmInfo.retCode==4){
-                        MessageBox('提示','此活动已取消');
+                        MessageBox('','此活动已取消');
                     }else if(crmInfo.retCode==5){
-                        MessageBox('提示','此活动报名已结束');
+                        MessageBox('','此活动报名已结束');
                     }else if(crmInfo.retCode==6){
-                        MessageBox('提示','您已经报过名');
+                        MessageBox('','您已经报过名');
                     }else if(crmInfo.retCode==7){
-                        MessageBox('提示','客户性质传入值错误');
+                        MessageBox('','客户性质传入值错误');
                     }else if(crmInfo.retCode==8){
-                        MessageBox('提示','此客户为老客户，请联系此客户专属财富师进行报名');
+                        MessageBox('','此客户为老客户，请联系此客户专属财富师进行报名');
                     }else if(crmInfo.retCode==9){
-                        MessageBox('提示','此活动已结束');
+                        MessageBox('','此活动已结束');
                     }else if(crmInfo.retCode==10){
-                        MessageBox('提示','活动不存在');
+                        MessageBox('','活动不存在');
                     }else if(crmInfo.retCode==11){
-                        MessageBox('提示','此财富师不存在');
+                        MessageBox('','此财富师不存在');
                     }
                     return;
                 }else if(retCode== 1){
-                    MessageBox('提示','验证码错误');
+                    MessageBox('','验证码错误');
                 }else if(retCode== 2){
                     //MessageBox('提示','系统错误');
                     Toast({
@@ -488,15 +488,15 @@ export default {
                         duration: 3000
                     }); 
                 }else if(retCode== -2){
-                    MessageBox('提示','绑定手机号出错');
+                    MessageBox('','绑定手机号出错');
                 }else if(retCode== -3){
-                    MessageBox('提示','已绑定线上财富师');
+                    MessageBox('','已绑定线上财富师');
                 }else if(retCode== -4){
-                    MessageBox('提示','已绑定线下财富师');
+                    MessageBox('','已绑定线下财富师');
                 }else if(retCode== -5){
-                    MessageBox('提示','财富师工号不存在');
+                    MessageBox('','财富师工号不存在');
                 }else if(retCode== -6){
-                    MessageBox('提示','财富师已离职');
+                    MessageBox('','财富师已离职');
                 }
             });
         },//报名走的接口

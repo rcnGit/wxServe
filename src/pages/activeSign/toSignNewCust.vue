@@ -8,14 +8,14 @@
             <div class='inpBox'>
                 <input type='text' class='' v-model="param.realName" :disabled="isDisabled" ref="realName" placeholder="请输入联系人姓名"/>
                 <p class='warn' ref='warnName' v-show='warnShow'>{{warnName}}</p>
-                <span>联系人姓名</span>
+                <span>姓名</span>
                  <!-- <img src='./img/card_img@2x.png' class='clear' style='right:33%;'/>  -->
              </div>
             <div class='inpBox'>
                 <input type='hidden' class=''style='padding-right:100px;'maxlength='11' v-model="param.phone" ref='phone' />
                 <input type='tel' class=''style='padding-right:100px;'maxlength='11' v-model="phone2" ref='phone2' :disabled="isDisabled2" placeholder="请输入联系人电话" />
                 <p class='warn' ref='warnPhone' v-show='true'>{{warnPhone}}</p>
-                <span>联系人电话</span>
+                <span>电话</span>
                 <span class='inpRchoose fSize13' style='color:#4a90e2;' @click='changeP()' v-show='isShow'>变更手机号>></span>
              </div> <!--inpBox-->
               <div class='inpBox' v-show="yanzhengmaIsShow">
@@ -301,7 +301,12 @@ export default {
                      MessageBox(' ','身份证不合法');
                      return;
                  }else if(retCode == '-1'){
-                     MessageBox(' ','系统异常');
+                    //MessageBox(' ','系统异常');
+                     Toast({
+                        message: '系统异常',
+                        position: 'center',
+                        duration: 3000
+                    });
                      return;
                  }else if(retCode == '-3'){
                     // MessageBox(' ','未获取到token');

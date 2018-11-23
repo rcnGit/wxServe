@@ -135,7 +135,7 @@ export default {
                 }else if(retCode == '-2'){
                     that.trafficStatistics('017')
                     that.trafficStatistics('020')
-                    MessageBox('提示','该身份证已绑定其他手机号');
+                    MessageBox('','该身份证已绑定其他手机号');
                     that.$refs.wz.style.display='block'; 
                     return;
                 }else if(retCode == '-1'){

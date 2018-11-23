@@ -5,7 +5,7 @@ import active from '@/pages/active/active'
 import provinceList from '@/pages/active/provinceList'
 import postInfor from '@/pages/PostInfor/PostInformation'
 import minActive from '@/pages/active/minActive'
-import activeDetail from '@/pages/activeSign/activeDetail'
+import activeDetails from '@/pages/activeSign/activeDetails'
 import toSignNewCust from '@/pages/activeSign/toSignNewCust'
 import faceMsg from '@/pages/activeSign/faceMsg'//人脸识别，录身份信息
 import pushW from '@/pages/activeSign/pushW'//客服报名有财富师的跳转页面
@@ -22,10 +22,15 @@ import activeCheckin from '@/pages/activeCheckin/activeCheckin'//签到
 import SuccCheckin from '@/pages/activeCheckin/SuccCheckin'//签到成功
 import wealthCardD from '@/pages/wealth/wealthCardD'//没有财富师名片的，代理名片
 import wchoose from '@/pages/wealth/wchoose'//没有财富师名片的，代理名片
+
+import PrivateAsset from '@/pages/property/PrivateAsset'//我的私募
+import PublicAsset from '@/pages/property/PublicAsset'//我的公募
+import SecuritiesAsset from '@/pages/property/SecuritiesAsset'//资管类
+import cityList from '@/pages/active/cityList'
 Vue.use(Router)
 
 export default new Router({
- // mode: 'history',
+ //mode: 'history',
   routes: [
     {
       path: '/provinceList',
@@ -46,13 +51,13 @@ export default new Router({
       component: active
     },
     {
-      path: '/activeDetail',
-      name: 'activeDetail',
+      path: '/activeDetails',
+      name: 'activeDetails',
       meta: {
         title: '活动详情',
         keepAlive: false // 不需要缓存
       },
-      component: activeDetail//使用这个组件
+      component: activeDetails//使用这个组件
     },
     {
       path: '/toSignNewCust',
@@ -213,7 +218,42 @@ export default new Router({
         keepAlive: false // 不需要缓存
       },
       component: wchoose//使用这个组件
-    }
-  
+    },
+    {
+      path: '/PrivateAsset',
+      name: 'PrivateAsset',
+      meta: {
+        title: '我的私募',
+        keepAlive: false // 不需要缓存
+      },
+      component: PrivateAsset//使用这个组件
+    },
+    {
+      path: '/PublicAsset',
+      name: 'PublicAsset',
+      meta: {
+        title: '我的公募',
+        keepAlive: false // 不需要缓存
+      },
+      component: PublicAsset//使用这个组件
+    },
+    {
+      path: '/SecuritiesAsset',
+      name: 'SecuritiesAsset',
+      meta: {
+        title: '我的资管理财',
+        keepAlive: false // 不需要缓存
+      },
+      component: SecuritiesAsset//使用这个组件
+    },
+    {
+      path: '/cityList',
+      name: 'cityList',
+      meta: {
+        title: '活动城市选择',
+        keepAlive: false // 不需要缓存
+      },
+      component: cityList//使用这个组件
+    },
   ]
 })

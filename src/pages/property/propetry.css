@@ -24,11 +24,11 @@ body{
     min-height:20px;
 }
 .p4{
-    font-size: 20px;
+    font-size: .4rem;
     margin-top:10px;
 }
 .proContent{
-    padding-top: .3rem;
+    
 }
 .proDemo{
     /* height:87px; */
@@ -37,9 +37,11 @@ body{
     border-bottom:0.5px solid #efefef; */
     color:rgb(122,122,122);
     padding:16px 0.4rem 0 0.56rem;
-    height: 2.5rem;
-    background:url(./img/juxing.png) no-repeat center;
-    background-size: 100% 2.729333rem;
+    height: 3.066667rem;
+    background:url(./img/ju_bg.png) no-repeat center;
+    background-size: 10.253333rem 3.066667rem;
+    /* box-shadow: 0 .04rem .133333rem 0px #ccc;  */
+    /* margin-top: .266667rem; */
     
 }
 .proDemo img{
@@ -59,18 +61,18 @@ em{
 }
 .bigP{
     font-size: .4rem;
-    color:#000;
+    color:#333;
     padding-left: 0.06667rem;
     line-height: .36rem;
 }
 .smP{
     padding-left:0.21rem;
-    padding-top:0.19rem;
+    padding-top:0.12rem;
     font-size: .36rem;
 }
 .shouyi{
     font-size: .36rem;
-    padding-top: .2rem;
+    padding-top: .12rem;
     padding-right: .3rem;
 }
 .xindate{
@@ -80,8 +82,62 @@ em{
     font-size:.4rem;
     font-weight:400;
 }
+.proBot{
+    overflow: hidden;
+    text-align: left;
+}
 .red{
     font-size:.4rem;
     font-weight:400;
-    color:#ef2727;
+    color: #DF1E1D;
+}
+.TypeValue{
+    border:1px solid #DF1E1D;
+    color: #DF1E1D;
+    text-align: center;
+    padding: .063333rem .146667rem .043333rem;
+    margin-top: -.08rem;
+    border-radius: .1rem;
+    margin-left: .1rem;
+    line-height: 1;
+}
+.money_a{
+    color: #333;
+    font-size: .373333rem;
+    line-height: .5rem;
+}
+.money_b{
+    font-size: .373333rem;
+    line-height: .6rem;
+}
+.jin_one{
+    color: #7C7C7C;
+    font-size: .346667rem;
+    line-height: .6rem;
+}
+.rishouyi{
+    padding-right: 0.24rem;
+}
+.asset_con .smP{
+    padding-left: 0;
+    padding-top: 0.05rem;
+}
+.asset_con .shouyi{
+    padding-left: 0;
+    padding-top: 0.05rem;
+}
+.shouyi_left{
+    position: relative;
+}
+.shouyi_left:after{
+    content: "";
+    width: 1px;
+    height: .773333rem;
+    background: #fff;
+    position: absolute;
+    top: .1rem;
+    left: 100%;
+}
+.shou_size{
+    font-size: .4rem;
 }
