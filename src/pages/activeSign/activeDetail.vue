@@ -32,7 +32,7 @@
                  <img src='./img/nodataImg@2x.png'/>
                  <p>暂无活动介绍</p>
             </div>
-           <div v-else><img :src='content' class='imgEvent' width='100%'/></div>
+           <div v-else style="padding: 0 .4rem;"><img src='./img/detail_tit.png' class="detail_tit"/><img :src='content' class='imgEvent' width='100%'/></div>
         </div>
          <mt-button type="danger" size="large" class='toSign' @click='sign()' v-show='isShow' :disabled="isDisabled">{{actStatus}}</mt-button>
         <!-- 底部   框 -->
@@ -59,6 +59,7 @@ import { MessageBox } from 'mint-ui';//   框
 import { Toast } from 'mint-ui';
 import { getCookie,setCookie } from '@/common/js/cookie.js'
 import axios from 'axios'
+import merge from 'webpack-merge'
 export default {
     name:'activeDetail',
     data:function (){
@@ -139,6 +140,7 @@ export default {
                     title: '',
                     }).then(action => {
                     if(action == 'confirm'){
+                        Indicator.open();
                         that.zhijieAjax();
                     }else{
                         
@@ -160,6 +162,7 @@ export default {
                 }
             })
             .then(function(res){
+                Indicator.close();
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 if(retCode== 1){
@@ -184,8 +187,10 @@ export default {
                         name: 'signSuc',
                         query:{
                             isReviewSignup:that.isReviewSignup,
-                            activeId:that.param.activeId,
-                            actName:that.param.actName,
+                           // activeId:that.param.activeId,
+                           // actName:that.param.actName,
+                            activeId:that.actId,
+                            actName:that.actName,
                             beginTime:that.beginTime,
                             location :that.location ,
                         }
@@ -228,6 +233,11 @@ export default {
             .then(function(res){
                 console.log(res.data);
                 var retCode=res.data.retCode;
+                var returnUrl = that.$route.query.returnUrl;
+                //修改原有参数        
+                that.$router.push({
+                    query:merge(that.$route.query,{'faceResult':''})
+                })
                 if(retCode == '0'){
                     that.trafficStatistics('019')//自定义埋点
                     Toast({
@@ -235,12 +245,27 @@ export default {
                         position: 'center',
                         duration: 3000
                     });
+                    
                     that.authentic()
                     return;
                 }else if(retCode == '-2'){
                     that.trafficStatistics('017')
                     that.trafficStatistics('020')
-                    MessageBox('   ','该身份证已绑定其他手机号');
+                    //MessageBox('   ','该身份证已绑定其他手机号');
+                    MessageBox('','该身份证已绑定其他手机号').then(action => {
+                      if(action == 'confirm'){
+                       //跳转财富师名片页面
+                        that.$router.push({
+                            path:'/faceMsg',
+                            name:'faceMsg',
+                            query:{
+                            returnUrl:returnUrl,
+                            }
+                        })
+                      }else{//取消
+                        console.log('查看订单')
+                      }
+                  });//提示信息
                     return;
                 }else if(retCode == '-1'){
                     that.trafficStatistics('020')
@@ -338,11 +363,13 @@ export default {
                                 that.actStatus= '我要报名';
                             }else if(res.data.canSignUp == '1'){
                                 that.isShow = true;
-                                that.actStatus= '已报名';
+                                that.actStatus= '已申请';
                                 that.isDisabled = true;
                             }
                         }else{
-                            that.isShow = false
+                            that.isShow = true;
+                            that.actStatus= '已结束报名';
+                            that.isDisabled = true;
                         }
                         
                     }
@@ -394,10 +421,13 @@ export default {
                 if(retCode == 0){
                     if(!that.ghT==false){//对方有财富师
                         //that.businesscardShow=true
-                        that.headimgShow = true;
-                        that.getPhoto()
+                        if(that.ghT != "undefined"){
+                            that.headimgShow = true;
+                            that.getPhoto()
+                        }
                         
                     }else{
+                      //  that.ghT = res.data.userInfo.belongBusiness
                         //that.businesscardShow=false;
                         that.headimgShow = false;
                     }
@@ -437,9 +467,8 @@ export default {
                         return;
                     }else{
                             var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=activeDetail_'+that.actId+','+that.ghT+','+that.actName+','+that.$route.query.ifCard+'#wechat_redirect';
-                    }
-                    
+                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=activeDetail_'+that.actId+','+that.ghT+','+that.actName+','+that.$route.query.ifCard+'#wechat_redirect';
+                    }                   
                 }
                 else{
                     MessageBox('   ', retMsg); 
@@ -458,10 +487,10 @@ export default {
                 //ios
                 //this.ShowPop = !this.ShowPop;
                 //this.ShowDark = !this.ShowDark;
-                this.shareLink = 'https://interface.tdyhfund.com/weixin-h5/' + 'static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href+'&ifCard=1&ghT='+mygh)
+                this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href+'&ifCard=1&ghT='+mygh)
             } else if (/(Android)/i.test(navigator.userAgent)) {
                 //android
-                this.shareLink = location.href.split('?')[0]+'?ifCard=1&ghT='+mygh+'&actId='+this.actId+'&actName='+this.actName
+                this.shareLink = location.href.split('?')[0]+'?ifCard=1&ghT='+mygh+'&actId='+this.actId+'&actName='+encodeURIComponent(this.actName)
             }
             }
     
@@ -480,20 +509,30 @@ export default {
             })
             .then(function(res) {//成功之后
                 Indicator.close();
-                var data=Base64.decode(res.data);
-                data=jQuery.parseJSON(data);
-                that.photo = data.photo;
-                that.ghT=data.userId;
-                that.busNameT = data.userName; //对方财富师的名字
-                if(!that.photo==false){
-                    that.headImgUrl = that.photo
-                }else{
-                    that.headimgShow=false;
+                console.log(res.data)
+                var retCode=res.data.retCode;
+                var retMsg=res.data.retMsg;
+                if(retCode == 0){
+                   // var data=Base64.decode(res.data);
+                   // data=jQuery.parseJSON(data);
+                    var data=res.data
+                    that.photo = data.photo;
+                    that.ghT=data.userId;
+                    that.busNameT = data.userName; //对方财富师的名字
+                    if(!that.photo==false){
+                        that.headImgUrl = that.photo
+                    }else{
+                        that.headimgShow=false;
+                    }
+                    that.shareName=that.busNameT;//对方的财富师名字
+                    // that.userphone = res.data.userInfo.userphone
+                }else if(retCode == "-2"){
+                    Toast({
+                        message: retMsg,
+                        position: 'center',
+                        duration: 3000
+                    });
                 }
-                that.shareName=that.busNameT;//对方的财富师名字
-                // that.userphone = res.data.userInfo.userphone
-                    
-                
             })
         },
             
@@ -555,7 +594,7 @@ export default {
         },
         toBusiness:function(){
             this.trafficStatistics('002')
-            window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+this.belongBusiness;
+            window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+this.ghT;
         },
         async asyncSDKConifg (actName,businessName,mygh) {
             let that = this;
@@ -612,13 +651,14 @@ export default {
         }
         
     },
+    
     created(){
-        
        // this.asyncSDKConifg();
         //是否糖罐入口
         var that=this;
         if(that.$route.query.comefrom=='tangguan'||that.$route.params.comefrom=='tangguan'){
             that.param.comefrom ='tangguan';
+            that.getData();
         }
         
         document.body.scrollTop = document.documentElement.scrollTop = 0;//回到顶部；
@@ -676,7 +716,9 @@ export default {
              console.log('ifCard==='+ifCard);
              if(ifCard==1){
                  //that.$refs.card.style.display='flex';
-                 if(!that.ghT == false){
+                 if(that.ghT == '' || that.ghT ==undefined || that.ghT =='undefined'){
+                    that.businesscardShow=false
+                 }else{
                     that.businesscardShow=true
                  }
              }
@@ -688,6 +730,11 @@ export default {
         
         
     },
+    beforeRouteLeave(to, from, next) {
+         // 设置下一个路由的 meta
+        to.meta.keepAlive = true;  // 让 A 缓存，即不刷新
+        next();
+    }
     //  beforeRouteLeave(to, from, next) {
     //      alert('返回');
     //      console.log(to);
@@ -773,7 +820,7 @@ export default {
     
 }
 .ad_tit{
-    padding: .733333rem .4rem 0;
+    padding: .533333rem .4rem 0;
     font-size: .48rem;
     color:#333;
     margin-bottom:20px;
@@ -830,16 +877,15 @@ export default {
     overflow: hidden;
 }
 .add_icon{
-    width:18px;
-    height:18px;
-    margin-right: 7px;
+    height: .32rem;
+    margin-right: .253333rem;
     float: left;
+    margin-top: 0.056rem;
 }
 .date_icon{
-    width:15px;
-    height:18px;
-    margin-right: 7px;
+    height: .32rem;
     float: left;
+    margin: 0.053rem .253333rem 0 0.03rem;
 }
 .pop_contant_A{
 background:url(./img/weimaBg.png) no-repeat!important;
@@ -859,6 +905,11 @@ height:360px!important;
     width: 100%;
     height: 1px;
     background: #E6E6E6;
+}
+.detail_tit{
+    width: 4.24rem;
+    height: .466667rem;
+    margin: .8rem auto;
 }
 </style>
 

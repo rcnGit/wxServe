@@ -32,7 +32,7 @@ import getcode from './getcode'
 import comfooter from '../../components/footer'
 import { isValidName,isValidMobile ,isValidverifycode} from '@/common/js/extends.js';//引入mint-ui的button组件文件包
 export default {
-    name:'changephone',
+    name:'bdphone',
     data:function(){
         return{
             messType:'5',
@@ -49,11 +49,53 @@ export default {
     },
     components:{getcode,MessageBox,Button,comfooter},
     mounted:function(){
+        this.getData()
         this.GasyncSDKConifg()
         var that=this;
         that.bdfrom =this.$route.query.bdfrom;
     },
     methods:{
+        getData:function(){
+            Indicator.open();
+            let that = this;
+            axios({
+                method:'get',
+                url:'/wxservice/wxservice?opName=getUserInfo',//判断是否有财富师
+                params: {
+                    backUrl: that.paramurl
+                }
+            })
+            .then(function(res){
+                 Indicator.close();
+                 var retCode=res.data.retCode;
+                if(retCode=='0'){
+                    if(!res.data.userInfo.phone==false){
+                        Indicator.open();
+                        setTimeout(() => {
+                        Indicator.close();
+                        MessageBox({title: '',message: '您已绑定手机号',closeOnClickModal: false}).then(action => {
+                            if(action == 'confirm'){
+                                 WeixinJSBridge.call('closeWindow');
+                            }
+                        }).catch(() => {
+                        //取消按钮
+                        })
+                    }, 3000)
+                    }
+                 
+                }else if(retCode=='-1'){//系统异常
+                    //MessageBox('提示', '系统异常');
+                    Toast({
+                        message: '系统异常',
+                        position: 'center',
+                        duration: 3000
+                    });
+                }else if(retCode == 400){
+                    var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
+                  window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=bdphone_wxser#wechat_redirect';
+                }
+            })
+        },
         phFn:function(){//实时校验手机号
             if(this.ipNo==''){
                 //this.$refs.phwarn.style.display='none';
@@ -161,9 +203,14 @@ export default {
             .then(function(res) {//成功之后
                 Indicator.close();
                 var retCode=res.data.retCode;
+                var wxfrom =decodeURIComponent(that.$route.query.actId);
+                //console.log(wxfrom)
                 if(retCode=='0'){//更改成功
                        MessageBox('','手机号绑定成功').then(action => {
                         if(action == 'confirm'){
+                            if(wxfrom == 'wxser' || that.bdfrom == 'wxser'){//自动回复直接打开
+                                WeixinJSBridge.call('closeWindow');//关闭当前页面
+                            }
                             that.$router.push({
                                 path:'/'+that.bdfrom,
                                 name:that.bdfrom,
@@ -171,6 +218,7 @@ export default {
                                     
                                 }
                             })
+                            
                         }
                     }).catch(() => {
                        //取消按钮
@@ -189,7 +237,7 @@ export default {
                 }
                  else if(retCode == 400){
                      var serbackUrl = that.Host+'wxservice/wxMemberInfo/changeMobile'
-                 window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=changePhone#wechat_redirect';
+                 window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=bdphone#wechat_redirect';
                  }
                 else{
                    // MessageBox('提示','系统异常');

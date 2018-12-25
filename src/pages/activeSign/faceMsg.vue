@@ -42,6 +42,7 @@ export default {
             returnUrl:'',//人脸识别后返回的Url
             backUrl: location.href.split('?')[0]
            },
+           faceUrl:'',
            namewarn:'',
            token:'',
            serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxMemberInfo/getFaceToken')
@@ -49,6 +50,48 @@ export default {
    },
     components:{Button,axios,Toast},//使用mint-ui的button的组件
     methods:{
+        getData:function(){
+            Indicator.open();
+            let that = this;
+            axios({
+                method:'get',
+                url:'/wxservice/wxservice?opName=getUserInfo',//判断是否有财富师
+                params: {
+                    backUrl: that.paramurl
+                }
+            })
+            .then(function(res){
+                Indicator.close();
+                var retCode=res.data.retCode;
+                if(retCode=='0'){
+                    if(res.data.userInfo.authenticFlag==1){
+                        Indicator.open();
+                        setTimeout(() => {
+                        Indicator.close();
+                        MessageBox({title: '',message: '您已实名认证',closeOnClickModal: false}).then(action => {
+                            if(action == 'confirm'){
+                                WeixinJSBridge.call('closeWindow');   
+                            }
+                        }).catch(() => {
+                        //取消按钮
+                        })
+                    }, 1000)
+                    }
+                }else if(retCode=='-1'){//系统异常
+                    //MessageBox('提示', '系统异常');
+                    Toast({
+                        message: '系统异常',
+                        position: 'center',
+                        duration: 3000
+                    });
+                }else if(retCode == 400){
+                    var return_url = that.Host+'weixin-h5/index.html#/faceSuccess'
+                    setCookie('facefrom',return_url);
+                    var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
+                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=faceMsg#wechat_redirect';
+                }
+            })
+        },
         shenJ:function(){
            this.param.idCardNo=this.param.idCardNo.replace(/[\W]/g,'');
            this.param.idCardNo=this.param.idCardNo.toLocaleUpperCase();
@@ -82,6 +125,7 @@ export default {
         this.trafficStatistics('016')//自定义埋点
         console.log(this.param)
         var that=this;
+       //alert(that.param.returnUrl)
         Indicator.open();
         axios({
             method:'get',
@@ -94,7 +138,7 @@ export default {
             var retCode=res.data.retCode;
             if(retCode == 400){
                 var serbackUrl = that.Host+'wxservice/wxMemberInfo/getFaceToken'
-                window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=faceMsg#wechat_redirect';
+                window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=faceMsg#wechat_redirect';
             }else if(retCode == '-2'){
                 MessageBox(' ','身份证不合法');
                 return;
@@ -135,7 +179,8 @@ export default {
                                 name:'changephone',
                                 query:{
                                     changeForm:'faceMsg',
-                                    returnUrl:that.$route.query.returnUrl,
+                                    //returnUrl:that.$route.query.returnUrl,
+                                    returnUrl:that.faceUrl
                                 }
                             })
                         }
@@ -159,7 +204,8 @@ export default {
                                 name:'changephone',
                                 query:{
                                     changeForm:'faceMsg',
-                                    returnUrl:that.$route.query.returnUrl,
+                                    //returnUrl:that.$route.query.returnUrl,
+                                    returnUrl:that.faceUrl
                                 }
                             })
                         }
@@ -205,17 +251,31 @@ export default {
         },
     },
     created:function(){
-    this.GasyncSDKConifg()
-       var that = this;
-      var returnUrl = that.$route.query.returnUrl;
+       // if(this.$route.query.chForm == 'fromWxser'){//变更手机号过来不用getdata      
+       // }else{
+            this.getData()
+       // }
+      
+      this.GasyncSDKConifg()
+      var that = this;
+      var returnUrl      
+      if(!that.$route.query.returnUrl == false){   
+         if(that.$route.query.returnUrl == 'faceSuccess'){
+            returnUrl = that.Host+'weixin-h5/index.html#/faceSuccess'
+         }else{
+            returnUrl = that.$route.query.returnUrl
+         }
+      }else{
+        // returnUrl =decodeURIComponent(that.$route.query.actId);//获取重定向_后拼的参数
+        returnUrl = decodeURIComponent(getCookie("facefrom"))
+      }
+      that.faceUrl = returnUrl
        if(returnUrl&&returnUrl!=undefined){
            if(returnUrl.indexOf("?") != -1){
                that.param.returnUrl=returnUrl+'&faceResult=1';
            }else{
                that.param.returnUrl=returnUrl+'?faceResult=1';
            }
-           
-           
        }
     }
 }

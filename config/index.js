@@ -19,22 +19,22 @@ module.exports = {
           '^/api': ''
         }
       },
-      // '/': {
-      //   target: 'https://interface.tdyhfund.com', // 接口的域名https://test-interface.tdyhfund.com
-      //   // secure: false,  // 如果是https接口，需要配置这个参数
-      //   changeOrigin: true, // 如果接口跨域，需要进行这个参数配置
-      //   pathRewrite: {
-      //     '^/': ''
-      //   }
-      // },
       '/': {
-        target: 'https://interface.tdyhfund.com', // 接口的域名
+        target: 'https://weixin-test-interface.tdyhfund.com', // 接口的域名https://test-interface.tdyhfund.com
         // secure: false,  // 如果是https接口，需要配置这个参数
         changeOrigin: true, // 如果接口跨域，需要进行这个参数配置
         pathRewrite: {
           '^/': ''
         }
       },
+      // '/': {
+      //   target: 'http://172.16.8.52:8099', // 接口的域名
+      //   // secure: false,  // 如果是https接口，需要配置这个参数
+      //   changeOrigin: true, // 如果接口跨域，需要进行这个参数配置
+      //   pathRewrite: {
+      //     '^/': ''
+      //   }
+      // },
       '/faceVerify': {
         target: 'https://api.megvii.com', // 接口的域名
         // secure: false,  // 如果是https接口，需要配置这个参数
@@ -55,7 +55,7 @@ module.exports = {
     },
 
     // Various Dev Server settings 各种DEV服务器设置
-    host: '192.168.132.173', // can be overwritten by process.env.HOST http://localhost
+    host: '192.168.135.194', // can be overwritten by process.env.HOST http://localhost
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,//运行后项目是否自动启动
     errorOverlay: true,

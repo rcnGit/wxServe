@@ -32,6 +32,7 @@ import { Toast } from 'mint-ui';
 import axios from 'axios'
 import comfooter from '../../components/footer'
 import { getCookie,setCookie } from '@/common/js/cookie.js'
+import merge from 'webpack-merge'
 export default {
     name:'postInfor',
     data:function(){
@@ -73,6 +74,10 @@ export default {
             .then(function(res){
                 console.log(res.data);
                 var retCode=res.data.retCode;
+                //修改原有参数        
+                that.$router.push({
+                    query:merge(that.$route.query,{'faceResult':''})
+                })
                 if(retCode == '0'){
                     that.trafficStatistics('019')
                    // MessageBox('  ','人脸识别成功');
@@ -183,7 +188,7 @@ export default {
                         return;
                 }else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=queryPublishInfo'
-                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=PostInformation#wechat_redirect';
+                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=PostInformation#wechat_redirect';
                 }
             });
         },
@@ -233,7 +238,7 @@ export default {
     height:20px;
     text-align: left;
     margin-bottom:18px;
-    
+    line-height: .4rem;
 }
 .text{
     width:70%;
@@ -245,19 +250,20 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     text-align: left;
+    line-height: .4rem;
 }
 .date{
     font-size:12px;
     color:rgb(153,153,153);
 }
-.noData{
+.postInfor .noData{
     background:#fff;
 }
-.noData img{
+.postInfor .noData img{
     width:2.24rem;
     margin:2.5rem auto 0;
 }
-.noData p{
+.postInfor .noData p{
     color:#333;
 }
 .xiazai{

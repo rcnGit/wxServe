@@ -25,6 +25,7 @@ import { MessageBox } from 'mint-ui';//提示框
 import { Toast } from 'mint-ui';
 import comfooter from '../../components/footer'
 import { getCookie,setCookie } from '@/common/js/cookie.js'
+import merge from 'webpack-merge'
 export default {
     name:'wchoose',
     data:function(){
@@ -42,6 +43,7 @@ export default {
         }
     },
     methods:{
+
         zhid:function(){
             var that=this;
             if(that.authenticFlag==0){//未认证
@@ -75,6 +77,10 @@ export default {
                 console.log(res.data);
                  Indicator.close();
                 var retCode=res.data.retCode;
+                //修改原有参数        
+                that.$router.push({
+                    query:merge(that.$route.query,{'faceResult':''})
+                })
                 if(retCode == '0'){
                     that.trafficStatistics('019')
                     //MessageBox('提示','人脸识别成功');
@@ -203,7 +209,7 @@ export default {
                 var retCode=res.data.retCode;
                 var isApplyWealther=res.data.isApplyWealther;
                  Indicator.close();
-                if(isApplyWealther==1){
+               /* if(isApplyWealther==1){//正在申请的状态
                     that.$router.push({//跳入本地名片代理页面
                              path:'/applysuc',
                              name:'applysuc',
@@ -211,7 +217,7 @@ export default {
                                  gh:that.gh
                              }
                           })
-                }
+                }*/
                 if(retCode=='0'){
                     var belongBusiness=res.data.userInfo.belongBusiness;
                     that.cgh=belongBusiness;//财富师工号
@@ -239,7 +245,7 @@ export default {
 
                 }else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                  window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=wchoose#wechat_redirect';
+                  window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=wchoose#wechat_redirect';
                 }
             })
     },

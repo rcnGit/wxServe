@@ -67,6 +67,7 @@ export default {
                 }
              })
             .then(function(res) {//成功之后
+                console.log(res)
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 if(retCode == -1){

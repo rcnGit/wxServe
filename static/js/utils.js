@@ -3,6 +3,9 @@ import axios from 'axios';
 export default {
     install(Vue, options) {
         Vue.prototype.Host='https://interface.tdyhfund.com/'
+        //Vue.prototype.Host="https://weixin-test-interface.tdyhfund.com/"
+        Vue.prototype.APPID='wx42b6456eeafbe956'
+        //Vue.prototype.APPID='wx1f686b130ea97432'
         Vue.prototype.formatDuring = function (mss) {//时间格式化
             var days = parseInt(mss / (1000 * 60 * 60 * 24));
             var hours = parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -39,7 +42,7 @@ export default {
            const backUrl = encodeURIComponent(location.href.split('#')[0])
             axios.get('/wxservice/core/getJSSDKConfigure.mm?pageUrl='+backUrl)
                 .then(function (res) {
-                    console.log(res)
+                   // console.log(res)
                 wx.config({
                     debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
                     appId: res.data.appId, // 必填，公众号的唯一标识
@@ -49,8 +52,8 @@ export default {
                     jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage'] // 必填，需要使用的JS接口列表
                 })
                 wx.ready(function(res) { //通过ready接口处理成功验证 // config信息验证成功后会执行ready方法
-                  console.log(meatTitle+'====meatTitle')
-                  console.log(res+'===res')
+                //  console.log(meatTitle+'====meatTitle')
+                //  console.log(res+'===res')
                 wx.onMenuShareAppMessage({ // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用 
                     title: '大唐财富'+meatTitle, // 分享标题
                     desc: '中国私人银行服务的领航者，诚邀您开启财富之旅', // 分享描述

@@ -2,7 +2,7 @@
   <div id="app" h='123'>
     <!-- <mt-button @click.native="handleClick">按钮</mt-button> -->
      <!-- <router-view v-wechat-title='$route.meta.title'></router-view>  -->
-    <keep-alive include="test-keep-alive">
+    <keep-alive include="active">
         <router-view v-if="$route.meta.keepAlive" v-wechat-title='$route.meta.title'></router-view>
     </keep-alive>
     <router-view v-if="!$route.meta.keepAlive" v-wechat-title='$route.meta.title'></router-view> 

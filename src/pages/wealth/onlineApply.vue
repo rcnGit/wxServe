@@ -150,7 +150,7 @@ export default {
                 var retCode=res.data.retCode;
                  if(retCode == 400){
                      var serbackUrl = that.Host+'wxservice/wxMemberInfo/getFaceToken'
-                     window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=faceMsg#wechat_redirect';
+                     window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=faceMsg#wechat_redirect';
                  }else if(retCode == '-2'){
                      MessageBox(' ','身份证不合法');
                      return;
@@ -320,7 +320,7 @@ export default {
                         MessageBox('  ', '请发送验证码');
                     }else if(retCode == 400){
                          var serbackUrl = that.Host+'wxservice/wxMemberInfo/applyWealther'
-                         window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=onlineApply#wechat_redirect';
+                         window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=onlineApply#wechat_redirect';
                     }else{
                         Toast({
                             message: retMsg,
@@ -367,7 +367,7 @@ export default {
                     
                 }else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=toSignNewCust#wechat_redirect';
+                window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=toSignNewCust#wechat_redirect';
                 }else{
                    // MessageBox('  ',retMsg);
                     Toast({

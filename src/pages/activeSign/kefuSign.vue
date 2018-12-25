@@ -22,15 +22,15 @@
                     <input type='tel' class='' maxlength='4' v-model="param.verifiCode" ref='verifycode' placeholder="请输入验证码"/>
                     <p class='warn' ref='warnCode'v-show='true'>{{warnCode}}</p>
                     <span>验证码</span>
-                    <mt-button type="danger" size="small" class='sendCodeBtn'@click="getM()" v-bind:disabled='Dsiabled'>{{text}}</mt-button>
+                    <mt-button type="danger" size="small" class='sendCodeBtn' @click="getM()" v-bind:disabled='Dsiabled'>{{text}}</mt-button>
                  </div> <!--inpBox-->
                  <div class='inpBox'>
-                    <input type='text' class='' v-model="param.businessName" :disabled="isDisabled3" ref='businessName' placeholder="请输入财富师姓名"/>
+                    <input type='text' class='' v-model="param.businessName" :disabled="isDisabled3" ref='businessName' placeholder="请输入财富师姓名" @blur.prevent="changeCount($event)"/>
                     <p class='warn' ref='warnbusinessName' v-show='true'>{{warnbusinessName}}</p>
                     <span>财富师</span>
                   </div> <!--inpBox-->
                   <div class='inpBox'>
-                    <input type='tel' class='' v-model="gh" :disabled="isDisabled4" ref='belongBusiness'placeholder="请输入财富师工号" maxlength="7"/>
+                    <input type='tel' class='' v-model="gh" :disabled="isDisabled4" ref='belongBusiness'placeholder="请输入财富师工号" maxlength="7" @blur.prevent="changeCount($event)"/>
                     <p class='warn' ref='warnbelongBusiness' v-show='true'>{{warnbelongBusiness}}</p>
                     <span>财富师工号DT</span>
                   </div> <!--inpBox-->
@@ -57,6 +57,8 @@ export default {
     name:'kefuSign',
     data:function(){
         return{
+            shareLink:'',
+            ghT:'',//对方财富师工号
             messType:'3',
             text:'获取验证码',
             Dsiabled:false,
@@ -93,17 +95,30 @@ export default {
                 activeId: '',
                 actName: '',
                 isReviewSignup: '',
+                appointState: '0'
+            },
+            user:{
+                userId: "",
+                osFlag: 3
             },
             params:{
                 bizId:''
             },
-            backUrl: encodeURIComponent(location.href.split('#')[0]),
+            backUrl: encodeURIComponent(location.href.split('#')[0]),//微信分享
             serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxservice?opName=getUserInfo'),//接口
             paramurl: location.href.split('?')[0],
             isFaceSuc:0,//未实名成功
         }
     },
     methods:{
+        changeCount:function(e){
+            //若是由点击引起的焦点改变，捕获点击了的元素
+            var ele =  e.relatedTarget
+            console.log(ele)
+            if(ele == null){
+                window.scroll(0,0);
+            }  
+        },
         // getResult:function(){
         //     axios({
         //         method:'get',
@@ -127,6 +142,7 @@ export default {
             })
             .then(function(res) {//成功之后
                 Indicator.close();
+                console.log(res.data)
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 if(retCode == 0){
@@ -155,12 +171,15 @@ export default {
                         that.isValid4 = true
                         var actname = '财富师'+that.param.businessName+'邀请您参加'+that.param.actName
                         var busname = '大唐财富尊享活动'+that.param.actName+'即将举办，机会难得，邀请你一起参加'
+                        var mygh = res.data.userInfo.belongBusiness
+                        that.Share(mygh) 
                         that.asyncSDKConifg(actname,busname)
                     }else{
                         if(!res.data.userInfo.nickName==false){
-                            var businName = res.data.userInfo.nickname
+                            var businName = res.data.userInfo.nickName
                             var actname = businName+'邀请您参加'+that.param.actName
                             var busname = '大唐财富尊享活动'+that.param.actName+'即将举办，要一起参加吗？'
+                            that.Share()
                             that.asyncSDKConifg(actname,busname)
                         }else{
                             var businName = ''
@@ -168,16 +187,28 @@ export default {
                     }
                     if(!res.data.userInfo.belongBusiness == false){
                         //已经有财富师不是自己输入的
-                        that.ifCaiFu=true;
-                        //that.gh = res.data.userInfo.belongBusiness
-                        that.gongH=res.data.userInfo.belongBusiness;
-                        that.gh=that.gongH.substr(2,7);
-                        that.isDisabled4 = true;
-                          that.isValid5 = true
+                        if(res.data.userInfo.belongBusiness=='undefined'){   
+                        }else{
+                            that.ifCaiFu=true;
+                            //that.gh = res.data.userInfo.belongBusiness
+                            that.gongH=res.data.userInfo.belongBusiness;
+                            that.gh=that.gongH.substr(2,7);
+                            that.isDisabled4 = true;
+                            that.isValid5 = true
+                        }
+                        that.ghT = res.data.userInfo.belongBusiness;
+                    }else{
+                        if(!that.ghT == false){
+                            if(that.ghT != "undefined"){
+                            that.gh=that.ghT.substr(2,7);
+                            that.getPhoto()
+                         }
+                        }
+                        
                     }
                 }else if(retCode == 400){
                      var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=kefuSign#wechat_redirect';
+                     window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=toSignNewCust_'+that.param.activeId+','+that.ghT+','+that.param.actName+','+that.param.activityType+','+that.param.isReviewSignup+'#wechat_redirect';
                  }else{
                     //MessageBox('提示',retMsg);
                     Toast({
@@ -187,6 +218,47 @@ export default {
                     });
                 }
             });
+        },
+        getPhoto:function(){ 
+            let that = this;
+            Indicator.open();
+            var param=Base64.encode('{"userId":"'+that.ghT+'"}');//that.user.userId
+            axios({
+                method:'get',
+                url:'/wxservice/wxexternal?opName=getTCmycard&versionNo=30',//获取客户信息
+                params:{
+                    param:param,
+                    osFlag:'3'
+                }
+            })
+            .then(function(res) {//成功之后
+                Indicator.close();
+                console.log(res.data)
+                var retCode=res.data.retCode;
+                var retMsg=res.data.retMsg;
+                if(retCode == 0){
+                  //  var data=Base64.decode(res.data);
+                   // data=jQuery.parseJSON(data);
+                   // that.photo = data.photo;
+                   var data=res.data
+                    that.ghT=data.userId;
+                  //  that.busNameT = data.userName; //对方财富师的名字
+                    that.param.businessName = data.userName
+                    // if(!that.photo==false){
+                    //     that.headImgUrl = that.photo
+                    // }else{
+                    //     that.headimgShow=false;
+                    // }
+                    //that.shareName=that.busNameT;//对方的财富师名字
+                    // that.userphone = res.data.userInfo.userphone
+                }else if(retCode == "-2"){
+                    Toast({
+                        message: retMsg,
+                        position: 'center',
+                        duration: 3000
+                    });
+                }
+            })
         },
         phoneFn:function(){
             if(this.userPhone == ''){
@@ -199,16 +271,24 @@ export default {
                 this.warnPhone='请输入正确的手机号';
                // this.$refs.phone.style='border-bottom:0.5px solid #df1e1d!important';
                 this.isValid = false
+                return false;
             }else{
                 this.$refs.warnPhone.style.display='none';
                // this.$refs.phone.style='border-bottom:0.5px solid #efefef!important';
                 this.isValid = true
+                return true
             }
         },//验证手机号
         getM:function(){
             this.Dsiabled = true;
-            if(!this.phoneFn()){
-                this.Dsiabled = false;
+            // if(!this.phoneFn()){
+            //     this.Dsiabled = false;
+            // }
+            if(this.phoneFn()){
+               this.Dsiabled = true
+            }else{
+                this.Dsiabled = false//放开
+                return;
             }
             if(this.userPhone == ''){
                 this.param.phone == this.phone2 
@@ -250,6 +330,7 @@ export default {
                 this.warnCode='请输入正确的验证码';
               //  this.$refs.verifycode.style='border-bottom:0.5px solid #df1e1d!important';
                 this.isValid2 = false
+                this.Dsiabled=false;
             }else{
                 this.$refs.warnCode.style.display='none';
                // this.$refs.verifycode.style='border-bottom:0.5px solid #efefef!important';
@@ -262,10 +343,12 @@ export default {
                 this.warnName='请输入正确的姓名';
               //  this.$refs.realName.style='border-bottom:0.5px solid #df1e1d!important';
                 this.isValid3 = false
+                return false;
             }else{
                 this.$refs.warnName.style.display='none';
                // this.$refs.realName.style='border-bottom:0.5px solid #efefef!important';
                 this.isValid3 = true
+                return true
             }
         },//验证联系人姓名
         businessNameFn:function(){
@@ -274,10 +357,12 @@ export default {
                 this.warnbusinessName='请输入正确的财富师姓名';
                 //this.$refs.businessName.style='border-bottom:0.5px solid #df1e1d!important';
                 this.isValid4 = false
+                return false;
             }else{
                 this.$refs.warnbusinessName.style.display='none';
                 //this.$refs.businessName.style='border-bottom:0.5px solid #efefef!important';
                 this.isValid4 = true
+                return true
             }
         },//验证财富师姓名
         belongBusinessFn:function(){
@@ -286,10 +371,13 @@ export default {
                 this.warnbelongBusiness='请输入正确的财富师工号';
                // this.$refs.belongBusiness.style='border-bottom:0.5px solid #df1e1d!important';
                 this.isValid5 = false
+                return false;
             }else{
                 this.$refs.warnbelongBusiness.style.display='none';
                // this.$refs.belongBusiness.style='border-bottom:0.5px solid #efefef!important';
                 this.isValid5 = true
+                return true
+
             }
         },//验证财富师工号
         tishi_changeP:function(){
@@ -359,7 +447,7 @@ export default {
                 var retCode=res.data.retCode;
                  if(retCode == 400){
                      var serbackUrl = that.Host+'wxservice/wxMemberInfo/getFaceToken'
-                     window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=faceMsg#wechat_redirect';
+                     window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=faceMsg#wechat_redirect';
                  }else if(retCode == '-2'){
                      MessageBox('','身份证不合法');
                      return;
@@ -408,6 +496,7 @@ export default {
             
         },//signup
         kefuAxio:function(){
+            Indicator.open();
             this.trafficStatistics('007')//自定义埋点客服报名
             var that=this;
             //that.param.belongBusiness='DT'+that.param.belongBusiness;
@@ -434,6 +523,7 @@ export default {
                                         activeId:that.param.activeId,
                                         businessName: that.param.businessName,
                                         belongBusiness:that.param.belongBusiness,
+                                        actName:encodeURIComponent(that.param.actName),
                                     }
                                 })
                     }else{
@@ -443,7 +533,8 @@ export default {
                             query:{
                                 isReviewSignup: that.param.isReviewSignup,
                                 activeId: that.param.activeId,
-                                businessName: that.param.businessName
+                                businessName: that.param.businessName,
+                                actName:encodeURIComponent(that.param.actName),
                             }
                         })
                     }
@@ -497,6 +588,8 @@ export default {
                     MessageBox('','财富师工号不存在');
                 }else if(retCode== -6){
                     MessageBox('','财富师已离职');
+                }else if(retCode== 6){
+                    MessageBox('','您已经报过名');
                 }
             });
         },//报名走的接口
@@ -518,9 +611,33 @@ export default {
                  that.signup();
             }
         },
+        Share:function(mygh) {
+            //var shareData = '?ghT='+this.$route.query.ghT+'&isReviewSignup='+this.param.isReviewSignup+'&activityType='+this.param.activityType+'&activeId='+this.param.activeId+'&actName='+encodeURIComponent(this.param.actName)+'&beginTime='+this.beginTime+'&location='+encodeURIComponent(this.location)+'&busNameT='+encodeURIComponent(this.param.businessName);
+            var shareData = '?ghT='+mygh+'&isReviewSignup='+this.param.isReviewSignup+'&activityType='+this.param.activityType+'&activeId='+this.param.activeId+'&actName='+encodeURIComponent(this.param.actName)+'&beginTime='+this.beginTime+'&location='+encodeURIComponent(this.location);
+            let ua = navigator.userAgent.toLowerCase();
+            //android终端
+            let isAndroid = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1;  　　//ios终端
+            let isiOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); 
+            if(false) {//isWeixinBrowser()//判断是不是微信
+                
+            }else{
+            if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
+                //ios
+                //this.ShowPop = !this.ShowPop;
+                //this.ShowDark = !this.ShowDark;
+                this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(location.href.split('?')[0]+shareData)
+            } else if (/(Android)/i.test(navigator.userAgent)) {
+                //android
+                this.shareLink = window.location.href+'&ghT='+mygh
+                //this.shareLink = encodeURIComponent(location.href.split('?')[0]+shareData)
+                //this.shareLink = location.href.split('?')[0]+shareData
+            }
+            }
+    
+        },
         async asyncSDKConifg (actName,businessName) {
             let that = this
-            axios.get('/wxservice/core/getJSSDKConfigure.mm?pageUrl=pageUrl',{params:{"url":this.backUrl}})
+            axios.get('/wxservice/core/getJSSDKConfigure.mm?pageUrl='+that.backUrl)
                 .then(function (res) {
                 wx.config({
                     debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
@@ -531,12 +648,13 @@ export default {
                     jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage'] // 必填，需要使用的JS接口列表
                 })
                 wx.ready(function() { //通过ready接口处理成功验证
-                    console.log(businessName)
+                   // console.log(businessName)
             // config信息验证成功后会执行ready方法
                 wx.onMenuShareAppMessage({ // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用 
                     title: actName, // 分享标题
                     desc: businessName, // 分享描述
-                    link: location.href.split('?')[0]+'?ifcard=1', // 分享链接
+                   // link: window.location.href, // 分享链接
+                    link: that.shareLink,
                     imgUrl: 'http://file0.datangwealth.com/g1/M00/0F/56/rBAeX1vYo1-AYmqbAAAIn3unB5w639.jpg?filename=share_img.jpg', // 分享图标
                     type: '', // 分享类型,music、video或link，不填默认为link
                     dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
@@ -552,7 +670,7 @@ export default {
                     wx.onMenuShareTimeline({ //分享朋友圈
                     title: actName, // 分享标题
                     desc: businessName, // 分享描述
-                    link: location.href.split('?')[0]+'?ifcard=1',
+                    link: that.shareLink,
                     imgUrl: 'http://file0.datangwealth.com/g1/M00/0F/56/rBAeX1vYo1-AYmqbAAAIn3unB5w639.jpg?filename=share_img.jpg', // 分享图标
                     success: function() {
                         // 用户确认分享后执行的回调函数
@@ -572,23 +690,47 @@ export default {
     components:{Button,getcode,Field},//使用mint-ui的button的组件
     created:function(){
         Indicator.open();
-        var that=this; 
+        //var that=this; 
          var bizId=decodeURIComponent(getCookie("bizId"));
-         that.params.bizId=bizId;
+         this.params.bizId=bizId;
          //分享方的财富师
-         if(!this.$route.query.ghT==false){
-            this.gh= this.$route.query.ghT;
-            this.gh=this.gh.substr(2,7);
-           this.param.businessName = decodeURIComponent(this.$route.query.busNameT);
-         }
-         
-
-        that.param.isReviewSignup = that.$route.query.isReviewSignup;
-        that.param.activityType = that.$route.query.activityType;
-        //alert(that.$route.query.activeId+'===客服初次')
-        that.param.activeId = that.$route.query.activeId;
-        that.param.actName = decodeURIComponent(that.$route.query.actName);
-        that.getData()
+        //  if(!this.$route.query.ghT==false){
+        //     if(this.$route.query.ghT=='undefined,' || this.$route.query.ghT=='undefined'){   
+        //     }else{
+        //        // alert(this.$route.query.ghT)
+        //         this.gh= this.$route.query.ghT;
+        //         this.gh=this.gh.substr(2,7);
+        //         this.param.businessName = decodeURIComponent(this.$route.query.busNameT);
+        //     }
+        //  }
+        if(!this.$route.query.ghT==false){
+            this.ghT=this.$route.query.ghT;
+        }else{
+           // this.ghT=wxstr.split(",")[1];
+        }
+        if(!this.$route.query.activityType==false){
+            this.param.isReviewSignup = this.$route.query.isReviewSignup;
+            this.param.activityType = this.$route.query.activityType;
+            this.param.activeId = this.$route.query.activeId;
+            this.param.actName = decodeURIComponent(this.$route.query.actName);
+           // this.beginTime = this.$route.query.beginTime;
+           // this.location = decodeURIComponent(this.$route.query.location);
+           // this.ghT=this.$route.query.ghT;
+        }else{
+            var wxstr =decodeURIComponent(this.$route.query.actId); 
+            this.param.activeId=wxstr.split(",")[0];
+            this.ghT=wxstr.split(",")[1];
+            this.param.isReviewSignup = wxstr.split(",")[4];
+            this.param.activityType = wxstr.split(",")[3];
+            this.param.actName = decodeURIComponent(wxstr.split(",")[2]);
+            
+        }
+        // that.param.isReviewSignup = that.$route.query.isReviewSignup;
+        // that.param.activityType = that.$route.query.activityType;
+        // //alert(that.$route.query.activeId+'===客服初次')
+        // that.param.activeId = that.$route.query.activeId;
+        // that.param.actName = decodeURIComponent(that.$route.query.actName);
+        this.getData()
     }
 
 }

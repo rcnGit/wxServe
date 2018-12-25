@@ -91,6 +91,7 @@ import clip from '@/common/js/clipboard.js'//vue 复制功能
 import { getCookie,setCookie } from '@/common/js/cookie.js'
 import comfooter from '../../components/footer'
 import axios from 'axios';
+import merge from 'webpack-merge'
 export default {
     name:'appointW',
     data:function(){
@@ -98,6 +99,7 @@ export default {
             wName:'',
             gh:'',
             headimgShow: false,
+            isApplyWealther:0,//是否正在申请财富师
             headimgShow2:false,
             warnGh:'',//工号的校验提醒
             actions:'',
@@ -158,6 +160,10 @@ export default {
             .then(function(res){
                 var retCode=res.data.retCode;
                 var returnUrl = that.$route.query.returnUrl;
+                //修改原有参数        
+                that.$router.push({
+                    query:merge(that.$route.query,{'faceResult':''})
+                })
                 if(retCode == '0'){
                     that.trafficStatistics('019')
                    // MessageBox('提示','人脸识别成功');
@@ -260,7 +266,7 @@ export default {
             var that=this;
             axios({
                 method:'get',
-                url:'/wxservice/wxservice?opName=getUserInfo',//获取我的活动
+                url:'/wxservice/wxservice?opName=getUserInfo',//获取我的活动和客户信息
                 params: {
                     backUrl: that.paramurl
                 }
@@ -269,6 +275,7 @@ export default {
                 console.log(res.data);
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
+                that.isApplyWealther=res.data.isApplyWealther;
                 if(retCode == 0){
                     var userInfo=res.data.userInfo;
                     that.msg2=userInfo.realName;
@@ -276,10 +283,12 @@ export default {
                         //打开财富师页面
                          window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+userInfo.belongBusiness;
                     }
-                }else if(retCode == 400){
+                }
+                else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                  window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=appointW#wechat_redirect';
-                }else{
+                  window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=appointW_wxser#wechat_redirect';
+                }
+                else{
                   // MessageBox('提示',retMsg);
                     Toast({
                         message: retMsg,
@@ -398,12 +407,12 @@ export default {
                 //this.$refs.gh.style='border-bottom:0.5px solid #efefef!important';
             }
             this.param.dtNo='DT'+this.gh;
-            this.param.dtName=this.wName;
-            Indicator.open();
+            this.param.dtName=this.wName;       
             this.trafficStatistics('009')//自行输入姓名、财富师工号绑定财富师的用户数
             this.valiW();
         },
         valiW:function(){
+            Indicator.open();
             var that=this;
             console.log(that.param);
             axios({
@@ -470,6 +479,7 @@ export default {
         });
         },
         zhiding:function(){
+            Indicator.open();
             var that=this;
             console.log(that.param);
             axios({
@@ -479,15 +489,21 @@ export default {
                 
             })
             .then(function(res) {//成功之后
+                Indicator.close();
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 console.log(res.data);
                 var data=res.data.data;
+                var wxfrom =decodeURIComponent(that.$route.query.actId);
                 if(retCode==0){//指定成功    跳转财富师名片页面
                    MessageBox('', '指定财富师成功').then(action => {
                   if(action == 'confirm'){
-                   //跳转财富师名片页面
-                    window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+that.param.dtNo;
+                    if(wxfrom == 'wxser' || that.$route.query.appointForm == 'wxser'){
+                        WeixinJSBridge.call('closeWindow');
+                    }
+                        //跳转财富师名片页面
+                        window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+that.param.dtNo;
+                    
                   }else{//取消
                     console.log('查看订单')
                   }
@@ -507,6 +523,14 @@ export default {
         onlineApplyV:function(){
             this.trafficStatistics('011')//自定义埋点在线申请
             var that=this;
+             if(that.isApplyWealther==1){//正在申请的状态
+                    that.$router.push({//跳入本地名片代理页面
+                             path:'/applysuc',
+                             name:'applysuc',
+                            
+                          })
+                          return;
+                }
             Indicator.open();
                axios({
                     method:'get',

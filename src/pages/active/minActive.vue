@@ -35,7 +35,7 @@
             已经到底了
           </div>
 
-          <div class='noData' ref='nodata' v-if='isShow' style="min-height:500px;">
+          <div class='noData minActive_nodata' ref='nodata' v-if='isShow' style="min-height:500px;">
             <img src='./img/nomessage@2x.png'/>
             <p class='fSize16'>您还没有参与活动哦~</p>
           </div>
@@ -130,7 +130,7 @@ export default {
                         return;
                 }else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxMemberInfo/getCustActList'
-                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=minActive#wechat_redirect';
+                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=minActive#wechat_redirect';
                 }else{
                     that.isShow = true;
                    // MessageBox('提示', retMsg);
@@ -155,7 +155,7 @@ export default {
                 path:'/activeDetail',
                 name:'activeDetail',
                 query:{
-                    oaActId:oaActId,
+                    actId:oaActId,
                     actName:actName,
                     ifCard:true,
                     comefrom:that.comefrom
@@ -175,16 +175,23 @@ export default {
 <style>
 .minActive{
     width:100%;
-    background:#f2f2f2;
 }
 .mineOne{
     width:100%;
-    min-height:100px;
+    min-height:120px;
     background:#fff;
-    margin-top:10px;
-    padding:20px 14px;
+    /* margin-top:10px; */
+    /* padding:.25rem .42rem; */
     text-align: left!important;
     position: relative;
+    /* background:url(./img/ju_bg.png) no-repeat center;
+    background-size: 10.253333rem 3.066667rem; */
+    padding:.35rem 0.35rem 0.45rem 0.33rem;
+    box-shadow: 0 .04rem .15rem 0px #e0e0e0; 
+    margin-top: .266667rem;
+}
+.mineOne:nth-of-type(1){
+    margin-top: 0;
 }
 .pTitle{
     font-size: 15px;
@@ -209,7 +216,7 @@ export default {
     width:75px;
     height: 20px;
     right:0;
-    top:0px;
+    top:0;
     line-height: 20px;
     font-size: 12px;
     color:#fff;
@@ -226,15 +233,15 @@ export default {
 .hrefWealth{
     color:rgb(76,136,255);
 }
-.noData{
+.minActive_nodata{
      background:#fff;
 }
-.noData img{
+.minActive_nodata img{
     width:40%;
      margin:3.4rem auto 0.5rem;
    
 }
-.noData p{
+.minActive_nodata p{
     color:#333;
 }
 </style>

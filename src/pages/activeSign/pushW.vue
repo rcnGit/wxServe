@@ -20,6 +20,7 @@ export default {
             isReviewSignup:'',
             activeId:'',
             belongBusiness:'',//财富师工号
+            actName:'',
         }
     },
     created:function(){
@@ -28,6 +29,7 @@ export default {
         var that=this;
       var routerParams = that.$route.query.isReviewSignup
        that.activeId = that.$route.query.activeId
+       that.actName = decodeURIComponent(that.$route.query.actName);
        that.Wname = that.$route.query.businessName;
        that.belongBusiness = that.$route.query.belongBusiness
        // var routerParams = '0'
@@ -38,12 +40,13 @@ export default {
     },
     methods: {
       toActiveDetail:function(){
-          var that=this;
+         // var that=this;
         this.$router.push({
           path:'/activeDetail',
           name:'activeDetail',
           query:{
-            actId : this.activeId
+            actId : this.activeId,
+            actName: this.actName
           }
         })
       },

@@ -5,7 +5,7 @@ import active from '@/pages/active/active'
 import provinceList from '@/pages/active/provinceList'
 import postInfor from '@/pages/PostInfor/PostInformation'
 import minActive from '@/pages/active/minActive'
-import activeDetails from '@/pages/activeSign/activeDetails'
+import activeDetail from '@/pages/activeSign/activeDetail'
 import toSignNewCust from '@/pages/activeSign/toSignNewCust'
 import faceMsg from '@/pages/activeSign/faceMsg'//人脸识别，录身份信息
 import pushW from '@/pages/activeSign/pushW'//客服报名有财富师的跳转页面
@@ -27,6 +27,7 @@ import PrivateAsset from '@/pages/property/PrivateAsset'//我的私募
 import PublicAsset from '@/pages/property/PublicAsset'//我的公募
 import SecuritiesAsset from '@/pages/property/SecuritiesAsset'//资管类
 import cityList from '@/pages/active/cityList'
+import faceSuccess from '@/pages/activeSign/faceSuccess'//实名认证成功
 Vue.use(Router)
 
 export default new Router({
@@ -51,13 +52,13 @@ export default new Router({
       component: active
     },
     {
-      path: '/activeDetails',
-      name: 'activeDetails',
+      path: '/activeDetail',
+      name: 'activeDetail',
       meta: {
         title: '活动详情',
         keepAlive: false // 不需要缓存
       },
-      component: activeDetails//使用这个组件
+      component: activeDetail//使用这个组件
     },
     {
       path: '/toSignNewCust',
@@ -255,5 +256,24 @@ export default new Router({
       },
       component: cityList//使用这个组件
     },
-  ]
+    {
+      path: '/faceSuccess',
+      name: 'faceSuccess',
+      meta: {
+        title: '实名认证',
+        keepAlive: false // 不需要缓存
+      },
+      component: faceSuccess//使用这个组件---客户福利个人报名
+    }
+  ],
+  scrollBehavior (to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      if (from.meta.keepAlive) {
+        from.meta.savedPosition = document.body.scrollTop
+      }
+      return { x: 0, y: to.meta.savedPosition || 0 }
+    }
+  }
 })

@@ -1,9 +1,9 @@
 <template>
     <div class='propertyList fColorFFF' style='min-height:430px;background: #fff;'>
         <div class='headContent'>
-                <p class='fSize13 pp1'>总金额（元）</p>
+                <p class='fSize13 pp1' style="padding-top:0.78rem;">总金额（元）</p>
                 <p class='pp2'>{{totalAsset}}</p> <!--在数字上加逗号 -->
-                <p class='p3'>私募待确认：{{privateToConfirmAsset}}（元）</p><!--在数字上加逗号 -->
+                <p class='p3'>待确认：{{privateToConfirmAsset}}（元）</p><!--在数字上加逗号 -->
                 <div style='display:none;'>
                     <div class='floatLeft w50 inc_box' style='border-right:0.5px solid #efefef;'>
                         <p class='fSize13'>最新收益（元）</p>
@@ -15,44 +15,44 @@
                     </div>
                 </div>
         </div>
-        <div class='noData' ref='nodata' style="display:none;">
+        <div class='noData asset_nodata' ref='nodata' style="display:none;">
                 <img src='./img/noprop.png'/>
                 <p class='fSize16' style="font-size: .3733rem">您还没在大唐开启投资之旅哦</p>
                  <mt-button type="danger" size="large" class='next' @click='downApp ()' style="margin-top:0.72222rem;">去投资</mt-button>
          </div>
-        <div class='proContent' ref='contant' style='display:none;'>
-            <div class='proDemo'>
+        <div class='proContent proper_list' ref='contant' style='display:none;'>
+            <div class='proDemo' @click="jumpPrivate">
                 <div class='proTop'>
                     <!-- <img  class='floatLeft'src='./img/sLogo.png'/> -->
                     <span class='floatLeft bigP'>私募</span>
                 </div>
                 <div style='clear:both'></div>
                 <div class='proBot'>
-                    <span class='floatLeft smP'>金额&nbsp;<em class="smp-number">{{privateTotalAsset}}</em></span>
+                    <span class='floatLeft smP'><span class="jin_one">金额（元）</span><br><em class="smp-number money_a">{{privateTotalAsset}}</em></span>
                 </div>
             </div>  <!-- proDemo -->
-             <div class='proDemo'>
+             <div class='proDemo'  @click="jumpPublic">
                 <div class='proTop'>
                     <!-- <img  class='floatLeft' src='./img/gLogo.png' /> -->
                     <span class='floatLeft bigP'>公募</span>
-                    <span class='floatRight xindate'>更新日期：<em>{{publicDate}}</em></span>
+                    <!-- <span class='floatRight xindate'>更新日期：<em>{{publicDate}}</em></span> -->
                 </div>
                 <div style='clear:both'></div>
                 <div class='proBot'>
-                    <span class='floatLeft smP'>金额&nbsp;<em class="smp-number">{{publicTotalAsset}}</em></span>
-                    <span class='floatRight shouyi'>最新收益<em :class='gC'>{{publicYestIncome}}</em></span>
+                    <span class='floatLeft smP'><span class="jin_one">金额（元）</span><br><em class="smp-number money_a">{{publicTotalAsset}}</em></span>
+                    <span class='floatRight shouyi'><span class="jin_one">最新收益（{{publicDate}}）</span><br><em :class='gC' style="line-height:0.7rem;">{{publicYestIncome}}</em></span>
                 </div>
             </div>  <!-- proDemo -->
-             <div class='proDemo'>
+             <div class='proDemo' @click="jumpSecurities">
                 <div class='proTop'>
                     <!-- <img  class='floatLeft'src='./img/dLogo.png'/> -->
                     <span class='floatLeft bigP'>资管理财</span>
-                    <span class='floatRight xindate'>更新日期：<em>{{securitiesDate}}</em></span>
+                    <!-- <span class='floatRight xindate'>更新日期：<em>{{securitiesDate}}</em></span> -->
                 </div>
                 <div style='clear:both'></div>
                 <div class='proBot'>
-                    <span class='floatLeft smP'>金额&nbsp;<em class="smp-number">{{securitiesTotalAsset}}</em></span>
-                    <span class='floatRight shouyi'>最新收益<em :class='ziC'>{{securitiesYestIncome}}</em></span>
+                    <span class='floatLeft smP'><span class="jin_one">金额（元）</span><br><em class="smp-number money_a">{{securitiesTotalAsset}}</em></span>
+                    <span class='floatRight shouyi'><span class="jin_one">最新收益（{{securitiesDate}}）</span><br><em :class='ziC' style="line-height:0.7rem;">{{securitiesYestIncome}}</em></span>
                 </div>
             </div>  <!-- proDemo -->
         </div>
@@ -61,7 +61,8 @@
             <p class='fSize16' style='color:#333'>实名认证后可查看我的资产哦~</p>
         <mt-button type="danger" size="large" class='next' @click='rz()' style='margin-top:1.4rem;'>去人脸识别实名认证</mt-button>
         </div>
-        <comfooter></comfooter>
+        <comfooter v-if="showBottom"></comfooter>
+        <div class="comfooter_a" v-else style="margin-top:0.6rem;padding-bottom: 0.34rem"><comfooter></comfooter></div>
     </div>
 </template>
 <script>
@@ -72,10 +73,12 @@ import { Toast } from 'mint-ui';
 import comfooter from '../../components/footer'
 import { getCookie,setCookie } from '@/common/js/cookie.js'
 import axios from 'axios';
+import merge from 'webpack-merge'
 export default {
     name:'propertyList',
     data:function(){
         return{
+            showBottom:true,
             loadObj:{
                 text: '加载中...',
                 spinnerType: 'triple-bounce'
@@ -122,6 +125,10 @@ export default {
             .then(function(res){
                 console.log(res.data);
                 var retCode=res.data.retCode;
+                //修改原有参数        
+                that.$router.push({
+                    query:merge(that.$route.query,{'faceResult':''})
+                })
                 if(retCode == '0'){
                     that.trafficStatistics('019')
                     //MessageBox('提示','人脸识别成功');
@@ -226,35 +233,38 @@ export default {
                         });
                     }else if(retCode == 400){
                         var serbackUrl = that.Host+'wxservice/wxMemberInfo/getUserAsset?v='+(new Date()).getTime();
-                      window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=propertyList#wechat_redirect';
+                      window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=propertyList#wechat_redirect';
                     }var d=res.data.data;
-                   // that.totalAsset=that.money(d.totalAsset)//总资产
-                     that.totalAsset=that.money(d.totalAsset)//总资产
-                    that.privateTotalAsset=that.money(d.privateTotalAsset)//私募总资产
-                    that.privateToConfirmAsset=that.money(d.privateToConfirmAsset)//私募待确认
-                    that. publicTotalAsset=that.money(d.publicTotalAsset)//公募总资产
+                   // that.totalAsset=d.totalAsset)//总资产
+                     that.totalAsset=d.totalAsset //总资产
+                    that.privateTotalAsset=d.privateTotalAsset//私募总资产
+                    //that.privateToConfirmAsset=d.privateToConfirmAsset//私募待确认
+                    that.privateToConfirmAsset=d.toConfirmAsset//私募待确认
+                    that. publicTotalAsset=d.publicTotalAsset//公募总资产
                     if(d.publicYestIncome<0){//公募最新收益
                         that.gC='green'
                     }else{
                         that.gC='red'
                     }
-                    that.publicYestIncome=that.money(d.publicYestIncome)//公募最新收益
-                    that.publicAddIncome=that.money(d.publicAddIncome)//公募总收益
-                    that.securitiesTotalAsset=that.money(d.securitiesTotalAsset)//资管类总资产
+                    that.publicYestIncome=d.publicYestIncome//公募最新收益
+                    that.publicAddIncome=d.publicAddIncome//公募总收益
+                    that.securitiesTotalAsset=d.securitiesTotalAsset//资管类总资产
                     if(d.securitiesYestIncome<0){
                             that.zic='green';
                     }
-                    that.securitiesYestIncome=that.money(d.securitiesYestIncome)//资管类最新收益
-                    that.securitiesAddIncome=that.money(d.securitiesAddIncome)//资管类总收益
+                    that.securitiesYestIncome=d.securitiesYestIncome//资管类最新收益
+                    that.securitiesAddIncome=d.securitiesAddIncome//资管类总收益
 
 
                     if(that.totalAsset=='0.00'&&that.privateToConfirmAsset=='0.00'){
                         that.$refs.contant.style.display='none';
                         that.$refs.nodata.style.display='block';
+                        that.showBottom = true
                         return;
                     }else{
                         that.$refs.contant.style.display='block';
                         that.$refs.nodata.style.display='none';
+                        that.showBottom = false
                     }
                    
                     if(d.publicDate==''){
@@ -293,6 +303,24 @@ export default {
                 function isWeixinBrowser() {
                     return (/micromessenger/.test(ua)) ? true : false;
                 }
+        },
+        jumpPrivate:function() {
+            this.$router.push({
+                path:'/PrivateAsset',
+                name:'PrivateAsset'
+            }) 
+        },
+        jumpPublic:function() {
+            this.$router.push({
+                path:'/PublicAsset',
+                name:'PublicAsset'
+            }) 
+        },
+        jumpSecurities:function() {
+            this.$router.push({
+                path:'/SecuritiesAsset',
+                name:'SecuritiesAsset'
+            }) 
         }
     },
     created:function(){
@@ -300,7 +328,7 @@ export default {
         if(!this.$route.query.faceResult == false){
              //var bizId=localStorage.getItem('bizId');
             var bizId=decodeURIComponent(getCookie("bizId"));
-            this.faceparam.bizId = bizId;
+            this.faceparam.bizId = bizId;           
             this.getfaceId();
         }else{
              this.getList();
@@ -315,7 +343,18 @@ export default {
 .green{
     color:rgb(11,124,10);
 }
-.noData{
+
+.proper_list .proDemo{
+    padding: .24rem .4rem .36rem .4rem;
+}
+
+.proper_list .shouyi{
+    width: 50%;
+}
+.proper_list .smPi{
+    width: 50%;
+}
+/* .noData{
     background:#fff;
 }
 .noData img{
@@ -325,7 +364,7 @@ export default {
 .noData p{
     color:#757575;
     margin-top:.373333rem;
-}
+} */
 .xiazai{
     color:#4a90e2;
 }

@@ -10,16 +10,17 @@
             <img src='./img/search@2x.png' class='search_img' @click.stop='search'/>
           </div>
         </div><!--act_head-->
-        <div class='noData' ref='nodata' v-if='isShow'>
+        <div class='noData active_nodata' ref='nodata' v-if='isShow'>
           <img src='./img/noactive@2x.png'/>
-          <p class='fSize16' style="padding-top: 1.066667rem"> 暂未搜索到相关结果</p>
-          <p class='fSize16' @click="Loadpage" style="color:#DF1E1D;padding-top: .266667rem">先看看其他精彩活动吧>></p>
+          <p class='fSize16' style="padding-top: 1.066667rem;color: #999;"> 暂未搜索到相关结果</p>
+          <p class='fSize16' @click="Loadpage" style="color:#DF1E1D;padding-top: .366667rem">先看看其他精彩活动吧>></p>
         </div>
         <div id='active_content' v-else>
           <div style='height:20px;background:#f1f1f1;'></div>
            <div v-for="item in items" class="active_demo" @click='en_details($event)' :oaActId='item.oaActId' :ActName='item.actName'>
                <div style="position:relative;">
-                 <img v-bind:src="item.bulletinPicture" width='100%' style='min-height:180px;max-height:200px;'/>
+                 <img v-if="item.cover" v-bind:src="item.cover" width='100%' style='min-height:180px;max-height:200px;'/>
+                 <img v-else v-bind:src="item.bulletinPicture" width='100%' style='min-height:180px;max-height:200px;'/>
                  <div class='meng'><img src='./img/img_meng.png'width='100%' height='100%'/></div> 
                </div>
               <div class='textMain'>
@@ -77,7 +78,7 @@ export default {
       backUrl: encodeURIComponent('https://interface.tdyhfund.com/wxservice/wxexternal?opName=getactiveinfo'),
       param:{
           pageNo:1,
-          city:'',
+          cityCode:'',
           actName:'',
           code:'',
           comefrom:'',
@@ -101,8 +102,8 @@ export default {
        var oaActId=event.currentTarget.getAttribute('oaactid');//绑定事件的元素
        var ActName=event.currentTarget.getAttribute('ActName');//绑定事件的元素   
        that.$router.push({
-          path:'/activeDetails',
-          name:'activeDetails',
+          path:'/activeDetail',
+          name:'activeDetail',
           query:{
             actId: oaActId,
             actName : ActName,
@@ -124,16 +125,19 @@ export default {
       that.allList=[];
       that.param={
           pageNo:1,
-          city:that.$route.query.city,
+          cityCode:that.$route.query.code,
           actName:name,
           comefrom:that.param.comefrom
         }
      that.getData();
     },
     Loadpage:function(){
+      Indicator.open(this.loadObj);
+      this.pcity = '全国'
+      this.$refs.name.value = ''
       this.param={
           pageNo:1,
-          city:'',
+          cityCode:'',
           actName:"",
           comefrom:this.param.comefrom
         }
@@ -151,16 +155,18 @@ export default {
         })
         .then(function(res) {//成功之后
             Indicator.close();
+            console.log(res.data)
             var retCode=res.data.retCode
             var retMsg=res.data.retMsg;
             if(retCode == 0){
               if(that.ifSearch&&res.data.itemList.length==0){
                   //提示搜索为空
-                  Toast({
-                        message: '暂未搜索到相关结果～',
-                        position: 'center',
-                        duration: 3000
-                    });
+                  that.isShow=true;
+                  // Toast({
+                  //       message: '暂未搜索到相关结果～',
+                  //       position: 'center',
+                  //       duration: 3000
+                  //   });
                     that.ifSearch=false;
               }
               if(res.data.itemList != ''){
@@ -181,7 +187,7 @@ export default {
             }
             else if(retCode == 400){
               var serbackUrl = that.Host+'wxservice/wxexternal?opName=getactiveinfo'
-              window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
+              window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=active#wechat_redirect';
             }
             else{
               //MessageBox('提示', retMsg);
@@ -217,13 +223,13 @@ export default {
   },
    mounted:function(){
       let that = this; //这个是钩子函数mounted
-     Indicator.open(that.loadObj);
+      Indicator.open(that.loadObj);
      if(that.$route.query.comefrom=='tangguan'||that.$route.params.comefrom=='tangguan'){
         that.param.comefrom ='tangguan';
         
     }
-    alert(that.$route.query.city)
      var routerCity = that.$route.query.city;
+     var routerCode = that.$route.query.code;
      if(!that.$route.query.city == false){
        that.pcity = routerCity
      }
@@ -231,7 +237,7 @@ export default {
          that.allList=[];
            that.param={
             pageNo:1,
-            city:routerCity,
+            cityCode:routerCode,
             actName:''
           }
          that.getData();
@@ -244,6 +250,7 @@ export default {
    created(){
      this.GasyncSDKConifg()
      let that = this;
+     if(that.$route.path == '/active'){ //获取当前页面路由
      window.onscroll = function(){
        	//变量scrollTop是滚动条滚动时，距离顶部的距离
         var scrollTop = document.documentElement.scrollTop||document.body.scrollTop;
@@ -260,13 +267,14 @@ export default {
                return;
              }
           Indicator.open(that.loadObj);
+         // alert(location.href.split('#')[0])
           var pageNo=that.param.pageNo;
            pageNo++;
            that.param.pageNo=pageNo;  
           that.getData();
         }   
       }
-       
+     }
      }
    }
         
@@ -292,6 +300,7 @@ export default {
   float: left;
   line-height: 1rem;
   padding-right: .2rem;
+  padding-left: .2rem;
 }
 .act_h_left span{
   float: left;
@@ -300,15 +309,20 @@ export default {
 	text-overflow: ellipsis;
 	display: -webkit-box;
 	-webkit-line-clamp: 1;/*此为两行，设置行数*/
-	-webkit-box-orient: vertical;/*子元素垂直排列*/
+  /*! autoprefixer: off */
+  -webkit-box-orient: vertical;
+  /*! autoprefixer: on */
 	max-width: 1.5rem; 
+  color: #333;
+  padding-top: .04rem;
+  white-space: nowrap;
 }
 .act_h_left img{
   display: block;
   width: .23667rem;
   float: left;
-  margin-left: .066667rem;
-  margin-top: .38667rem
+  margin-left: .1rem;
+  margin-top: .44rem
 }
 .act_h_right{
   flex: 1;
@@ -316,13 +330,14 @@ export default {
   position: relative;
   border: 1px solid rgba(230,230,230,1);
   border-radius: .133333rem;
+  margin-right: 0.16rem;
 }
 .act_h_right .searchInput{
   width:100%;
-  border:1px solid #e4e5e7;
   background:#fff;
   border-radius:30px;
-  padding: .286667rem .4rem .038667rem .266667rem;
+  height: 100%;
+  padding: 0rem .4rem 0rem .266667rem;
   box-sizing: border-box;
   font-size: 0.37rem;
   color:rgb(57,66,89);
@@ -330,24 +345,26 @@ export default {
   outline-color: invert ;
 	outline-style: none ;
 	outline-width: 0px ;
-	border: none ;
-	border-style: none ;
 	text-shadow: none ;
 	-webkit-appearance: none ;
 	-webkit-user-select: text ;
 	outline-color: transparent ;
   box-shadow: none;
   opacity: 1;
+
 }
 input::-webkit-input-placeholder { /* WebKit browsers */ 
 color: #d2cfcf; 
+font-size: 0.37rem;
 } 
-
+.act_h_right input:focus{
+  border:0!important;
+}
 
 .search_img{
   width:0.45rem;
   position: absolute;
-  top:0.27rem;
+  top:0.25rem;
   right:14px;
 }
 #active_content{
@@ -421,17 +438,19 @@ color: #d2cfcf;
   text-overflow: ellipsis;
   display: none;
 }
-.noData{
+.active_nodata{
   background:#fff;
   padding-top: 4.773333rem
 }
-.noData img{
+.active_nodata img{
     width: 2.493333rem;
     margin:0 auto;
 }
-.noData p{
-    color:rgb(197,197,197);
+.active_nodata p{
     font-size: .4rem;
+}
+input::-webkit-input-placeholder {
+  color: #999;
 }
 </style>
 

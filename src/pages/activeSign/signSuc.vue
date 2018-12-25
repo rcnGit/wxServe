@@ -10,7 +10,7 @@
            
         </div>
         <div class="ReviewF" v-if="!isshow">
-            <p class='p4'>工作人员将在N个工作日内反馈审核结果，您可在我的活动中<span class="progress" @click='toActive()'>查看进度>></span></p>
+            <p class='p4'>工作人员会尽快审核您的报名信息，您可在我的活动中<span class="progress" @click='toActive()'>查看进度>></span>如有疑问请拨打400-819-9868</p>
         </div>
         <mt-button type="danger" size="large" class='sure' @click='toActiveDetail()'>确定</mt-button>
     </div>

@@ -7,16 +7,16 @@
                 <div style="overflow:hidden;padding-top: .6rem">
                     <div class='floatLeft w50 inc_box shouyi_left'>
                         <p class='fSize13'>日收益（元）</p>
-                        <p class='p4'>{{publicYestIncome}}</p>
+                        <p class='M_num'>{{publicYestIncome}}</p>
                     </div>
                     <div class='floatRight w50 inc_box'>
                         <p class='fSize13'>累计收益（元）</p>
-                        <p class='p4'>{{publicAddIncome}}</p>
+                        <p class='M_num'>{{publicAddIncome}}</p>
                     </div>
                 </div>
         </div>
         <div class='proContent' >
-            <div class="proDemo" v-for="(item,index) in inforList" :index='index' style="padding: .373333rem .386667rem;">
+            <div class="proDemo" v-for="(item,index) in inforList" :index='index' style="padding: .33333rem .386667rem;">
                 <div class='proTop' style="padding-left:0;">
                     <!-- <img  class='floatLeft' src='./img/gLogo.png' /> -->
                     <span class='floatLeft bigP' style="padding-left:0;">{{item.fundName}} <span class='xindate'> {{item.fundCode}}</span></span>
@@ -25,12 +25,16 @@
                 <div style='clear:both'></div>
                 <div class='proBot asset_con'>
                     <span class='floatLeft smP'><span  class="jin_one" >金额（元）</span><br><em class="smp-number money_a">{{item.fundAsset}}</em></span>
-                    <span class='floatRight shouyi rishouyi'><span  class="jin_one">持仓收益（元）</span><br><em :class='gC' class="money_b" >{{getcolor(item.addIncome)}}</em></span>
-                    <span class='floatRight shouyi '><span  class="jin_one">日收益<span>{{item.yesIncomeDate}}</span>（元）</span><br><em :class='gC2' class="money_b">{{getcolor2(item.yestIncome)}}</em></span>
+                    <span class='floatRight shouyi rishouyi'><span  class="jin_one">持仓收益（元）</span><br><em class="money_b red" >{{item.addIncome.replace(',', '')>=0?item.addIncome:kong}}</em><em class="money_b green" >{{item.addIncome.replace(',', '')<0?item.addIncome:kong}}</em></span>
+                    <span class='floatRight shouyi '><span  class="jin_one">日收益<span>{{item.yesIncomeDate}}</span>（元）</span><br><em class="money_b red" >{{item.yestIncome.replace(',', '')>=0?item.yestIncome:kong}}</em><em class="money_b green" >{{item.yestIncome.replace(',', '')<0?item.yestIncome:kong}}</em></span>
                 </div>
             </div>    
         </div>
-        
+        <div class='noData asset_nodata' v-show="showPublic">
+            <img src='./img/noprop.png'/>
+            <p class='fSize16' style="font-size: .3733rem">您还没持有公募基金哦</p>
+             <mt-button type="danger" size="large" class='next' @click='downApp ()' style="margin-top:0.72222rem;">去投资</mt-button>
+        </div>
         <!-- <comfooter></comfooter> -->
     </div>
 </template>
@@ -54,9 +58,11 @@ export default {
                 bizId: '',
                 backUrl: location.href.split('?')[0]
             },
+            showPublic:false,
             gC:'red',
             gC2:'red',
             ziC:'red',
+            kong:'',
             inforList:'',
             totalAsset:'--',//总资产
             privateTotalAsset:'',//私募总资产
@@ -84,24 +90,12 @@ export default {
             }
             return value
         },
-        getcolor2:function(value){
-            if(value.substring(0,1) == '-'){
-                this.gC2='green'
-            }else{
-                this.gC2='red'
-            }
-            return value
-        },
         getList:function(){
              var that=this;
              Indicator.open();
                 axios({
                     method:'get',
-                    url:'/wxservice/wxMemberInfo/getUserPublicAsset',
-                    params: {
-                   // param:that.param,//系统类别
-                        backUrl: that.paramurl
-                    }
+                    url:'/wxservice/wxMemberInfo/getUserPublicAsset'
                 })
                 .then(function(res) {//成功之后
                     console.log(res)
@@ -117,16 +111,23 @@ export default {
                         });
                     }else if(retCode == 400){
                         var serbackUrl = that.Host+'/wxservice/wxMemberInfo/getUserPublicAsset';
-                      window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=PublicAsset#wechat_redirect';
+                      window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=PublicAsset#wechat_redirect';
                     }else if(retCode==0){
                         var d=res.data.data;
-                        console.log(d.prodAssetList[0].yestIncome)
+                        //console.log(d.prodAssetList[0].yestIncome)
                      //   d.prodAssetList[0].yestIncome = '-2,222'
                         that.totalAsset=d.publicTotalAsset//总资产
                         that.publicToConfirmAsset=d.publicToConfirmAsset//公募待确认资产
-                        that.inforList = d.prodAssetList //资产列表
+                        
                         that.publicYestIncome = d.publicYestIncome//公募最新总收益
                         that.publicAddIncome=d.publicAddIncome//公募累计总收益
+                        if(d.prodAssetList != ''){
+                            that.inforList = d.prodAssetList //资产列表
+                            that.showPublic = false
+                        }else{
+                            that.showPublic = true;
+                        }
+                        
                     }
                    // var d=res.data.data;
                    // that.totalAsset=that.money(d.totalAsset)//总资产
@@ -170,14 +171,36 @@ export default {
                    
                    
                 });
+        },
+        downApp:function() {
+            this.trafficStatistics('013')//自定义埋点
+            let ua = navigator.userAgent.toLowerCase();
+            //android终端
+            let isAndroid = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1;  　　//ios终端
+            let isiOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); 
+            if(false) {//isWeixinBrowser()//判断是不是微信
+                
+            }else{
+            if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
+                //ios
+                //this.ShowPop = !this.ShowPop;
+                //this.ShowDark = !this.ShowDark;
+                window.location='https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf';
+            } else if (/(Android)/i.test(navigator.userAgent)) {
+                //android
+                window.location = 'https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf'
+            }
+            }
+    
+            function isWeixinBrowser() {
+                return (/micromessenger/.test(ua)) ? true : false;
+            }
         }
     },
     created:function(){
         this.GasyncSDKConifg()
-        
+
         this.getList();
-        
-       
     }
 
 }
@@ -187,17 +210,7 @@ export default {
 .green{
     color:#06B24A;
 }
-.noData{
-    background:#fff;
-}
-.noData img{
-    width:2.24rem;
-    margin:2.5rem auto 0;
-}
-.noData p{
-    color:#757575;
-    margin-top:.373333rem;
-}
+
 .xiazai{
     color:#4a90e2;
 }

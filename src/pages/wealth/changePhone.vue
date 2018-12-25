@@ -59,11 +59,129 @@ export default {
             faceparam:{
                 bizId: '',
                 backUrl: location.href.split('?')[0]
-            }
+            },
+            realName:'',
+            idNo:'',
+            token:''
         }
     },
     components:{getcode,MessageBox,Button,comfooter},
     methods:{
+        getData:function(){
+            let that = this;
+            axios({
+                method:'get',
+                url:'/wxservice/wxservice?opName=getUserInfo',//判断是否有财富师
+                params: {
+                    backUrl: that.paramurl
+                }
+            })
+            .then(function(res){
+                 Indicator.close();
+                 var retCode=res.data.retCode;
+                if(retCode=='0'){
+                    if(!res.data.userInfo.realName == false){
+                        that.realName = res.data.userInfo.realName;
+                        that.idNo = res.data.userInfo.idNo;//身份证
+                    }
+                    if(that.$route.query.actId == 'wxser' || that.changeForm == 'wxser'){
+                        if(res.data.userInfo.authenticFlag==1){
+                            Indicator.open();
+                            setTimeout(() => {
+                            Indicator.close();
+                            var message = '更换手机号需先通过人脸识别验证是本人操作'
+                            MessageBox.confirm('',{
+                            message: message,
+                            title: '',
+                            confirmButtonText:'去验证',
+                            closeOnClickModal: false
+                            }).then(action => {
+                            if(action == 'confirm'){
+                                that.face();//去人脸
+                            //    that.$router.push({
+                            //     path:'/faceMsg',
+                            //     name:'faceMsg',
+                            //     query:{
+                            //         returnUrl:that.Host+'weixin-h5/index.html#/changePhone?changeForm=wxser',
+                            //         chForm:'fromWxser'
+                            //     }
+                            //  })
+                            }else{
+                                
+                            }
+                            }).catch(err => {
+                                if (err == 'cancel') {     //取消的回调
+                                    WeixinJSBridge.call('closeWindow'); 
+                                }
+                            })
+                        }, 1000)
+                        }
+                    }
+                }else if(retCode=='-1'){//系统异常
+                    //MessageBox('提示', '系统异常');
+                    Toast({
+                        message: '系统异常',
+                        position: 'center',
+                        duration: 3000
+                    });
+                }else if(retCode == 400){
+                    var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
+                  window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=changephone_wxser#wechat_redirect';
+                }
+            })
+        },
+        face:function(){
+            var that=this;
+            var idCardNo=that.idNo;
+            var idCardName=that.realName;
+          //  var canshu='changeForm=kefuSign&isReviewSignup='+that.param.isReviewSignup+'&activityType='+that.param.activityType+'&activeId='+that.param.activeId+'&actName='+encodeURIComponent(that.param.actName)+'&isFace=1';
+            //alert(canshu);
+            Indicator.open();
+            axios({
+                method:'get',
+                url:'/wxservice/wxMemberInfo/getFaceToken',//ning
+                params:{
+                    idCardNo:idCardNo,//身份证号
+                    idCardName:idCardName,//身份证姓名
+                    returnUrl:that.Host+'weixin-h5/index.html#/changePhone?changeForm=wxser&isFace=1',//人脸识别后返回的Url
+                    backUrl: location.href.split('?')[0]
+                }
+            })
+            .then(function(res) {//成功之后
+                Indicator.close();
+                console.log(res.data);
+                var retCode=res.data.retCode;
+                 if(retCode == 400){
+                     var serbackUrl = that.Host+'wxservice/wxMemberInfo/getFaceToken'
+                     window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=faceMsg#wechat_redirect';
+                 }else if(retCode == '-2'){
+                     MessageBox('','身份证不合法');
+                     return;
+                 }else if(retCode == '-1'){
+                    // MessageBox('提示','系统异常');
+                     Toast({
+                        message: '系统异常',
+                        position: 'center',
+                        duration: 3000
+                    });
+                     return;
+                 }else if(retCode == '-3'){
+                    // MessageBox('提示','当前网络不稳定，请重试');
+                     Toast({
+                        message: '当前网络不稳定，请重试',
+                        position: 'center',
+                        duration: 3000
+                    });
+                     return;
+                 }else{
+                     that.token=res.data.data.token;
+                     var bizId=res.data.data.bizId;
+                     setCookie('bizId',bizId);
+                     window.location.href='https://api.megvii.com/faceid/lite/do?token='+that.token;
+                
+                 }
+            })
+        },
         phFn:function(){//实时校验手机号
             if(this.ipNo==''){
                 //this.$refs.phwarn.style.display='none';
@@ -174,25 +292,31 @@ export default {
                 Indicator.close();
                 console.log(res.data);
                 var retCode=res.data.retCode;
+                var wxfrom =decodeURIComponent(that.$route.query.actId);
                 if(retCode=='0'){//更改成功
                      //MessageBox('    ','手机号码更改成功');
                     MessageBox('    ', '手机号码更改成功').then(action => {
                       if(action == 'confirm'){
-                        that.$router.push({
-                            path:'/'+that.changeForm,
-                            name:that.changeForm,
-                            query:{
-                                changeForm:that.changeForm,
-                                isReviewSignup:that.isReviewSignup,
-                                activityType:that.activityType,
-                                activeId:that.activeId,
-                                actName:that.actName,
-                                beginTime:that.beginTime,
-                                location:that.location,
-                                phone:that.ipNo,
-                                city:that.city,
-                            }
-                        })
+                         if(wxfrom == 'wxser' || that.changeForm == 'wxser'){
+                            WeixinJSBridge.call('closeWindow');
+                         }
+                            that.$router.push({
+                                path:'/'+that.changeForm,
+                                name:that.changeForm,
+                                query:{
+                                    changeForm:that.changeForm,
+                                    isReviewSignup:that.isReviewSignup,
+                                    activityType:that.activityType,
+                                    activeId:that.activeId,
+                                    actName:that.actName,
+                                    beginTime:that.beginTime,
+                                    location:that.location,
+                                    phone:that.ipNo,
+                                    city:that.city,
+                                    returnUrl:that.$route.query.returnUrl,
+                                }
+                            })
+                         
                        }else{//取消
                         
                       }
@@ -212,7 +336,7 @@ export default {
                  }
                  else if(retCode == 400){
                      var serbackUrl = that.Host+'wxservice/wxMemberInfo/changeMobile'
-                 window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx42b6456eeafbe956&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=changePhone#wechat_redirect';
+                 window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=changePhone#wechat_redirect';
                  }
                 else{
                    // MessageBox('    ','系统异常');
@@ -362,6 +486,7 @@ export default {
             //     }
             })
             .catch(function(){
+                alert("catch")
                 MessageBox('    ','获取信息失败').then(action => {
                       if(action == 'confirm'){
                         that.$router.push({
@@ -387,6 +512,7 @@ export default {
         
     },
     created:function(){
+        
         this.GasyncSDKConifg()
         //客服报名所需的参数；
         var that=this;
@@ -405,11 +531,13 @@ export default {
         this.isFace=this.$route.query.isFace;
         that.ghT=that.$route.query.ghT;
         that.busNameT=that.$route.query.busNameT;
-        if(this.isFace==1){//需要人脸验证结果
+        if(this.isFace==1 || this.$route.query.faceResult == 1){//需要人脸验证结果
             Indicator.open();
             var bizId=decodeURIComponent(getCookie("bizId"));
             that.faceparam.bizId = bizId;
             that.getfaceId();
+        }else{
+            this.getData()
         }
 
     }
