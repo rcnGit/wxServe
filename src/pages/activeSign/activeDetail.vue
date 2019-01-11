@@ -102,7 +102,6 @@ export default {
                 comefrom:'',
             },
              paramOnly:{
-                 name:'haha',
                 realName:'',
                 phone: '',
                 verifiCode: '',
@@ -112,6 +111,7 @@ export default {
                 activeId: '',
                 actName:'',
                 isReviewSignup: '',
+                appointState: '0'
             },
             user:{
                 userId: "",
@@ -332,6 +332,7 @@ export default {
             })
             .then(function(res) {//成功之后
                 Indicator.close();
+                console.log(res.data)
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 if(retCode!=0){
@@ -344,8 +345,10 @@ export default {
                         that.contentShow = false;
                         that.activityType = res.data.itemList[0].activityType;
                         that.isReviewSignup = res.data.itemList[0].isReviewSignup;
+                        that.paramOnly.isReviewSignup = res.data.itemList[0].isReviewSignup;
                         var obj=res.data.itemList[0];
                         that.actName=obj.actName;
+                        that.paramOnly.actName=obj.actName;
                         that.beginTime=obj.beginTime;
                         that.endTime=obj.endTime;
                         that.location=obj.location;
@@ -416,6 +419,7 @@ export default {
             })
             .then(function(res) {//成功之后
                 Indicator.close();
+                console.log(res.data)
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg; 
                 if(retCode == 0){
@@ -439,6 +443,9 @@ export default {
                     that.userphone = res.data.userInfo.phone;
                     that.realName = res.data.userInfo.realName;
                     that.paramOnly.realName=res.data.userInfo.realName;
+                    that.paramOnly.phone=res.data.userInfo.phone;
+                    that.paramOnly.businessName=res.data.userInfo.businessName
+                    that.paramOnly.belongBusiness=res.data.userInfo.belongBusiness
                     if(!res.data.userInfo.businessName==false){//我的财富师
                         that.businessName = '财富师'+res.data.userInfo.businessName
                         // that.businesscardShow = true
@@ -849,6 +856,7 @@ export default {
     -webkit-line-clamp:2; 
     float: left;
     line-height: 20px;
+    width: 92%;
 }
 .actDe{
     width:100%;

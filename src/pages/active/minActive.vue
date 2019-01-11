@@ -1,13 +1,14 @@
 <template>
     <div class='minActive' style="min-height:480px;">
         <div class='mineOne' v-for="item in items" :oaActId='item.actId' :actName='item.actName' @click='en_details($event)'>
-            <div class='stateB redState'v-show='!item.cancelReasonFlag&&!item.reasonFlag&&!cancelSignupReasonFlag'>{{item.statusValue}}</div>
+            <div class='stateB redState'v-show='!item.cancelReasonFlag&&!item.reasonFlag&&!cancelSignupReasonFlag&&!expiredFlag'>{{item.statusValue}}</div>
             <div class='stateB grayState'v-show='item.reasonFlag'>{{item.statusValue}}</div>
             <div class='stateB grayState'v-show='item.cancelReasonFlag'>{{item.statusValue}}</div>
             <div class='stateB grayState'v-show='item.cancelSignupReasonFlag'>{{item.statusValue}}</div>
+            <div class='stateB grayState'v-show='item.expiredFlag'>{{item.statusValue}}</div>
             <p class='pTitle'>{{item.actName}}</p>
             <p class='pDate'>活动时间：<span class='dataSp'>{{item.beginTime}}</span></p>
-            <p class='pAdd'>活动地点：<span class='addSp'>{{item.location}}</span></p>
+            <p class='pAdd' style="line-height:.5rem;">活动地点：<span class='addSp'>{{item.location}}</span></p>
             <p class='pState' v-if='item.applyFlag'  @click.stop='openCFScard(item.businessCode)'>活动状态：您的申请意愿已提交给财富师<span class='hrefWealth'>{{item.businessName}}</span></p>
             <p class='pState' v-if='item.businessFlag'  @click.stop='openCFScard(item.businessCode)'>邀请财富师<span class='hrefWealth'>{{item.businessName}}</span></p>           
             <p class='pState' v-show='item.reasonFlag'>失败原因：{{reason(item.reason)}}</p>
@@ -114,6 +115,7 @@ export default {
             })
             .then(function(res) {//成功之后
                 Indicator.close();
+                console.log(res.data)
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 var data=res.data.data;
@@ -186,7 +188,7 @@ export default {
     position: relative;
     /* background:url(./img/ju_bg.png) no-repeat center;
     background-size: 10.253333rem 3.066667rem; */
-    padding:.35rem 0.35rem 0.45rem 0.33rem;
+    padding:.6rem 0.35rem 0.45rem 0.33rem;
     box-shadow: 0 .04rem .15rem 0px #e0e0e0; 
     margin-top: .266667rem;
 }
@@ -194,8 +196,9 @@ export default {
     margin-top: 0;
 }
 .pTitle{
-    font-size: 15px;
+    font-size: .4rem;
     color:rgb(59,59,59);
+    line-height: .5rem;
 }
 .pDate,.pAdd,.pState{
      font-size: 13px;
@@ -203,13 +206,13 @@ export default {
     color:rgb(99,99,99);
 }
 .pDate{
-    margin-top:15px;
+    margin-top:14px;
 }
 .pAdd{
-    margin-top:10px;
+    margin-top:9px;
 }
 .pState{
-    margin-top:10px;
+    margin-top:9px;
 }
 .stateB{
     position: absolute;

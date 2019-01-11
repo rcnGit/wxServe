@@ -12,7 +12,7 @@
         </div><!--act_head-->
         <div class='noData active_nodata' ref='nodata' v-if='isShow'>
           <img src='./img/noactive@2x.png'/>
-          <p class='fSize16' style="padding-top: 1.066667rem;color: #999;"> 暂未搜索到相关结果</p>
+          <p class='fSize16' style="padding-top: 1.066667rem;color: #999;">暂未搜索到相关结果</p>
           <p class='fSize16' @click="Loadpage" style="color:#DF1E1D;padding-top: .366667rem">先看看其他精彩活动吧>></p>
         </div>
         <div id='active_content' v-else>

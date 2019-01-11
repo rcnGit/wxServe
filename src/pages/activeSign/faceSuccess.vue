@@ -3,17 +3,17 @@
         <div class="" v-show="successShow">
             <img src='./img/faceSucc.png' class='ztw'/>
             <div class="Review" >
-                <p class='p1'>恭喜您，实名认证成功</p>
+                <p class='p1'>恭喜您，身份认证成功</p>
                 
             </div>
         </div>
         <div class="" v-show="failShow">
             <img src='./img/facefail.png' class='ztw2'/>
             <div class="Review" >
-                <p class='p1'>实名认证失败</p>
-                <p class='fail_text'>人脸识别实名认证失败，请重试</p>
+                <p class='p1'>身份认证失败</p>
+                <p class='fail_text'>人脸识别身份认证失败，请重试</p>
                 <p class='fail_text'>若无法完成人脸识别可下载大唐财富APP</p>
-                <p class='fail_text'>通过绑卡完成实名认证后报名活动</p>
+                <p class='fail_text'>通过绑卡完成身份认证后报名活动</p>
             </div>
             <mt-button type="danger" size="large" class='sure' @click='tofacemsg()'>重新认证</mt-button>
             <mt-button type="danger" size="large" class='downapp' @click='todownApp()'>下载大唐财富APP</mt-button>
@@ -72,7 +72,7 @@ export default {
                 }else{
                     that.trafficStatistics('020')
                     that.failShow = true
-                    // var message = '人脸识别实名认证失败，请重试。若无法完成人脸识别实名认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成实名认证后报名活动。'
+                    // var message = '人脸识别身份认证失败，请重试。若无法完成人脸识别身份认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成身份认证后报名活动。'
                     // MessageBox('', message).then(action => {
                     //     if(action == 'confirm'){
                     //             //跳转财富师名片页面

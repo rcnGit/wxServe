@@ -5,7 +5,7 @@ export default {
         Vue.prototype.Host='https://interface.tdyhfund.com/'
         //Vue.prototype.Host="https://weixin-test-interface.tdyhfund.com/"
         Vue.prototype.APPID='wx42b6456eeafbe956'
-        //Vue.prototype.APPID='wx1f686b130ea97432'
+       // Vue.prototype.APPID='wx1f686b130ea97432'
         Vue.prototype.formatDuring = function (mss) {//时间格式化
             var days = parseInt(mss / (1000 * 60 * 60 * 24));
             var hours = parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));

@@ -27,7 +27,9 @@ import PrivateAsset from '@/pages/property/PrivateAsset'//我的私募
 import PublicAsset from '@/pages/property/PublicAsset'//我的公募
 import SecuritiesAsset from '@/pages/property/SecuritiesAsset'//资管类
 import cityList from '@/pages/active/cityList'
-import faceSuccess from '@/pages/activeSign/faceSuccess'//实名认证成功
+import faceSuccess from '@/pages/activeSign/faceSuccess'//身份认证成功
+import postDetail from '@/pages/PostInfor/postDetail' //投后信息详情
+
 Vue.use(Router)
 
 export default new Router({
@@ -73,7 +75,7 @@ export default new Router({
       path: '/faceMsg',
       name: 'faceMsg',
       meta: {
-        title: '实名认证',
+        title: '身份认证',
         keepAlive: false // 不需要缓存
       },
       component: faceMsg//使用这个组件---客户福利个人报名
@@ -147,6 +149,15 @@ export default new Router({
         keepAlive: false // 不需要缓存
       },
       component: postInfor//使用这个组件
+    },
+    {
+      path: '/postDetail',
+      name: 'postDetail',
+      meta: {
+        title: '投后消息详情',
+        keepAlive: false // 不需要缓存
+      },
+      component: postDetail//使用这个组件
     },
     {
       path: '/appointW',
@@ -260,7 +271,7 @@ export default new Router({
       path: '/faceSuccess',
       name: 'faceSuccess',
       meta: {
-        title: '实名认证',
+        title: '身份认证',
         keepAlive: false // 不需要缓存
       },
       component: faceSuccess//使用这个组件---客户福利个人报名

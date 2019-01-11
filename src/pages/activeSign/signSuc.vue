@@ -5,7 +5,7 @@
             <p class='p1'>恭喜您，{{result}}成功</p>
             <div v-if="isshow">
                 <p class='p2'>活动时间：<span>{{beginTime}}</span></p>
-                <p class='p3'>活动地点：{{location}}</p>
+                <p class='p3' style="line-height:.5rem;">活动地点：{{location}}</p>
             </div>
            
         </div>

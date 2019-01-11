@@ -68,7 +68,7 @@ export default {
                         Indicator.open();
                         setTimeout(() => {
                         Indicator.close();
-                        MessageBox({title: '',message: '您已实名认证',closeOnClickModal: false}).then(action => {
+                        MessageBox({title: '',message: '您已身份认证',closeOnClickModal: false}).then(action => {
                             if(action == 'confirm'){
                                 WeixinJSBridge.call('closeWindow');   
                             }

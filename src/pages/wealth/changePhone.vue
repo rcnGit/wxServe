@@ -395,7 +395,7 @@ export default {
                     return;
                 }else{
                     that.trafficStatistics('020')
-                    var message = '人脸识别实名认证失败，请重试。'
+                    var message = '人脸识别身份认证失败，请重试。'
                     MessageBox('', message).then(action => {
                         if(action == 'confirm'){
                                 //跳转财富师名片页面

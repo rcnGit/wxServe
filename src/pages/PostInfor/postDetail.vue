@@ -1,14 +1,30 @@
 <template>
-    <div class='postInfor'>
+    <div class='postDetail'>
         <div class='content_s' style='padding-left:0!important;padding-right:0!important;padding-top:0!important;'>
             <div ref='hasData'>
-                <div v-for='item in items'>
+                <!-- <div v-for='item in items'>
                     <div class='postOne' v-bind:fileUrl='item.fileurl' @click.stop='open'>
                         <p class='title'>{{item.filename}}</p>
                         <p><span class='text'>{{item.prodName}}</span><span class='date'>{{time(item.publishtime)}}</span></p>
                         <div style='clear:both;'></div>
-                    </div>   <!--postOne -->
+                    </div>   
                     <div style='width:100%;height:10px;background:#f2f2f2;'></div>
+                </div> -->
+                <p class="post_title">唐盈元一综合股权投资母基金2号的投资主体已完成备案</p>
+                <p class="post_title2">大唐元一长安大健康母基金1号；唐诚1号私募股权基金；润合珍宝唐诚1号私募投资基金 </p>
+                <p class="post_date">2018-08-21</p>
+                <div class="lines"></div>
+                <div class="attachment">
+                    <img src='./img/attach@2x.png' class="att_icon"/>
+                    <p class='att_name'>唐盈元一综合股权投资母基金2号架构图pdf</p>
+                </div>
+                <div class="attachment">
+                    <img src='./img/attach@2x.png' class="att_icon"/>
+                    <p class='att_name'>唐盈元一综构图pdf</p>
+                </div>
+                <div class="att_text">
+                    <p class="att_p1">敬的投资者：</p>
+                    <p class="att_p2">唐盈元一综合股权投资母基金2号的投资主体——唐盈元曦（宁波）股权投资管理合伙企业（有限合伙）已于2018年6月20日备案成功，投资者打款无需等待，即可实现对外投资。附件是唐盈元一综合股权投资母基金2号的架构图和投资主体唐盈元曦（宁波）股权投资管理合伙企业（有限合伙）的备案函，请知悉。</p>
                 </div>
                 
             </div>
@@ -22,7 +38,7 @@
             <mt-button type="danger" size="large" class='next' @click='rz()' style='margin-top:1.4rem;'>去人脸识别身份认证</mt-button>
             </div>
         </div>
-        <div class="comfooter_a"><comfooter></comfooter></div>
+        <!-- <div class="comfooter_a"><comfooter></comfooter></div> -->
     </div>
 </template>
 <script>
@@ -34,7 +50,7 @@ import comfooter from '../../components/footer'
 import { getCookie,setCookie } from '@/common/js/cookie.js'
 import merge from 'webpack-merge'
 export default {
-    name:'postInfor',
+    name:'postDetail',
     data:function(){
         return{
             items:[],
@@ -199,26 +215,32 @@ export default {
         }
     },
     created:function(){
-        this.GasyncSDKConifg()
+      //  this.GasyncSDKConifg()
         var that=this;
-        var bizId=decodeURIComponent(getCookie("bizId"));
-            if(!this.$route.query.faceResult == false){
-                Indicator.open(that.loadObj);
-                this.faceparam.bizId = bizId;
-                this.getfaceId();
-                 return;
-            }else{
-                  Indicator.open(that.loadObj);
-                  that.getList();
-            }
+        // var bizId=decodeURIComponent(getCookie("bizId"));
+        //     if(!this.$route.query.faceResult == false){
+        //         Indicator.open(that.loadObj);
+        //         this.faceparam.bizId = bizId;
+        //         this.getfaceId();
+        //          return;
+        //     }else{
+        //           Indicator.open(that.loadObj);
+        //           that.getList();
+        //     }
     }
 }
 </script>
 <style>
-.postInfor{
+.postDetail{
     width:100%;
     height:100%;
      background:#fff!important;
+     text-align: left;
+}
+.lines{
+    width: 100%;
+    height: 1px;
+    background: #E6E6E6;
 }
 .postOne{
     width:100%;
@@ -274,6 +296,52 @@ export default {
     position: static;
      bottom: 0;
  }
+ .post_title{
+    font-size: .48rem;
+    color: #333;
+    line-height: .64rem;
+    padding: .7rem .4rem .36rem;
+    font-weight: 600;
+ }
+ .post_title2{
+    font-size: .373333rem;
+    color: #646262;
+    line-height: .55rem;
+    padding: 0 .4rem;
+ }
+ .post_date{
+    font-size: .373333rem;
+    color: #646262;
+    line-height: .5rem;
+    padding: 0.2rem .4rem;
+ }
+ .attachment{
+     overflow: hidden;
+     background: #E6E6E6;
+     border-radius: .5rem;
+     padding: .2rem .4rem;
+     margin: .4rem;
+     width: max-content;
+ }
+ .att_icon{
+     float: left;
+     height: .4rem;
+ }
+ .att_name{
+     float: left;
+     padding: .051rem .2rem;
+     color: #4a90e2;
+     font-size: .346667rem;
+ }
+ .att_text{
+     font-size: .426667rem;
+     color: #333;
+     line-height: .7rem; 
+     padding: .2rem .4rem;
+ }
+ .att_p2{
+    padding-top: .2rem;
+    text-align: justify;
+    text-indent: 2em;
+ }
 </style>
-
-

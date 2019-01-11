@@ -23,14 +23,22 @@ export default{
     }
   },
  created () {
-//this.asyncSDKConifg(this.meatTitle)
+    // this.changeURL()
+    //this.asyncSDKConifg(this.meatTitle)
    //console.log(location.href.split('?')[0]+'?ifcard=1')
   },
 //   components:{comfooter},
  methods: {
-  handleClick: function() {
-   this.$toast('Hello world!');
-  },
+    handleClick: function() {
+        this.$toast('Hello world!');
+    },
+    changeURL:function(){
+      if (/from=[^&$?]{1,}(&|$)/.test(location.search) || /isappinstalled=[^&$?]{1,}(&|$)/.test(location.search)) {
+        var newSearch = location.search.replace(/from=[^&$?]{1,}(&|$)/, '').replace(/isappinstalled=[^&$?]{1,}(&|$)/, '').replace(/&$|\?$/, '');
+        var newUrl = location.origin + location.pathname + newSearch + location.hash;
+        location.replace(newUrl);
+    }
+},
   /**
      * 获取config
      */
