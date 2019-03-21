@@ -50,6 +50,7 @@
     </div>
 </template>
 <script>
+let Base64 = require('js-base64').Base64;
 import { Indicator } from 'mint-ui';
 import comfooter from '../../components/footer'
 import { MessageBox } from 'mint-ui';//提示框
@@ -90,8 +91,12 @@ export default {
         },
         openCFScard:function(id){
             this.trafficStatistics('014')//自定义埋点
+            var urlCan='{"userId":"'+id+'","sourceModule":"2","channel":"2"}'
+            urlCan = Base64.encode(urlCan);	
             //打开我的财富师名片
-            window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+id;
+            window.location.href=this.tgHost+'?paramCan='+urlCan
+           // window.location.href=this.tgHost+'?userId='+id+'&sourceModule=2&channel=2'
+           //window.location.href=this.Host+'weixin-h5/index.html#/wealthCard?userId='+id+'&sourceModule=2&channel=2&mobile_switch='
         },
         bd:function(){//去实名认证
             this.$router.push({
@@ -159,7 +164,7 @@ export default {
                 query:{
                     actId:oaActId,
                     actName:actName,
-                    ifCard:true,
+                   // ifCard:true,
                     comefrom:that.comefrom
                 }
                 })

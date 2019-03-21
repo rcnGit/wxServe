@@ -198,6 +198,30 @@ export default {
               });
             }
         });
+    },
+    onScroll:function(){
+      let that = this;
+      //变量scrollTop是滚动条滚动时，距离顶部的距离
+      var scrollTop = document.documentElement.scrollTop||document.body.scrollTop;
+        //变量windowHeight是可视区的高度
+        var windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
+        //变量scrollHeight是滚动条的总高度
+        var scrollHeight = document.documentElement.scrollHeight||document.body.scrollHeight;
+        //滚动条到底部的条件
+        if(scrollTop+windowHeight==scrollHeight){
+          //写后台加载数据的函数
+          console.log('到底了')
+         	  if(!that.load){
+              that.$refs.loader.style.display='block';
+               return;
+             }
+          Indicator.open(that.loadObj);
+         // alert(location.href.split('#')[0])
+          var pageNo=that.param.pageNo;
+           pageNo++;
+           that.param.pageNo=pageNo;  
+          that.getData();
+        } 
     }
     // getCode:function(){
     //  // alert(location.href.split('?')[0])
@@ -244,37 +268,19 @@ export default {
          // that.$route.query.city='';
           return;
      }
-     
      that.getData();
+    // 滚动加载
+      that.$nextTick(function () {
+          window.addEventListener('scroll', that.onScroll)
+      })
    },
    created(){
      this.GasyncSDKConifg()
-     let that = this;
-     if(that.$route.path == '/active'){ //获取当前页面路由
-     window.onscroll = function(){
-       	//变量scrollTop是滚动条滚动时，距离顶部的距离
-        var scrollTop = document.documentElement.scrollTop||document.body.scrollTop;
-        //变量windowHeight是可视区的高度
-        var windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
-        //变量scrollHeight是滚动条的总高度
-        var scrollHeight = document.documentElement.scrollHeight||document.body.scrollHeight;
-        //滚动条到底部的条件
-        if(scrollTop+windowHeight==scrollHeight){
-          //写后台加载数据的函数
-          console.log('到底了')
-         	  if(!that.load){
-              that.$refs.loader.style.display='block';
-               return;
-             }
-          Indicator.open(that.loadObj);
-         // alert(location.href.split('#')[0])
-          var pageNo=that.param.pageNo;
-           pageNo++;
-           that.param.pageNo=pageNo;  
-          that.getData();
-        }   
-      }
-     }
+    //  if(that.$route.path == '/active'){ //获取当前页面路由
+    //  window.onscroll = function(){
+       	  
+    //   }
+    //  }
      }
    }
         

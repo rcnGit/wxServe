@@ -85,7 +85,8 @@ export default {
             },
             faceparam:{
                 bizId: '',
-                backUrl: location.href.split('?')[0]
+                backUrl: location.href.split('?')[0],
+                phone:''
             },
             gC:'red',
             ziC:'red',
@@ -116,6 +117,8 @@ export default {
                 })
         },
         getfaceId:function(){
+            Indicator.open();
+            this.faceparam.phone = this.$route.query.phone
             var that=this;
             axios({
                 method:'get',
@@ -123,12 +126,16 @@ export default {
                 params: that.faceparam
             })
             .then(function(res){
+                Indicator.close();
                 console.log(res.data);
                 var retCode=res.data.retCode;
+                //var returnUrl = that.$route.query.returnUrl;
+                var returnUrl = that.Host+'weixin-h5/index.html#/propertyList'
                 //修改原有参数        
                 that.$router.push({
                     query:merge(that.$route.query,{'faceResult':''})
                 })
+               // alert(retCode)
                 if(retCode == '0'){
                     that.trafficStatistics('019')
                     //MessageBox('提示','人脸识别成功');
@@ -157,36 +164,61 @@ export default {
                     return;
                 }else{
                     that.trafficStatistics('020')
-                    var message = '人脸识别身份认证失败，请重试。若无法完成人脸识别身份认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成身份认证后报名活动。'
-                    MessageBox.confirm('', {
-                        message: message,
-                        title: '',
-                        showConfirmButton:true,
-                        confirmButtonClass:'confirmButton',
-                        confirmButtonText:'重试',
-                    }).then(action => {
-                        if(action == 'confirm'){
-                                //跳转财富师名片页面
-                            that.$router.push({
-                                path:'/faceMsg',
-                                name:'faceMsg',
-                                query:{
-                                returnUrl:returnUrl,
-                                }
-                            })
-                        }else{
-                            //跳转财富师名片页面
-                            that.$router.push({
-                                path:'/faceMsg',
-                                name:'faceMsg',
-                                query:{
-                                returnUrl:returnUrl,
-                                }
-                            })
-                        }
-                    }).catch(() => {
-                        
-                    })
+                   // if(!that.$route.query.idNo == false){
+                        var message = '人脸识别身份认证失败，请重试。'
+                        MessageBox.confirm('', {
+                            message: message,
+                            title: '',
+                            confirmButtonText:'重新识别',
+                            cancelButtonText:'取消'
+                        }).then(action => {
+                            if(action == 'confirm'){
+                                var idCardNo=that.$route.query.idNo
+                                var idCardName=decodeURIComponent(that.$route.query.name)
+                                var type = that.$route.query.tp
+                                var canshu=returnUrl+'?phone='+that.$route.query.phone+'&idNo='+idCardNo+'&name='+encodeURIComponent(that.$route.query.name)+'&tp='+type 
+                                that.getface(idCardNo,idCardName,canshu,type)
+                            }
+                        }).catch(err => {
+                            if (err == 'cancel') {     //取消的回调
+                                that.getList();
+                            }
+                        })
+
+                    // }else{
+                    //     var message = '人脸识别身份认证失败，请重试。若无法完成人脸识别身份认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成身份认证后查看资产。'
+                    //     MessageBox.confirm('', {
+                    //         message: message,
+                    //         title: '',
+                    //         showConfirmButton:true,
+                    //         confirmButtonClass:'confirmButton',
+                    //         confirmButtonText:'重试',
+                    //     }).then(action => {
+                    //         if(action == 'confirm'){
+                    //                 //跳转财富师名片页面
+                    //             that.$router.push({
+                    //                 path:'/faceMsg',
+                    //                 name:'faceMsg',
+                    //                 query:{
+                    //                 returnUrl:returnUrl,
+                    //                 }
+                    //             })
+                    //         }else{
+                    //             //跳转财富师名片页面
+                    //             that.$router.push({
+                    //                 path:'/faceMsg',
+                    //                 name:'faceMsg',
+                    //                 query:{
+                    //                 returnUrl:returnUrl,
+                    //                 }
+                    //             })
+                    //         }
+                    //     }).catch(err => {
+                    //         if (err == 'cancel') {     //取消的回调
+                    //             that.getList();
+                    //         }
+                    //     })
+                    // }
                     return;
                 }
                 // else if(retCode == '-3'){

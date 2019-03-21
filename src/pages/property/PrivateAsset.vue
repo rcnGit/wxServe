@@ -35,6 +35,12 @@
             <p class='fSize16' style="font-size: .3733rem">您还没持有私募基金哦</p>
              <mt-button type="danger" size="large" class='next' @click='downApp ()' style="margin-top:0.72222rem;">去投资</mt-button>
         </div>
+        
+        <div class='wz'ref='wz' style="background:#fff;display:none;" >
+            <img src='../../common/img/wr.png'  style='width:27%;margin:2.8rem auto 0.5rem;'/>
+            <p class='fSize16' style='color:#333'>身份认证后可查看我的资产哦~</p>
+        <mt-button type="danger" size="large" class='next' @click='rz()' style='margin-top:1.4rem;'>去人脸识别身份认证</mt-button>
+        </div>
         <!-- <comfooter></comfooter> -->
     </div>
 </template>
@@ -56,7 +62,8 @@ export default {
             },
             faceparam:{
                 bizId: '',
-                backUrl: location.href.split('?')[0]
+                backUrl: location.href.split('?')[0],
+                phone: ''
             },
             showPrivate:false,
             gC:'red',
@@ -79,6 +86,15 @@ export default {
     },
     components:{Button,axios,Indicator,MessageBox,comfooter},//使用mint-ui的button的组件
     methods:{
+        rz:function(){//去身份认证
+            this.$router.push({
+                    path:'/faceMsg',
+                    name:'faceMsg',
+                    query:{
+                        returnUrl:this.Host+'weixin-h5/index.html#/PrivateAsset'
+                    }
+                })
+        },
         getList:function(){
              var that=this;
              Indicator.open();
@@ -91,7 +107,11 @@ export default {
                     Indicator.close();
                     var retCode=res.data.retCode;
                     var retMsg=res.data.retMsg;
-                    if(retCode==-1){//系统异常
+                    if(retCode==-2){//未身份认证
+                        that.totalAsset='--';
+                        that.$refs.wz.style.display='block';
+                        return;
+                    }else if(retCode==-1){//系统异常
                        // MessageBox('提示', '系统异常');
                         Toast({
                             message: '系统异常',
@@ -156,6 +176,106 @@ export default {
                    
                 });
         },
+        getfaceId:function(){
+            this.faceparam.phone = this.$route.query.phone
+            var that=this;
+            axios({
+                method:'get',
+                url:'/wxservice/wxMemberInfo/getFaceResult',
+                params: that.faceparam
+            })
+            .then(function(res){
+                console.log(res.data);
+                var retCode=res.data.retCode;
+                //var returnUrl = that.$route.query.returnUrl;
+                var returnUrl = that.Host+'weixin-h5/index.html#/PrivateAsset'
+                if(retCode == '0'){
+                    that.trafficStatistics('019')
+                    //MessageBox('提示','人脸识别成功');
+                    Toast({
+                        message: '人脸识别成功',
+                        position: 'center',
+                        duration: 3000
+                    });
+                     that.getList();
+                    return;
+                }else if(retCode == '-2'){
+                    that.trafficStatistics('017')
+                    that.trafficStatistics('020')
+                    MessageBox('','该身份证已绑定其他手机号');
+                    that.$refs.wz.style.display='block'; 
+                    return;
+                }else if(retCode == '-1'){
+                    that.trafficStatistics('020')
+                    //MessageBox('提示','系统异常');
+                    Toast({
+                        message: '系统异常',
+                        position: 'center',
+                        duration: 3000
+                    });
+                    that.$refs.wz.style.display='block';
+                    return;
+                }else{
+                    that.trafficStatistics('020')
+                    //if(!that.$route.query.idNo == false){
+                        var message = '人脸识别身份认证失败，请重试。'
+                        MessageBox.confirm('', {
+                            message: message,
+                            title: '',
+                            confirmButtonText:'重新识别',
+                            cancelButtonText:'取消'
+                        }).then(action => {
+                            if(action == 'confirm'){
+                                var idCardNo=that.$route.query.idNo
+                                var idCardName=decodeURIComponent(that.$route.query.name)
+                                var type = that.$route.query.tp
+                                var canshu=returnUrl+'?phone='+that.$route.query.phone+'&idNo='+idCardNo+'&name='+encodeURIComponent(that.$route.query.name)+'&tp='+type 
+                                that.getface(idCardNo,idCardName,canshu,type)
+                            }
+                        }).catch(err => {
+                            if (err == 'cancel') {     //取消的回调
+                                that.getList();
+                            }
+                        })
+
+                    // }else{
+                    //     var message = '人脸识别身份认证失败，请重试。若无法完成人脸识别身份认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成身份认证后查看资产。'
+                    //     MessageBox.confirm('', {
+                    //         message: message,
+                    //         title: '',
+                    //         showConfirmButton:true,
+                    //         confirmButtonClass:'confirmButton',
+                    //         confirmButtonText:'重试',
+                    //     }).then(action => {
+                    //         if(action == 'confirm'){
+                    //                 //跳转财富师名片页面
+                    //             that.$router.push({
+                    //                 path:'/faceMsg',
+                    //                 name:'faceMsg',
+                    //                 query:{
+                    //                 returnUrl:returnUrl,
+                    //                 }
+                    //             })
+                    //         }else{
+                    //             //跳转财富师名片页面
+                    //             that.$router.push({
+                    //                 path:'/faceMsg',
+                    //                 name:'faceMsg',
+                    //                 query:{
+                    //                 returnUrl:returnUrl,
+                    //                 }
+                    //             })
+                    //         }
+                    //     }).catch(err => {
+                    //         if (err == 'cancel') {     //取消的回调
+                    //             that.getList();
+                    //         }
+                    //     })
+                    // }
+                    return;
+                }
+            })
+        },
         downApp:function() {
             this.trafficStatistics('013')//自定义埋点
             let ua = navigator.userAgent.toLowerCase();
@@ -184,7 +304,14 @@ export default {
     created:function(){
         this.GasyncSDKConifg()
         
-        this.getList();
+        if(!this.$route.query.faceResult == false){
+             //var bizId=localStorage.getItem('bizId');
+            var bizId=decodeURIComponent(getCookie("bizId"));
+            this.faceparam.bizId = bizId;           
+            this.getfaceId();
+        }else{
+             this.getList();
+        }
      
     }
 

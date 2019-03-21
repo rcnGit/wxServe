@@ -14,17 +14,19 @@ export default {
             param:{
                 mobileNo:'',
                 messType:'',
+                state:''
             },
              messText:'',
            ex:{
                 time:60,
                 btnDsiabled:true,
            },
-           warn:''
+           warn:'',
+           
         }
     },
     methods:{
-        getCodeFn:function(type,ipNo,authenticFlag){
+        getCodeFn:function(type,ipNo,states){
             var that=this;
             if(type==3||type=='3'){
                 that.messText='活动报名';
@@ -56,7 +58,7 @@ export default {
             that.param={
                 mobileNo:ipNo,
                 messType:type,
-               
+                state:states
             }
             console.log(that.param);
              axios({
@@ -85,24 +87,37 @@ export default {
                     that.ex.time='获取验证码';
                     that.ex.btnDsiabled=false;
                     that.$emit('childByValue',that.ex);//传到调用页面
-                    var message = '该手机号已绑定其他账号，无法重复绑定。如有疑问请咨询客服：400-819-9868';
-                    // if(authenticFlag =="0"){
-                    //     var message = '该手机号已绑定其他账号，'+that.messText+'。如有疑问请咨询客服：400-819-9868'
-                    // }else if(authenticFlag =="1"){
-                    //     var message = '该手机号已绑定其他账号，'+that.messText+'，请绑定您资金的手机号如有疑问请咨询客服：400-819-9868'
-                    // }        
+                    // var message = '该手机号已绑定其他账号，无法重复绑定。如有疑问请咨询客服：400-819-9868';
+                    // // if(authenticFlag =="0"){
+                    // //     var message = '该手机号已绑定其他账号，'+that.messText+'。如有疑问请咨询客服：400-819-9868'
+                    // // }else if(authenticFlag =="1"){
+                    // //     var message = '该手机号已绑定其他账号，'+that.messText+'，请绑定您资金的手机号如有疑问请咨询客服：400-819-9868'
+                    // // }        
+                    // MessageBox.confirm('', {
+                    //     message: message,
+                    //     title: '',
+                    //     showConfirmButton:true,
+                    //     confirmButtonText:'去联系',
+                    //     cancelButtonText:'取消',
+                    // }).then(action => {
+                    //     if(action == 'confirm'){
+                    //        window.location.href='tel:400-819-9868';
+                    //     }
+                    // }).catch(() => {
+                    //    //取消按钮
+                    // })
+                    var message = '该手机号在大唐财富平台已绑定其他微信账号，无法重复绑定。如有疑问可在大唐财富服务号(datangwealth)内留言咨询';      
                     MessageBox.confirm('', {
                         message: message,
                         title: '',
-                        showConfirmButton:true,
-                        confirmButtonText:'去联系',
-                        cancelButtonText:'取消',
+                        showCancelButton:false,
+                        confirmButtonText:'我知道了',
                     }).then(action => {
                         if(action == 'confirm'){
-                           window.location.href='tel:400-819-9868';
+            
                         }
                     }).catch(() => {
-                       //取消按钮
+                        //取消按钮
                     })
                 }else if(retCode == 0){
                     that.subTime();

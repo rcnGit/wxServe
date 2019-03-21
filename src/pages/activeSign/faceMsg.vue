@@ -45,7 +45,8 @@ export default {
            faceUrl:'',
            namewarn:'',
            token:'',
-           serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxMemberInfo/getFaceToken')
+           serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxMemberInfo/getFaceToken'),
+           ReturnUrl:''
        }
    },
     components:{Button,axios,Toast},//使用mint-ui的button的组件
@@ -123,104 +124,8 @@ export default {
             this.$refs.warnIdcard.style.display='none'
         }
         this.trafficStatistics('016')//自定义埋点
-        console.log(this.param)
-        var that=this;
-       //alert(that.param.returnUrl)
-        Indicator.open();
-        axios({
-            method:'get',
-            url:'/wxservice/wxMemberInfo/getFaceToken',//ning
-            params:that.param
-        })
-        .then(function(res) {//成功之后
-            Indicator.close();
-            console.log(res.data);
-            var retCode=res.data.retCode;
-            if(retCode == 400){
-                var serbackUrl = that.Host+'wxservice/wxMemberInfo/getFaceToken'
-                window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=faceMsg#wechat_redirect';
-            }else if(retCode == '-2'){
-                MessageBox(' ','身份证不合法');
-                return;
-            }else if(retCode == '-1'){
-               // MessageBox(' ','系统异常');
-                Toast({
-                    message: '系统异常', 
-                    position: 'center',
-                    duration: 3000
-                });
-                return;
-            }else if(retCode == '-3'){
-                //MessageBox(' ','当前网络不稳定，请重试');
-                Toast({
-                    message: '当前网络不稳定，请重试',
-                    position: 'center',
-                    duration: 3000
-                });
-                return;
-            }else if(retCode == '-4'){
-                MessageBox(' ','您的实名信息已绑定其他微信无法重复绑定，如有疑问请拨打客服电话：400-819-9868');
-                return;
-            }else if(retCode == '-5'){
-                var tgPhone=res.data.tgPhone;
-               // MessageBox(' ','手机号与已实名的手机号不一致');
-               that.trafficStatistics('018')//自定义埋点
-               var message = '尊敬的客户，您当前绑定手机号与实名信息绑定手机号（尾号'+tgPhone+'）不一致，请更换一致后再进行身份认证。<br>PS：若想更换实名信息绑定手机号请去'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">大唐财富APP</a>'+'更换'
-                    MessageBox.confirm('', {
-                        message: message,
-                        title: '',
-                        showConfirmButton:true,
-                        confirmButtonClass:'confirmButton',
-                        confirmButtonText:'去更换',
-                    }).then(action => {
-                        if(action == 'confirm'){
-                            that.$router.push({
-                                path:'/changephone',
-                                name:'changephone',
-                                query:{
-                                    changeForm:'faceMsg',
-                                    //returnUrl:that.$route.query.returnUrl,
-                                    returnUrl:that.faceUrl
-                                }
-                            })
-                        }
-                    }).catch(() => {
-                        
-                    })
-                return;
-            }else if(retCode == '-6'){
-                that.trafficStatistics('018')//自定义埋点
-                var message = '您当前账户绑定的手机号已绑定其他实名信息，请更换手机号后重新认证。'
-                    MessageBox.confirm('', {
-                        message: message,
-                        title: '',
-                        showConfirmButton:true,
-                        confirmButtonClass:'confirmButton',
-                        confirmButtonText:'去更换',
-                    }).then(action => {
-                        if(action == 'confirm'){
-                            that.$router.push({
-                                path:'/changephone',
-                                name:'changephone',
-                                query:{
-                                    changeForm:'faceMsg',
-                                    //returnUrl:that.$route.query.returnUrl,
-                                    returnUrl:that.faceUrl
-                                }
-                            })
-                        }
-                    }).catch(() => {
-                        
-                    })
-                return;
-            }else{
-                that.token=res.data.data.token;
-                var bizId=res.data.data.bizId;
-                setCookie('bizId',bizId);
-               window.location.href='https://api.megvii.com/faceid/lite/do?token='+that.token;
-               
-            }
-        });
+        this.getFaceFn() //人脸识别
+        
         },
         idCardNoFn:function(){
             if(this.param.idCardNo==''){
@@ -249,6 +154,147 @@ export default {
                 this.$refs.name.style='border-bottom:0.5px solid #efefef!important';
             }
         },
+        getFaceFn:function(){
+            console.log(this.param)
+            var that=this;
+            if(!that.param.idCardName == false){
+                that.ReturnUrl = that.param.returnUrl
+                that.param.returnUrl = that.param.returnUrl+'&idNo='+that.param.idCardNo+'&name='+encodeURIComponent(that.param.idCardName)  
+            }
+       // alert(that.param.returnUrl)
+            Indicator.open();
+            axios({
+                method:'get',
+                url:'/wxservice/wxMemberInfo/getFaceToken',//ning
+                params:that.param
+            })
+            .then(function(res) {//成功之后
+                Indicator.close();
+                console.log(res.data);
+                var retCode=res.data.retCode;
+               // alert(retCode)
+                if(retCode == 400){
+                    var serbackUrl = that.Host+'wxservice/wxMemberInfo/getFaceToken'
+                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=faceMsg#wechat_redirect';
+                }else if(retCode == '-2'){
+                    MessageBox(' ','身份证不合法');
+                    return;
+                }else if(retCode == '-1'){
+                // MessageBox(' ','系统异常');
+                    Toast({
+                        message: '系统异常', 
+                        position: 'center',
+                        duration: 3000
+                    });
+                    return;
+                }else if(retCode == '-3'){//未获取到token
+                    //MessageBox(' ','当前网络不稳定，请重试');
+                    Toast({
+                        message: '姓名或身份证输入有误',
+                        position: 'center',
+                        duration: 3000
+                    });
+                    return;
+                }else if(retCode == '-4'){
+                   // MessageBox(' ','您的实名信息已绑定其他微信无法重复绑定，如有疑问请拨打客服电话：400-819-9868');
+                   var message = '该身份信息在大唐财富平台已绑定其他微信账号，无法重复绑定。如有疑问可在大唐财富服务号(datangwealth)内留言咨询';      
+                    MessageBox.confirm('', {
+                        message: message,
+                        title: '',
+                        showCancelButton:false,
+                        confirmButtonText:'我知道了',
+                    }).then(action => {
+                        if(action == 'confirm'){
+                        }
+                    }).catch(() => {
+                        //取消按钮
+                    })
+                    return;
+                }else if(retCode == '-5'){
+                  //  var tgPhone=res.data.tgPhone;
+               // MessageBox(' ','手机号与已实名的手机号不一致');
+                that.trafficStatistics('018')//自定义埋点
+                // var message = '尊敬的客户，您当前绑定手机号与实名信息绑定手机号（尾号'+tgPhone+'）不一致，请更换一致后再进行身份认证。<br>PS：若想更换实名信息绑定手机号请去'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">大唐财富APP</a>'+'更换'
+                //         MessageBox.confirm('', {
+                //             message: message,
+                //             title: '',
+                //             showConfirmButton:true,
+                //             confirmButtonClass:'confirmButton',
+                //             confirmButtonText:'去更换',
+                //         }).then(action => {
+                //             if(action == 'confirm'){
+                //                 that.$router.push({
+                //                     path:'/changephone',
+                //                     name:'changephone',
+                //                     query:{
+                //                         changeForm:'faceMsg',
+                //                         //returnUrl:that.$route.query.returnUrl,
+                //                         returnUrl:that.faceUrl
+                //                     }
+                //                 })
+                //             }
+                //         }).catch(() => {
+                            
+                //         })
+                var message = '该实名信息已开通大唐账户，且绑定的手机号与当前账号所绑定的不一致。需重新绑定手机号后继续身份认证。';      
+                    MessageBox.confirm('', {
+                        message: message,
+                        title: '',
+                        showCancelButton:false,
+                        confirmButtonText:'我知道了',
+                    }).then(action => {
+                        if(action == 'confirm'){
+                            that.$router.push({
+                                path:'/bdphone',
+                                name:'bdphone',
+                                query:{
+                                    name: that.param.idCardName,
+                                    idNo: that.param.idCardNo,
+                                    returnUrl:that.ReturnUrl,
+                                    bdfrom:'faceMsg',
+                                    type: '1'
+                                }
+                            })
+                            
+                        }
+                    }).catch(() => {
+                        //取消按钮
+                    })
+                    return;
+                }else if(retCode == '-6'){
+                    that.trafficStatistics('018')//自定义埋点
+                    var message = '您当前账户绑定的手机号已绑定其他实名信息，请更换手机号后重新认证。'
+                        MessageBox.confirm('', {
+                            message: message,
+                            title: '',
+                            showConfirmButton:true,
+                            confirmButtonClass:'confirmButton',
+                            confirmButtonText:'去更换',
+                        }).then(action => {
+                            if(action == 'confirm'){
+                                that.$router.push({
+                                    path:'/changephone',
+                                    name:'changephone',
+                                    query:{
+                                        changeForm:'faceMsg',
+                                        //returnUrl:that.$route.query.returnUrl,
+                                        returnUrl:that.faceUrl
+                                    }
+                                })
+                            }
+                        }).catch(() => {
+                            
+                        })
+                    return;
+                }else{
+                    that.token=res.data.data.token;
+                    var bizId=res.data.data.bizId;
+                    setCookie('bizId',bizId);
+                window.location.href='https://api.megvii.com/faceid/lite/do?token='+that.token;
+                
+                }
+            });
+        }
     },
     created:function(){
        // if(this.$route.query.chForm == 'fromWxser'){//变更手机号过来不用getdata      

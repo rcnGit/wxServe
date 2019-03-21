@@ -11,6 +11,7 @@
     </div>
 </template>
 <script>
+let Base64 = require('js-base64').Base64;
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 export default {
     name:'pushW',
@@ -60,7 +61,12 @@ export default {
       },
       toMingpian:function(){
         this.trafficStatistics('008')//自定义埋点客服活动跳转到指定理财师页面的数量
-        window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+this.belongBusiness;
+        var urlCan='{"userId":"'+this.belongBusiness+'","sourceModule":"2","channel":"2"}'
+        urlCan = Base64.encode(urlCan);	
+        //打开我的财富师名片
+        window.location.href=this.tgHost+'?paramCan='+urlCan
+       // window.location.href=this.tgHost+'?userId='+this.belongBusiness+'&sourceModule=2&channel=2';
+       // window.location.href=this.Host+'weixin-h5/index.html#/wealthCard?userId='+this.belongBusiness+'&sourceModule=2&channel=2&mobile_switch='
       }
     },
     watch: {

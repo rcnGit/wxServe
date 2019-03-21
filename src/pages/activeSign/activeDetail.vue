@@ -1,5 +1,6 @@
 <template>
     <div class='activeSign'>
+        <div>
          <div class='business_Card' ref="card" v-show="businesscardShow">
             <div class='bus_L'>
                 <img :src="headImgUrl" v-if="headimgShow"/>
@@ -36,7 +37,7 @@
         </div>
          <mt-button type="danger" size="large" class='toSign' @click='sign()' v-show='isShow' :disabled="isDisabled">{{actStatus}}</mt-button>
         <!-- 底部   框 -->
-        <mt-popup v-model="popupVisible" position="center" pop-transition="popup-fade">
+        <mt-popup v-model="popupVisible" position="center" pop-transition="popup-fade" >
            <div class='pop_contant pop_contant_A' ref='pop_contant'>
                <div class='popImgBox_A'>
                    <img :src='erweima' style='width:180px;height:180px;margin:94px auto 10px;'/>
@@ -45,14 +46,14 @@
                </div>
            </div> <!--pop_contant -->
          </mt-popup>  
-        
+        </div>
     </div>
 </template>
 <script src=''></script>
 <script>
 let Base64 = require('js-base64').Base64;
 import wx from 'weixin-js-sdk';
-import { Popup } from 'mint-ui';//底部出来的弹框；
+import { Popup } from 'mint-ui';//底部出来的弹框
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//   框
@@ -123,11 +124,14 @@ export default {
             },
             faceparam:{
                 bizId: '',
-                backUrl: location.href.split('?')[0]
+                backUrl: location.href.split('?')[0],
+                phone:''
             },
             backUrl: encodeURIComponent(location.href.split('#')[0]),//微信分享
             serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxservice?opName=getUserInfo'),//接口
-            paramurl: location.href.split('?')[0]
+            paramurl: location.href.split('?')[0],
+            token:'',
+            comefrom:''
         }
        
     },
@@ -219,21 +223,29 @@ export default {
                         MessageBox('   ','此财富师不存在');
                     }
                     return;
-                }//状态为三；
+                }
              
             })
         },
         getfaceId:function(){
+            this.faceparam.phone = this.$route.query.phone
+            //var canshu=returnUrl
             var that=this;
+            var idCardNo=that.$route.query.idNo
+            var idCardName=encodeURIComponent(that.$route.query.name)
+           // alert(that.faceparam.phone+'.....'+that.faceparam.bizId)
             axios({
                 method:'get',
                 url:'/wxservice/wxMemberInfo/getFaceResult',
                 params: that.faceparam
             })
             .then(function(res){
+                Indicator.close();
                 console.log(res.data);
                 var retCode=res.data.retCode;
-                var returnUrl = that.$route.query.returnUrl;
+               // alert(retCode)
+               // var returnUrl = that.$route.query.returnUrl;
+               var returnUrl = that.Host+'weixin-h5/index.html#/activeDetail?phone='+that.faceparam.phone+'&name='+idCardName+'&idNo='+idCardNo+'&ghT='+that.belongBusiness+'&actId='+that.actId+'&actName='+encodeURIComponent(that.actName)
                 //修改原有参数        
                 that.$router.push({
                     query:merge(that.$route.query,{'faceResult':''})
@@ -277,36 +289,62 @@ export default {
                     return;
                 }else{
                     that.trafficStatistics('020')
-                    var message = '人脸识别实名认证失败，请重试。若无法完成人脸识别实名认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成实名认证后报名活动。'
-                    MessageBox.confirm('', {
-                        message: message,
-                        title: '',
-                        showConfirmButton:true,
-                        confirmButtonClass:'confirmButton',
-                        confirmButtonText:'重试',
-                    }).then(action => {
-                        if(action == 'confirm'){
-                                //跳转财富师名片页面
-                            that.$router.push({
-                                path:'/faceMsg',
-                                name:'faceMsg',
-                                query:{
-                                returnUrl:returnUrl,
-                                }
-                            })
-                        }else{
-                             //跳转财富师名片页面
-                            that.$router.push({
-                                path:'/faceMsg',
-                                name:'faceMsg',
-                                query:{
-                                returnUrl:returnUrl,
-                                }
-                            })
-                        }
-                    }).catch(() => {
-                        
-                    })
+                   // alert(11111)
+                   // if(!that.$route.query.idNo == false){
+                        var message = '人脸识别身份认证失败，请重试。'
+                        MessageBox.confirm('', {
+                            message: message,
+                            title: '',
+                            confirmButtonText:'重新识别',
+                            cancelButtonText:'取消'
+                        }).then(action => {
+                            if(action == 'confirm'){
+                                var idCardNo=that.$route.query.idNo
+                                var idCardName=decodeURIComponent(that.$route.query.name)
+                                var type = that.$route.query.tp
+                                var canshu=that.Host+'weixin-h5/index.html#/activeDetail?phone='+that.faceparam.phone+'&name='+encodeURIComponent(that.$route.query.name)+'&idNo='+idCardNo+'&ghT='+that.belongBusiness+'&actId='+that.actId+'&actName='+encodeURIComponent(that.actName)+'&tp='+type
+                                that.getface(idCardNo,idCardName,canshu,type)
+                            }
+                        }).catch(err => {
+                            if (err == 'cancel') {     //取消的回调
+                                that.authentic()//获取客户信息
+                            }
+                        })
+
+                    // }else{
+                    //     var message = '人脸识别实名认证失败，请重试。若无法完成人脸识别实名认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成实名认证后报名活动。'
+                    //     MessageBox.confirm('', {
+                    //         message: message,
+                    //         title: '',
+                    //         showConfirmButton:true,
+                    //         confirmButtonClass:'confirmButton',
+                    //         confirmButtonText:'重试',
+                    //     }).then(action => {
+                    //         if(action == 'confirm'){
+                    //                 //跳转财富师名片页面
+                    //             that.$router.push({
+                    //                 path:'/faceMsg',
+                    //                 name:'faceMsg',
+                    //                 query:{
+                    //                 returnUrl:returnUrl,
+                    //                 }
+                    //             })
+                    //         }else{
+                    //             //跳转财富师名片页面
+                    //             that.$router.push({
+                    //                 path:'/faceMsg',
+                    //                 name:'faceMsg',
+                    //                 query:{
+                    //                 returnUrl:returnUrl,
+                    //                 }
+                    //             })
+                    //         }
+                    //     }).catch(err => {
+                    //         if (err == 'cancel') {     //取消的回调
+                    //             that.authentic()//获取客户信息
+                    //         }
+                    //     })
+                    // }
                     return;
                 }
                 // else if(retCode == '-3'){
@@ -474,7 +512,7 @@ export default {
                         return;
                     }else{
                             var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=activeDetail_'+that.actId+','+that.ghT+','+that.actName+','+that.$route.query.ifCard+'#wechat_redirect';
+                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=activeDetail_'+that.actId+','+that.ghT+','+that.actName+','+that.$route.query.ifCard+','+that.$route.query.comefrom+'#wechat_redirect';
                     }                   
                 }
                 else{
@@ -553,7 +591,7 @@ export default {
             }
             that.paramOnly.activityType=that.activityType;
             if(that.activityType == 'YX'){
-                if(!that.realName || !that.userphone || !that.belongBusiness){
+                if(!that.realName || !that.userphone || !that.belongBusiness){//有姓名说明已经实名
                     that.$router.push({
                         path: '/toSignNewCust',
                         name: 'toSignNewCust',
@@ -579,7 +617,7 @@ export default {
                         path: '/faceMsg',
                         name: 'faceMsg',
                         query:{
-                            returnUrl: that.Host+'weixin-h5/index.html#/activeDetail?actId='+that.actId+'&actName='+that.actName
+                            returnUrl: that.Host+'weixin-h5/index.html#/activeDetail?actId='+that.actId+'&actName='+that.actName+'&ghT='+that.belongBusiness
                         }
                     })
                 }else{
@@ -600,8 +638,26 @@ export default {
             }
         },
         toBusiness:function(){
+           // alert(this.paramOnly.belongBusiness)
+            var urlCan='{"userId":"'+this.ghT+'","sourceModule":"2"}'
+            urlCan = Base64.encode(urlCan);	
+            var urlCan1='{"userId":"'+this.ghT+'","sourceModule":"0"}'
+            urlCan1 = Base64.encode(urlCan1);
             this.trafficStatistics('002')
-            window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+this.ghT;
+            if(this.comefrom == 'tangchao'){
+                if(this.paramOnly.belongBusiness == this.ghT){
+                    window.location.href=this.tgHost+'?paramCan='+urlCan1 //分享不带channel,糖巢名片
+                }else{
+                    window.location.href=this.Host+'weixin-h5/index.html#/wealthCard?userId='+this.ghT+'&sourceModule=0' //微信名片
+                }   
+            }else{
+                if(this.paramOnly.belongBusiness == this.ghT){
+                    window.location.href=this.tgHost+'?paramCan='+urlCan    //wx分享不带channel
+                }else{
+                    window.location.href=this.Host+'weixin-h5/index.html#/wealthCard?userId='+this.ghT+'&sourceModule=2'  //微信名片
+                }
+            }   
+            //
         },
         async asyncSDKConifg (actName,businessName,mygh) {
             let that = this;
@@ -658,7 +714,6 @@ export default {
         }
         
     },
-    
     created(){
        // this.asyncSDKConifg();
         //是否糖罐入口
@@ -676,7 +731,7 @@ export default {
          }else{
              that.authentic()//获取客户信息
          }
-         //================
+
         var wxstr =decodeURIComponent(that.$route.query.actId); 
         var actId=wxstr.split(",")[0];
         that.actId=wxstr.split(",")[0];
@@ -732,6 +787,11 @@ export default {
          }
          that.user.userId = that.$route.query.ghT;
          
+        if(!that.$route.query.comefrom==false){
+            that.comefrom=that.$route.query.comefrom;
+        }else{
+            that.comefrom=wxstr.split(",")[4];
+        }
             
         
         
@@ -751,7 +811,6 @@ export default {
     //    if (to.path == "/active") {
     //      from.meta.keepAlive = true;//走缓存
     //      to.meta.keepAlive = true;
-    //      alert('1111')
     //    } else {
     //      to.meta.keepAlive = false;
     //      from.meta.keepAlive = false;
@@ -909,7 +968,7 @@ height:360px!important;
     width:100%;
     overflow: hidden
 }
-.lines{
+.addressBox .lines{
     width: 100%;
     height: 1px;
     background: #E6E6E6;

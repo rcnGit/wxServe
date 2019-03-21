@@ -53,6 +53,7 @@ import getcode from '../wealth/getcode';
 import axios from 'axios'
 import { getCookie,setCookie } from '@/common/js/cookie.js'
 import { isValidMobile, isValidxincode, isValidverifycode, isValidName, isValidEmpNo } from '@/common/js/extends.js'
+import merge from 'webpack-merge'
 export default {
     name:'kefuSign',
     data:function(){
@@ -104,6 +105,11 @@ export default {
             params:{
                 bizId:''
             },
+            faceparam:{
+                bizId: '',
+                backUrl: location.href.split('?')[0],
+                phone:''
+            },
             backUrl: encodeURIComponent(location.href.split('#')[0]),//微信分享
             serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxservice?opName=getUserInfo'),//接口
             paramurl: location.href.split('?')[0],
@@ -146,7 +152,18 @@ export default {
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
                 if(retCode == 0){
-                    that.isFaceSuc=res.data.userInfo.authenticFlag;
+                    that.isFaceSuc=res.data.userInfo.authenticFlag;  //实名认证标志
+                    if(that.isFaceSuc==0){   //未实名先去实名认证
+                        var returnUrl = that.Host+'weixin-h5/index.html#/kefuSign?isReviewSignup='+that.param.isReviewSignup+'&activityType='+that.param.activityType+'&activeId='+that.param.activeId+'&actName='+encodeURIComponent(that.param.actName)+'&ghT='+that.ghT
+                        //alert(returnUrl)
+                        that.$router.push({
+                            path:'/faceMsg',
+                            name:'faceMsg',
+                            query:{
+                                returnUrl:returnUrl,
+                            }
+                        })
+                    }
                     if(!res.data.userInfo.phone == false){
                         that.userPhone = res.data.userInfo.phone
                         var Tel = that.userPhone
@@ -208,7 +225,7 @@ export default {
                     }
                 }else if(retCode == 400){
                      var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                     window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=toSignNewCust_'+that.param.activeId+','+that.ghT+','+that.param.actName+','+that.param.activityType+','+that.param.isReviewSignup+'#wechat_redirect';
+                     window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=kefuSign_'+that.param.activeId+','+that.ghT+','+that.param.actName+','+that.param.activityType+','+that.param.isReviewSignup+'#wechat_redirect';
                  }else{
                     //MessageBox('提示',retMsg);
                     Toast({
@@ -389,7 +406,7 @@ export default {
                     confirmButtonText:'去验证',
                     }).then(action => {
                     if(action == 'confirm'){
-                        that.face();//去人脸
+                        that.face('1');//去人脸
                     }else{
                         
                     }
@@ -424,12 +441,17 @@ export default {
             
          
         },
-        face:function(){
+        face:function(from,memId,memName){
             var that=this;
-            var idCardNo=that.idNo;
-            var idCardName=that.param.realName;
-            var canshu='changeForm=kefuSign&isReviewSignup='+that.param.isReviewSignup+'&activityType='+that.param.activityType+'&activeId='+that.param.activeId+'&actName='+encodeURIComponent(that.param.actName)+'&isFace=1';
-            //alert(canshu);
+            if(from == '1'){//更换手机号之前的人脸
+                var idCardNo=that.idNo;
+                var idCardName=that.param.realName;
+                var canshu='changePhone?changeForm=kefuSign&isReviewSignup='+that.param.isReviewSignup+'&name='+encodeURIComponent(idCardName)+'&idNo='+idCardNo+'&activityType='+that.param.activityType+'&activeId='+that.param.activeId+'&actName='+encodeURIComponent(that.param.actName)+'&ghT='+that.ghT+'&isFace=1';
+            }else{
+                var idCardNo=memId;
+                var idCardName=memName;
+                var canshu='kefuSign?isReviewSignup='+that.param.isReviewSignup+'&name='+encodeURIComponent(idCardName)+'&idNo='+idCardNo+'&activityType='+that.param.activityType+'&activeId='+that.param.activeId+'&actName='+encodeURIComponent(that.param.actName)+'&ghT='+that.ghT+'&faceResult=1'+'&businessName='+encodeURIComponent(that.param.businessName)+'&phone2='+that.param.phone+'&verifiCode='+that.param.verifiCode+'&belongBusiness='+that.param.belongBusiness;
+            }
             Indicator.open();
             axios({
                 method:'get',
@@ -437,7 +459,7 @@ export default {
                 params:{
                     idCardNo:idCardNo,//身份证号
                     idCardName:idCardName,//身份证姓名
-                    returnUrl:that.Host+'weixin-h5/index.html#/changePhone?'+canshu,//人脸识别后返回的Url
+                    returnUrl:that.Host+'weixin-h5/index.html#/'+canshu,//人脸识别后返回的Url
                     backUrl: location.href.split('?')[0]
                 }
             })
@@ -461,8 +483,8 @@ export default {
                      return;
                  }else if(retCode == '-3'){
                     // MessageBox('提示','当前网络不稳定，请重试');
-                     Toast({
-                        message: '当前网络不稳定，请重试',
+                    Toast({
+                        message: '姓名或身份证输入有误',
                         position: 'center',
                         duration: 3000
                     });
@@ -488,7 +510,8 @@ export default {
                     title: ''
                 }).then(action => {
                     if(action == 'confirm'){
-                        that.kefuAxio();
+                        that.kefuAxio(); 
+                        window.scroll(0,0);
                     }
                 }).catch(() => {
                     return;
@@ -562,6 +585,13 @@ export default {
                         MessageBox('','此财富师不存在');
                     }
                     return;
+                }else if(retCode== 4){
+                    MessageBox({
+                        title: '',
+                        //message: '该手机号已绑定其他账号，无法重复绑定。如有疑问请咨询客服：400-819-9868',
+                        message: '该手机号在大唐财富平台已绑定其他账号，无法重复绑定。如有疑问可在大唐财富服务号(datangwealth)内留言咨询',
+                        confirmButtonText: '我知道了'
+                    });
                 }else if(retCode== 1){
                     MessageBox('','验证码错误');
                 }else if(retCode== 2){
@@ -590,6 +620,31 @@ export default {
                     MessageBox('','财富师已离职');
                 }else if(retCode== 6){
                     MessageBox('','您已经报过名');
+                }else if(retCode == -7){//提示并调人脸识别打通账户（WX未实名，APP实名且手机号相同）
+                    window.scroll(0,0);
+                    var message = '该手机号已开通大唐财富账户，请人脸识别身份认证同步账户信息。';      
+                    MessageBox.confirm('', {
+                        message: message,
+                        title: '',
+                        showCancelButton:false,
+                        confirmButtonText:'去同步',
+                    }).then(action => {
+                        if(action == 'confirm'){
+                            var memId = res.data.memId;    //糖罐的用户身份证
+                            var memName = res.data.memName;    //糖罐的用户姓名
+                            that.face('2',memId,memName);//用APP信息去人脸
+                        }
+                    }).catch(() => {
+                        //取消按钮
+                    })
+                }else if(retCode == -8){//实名用户电话同TG实名用户电话不一致
+                    window.scroll(0,0);
+                    MessageBox({
+                        title: '',
+                        //message: '该手机号已绑定其他账号，无法重复绑定。如有疑问请咨询客服：400-819-9868',
+                        message: '该手机号在大唐财富平台已绑定其他账号，无法重复绑定。如有疑问可在大唐财富服务号(datangwealth)内留言咨询。',
+                        confirmButtonText: '我知道了'
+                    });
                 }
             });
         },//报名走的接口
@@ -610,6 +665,121 @@ export default {
             }else{
                  that.signup();
             }
+        },
+        
+        getfaceId:function(){
+            Indicator.open();
+            this.faceparam.phone = this.$route.query.phone
+            var that=this;
+            axios({
+                method:'get',
+                url:'/wxservice/wxMemberInfo/getFaceResult',
+                params: that.faceparam
+            })
+            .then(function(res){
+                Indicator.close();
+                console.log(res.data);
+                var retCode=res.data.retCode;
+               // var returnUrl = that.$route.query.returnUrl;
+                var returnUrl = that.Host+'weixin-h5/index.html#/kefuSign?phone='+that.faceparam.phone+'&isReviewSignup='+that.param.isReviewSignup+'&activityType='+that.param.activityType+'&activeId='+that.param.activeId+'&actName='+encodeURIComponent(that.param.actName)+'&ghT='+that.ghT+'&businessName='+encodeURIComponent(that.param.businessName)+'&phone2='+that.param.phone+'&verifiCode='+that.param.verifiCode+'&belongBusiness='+that.param.belongBusiness;;
+                //修改原有参数        
+                that.$router.push({
+                    query:merge(that.$route.query,{'faceResult':''})
+                })
+                if(retCode == '0'){
+                    that.trafficStatistics('019')//自定义埋点
+                    Toast({
+                        message: '人脸识别成功',
+                        position: 'center',
+                        duration: 3000
+                    });
+                    that.getData()//获取客户信息
+                    return;
+                }else if(retCode == '-2'){
+                    that.trafficStatistics('017')
+                    that.trafficStatistics('020')
+                    //MessageBox('   ','该身份证已绑定其他手机号');
+                    MessageBox('','该身份证已绑定其他手机号').then(action => {
+                      if(action == 'confirm'){
+                        that.$router.push({
+                            path:'/faceMsg',
+                            name:'faceMsg',
+                            query:{
+                             returnUrl:returnUrl,
+                            }
+                        })
+                      }else{//取消
+                        console.log('查看订单')
+                      }
+                  });//提示信息
+                    return;
+                }else if(retCode == '-1'){
+                    that.trafficStatistics('020')
+                    Toast({
+                        message: '系统异常',
+                        position: 'center',
+                        duration: 3000
+                    });
+                    return;
+                }else{
+                    that.trafficStatistics('020')
+                   // if(!that.$route.query.idNo == false){
+                        var message = '人脸识别身份认证失败，请重试。'
+                        MessageBox.confirm('', {
+                            message: message,
+                            title: '',
+                            confirmButtonText:'重新识别',
+                            cancelButtonText:'取消'
+                        }).then(action => {
+                            if(action == 'confirm'){
+                                var idCardNo=that.$route.query.idNo
+                                var idCardName=decodeURIComponent(that.$route.query.name)
+                                var type = that.$route.query.tp
+                                var canshu=returnUrl+'&tp='+type+'&idNo='+idCardNo+'&name='+encodeURIComponent(that.$route.query.name)
+                                that.getface(idCardNo,idCardName,canshu,type)
+                            }
+                        }).catch(err => {
+                            if (err == 'cancel') {     //取消的回调
+                                that.getData()//获取客户信息
+                            }
+                        })
+
+                    // }else{
+                    //     var message = '人脸识别实名认证失败，请重试。若无法完成人脸识别实名认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成实名认证后报名活动。'
+                    //     MessageBox.confirm('', {
+                    //         message: message,
+                    //         title: '',
+                    //         showConfirmButton:true,
+                    //         confirmButtonClass:'confirmButton',
+                    //         confirmButtonText:'重试',
+                    //     }).then(action => {
+                    //         if(action == 'confirm'){
+                    //             that.$router.push({
+                    //                 path:'/faceMsg',
+                    //                 name:'faceMsg',
+                    //                 query:{
+                    //                 returnUrl:returnUrl,
+                    //                 }
+                    //             })
+                    //         }
+                    //     }).catch(err => {
+                    //         if (err == 'cancel') {     //取消的回调
+                    //             that.getData()//获取客户信息
+                    //         } 
+                    //     })
+                    // }
+                    return;
+                }
+                // else if(retCode == '-3'){
+                //     that.trafficStatistics('020')
+                //     MessageBox('   ','人脸识别未通过');
+                //     return;
+                // }else if(retCode == '-4'){
+                //     that.trafficStatistics('020')
+                //     MessageBox('   ','未查询到人脸识别结果');
+                //     return;
+                // }
+            })
         },
         Share:function(mygh) {
             //var shareData = '?ghT='+this.$route.query.ghT+'&isReviewSignup='+this.param.isReviewSignup+'&activityType='+this.param.activityType+'&activeId='+this.param.activeId+'&actName='+encodeURIComponent(this.param.actName)+'&beginTime='+this.beginTime+'&location='+encodeURIComponent(this.location)+'&busNameT='+encodeURIComponent(this.param.businessName);
@@ -691,8 +861,6 @@ export default {
     created:function(){
         Indicator.open();
         //var that=this; 
-         var bizId=decodeURIComponent(getCookie("bizId"));
-         this.params.bizId=bizId;
          //分享方的财富师
         //  if(!this.$route.query.ghT==false){
         //     if(this.$route.query.ghT=='undefined,' || this.$route.query.ghT=='undefined'){   
@@ -703,6 +871,13 @@ export default {
         //         this.param.businessName = decodeURIComponent(this.$route.query.busNameT);
         //     }
         //  }
+        var bizId=decodeURIComponent(getCookie("bizId"));
+        this.faceparam.bizId = bizId;
+         if(!this.$route.query.faceResult == false||bizId==null){
+            this.getfaceId();
+         }else{
+            this.getData()//获取客户信息
+         }
         if(!this.$route.query.ghT==false){
             this.ghT=this.$route.query.ghT;
         }else{
@@ -716,6 +891,15 @@ export default {
            // this.beginTime = this.$route.query.beginTime;
            // this.location = decodeURIComponent(this.$route.query.location);
            // this.ghT=this.$route.query.ghT;
+           if(!this.$route.query.phone2==false){
+            this.param.realName = decodeURIComponent(this.$route.query.name)
+           this.param.phone =this.$route.query.phone2;
+           this.phone2 = this.$route.query.phone2
+           this.param.verifiCode=this.$route.query.verifiCode;
+           this.param.belongBusiness = this.$route.query.belongBusiness;
+           this.param.businessName = decodeURIComponent(this.$route.query.businessName)
+           this.gh=this.param.belongBusiness.substr(2,7);
+           }
         }else{
             var wxstr =decodeURIComponent(this.$route.query.actId); 
             this.param.activeId=wxstr.split(",")[0];
@@ -730,7 +914,7 @@ export default {
         // //alert(that.$route.query.activeId+'===客服初次')
         // that.param.activeId = that.$route.query.activeId;
         // that.param.actName = decodeURIComponent(that.$route.query.actName);
-        this.getData()
+      //  this.getData()
     }
 
 }

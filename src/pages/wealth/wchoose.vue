@@ -19,6 +19,7 @@
     </div>
 </template>
 <script>
+let Base64 = require('js-base64').Base64;
 import axios from 'axios';
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
@@ -38,6 +39,7 @@ export default {
             faceparam:{
                 bizId: '',
                 backUrl: location.href.split('?')[0],
+                phone:''
             },
              ifCardShow:false,
         }
@@ -67,6 +69,7 @@ export default {
            
         },
         getfaceId:function(){
+            this.faceparam.phone = this.$route.query.phone
             var that=this;
             axios({
                 method:'get',
@@ -77,6 +80,8 @@ export default {
                 console.log(res.data);
                  Indicator.close();
                 var retCode=res.data.retCode;
+                //var returnUrl = that.$route.query.returnUrl;
+                var returnUrl = that.Host+'weixin-h5/index.html#/wchoose'
                 //修改原有参数        
                 that.$router.push({
                     query:merge(that.$route.query,{'faceResult':''})
@@ -105,36 +110,59 @@ export default {
                     return;
                 }else{
                     that.trafficStatistics('020')
-                    var message = '人脸识别身份认证失败，请重试。若无法完成人脸识别身份认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成身份认证后报名活动。'
-                    MessageBox.confirm('', {
-                        message: message,
-                        title: '',
-                        showConfirmButton:true,
-                        confirmButtonClass:'confirmButton',
-                        confirmButtonText:'重试',
-                    }).then(action => {
-                        if(action == 'confirm'){
-                                //跳转财富师名片页面
-                            that.$router.push({
-                                path:'/faceMsg',
-                                name:'faceMsg',
-                                query:{
-                                returnUrl:returnUrl,
-                                }
-                            })
-                        }else{
-                             //跳转财富师名片页面
-                            that.$router.push({
-                                path:'/faceMsg',
-                                name:'faceMsg',
-                                query:{
-                                returnUrl:returnUrl,
-                                }
-                            })
-                        }
-                    }).catch(() => {
-                        
-                    })
+                   // if(!that.$route.query.idNo == false){
+                        var message = '人脸识别身份认证失败，请重试。'
+                        MessageBox.confirm('', {
+                            message: message,
+                            title: '',
+                            confirmButtonText:'重新识别',
+                            cancelButtonText:'取消'
+                        }).then(action => {
+                            if(action == 'confirm'){
+                                var idCardNo=that.$route.query.idNo
+                                var idCardName=decodeURIComponent(that.$route.query.name)
+                                var type = that.$route.query.tp
+                                var canshu=returnUrl+'?phone='+that.$route.query.phone+'&idNo='+idCardNo+'&name='+encodeURIComponent(that.$route.query.name)+'&tp='+type 
+                                that.getface(idCardNo,idCardName,canshu,type)
+                            }
+                        }).catch(err => {
+                            if (err == 'cancel') {     //取消的回调
+                                
+                            }
+                        })
+
+                    // }else{
+                    //     var message = '人脸识别身份认证失败，请重试。若无法完成人脸识别身份认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成身份认证后指定财富师。'
+                    //     MessageBox.confirm('', {
+                    //         message: message,
+                    //         title: '',
+                    //         showConfirmButton:true,
+                    //         confirmButtonClass:'confirmButton',
+                    //         confirmButtonText:'重试',
+                    //     }).then(action => {
+                    //         if(action == 'confirm'){
+                    //                 //跳转财富师名片页面
+                    //             that.$router.push({
+                    //                 path:'/faceMsg',
+                    //                 name:'faceMsg',
+                    //                 query:{
+                    //                 returnUrl:returnUrl,
+                    //                 }
+                    //             })
+                    //         }else{
+                    //             //跳转财富师名片页面
+                    //             that.$router.push({
+                    //                 path:'/faceMsg',
+                    //                 name:'faceMsg',
+                    //                 query:{
+                    //                 returnUrl:returnUrl,
+                    //                 }
+                    //             })
+                    //         }
+                    //     }).catch(() => {
+                            
+                    //     })
+                    // }
                     return;
                 }
                 // else if(retCode == '-3'){
@@ -171,8 +199,13 @@ export default {
                     var mployment=res.data.data.mployment;
                     that.$refs.pic.src='res.data.data.photo'//财富师头像
                      if(mployment==0){//有名片
-                         window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+that.cgh;
-                     }else{//没有名片
+                        var urlCan='{"userId":"'+that.cgh+'","sourceModule":"2","channel":"2"}'
+                        urlCan = Base64.encode(urlCan);	
+                        //打开我的财富师名片
+                        window.location.href=that.tgHost+'?paramCan='+urlCan
+                      //   window.location.href=that.tgHost+'?userId='+that.cgh+'&sourceModule=2&channel=2';
+                        // window.location.href=that.Host+'weixin-h5/index.html#/wealthCard?userId='+that.cgh+'&sourceModule=2&channel=2&mobile_switch='
+                        }else{//没有名片
                          that.$router.push({//跳入本地名片代理页面
                              path:'/wealthCardD',
                              name:'wealthCardD',
@@ -232,7 +265,12 @@ export default {
                          that.ifCardShow=false;
                         that.wname=res.data.userInfo.businessName;
                        // that.pming();
-                       window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+belongBusiness;
+                       var urlCan='{"userId":"'+belongBusiness+'","sourceModule":"2","channel":"2"}'
+                        urlCan = Base64.encode(urlCan);	
+                        //打开我的财富师名片
+                        window.location.href=that.tgHost+'?paramCan='+urlCan
+                      // window.location.href=that.tgHost+'?userId='+belongBusiness+'&sourceModule=2&channel=2';
+                      // window.location.href=that.Host+'weixin-h5/index.html#/wealthCard?userId='+belongBusiness+'&sourceModule=2&channel=2&mobile_switch='
                     }
                 }else if(retCode=='-1'){//系统异常
                     //MessageBox('提示', '系统异常');

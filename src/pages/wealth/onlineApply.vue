@@ -30,9 +30,6 @@
         <getcode ref='c1' v-on:childByValue="childByValue"></getcode>
 
 
-
-
-       
         <comfooter class="footers"></comfooter>
     </div>
 </template>
@@ -74,6 +71,11 @@ export default {
                 backUrl: location.href.split('?')[0]
             },
             serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxMemberInfo/applyWealther'),//接口
+            faceparam:{
+                bizId: '',
+                backUrl: location.href.split('?')[0],
+                phone:''
+            }
         }
     },
     components:{getcode,isValidMobile,MessageBox,isValidverifycode,comfooter},
@@ -128,11 +130,18 @@ export default {
             }
             that.$refs.c1.getCodeFn(that.messType,that.ipNo);
         },
-        face:function(){
+        face:function(from,memId,memName){
             var that=this;
-            var idCardNo=that.idNo;
-            var idCardName=that.realName;
-            var canshu='changeForm=onlineApply&msgCode='+that.msgCode+'&phone='+that.routerPhone+'&phone2='+that.ipNo+'&city='+that.routerCity+'&isFace=1';
+            if(from == '1'){//更换手机号之前的人脸
+                var idCardNo=that.idNo;
+                var idCardName=that.realName;
+                var canshu='changePhone?changeForm=onlineApply&msgCode='+that.msgCode+'&name='+encodeURIComponent(idCardName)+'&idNo='+idCardNo+'&phone='+that.routerPhone+'&phone2='+that.ipNo+'&city='+that.routerCity+'&isFace=1';
+            }else{
+                var idCardNo=memId;
+                var idCardName=memName;
+                var canshu='onlineApply?msgCode='+that.msgCode+'&name='+encodeURIComponent(idCardName)+'&idNo='+idCardNo+'&phone='+that.routerPhone+'&phone2='+that.ipNo+'&city='+that.routerCity+'&isFace=1';
+            }
+            //alert(canshu)
             Indicator.open();
             axios({
                 method:'get',
@@ -140,7 +149,7 @@ export default {
                 params:{
                     idCardNo:idCardNo,//身份证号
                     idCardName:idCardName,//身份证姓名
-                    returnUrl:that.Host+'weixin-h5/index.html#/changePhone?'+canshu,//人脸识别后返回的Url
+                    returnUrl:that.Host+'weixin-h5/index.html#/'+canshu,//人脸识别后返回的Url
                     backUrl: location.href.split('?')[0]
                 }
             })
@@ -159,8 +168,8 @@ export default {
                      return;
                  }else if(retCode == '-3'){
                     // MessageBox(' ','未获取到token');
-                     Toast({
-                        message: '当前网络不稳定，请重试',
+                    Toast({
+                        message: '姓名或身份证输入有误',
                         position: 'center',
                         duration: 3000
                     });
@@ -174,6 +183,86 @@ export default {
                  }
             })
         },
+        getfaceId:function(){
+            Indicator.open();
+            var that=this; 
+           // that.routerPhone = that.$route.query.phone;//本人已有的手机号
+            if(that.$route.query.phone==''||that.param.phone==undefined){
+            //that.ifSendMa=true;
+                if(that.$route.query.phone2!=''&&that.$route.query.phone2!=undefined){
+                    that.faceparam.phone = that.$route.query.phone2; //手输入的手机号
+                    that.param.phone = that.$route.query.phone2; //手输入的手机号
+                }
+            }else{
+                that.faceparam.phone = that.$route.query.phone
+                that.param.phone = that.$route.query.phone
+            }
+            that.param.province=that.routerCity;
+            that.param.msgCode=that.$route.query.msgCode;
+            axios({
+                method:'get',
+                url:'/wxservice/wxMemberInfo/getFaceResult',
+                params: that.faceparam
+            })
+            .then(function(res){
+                console.log(res.data);
+                var retCode=res.data.retCode;
+                Indicator.close();
+                if(retCode == '0'){
+                    that.trafficStatistics('019')
+                   MessageBox('    ','人脸识别成功');
+                    Toast({
+                        message: '人脸识别成功',  
+                        position: 'center',
+                        duration: 3000
+                    });
+                    that.getApply()//在线申请财富师
+                    //账号打通，人脸成功后手机号也绑定成功。
+                    // MessageBox('','操作成功').then(action => {
+                    //     if(action == 'confirm'){
+                    //         // if(that.bdfrom == 'wxser'){//自动回复直接打开
+                    //         //     WeixinJSBridge.call('closeWindow');//关闭当前页面
+                    //         // }
+                    //         that.$router.push({
+                    //             path:'/'+that.bdfrom,
+                    //             name:that.bdfrom,
+                    //             query:{
+                    //                 clickSource: that.$route.query.clickSource,
+                    //             }
+                    //         })
+                            
+                    //     }
+                    // }).catch(() => {
+                    //    //取消按钮
+                    // })
+                    return;
+                }
+                else{
+                    that.trafficStatistics('020')
+                    var message = '人脸识别身份认证失败，请重试。'
+                        MessageBox.confirm('', {
+                            message: message,
+                            title: '',
+                            confirmButtonText:'重新识别',
+                            cancelButtonText:'取消'
+                        }).then(action => {
+                            if(action == 'confirm'){
+                                var idCardNo=that.$route.query.idNo
+                                var idCardName=decodeURIComponent(that.$route.query.name)
+                                var type = that.$route.query.tp
+                                var canshu=that.Host+'weixin-h5/index.html#/onlineApply?msgCode='+that.$route.query.msgCode+'&name='+encodeURIComponent(idCardName)+'&idNo='+idCardNo+'&phone='+that.$route.query.phone+'&phone2='+that.$route.query.phon2+'&city='+that.$route.query.city+'&isFace=1'+'&tp='+type
+                                that.getface(idCardNo,idCardName,canshu,type)
+                            }
+                        }).catch(err => {
+                            if (err == 'cancel') {     //取消的回调
+                                
+                            }
+                        })
+                    return;
+                }
+            })
+            
+        },
         tishi_changeP:function(){
             var that=this;
              var message = '更换手机号需先通过人脸识别验证是本人操作'
@@ -183,7 +272,7 @@ export default {
                     confirmButtonText:'去验证',
                     }).then(action => {
                     if(action == 'confirm'){
-                        that.face();//去人脸
+                        that.face('1');//去人脸
                     }else{
                         
                     }
@@ -239,7 +328,7 @@ export default {
         onlineW:function(){
              var that=this;
             that.param.province=that.routerCity;
-            if(that.param.phone==''||that.param.phone==undefined||that.param.phone==null){
+           /* if(that.param.phone==''||that.param.phone==undefined||that.param.phone==null){
                  that.param.phone=that.ipNo;
             }
             
@@ -258,7 +347,27 @@ export default {
                 that.$refs.phWarn.style.display='none';
                // that.$refs.ph.style='border-bottom:0.5px solid #efefef!important';
                
+            }*/
+            if(that.param.phone == false){
+                if(that.ipNo==''||that.ipNo==undefined||that.param.phone==null){
+                    that.$refs.phWarn.style.display='block';
+                // that.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important'
+                    that.phWarn='请输入手机号';
+                    return;
+                    
+                }else if(!isValidMobile(that.ipNo)){
+                    that.$refs.phWarn.style.display='block';
+                // that.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important'
+                    that.phWarn='请输入正确的手机号';
+                    return;
+                }else{
+                    that.$refs.phWarn.style.display='none';
+                // that.$refs.ph.style='border-bottom:0.5px solid #efefef!important';
+                
+                }
             }
+            
+            
             if(that.ifSendMa){
                 if(that.msgCode==''){
                     that.$refs.codeWarn.style.display='block';
@@ -288,7 +397,14 @@ export default {
                 that.$refs.provWarn.style.display='none';
                 //this.$refs.prov.style='border-bottom:0.5px solid #efefef!important';
             }
-           
+           that.getApply()
+            
+        },
+        getApply:function(){
+            let that = this;
+            if(that.param.phone==''||that.param.phone==undefined||that.param.phone==null){
+                that.param.phone=that.ipNo;
+            }
             console.log(that.param);
              axios({
                     method:'get',
@@ -318,17 +434,31 @@ export default {
                         MessageBox('  ', '验证码不正确');
                     }else if(retCode==-3){
                         MessageBox('  ', '请发送验证码');
+                    }else if(retCode== -4){
+                        MessageBox({
+                            title: '',
+                            //message: '该手机号已绑定其他账号，无法重复绑定。如有疑问请咨询客服：400-819-9868',
+                            message: '该手机号在大唐财富平台已绑定其他账号，无法重复绑定。如有疑问可在大唐财富服务号(datangwealth)内留言咨询',
+                            confirmButtonText: '我知道了'
+                        });
                     }else if(retCode == 400){
                          var serbackUrl = that.Host+'wxservice/wxMemberInfo/applyWealther'
                          window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=onlineApply#wechat_redirect';
+                    }else if(retCode == -8){//实名用户电话同TG实名用户电话不一致
+                        MessageBox({
+                            title: '',
+                            //message: '该手机号已绑定其他账号，无法重复绑定。如有疑问请咨询客服：400-819-9868',
+                            message: '该手机号在大唐财富平台已绑定其他账号，无法重复绑定。如有疑问可在大唐财富服务号(datangwealth)内留言咨询。',
+                            confirmButtonText: '我知道了'
+                        });
                     }else{
-                        Toast({
-                            message: retMsg,
-                            position: 'center',
-                            duration: 3000
-                        }); 
-                    }
-                })
+                    Toast({
+                        message: retMsg,
+                        position: 'center',
+                        duration: 3000
+                    }); 
+                }
+            })
         },
         getData:function(){
             let that = this;
@@ -367,7 +497,7 @@ export default {
                     
                 }else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=toSignNewCust#wechat_redirect';
+                window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=onlineApply#wechat_redirect';
                 }else{
                    // MessageBox('  ',retMsg);
                     Toast({
@@ -381,21 +511,28 @@ export default {
         
     },
     created:function(){
-        this.GasyncSDKConifg()
+       this.GasyncSDKConifg()
+        // var bizId=decodeURIComponent(getCookie("bizId"));
+        // this.faceparam.bizId = bizId;
+        //  if(!this.$route.query.faceResult == false||bizId==null){
+        //     this.getfaceId();
+        //  }else{
+        //     this.getData()//获取客户信息
+        //  }
       //  MessageBox('在线申请财富师','请输入正确的验证码');
       var that=this;
       that.getData();
       if(that.$route.query.msgCode!=undefined){
            that.msgCode = that.$route.query.msgCode;
       }
-     
         that.routerPhone = that.$route.query.phone;//本人已有的手机号
         if(that.routerPhone==''||that.param.phone==undefined){
            that.ifSendMa=true;
-             if(that.$route.query.phone2!=''&&that.$route.query.phone2!=undefined){
+             if(!that.$route.query.phone2 == false){
                 that.ipNo = that.$route.query.phone2; //手输入的手机号
             }
-        }/*else{
+        }
+        /*else{
            
              that.ifSendMa=false;
             that.param.phone=that.routerPhone;//本人的手机号
@@ -411,7 +548,7 @@ export default {
           var routerCity = that.$route.query.city;
          
             if(routerCity!=''&&routerCity!=undefined&&routerCity!='undefined'){
-                alert(that.$route.query.city);
+               // alert(that.$route.query.city);
                that.routerCity=decodeURIComponent(routerCity);
                // this.$route.query.city='';
                 return;

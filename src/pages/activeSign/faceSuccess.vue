@@ -36,7 +36,8 @@ export default {
             failShow: false,
             successShow: false,
             faceparam:{
-                bizId: ''
+                bizId: '',
+                phone:''
             },
             loadObj:{
                 text: '加载中...',
@@ -52,6 +53,7 @@ export default {
     },
     methods: {
         getfaceId:function(){
+            this.faceparam.phone = this.$route.query.phone
             var that=this;
             axios({
                 method:'get',

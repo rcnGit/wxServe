@@ -2,7 +2,7 @@
   <div id="app" h='123'>
     <!-- <mt-button @click.native="handleClick">按钮</mt-button> -->
      <!-- <router-view v-wechat-title='$route.meta.title'></router-view>  -->
-    <keep-alive include="active">
+    <keep-alive include="active,postInfor">
         <router-view v-if="$route.meta.keepAlive" v-wechat-title='$route.meta.title'></router-view>
     </keep-alive>
     <router-view v-if="!$route.meta.keepAlive" v-wechat-title='$route.meta.title'></router-view> 
@@ -12,6 +12,7 @@
 <script>
 import wx from 'weixin-js-sdk';
 import axios from 'axios';
+import { getCookie,setCookie } from '@/common/js/cookie.js'
 // import comfooter from './components/footer';
 export default{
  name: 'App',
@@ -23,7 +24,7 @@ export default{
     }
   },
  created () {
-    // this.changeURL()
+     this.changeURL()
     //this.asyncSDKConifg(this.meatTitle)
    //console.log(location.href.split('?')[0]+'?ifcard=1')
   },
@@ -32,7 +33,7 @@ export default{
     handleClick: function() {
         this.$toast('Hello world!');
     },
-    changeURL:function(){
+    changeURL:function(){//去掉微信分享的加的参数
       if (/from=[^&$?]{1,}(&|$)/.test(location.search) || /isappinstalled=[^&$?]{1,}(&|$)/.test(location.search)) {
         var newSearch = location.search.replace(/from=[^&$?]{1,}(&|$)/, '').replace(/isappinstalled=[^&$?]{1,}(&|$)/, '').replace(/&$|\?$/, '');
         var newUrl = location.origin + location.pathname + newSearch + location.hash;

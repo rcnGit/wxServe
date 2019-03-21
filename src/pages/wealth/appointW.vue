@@ -57,7 +57,7 @@
                <img v-bind:src='srcImg' class='wimg' v-if="headimgShow"/>
                <img src='./img/w.png' class='wimg' v-else/>
                <p class="dtname">{{dtName}}</p>
-               <p style="font-size:0.374rem;color:#333;">是否确定他（她）为我的专属财富师</p>
+               <p style="font-size:0.374rem;color:#333;">是否确定{{caiName}}为我的专属财富师</p>
                <div style='margin-top:15%;'>
                     <mt-button type="danger" size="large" class=''@click='zhiding()' style='width:5.49rem!important;margin-top:0px!important;'>确定</mt-button>
                 </div>
@@ -80,12 +80,13 @@
     </div>
 </template>
 <script>
+let Base64 = require('js-base64').Base64;
 import { Indicator } from 'mint-ui';
 import { Popup } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
 import { Toast } from 'mint-ui';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
-import { isValidName } from '@/common/js/extends.js';//引入mint-ui的button组件文件包
+import { isValidName } from '@/common/js/extends.js';//引入正则
 import {handleClipboard } from '@/common/js/clipboard.js'//vue 复制功能
 import clip from '@/common/js/clipboard.js'//vue 复制功能
 import { getCookie,setCookie } from '@/common/js/cookie.js'
@@ -96,6 +97,7 @@ export default {
     name:'appointW',
     data:function(){
         return{
+            caiName:'他（她）',
             wName:'',
             gh:'',
             headimgShow: false,
@@ -120,25 +122,60 @@ export default {
             },
             faceparam:{
                 bizId: '',
-                backUrl: location.href.split('?')[0]
+                backUrl: location.href.split('?')[0],
+                phone:''
+            },
+            loadObj:{
+                text: '加载中...',
+                spinnerType: 'triple-bounce'
             },
             serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxservice?opName=getUserInfo'),//接口
-            paramurl: location.href.split('?')[0]
+            paramurl: location.href.split('?')[0],
+            source: '',
+            tguserId: '',
+            productCode: ''
 
         }
         
     },
     component:{Button,axios,Popup,MessageBox,comfooter,Toast},
     created:function(){
+        Indicator.open(this.loadObj);
         this.GasyncSDKConifg()
         var bizId=decodeURIComponent(getCookie("bizId"));
         this.faceparam.bizId = bizId
         if(!this.$route.query.faceResult == false){
            this.getfaceId()
         }else{
-            this.getuserName();//获取用户姓名
+            if(!this.$route.query.actId==false){ //重定向后 
+                var wxstr = this.$route.query.actId;
+            // var wxstr =decodeURIComponent(that.$route.query.actId); 
+                this.tguserId=wxstr.split(",")[0];
+                this.productCode=wxstr.split(",")[1];
+                this.source=wxstr.split(",")[2];
+                this.getuserName();//获取用户姓名
+            }else{
+                this.tguserId=this.$route.query.userId
+                this.productCode=this.$route.query.productCode
+                this.source=this.$route.query.source
+                this.getuserName();//获取用户姓名
+            } 
+        } 
+    },
+    mounted:function(){
+        Indicator.open(this.loadObj);
+        //指定财富师确定页面
+        var that=this;
+       // that.popupVisible=false;
+        if(!that.$route.query.dtNo == false){
+           // that.$refs.pop_wealth.style.display='block';
+            that.param.mobile=that.$route.query.mobile
+            that.param.dtNo=that.$route.query.dtNo
+            that.param.dtName=decodeURIComponent(that.$route.query.dtName)
+            that.caiName = that.param.dtName
+           // that.popupVisible=true;
+           that.valiW();
         }
-        
     },
     methods:{
         handleCopy(text, event) {
@@ -151,6 +188,8 @@ export default {
            this.handleCopy(text,event); 
         },
         getfaceId:function(){
+            Indicator.open();
+            this.faceparam.phone = this.$route.query.phone
             var that=this;
             axios({
                 method:'get',
@@ -158,8 +197,10 @@ export default {
                 params: that.faceparam
             })
             .then(function(res){
+                Indicator.close();
                 var retCode=res.data.retCode;
-                var returnUrl = that.$route.query.returnUrl;
+               // var returnUrl = that.$route.query.returnUrl;
+                var returnUrl = that.Host+'weixin-h5/index.html#/appointW'
                 //修改原有参数        
                 that.$router.push({
                     query:merge(that.$route.query,{'faceResult':''})
@@ -194,21 +235,47 @@ export default {
                     return;
                 }else{
                     that.trafficStatistics('020')
-                    var message = '人脸识别身份认证失败，请重试。若无法完成人脸识别身份认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成身份认证后报名活动。'
-                    MessageBox('', message).then(action => {
-                        if(action == 'confirm'){
-                                //跳转财富师名片页面
-                            that.$router.push({
-                                path:'/faceMsg',
-                                name:'faceMsg',
-                                query:{
-                                returnUrl:returnUrl,
-                                }
-                            })
-                        }
-                    }).catch(() => {
-                        
-                    })
+                   // if(!that.$route.query.idNo == false){
+                        var message = '人脸识别身份认证失败，请重试。'
+                        MessageBox.confirm('', {
+                            message: message,
+                            title: '',
+                            confirmButtonText:'重新识别',
+                            cancelButtonText:'取消'
+                        }).then(action => {
+                            if(action == 'confirm'){
+                                var idCardNo=that.$route.query.idNo
+                                var idCardName=decodeURIComponent(that.$route.query.name)
+                                var type = that.$route.query.tp
+                                var canshu=returnUrl+'?phone='+that.$route.query.phone+'&idNo='+idCardNo+'&name='+encodeURIComponent(that.$route.query.name)+'&tp='+type 
+                                that.getface(idCardNo,idCardName,canshu,type)
+                            }
+                        }).catch(err => {
+                            if (err == 'cancel') {     //取消的回调
+                                that.$router.push({
+                                    path:'/wchoose',
+                                    name:'wchoose'
+                                })
+                            }
+                        })
+
+                    // }else{
+                    //     var message = '人脸识别身份认证失败，请重试。若无法完成人脸识别身份认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成身份认证后指定财富师。'
+                    //     MessageBox('', message).then(action => {
+                    //         if(action == 'confirm'){
+                    //                 //跳转财富师名片页面
+                    //             that.$router.push({
+                    //                 path:'/faceMsg',
+                    //                 name:'faceMsg',
+                    //                 query:{
+                    //                 returnUrl:returnUrl,
+                    //                 }
+                    //             })
+                    //         }
+                    //     }).catch(() => {
+                            
+                    //     })
+                    // }
                     return;
                 }
             //     else if(retCode == '-3'){
@@ -263,6 +330,7 @@ export default {
             })
         },
         getuserName:function(){
+            Indicator.open();
             var that=this;
             axios({
                 method:'get',
@@ -272,6 +340,9 @@ export default {
                 }
             })
             .then(function(res){
+                if(!that.$route.query.dtNo == true){
+                    Indicator.close();
+                }
                 console.log(res.data);
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg;
@@ -280,13 +351,17 @@ export default {
                     var userInfo=res.data.userInfo;
                     that.msg2=userInfo.realName;
                     if(userInfo.belongBusiness!=''&&userInfo.belongBusiness!=null&&userInfo.belongBusiness!=undefined){
-                        //打开财富师页面
-                         window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+userInfo.belongBusiness;
+                        var urlCan='{"userId":"'+userInfo.belongBusiness+'","sourceModule":"2","channel":"2"}'
+                        urlCan = Base64.encode(urlCan);	
+                        //打开我的财富师名片
+                        window.location.href=that.tgHost+'?paramCan='+urlCan
+                       //  window.location.href=that.tgHost+'?userId='+userInfo.belongBusiness;
+                      //  window.location.href=that.Host+'weixin-h5/index.html#/wealthCard?userId='+userInfo.belongBusiness+'&sourceModule=2&channel=2'
                     }
                 }
                 else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                  window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=appointW_wxser#wechat_redirect';
+                  window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=appointW_'+that.$route.query.userId+','+that.$route.query.productCode+','+that.$route.query.source+'#wechat_redirect';
                 }
                 else{
                   // MessageBox('提示',retMsg);
@@ -421,7 +496,7 @@ export default {
             params:that.param,
         })
         .then(function(res) {//成功之后
-            Indicator.close();
+            //Indicator.close();
               var retCode=res.data.retCode;
               var retMsg=res.data.retMsg;
                console.log(res.data);
@@ -436,7 +511,7 @@ export default {
                 }else{
                     that.headimgShow = false
                 }
-                that.dtName=data.dtName;
+                that.dtName=data.dtName;//businessName
                 that.popupVisible=true;
                 that.param.mobile=data.mobile;
               }else if(retCode==-4){//已绑定线下财富师,并且展示绑定的财富师的信息
@@ -496,18 +571,30 @@ export default {
                 var data=res.data.data;
                 var wxfrom =decodeURIComponent(that.$route.query.actId);
                 if(retCode==0){//指定成功    跳转财富师名片页面
-                   MessageBox('', '指定财富师成功').then(action => {
-                  if(action == 'confirm'){
-                    if(wxfrom == 'wxser' || that.$route.query.appointForm == 'wxser'){
-                        WeixinJSBridge.call('closeWindow');
+                    if(!that.$route.query.dtNo == false){
+                        that.trafficStatistics('027')//自定义埋点从名片指定的财富师
                     }
-                        //跳转财富师名片页面
-                        window.location.href='https://interface.tdyhfund.com/tcapi/HTML5/html/shared_card.html?userId='+that.param.dtNo;
-                    
-                  }else{//取消
-                    console.log('查看订单')
-                  }
-              });
+                   MessageBox('', '指定财富师成功').then(action => {
+                      if(action == 'confirm'){
+                        if(wxfrom == 'wxser' || that.$route.query.appointForm == 'wxser'){
+                            WeixinJSBridge.call('closeWindow');
+                        }else if(that.source == '2'){
+                            //跳到增值服务兑换信息页
+                            //alert('userId='+that.tguserId+'&productCode='+that.productCode)
+                            window.location.href=that.tgHostSer+'/exchange_infor.html?userId='+that.tguserId+'&productCode='+that.productCode+'&source=2'
+                        }else{
+                            var urlCan='{"userId":"'+that.param.dtNo+'","sourceModule":"2","channel":"2"}'
+                            urlCan = Base64.encode(urlCan);	
+                            //打开我的财富师名片
+                            window.location.href=that.tgHost+'?paramCan='+urlCan
+                            //window.location.href=that.tgHost+'?userId='+that.param.dtNo+'&sourceModule=2&channel=2';
+                           // window.location.href=that.Host+'weixin-h5/index.html#/wealthCard?userId='+that.param.dtNo+'&sourceModule=2&channel=2&mobile_switch='
+                        }
+                        
+                      }else{//取消
+                        console.log('查看订单')
+                      }
+                  });
                 }else if(retCode==-1){
                    // MessageBox('提示', '系统异常');
                     Toast({
@@ -606,7 +693,6 @@ export default {
     top:0;
     width:100%;
     height:100%;
-    z-index:10;
 }
 .mint-popup{
     width:100%;
@@ -670,6 +756,8 @@ export default {
 .wimg{
     width:2.67rem;
     margin:0.987rem auto 0.53rem;
+    height: 2.67rem;   
+    border-radius: 100%;
 }
 .xiazai{
     color:#4a90e2;

@@ -1,11 +1,21 @@
 import wx from 'weixin-js-sdk';
 import axios from 'axios';
+import { getCookie,setCookie } from '@/common/js/cookie.js'
+import { MessageBox } from 'mint-ui';//提示框
+import { Indicator } from 'mint-ui';
+import { Toast } from 'mint-ui';
+
 export default {
     install(Vue, options) {
         Vue.prototype.Host='https://interface.tdyhfund.com/'
-        //Vue.prototype.Host="https://weixin-test-interface.tdyhfund.com/"
-        Vue.prototype.APPID='wx42b6456eeafbe956'
-       // Vue.prototype.APPID='wx1f686b130ea97432'
+       // Vue.prototype.Host="http://weixin-test-interface.tdyhfund.com/"
+        Vue.prototype.APPID='wx42b6456eeafbe956'  //生产
+      //  Vue.prototype.APPID='wx1f686b130ea97432'
+      //  Vue.prototype.tgHost="http://172.16.8.82:8888/dthtml/HTML5/DTCFS_V4.2.2_190110/html/shared_card.html" 
+       // Vue.prototype.tgHost="https://test-interface.tdyhfund.com:8443/dthtml/HTML5/DTCFS/html/shared_card.html"
+        Vue.prototype.tgHost='https://interface.tdyhfund.com/dthtml/HTML5/DTCFS/html/shared_card.html'   //糖罐app财富师名片页
+       //Vue.prototype.tgHostSer = 'https://test-interface.tdyhfund.com:8443/dthtml/HTML5/DTCF/html/valueAddedServices'  //糖罐app增值服务页
+       Vue.prototype.tgHostSer = 'https://interface.tdyhfund.com/dthtml/HTML5/DTCF/html/valueAddedServices'  //糖罐app增值服务页
         Vue.prototype.formatDuring = function (mss) {//时间格式化
             var days = parseInt(mss / (1000 * 60 * 60 * 24));
             var hours = parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -87,7 +97,6 @@ export default {
                 console.log(res)
             });
         }
-      
 
         Vue.prototype.trafficStatistics = function (code) {
             axios({
@@ -102,6 +111,105 @@ export default {
             })//
 
         }
-        
-}
+        Vue.prototype.getface = function (idNo,name,canshu,tp) {
+            var that=this;
+           // alert(idNo)
+           // alert(name+'.....'+tp)
+           //alert(canshu)
+            Indicator.open();
+            axios({
+                method:'get',
+                url:'/wxservice/wxMemberInfo/getFaceToken',//获取face++的token
+                params:{
+                    idCardNo:idNo,//身份证号
+                    idCardName:name,//身份证姓名
+                    returnUrl:canshu+'&faceResult=1',//人脸识别后返回的Url
+                    backUrl: location.href.split('?')[0],
+                    type: tp
+                }
+            })
+            .then(function(res) {//成功之后
+                Indicator.close();
+                console.log(res.data);
+                var retCode=res.data.retCode;
+               // alert(retCode)
+                 if(retCode == 400){
+                     var serbackUrl = that.Host+'wxservice/wxMemberInfo/getFaceToken'
+                     window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=faceMsg_'+that.actId+','+that.ghT+','+that.actName+','+that.$route.query.ifCard+'#wechat_redirect';
+                 }else if(retCode == '-2'){
+                     MessageBox(' ','身份证不合法');
+                     return;
+                 }else if(retCode == '-1'){
+                    //MessageBox(' ','系统异常');
+                     Toast({
+                        message: '系统异常',
+                        position: 'center',
+                        duration: 3000
+                    });
+                     return;
+                 }else if(retCode == '-3'){
+                    // MessageBox(' ','未获取到token');
+                    Toast({
+                        message: '姓名或身份证输入有误',
+                        position: 'center',
+                        duration: 3000
+                    });
+                     return;
+                 }else{
+                   //  that.token=res.data.data.token;
+                     var bizId=res.data.data.bizId;
+                     setCookie('bizId',bizId);
+                     window.location.href='https://api.megvii.com/faceid/lite/do?token='+res.data.data.token;
+                
+                 }
+            })
+        }
+
+        Vue.prototype.getUrlParam = function (name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+            if (r != null) return unescape(r[2]); return null; //返回参数值
+        }
+        Vue.prototype.getCookiecode = function () { //cookie存储登录状态
+            //var userId = parseInt(Math.random()*100000000);
+             if( !getCookie("checkkey") == false){
+                // alert('已有code')
+
+             }else{
+                this.getCode()
+            }
+        }
+        Vue.prototype.getCode = function () { // 非静默授权，第一次有弹框
+            var code = this.$route.query.code // 截取路径中的code，如果没有就去微信授权，如果已经获取到了就直接传code给后台获取openId
+            //var code = this.getUrlParam('code')
+            const local = window.location.href
+            if (code == null || code === '') {
+                //window.location.href = 'http://weixin-test-interface.tdyhfund.com/weixin-h5/index.html#/active?code=efkmvom'
+                window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + this.APPID + '&redirect_uri=' + encodeURIComponent(local) + '&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect'
+            } else {
+               // alert(code)
+                this.getOpenId(code) //把code传给后台获取用户信息
+            }
+        },
+        Vue.prototype.getOpenId = function (ACCode) { // 通过code获取 openId等用户信息
+           // alert('getopenid')
+            //alert(code)
+                axios({
+                    method:'get',
+                    url:'/wxservice/wxexternal/authorizedLogin',
+                    params: {
+                        code:ACCode
+                    }
+                })
+                .then(function(res){
+                    console.log(res.data)
+                    var retCode=res.data.retCode;
+                    if(retCode == '0'){
+                        //setCookie('checkkey',res.data.data.checkkey)
+                    }else{
+                        
+                    }
+                })
+        }
+    }
 }

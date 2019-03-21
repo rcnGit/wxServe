@@ -29,21 +29,16 @@ import SecuritiesAsset from '@/pages/property/SecuritiesAsset'//资管类
 import cityList from '@/pages/active/cityList'
 import faceSuccess from '@/pages/activeSign/faceSuccess'//身份认证成功
 import postDetail from '@/pages/PostInfor/postDetail' //投后信息详情
+import addServe from '@/pages/addServe/addServe' //增值服务
+import wealthCard from '@/pages/wealth/wealthCard'//财富师名片
+import designatedW from '@/pages/wealth/designatedW'//指定财富师空白页
 
 Vue.use(Router)
 
 export default new Router({
- //mode: 'history',
+  //base: '/weixin-h5/',
+ // mode: 'history',
   routes: [
-    {
-      path: '/provinceList',
-      name: 'provinceList',
-      meta: {
-        title: '省份选择',
-        keepAlive: false // 不需要缓存
-      },
-      component: provinceList//使用这个组件
-    },
     {
       path: '/active',
       name: 'active',
@@ -52,6 +47,15 @@ export default new Router({
         keepAlive: true // 首次不需要被缓存
       },
       component: active
+    },
+    {
+      path: '/provinceList',
+      name: 'provinceList',
+      meta: {
+        title: '省份选择',
+        keepAlive: false // 不需要缓存
+      },
+      component: provinceList//使用这个组件
     },
     {
       path: '/activeDetail',
@@ -145,8 +149,8 @@ export default new Router({
       path: '/PostInformation',
       name: 'postInfor',
       meta: {
-        title: '投后消息',
-        keepAlive: false // 不需要缓存
+        title: '信息披露',
+        keepAlive: true // 不需要缓存
       },
       component: postInfor//使用这个组件
     },
@@ -154,7 +158,7 @@ export default new Router({
       path: '/postDetail',
       name: 'postDetail',
       meta: {
-        title: '投后消息详情',
+        title: '信息披露详情',
         keepAlive: false // 不需要缓存
       },
       component: postDetail//使用这个组件
@@ -274,8 +278,34 @@ export default new Router({
         title: '身份认证',
         keepAlive: false // 不需要缓存
       },
-      component: faceSuccess//使用这个组件---客户福利个人报名
-    }
+      component: faceSuccess//使用这个组件
+    },
+    {
+      path: '/addServe',
+      name: 'addServe',
+      meta: {
+        title: '增值服务',
+        keepAlive: false // 不需要缓存
+      },
+      component: addServe//使用这个组件
+    },
+    {
+      path: '/wealthCard',
+      name: 'wealthCard',
+      meta: {
+        title: '',
+        keepAlive: false // 不需要缓存
+      },
+      component: wealthCard//使用这个组件
+    },{
+      path: '/designatedW',
+      name: 'designatedW',
+      meta: {
+        title: '',
+        keepAlive: false // 不需要缓存
+      },
+      component: designatedW//使用这个组件
+    },
   ],
   scrollBehavior (to, from, savedPosition) {
     if (savedPosition) {

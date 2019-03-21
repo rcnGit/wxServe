@@ -55,7 +55,7 @@ module.exports = {
     },
 
     // Various Dev Server settings 各种DEV服务器设置
-    host: '192.168.132.187', // can be overwritten by process.env.HOST http://localhost
+    host: '192.168.135.41', // can be overwritten by process.env.HOST http://localhost
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,//运行后项目是否自动启动
     errorOverlay: true,
@@ -92,7 +92,7 @@ module.exports = {
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',//静态资源文件
     assetsPublicPath: './',//发布路径
-
+     //assetsPublicPath: '/weixin-h5/',
     /**
      * Source Maps
      */
