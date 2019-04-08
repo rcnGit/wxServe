@@ -38,8 +38,8 @@ export default{
         var newSearch = location.search.replace(/from=[^&$?]{1,}(&|$)/, '').replace(/isappinstalled=[^&$?]{1,}(&|$)/, '').replace(/&$|\?$/, '');
         var newUrl = location.origin + location.pathname + newSearch + location.hash;
         location.replace(newUrl);
-    }
-},
+      }
+    },
   /**
      * 获取config
      */

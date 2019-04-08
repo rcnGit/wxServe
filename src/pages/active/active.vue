@@ -2,8 +2,10 @@
     <div class='active'>
         <div class='act_head'>
           <div class="act_h_left">
-              <router-link to='/cityList'><span>{{pcity}}</span><img src='./img/upBtn_img@2x.png'/>
-              </router-link>
+              <!-- <router-link to='/cityList'><span>{{pcity}}</span><img src='./img/upBtn_img@2x.png'/>
+              </router-link> -->
+              <div @click="toCity"><span>{{pcity}}</span><img src='./img/upBtn_img@2x.png'/>
+              </div>
           </div>
           <div class="act_h_right">
             <input placeholder="请输入活动名称关键字" class='searchInput'ref='name'/>
@@ -95,6 +97,15 @@ export default {
       time=time.substr(0,10);
       return time;
     },
+    toCity:function(){
+      this.$router.push({
+          path:'/cityList',
+          name:'cityList',
+          query:{
+            comefrom:this.param.comefrom,//是否糖罐进入
+          }
+        })
+    },
     en_details:function(e){
        var that=this;
      // console.log(event.target);
@@ -107,7 +118,7 @@ export default {
           query:{
             actId: oaActId,
             actName : ActName,
-            comefrom:that.param.comefrom,//是否糖罐进入
+            comefrom:that.$route.query.comefrom,//是否糖罐进入
           }
         })
         var huoId = oaActId;
@@ -246,12 +257,13 @@ export default {
 //       }
   },
    mounted:function(){
+     
       let that = this; //这个是钩子函数mounted
       Indicator.open(that.loadObj);
-     if(that.$route.query.comefrom=='tangguan'||that.$route.params.comefrom=='tangguan'){
-        that.param.comefrom ='tangguan';
+    //  if(that.$route.query.comefrom=='tangguan'||that.$route.params.comefrom=='tangguan'){
+    //     that.param.comefrom ='tangguan';
         
-    }
+    // }
      var routerCity = that.$route.query.city;
      var routerCode = that.$route.query.code;
      if(!that.$route.query.city == false){
@@ -275,6 +287,9 @@ export default {
       })
    },
    created(){
+     if(this.$route.query.comefrom=='tangguan'||this.$route.params.comefrom=='tangguan'){
+        this.param.comefrom ='tangguan'; 
+    }
      this.GasyncSDKConifg()
     //  if(that.$route.path == '/active'){ //获取当前页面路由
     //  window.onscroll = function(){

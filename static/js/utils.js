@@ -7,15 +7,15 @@ import { Toast } from 'mint-ui';
 
 export default {
     install(Vue, options) {
-        Vue.prototype.Host='https://interface.tdyhfund.com/'
-       // Vue.prototype.Host="http://weixin-test-interface.tdyhfund.com/"
-        Vue.prototype.APPID='wx42b6456eeafbe956'  //生产
-      //  Vue.prototype.APPID='wx1f686b130ea97432'
+        //Vue.prototype.Host='https://interface.tdyhfund.com/'
+        Vue.prototype.Host="http://weixin-test-interface.tdyhfund.com/"
+       // Vue.prototype.APPID='wx42b6456eeafbe956'  //生产
+       Vue.prototype.APPID='wx1f686b130ea97432'
       //  Vue.prototype.tgHost="http://172.16.8.82:8888/dthtml/HTML5/DTCFS_V4.2.2_190110/html/shared_card.html" 
-       // Vue.prototype.tgHost="https://test-interface.tdyhfund.com:8443/dthtml/HTML5/DTCFS/html/shared_card.html"
-        Vue.prototype.tgHost='https://interface.tdyhfund.com/dthtml/HTML5/DTCFS/html/shared_card.html'   //糖罐app财富师名片页
-       //Vue.prototype.tgHostSer = 'https://test-interface.tdyhfund.com:8443/dthtml/HTML5/DTCF/html/valueAddedServices'  //糖罐app增值服务页
-       Vue.prototype.tgHostSer = 'https://interface.tdyhfund.com/dthtml/HTML5/DTCF/html/valueAddedServices'  //糖罐app增值服务页
+        Vue.prototype.tgHost="https://test-interface.tdyhfund.com:8443/dthtml/HTML5/DTCFS/html/shared_card.html"
+        //Vue.prototype.tgHost='https://interface.tdyhfund.com/dthtml/HTML5/DTCFS/html/shared_card.html'   //糖罐app财富师名片页
+       Vue.prototype.tgHostSer = 'https://test-interface.tdyhfund.com:8443/dthtml/HTML5/DTCF/html/valueAddedServices'  //糖罐app增值服务页
+       //Vue.prototype.tgHostSer = 'https://interface.tdyhfund.com/dthtml/HTML5/DTCF/html/valueAddedServices'  //糖罐app增值服务页
         Vue.prototype.formatDuring = function (mss) {//时间格式化
             var days = parseInt(mss / (1000 * 60 * 60 * 24));
             var hours = parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -47,9 +47,14 @@ export default {
 
         }//
        
-        Vue.prototype.GasyncSDKConifg = function () {
+        Vue.prototype.GasyncSDKConifg = function (paramUrl) {
             const meatTitle = this.$route.meta.title
            const backUrl = encodeURIComponent(location.href.split('#')[0])
+           if(!paramUrl == false){
+                var sharelink = location.href.split('?')[0]+'?source=wx'
+           }else{
+                var sharelink = location.href.split('?')[0]
+           }
             axios.get('/wxservice/core/getJSSDKConfigure.mm?pageUrl='+backUrl)
                 .then(function (res) {
                    // console.log(res)
@@ -67,8 +72,8 @@ export default {
                 wx.onMenuShareAppMessage({ // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用 
                     title: '大唐财富'+meatTitle, // 分享标题
                     desc: '中国私人银行服务的领航者，诚邀您开启财富之旅', // 分享描述
-                    link:location.href.split('?')[0], // 分享链接
-                    imgUrl: 'http://file0.datangwealth.com/g1/M00/0F/56/rBAeX1vYo1-AYmqbAAAIn3unB5w639.jpg?filename=share_img.jpg', // 分享图标
+                    link: sharelink, // 分享链接
+                    imgUrl: 'http://file0.datangwealth.com/g1/M00/16/50/rBAeX1ybKCiAEKkxAADvNDguF4c858.png?filename=share.png', // 分享图标
                     type: '', // 分享类型,music、video或link，不填默认为link
                     dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
                     success: function() {
@@ -80,8 +85,8 @@ export default {
                     });
                     wx.onMenuShareTimeline({ //分享朋友圈
                     title: '大唐财富'+meatTitle, // 分享标题
-                    link: location.href.split('?')[0],
-                    imgUrl: 'http://file0.datangwealth.com/g1/M00/0F/56/rBAeX1vYo1-AYmqbAAAIn3unB5w639.jpg?filename=share_img.jpg', // 分享图标
+                    link: sharelink,
+                    imgUrl: 'http://file0.datangwealth.com/g1/M00/16/50/rBAeX1ybKCiAEKkxAADvNDguF4c858.png?filename=share.png', // 分享图标
                     success: function() {
                         // 用户确认分享后执行的回调函数
                     },

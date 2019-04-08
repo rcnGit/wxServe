@@ -289,7 +289,6 @@ export default {
                     return;
                 }else{
                     that.trafficStatistics('020')
-                   // alert(11111)
                    // if(!that.$route.query.idNo == false){
                         var message = '人脸识别身份认证失败，请重试。'
                         MessageBox.confirm('', {
@@ -680,7 +679,7 @@ export default {
                        // link: location.href.split('?')[0]+'?ifCard=1&ghT='+that.belongBusiness+'&actId='+that.actId+'&actName='+that.actName, // 分享链接
                        // link:'https://interface.tdyhfund.com/weixin-h5/' + 'static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href+'&ifCard=1'),
                         link: that.shareLink,
-                       imgUrl: 'http://file0.datangwealth.com/g1/M00/0F/56/rBAeX1vYo1-AYmqbAAAIn3unB5w639.jpg?filename=share_img.jpg', // 分享图标
+                       imgUrl: 'http://file0.datangwealth.com/g1/M00/16/50/rBAeX1ybKCiAEKkxAADvNDguF4c858.png?filename=share.png', // 分享图标
                         type: '', // 分享类型,music、video或link，不填默认为link
                         dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
                         success: function() {
@@ -697,7 +696,7 @@ export default {
                             //link: location.href.split('?')[0]+'?ifCard=1&ghT='+that.belongBusiness+'&actId='+that.actId+'&actName='+that.actName,
                             //link:'https://interface.tdyhfund.com/weixin-h5/' + 'static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href+'&ifCard=1'),
                             link: that.shareLink,
-                            imgUrl: 'http://file0.datangwealth.com/g1/M00/0F/56/rBAeX1vYo1-AYmqbAAAIn3unB5w639.jpg?filename=share_img.jpg', // 分享图标
+                            imgUrl: 'http://file0.datangwealth.com/g1/M00/16/50/rBAeX1ybKCiAEKkxAADvNDguF4c858.png?filename=share.png', // 分享图标
                             success: function() {
                                 // 用户确认分享后执行的回调函数
                             },

@@ -32,6 +32,12 @@ import postDetail from '@/pages/PostInfor/postDetail' //投后信息详情
 import addServe from '@/pages/addServe/addServe' //增值服务
 import wealthCard from '@/pages/wealth/wealthCard'//财富师名片
 import designatedW from '@/pages/wealth/designatedW'//指定财富师空白页
+import severStar from '@/pages/severStar/severStar'//服务之星活动
+import question from '@/pages/severStar/question'//服务之星活动
+import shareCard from '@/pages/severStar/shareCard'//财富师名片
+import severIntro from '@/pages/severStar/severIntro'//服务之星介绍
+import severAppoint from '@/pages/severStar/severAppoint'//预约财富服务
+import appSuccess from '@/pages/severStar/appSuccess'//预约成功
 
 Vue.use(Router)
 
@@ -305,6 +311,62 @@ export default new Router({
         keepAlive: false // 不需要缓存
       },
       component: designatedW//使用这个组件
+    },
+    {
+      path: '/severStar',
+      name: 'severStar',
+      meta: {
+        title: '服务之星',
+        keepAlive: false // 不需要缓存
+      },
+      component: severStar//使用这个组件
+    },
+    {
+      path: '/question',
+      name: 'question',
+      meta: {
+        title: '点亮服务之星',
+        keepAlive: false // 不需要缓存
+      },
+      component: question//使用这个组件
+    },
+    {
+      path: '/shareCard',
+      name: 'shareCard',
+      meta: {
+        title: '',
+        keepAlive: false // 不需要缓存
+      },
+      component: shareCard//使用这个组件
+    },
+    {
+      path: '/severIntro',
+      name: 'severIntro',
+      meta: {
+        title: '服务之星介绍',
+        keepAlive: false // 不需要缓存
+      },
+      component: severIntro//使用这个组件
+    },
+    ,
+    {
+      path: '/severAppoint',
+      name: 'severAppoint',
+      meta: {
+        title: '预约财富服务',
+        keepAlive: false // 不需要缓存
+      },
+      component: severAppoint//使用这个组件
+    },
+    ,
+    {
+      path: '/appSuccess',
+      name: 'appSuccess',
+      meta: {
+        title: '预约成功',
+        keepAlive: false // 不需要缓存
+      },
+      component: appSuccess//使用这个组件
     },
   ],
   scrollBehavior (to, from, savedPosition) {

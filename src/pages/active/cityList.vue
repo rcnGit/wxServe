@@ -43,12 +43,11 @@
 </template>
 <script>
 import { IndexList, IndexSection } from 'mint-ui';//导入我要使用的这些组件
-
 export default {
   name: 'provinceList',
   data () {
     return {
-      msg: '我是活动页面，哈哈哈',
+    comefrom: '',
       src:{
         path:'/active',
         name:'active'
@@ -537,7 +536,8 @@ export default {
           name:this.src.name,
           query:{
             city: cityName,
-            code: cityCode
+            code: cityCode,
+            comefrom:this.comefrom,//是否糖罐进入
            // phone:this.routerPhone,
            // phone2:this.routerPhone2,
            // msgCode:this.msgCode
@@ -546,6 +546,9 @@ export default {
     }
   },
   created:function(){
+    if(this.$route.query.comefrom=='tangguan'||this.$route.params.comefrom=='tangguan'){
+        this.comefrom ='tangguan'; 
+    }
     //  var father = this.$route.query.father;
     //   var phone = this.$route.query.phone;
     //   var phone2 = this.$route.query.phone2;
