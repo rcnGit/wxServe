@@ -327,6 +327,7 @@ export default {
                 name:'question',
                 query:{
                     userName:this.businessName,
+                    userId: this.ghT
                 }
             })
         },

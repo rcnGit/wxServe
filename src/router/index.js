@@ -37,7 +37,7 @@ import question from '@/pages/severStar/question'//服务之星活动
 import shareCard from '@/pages/severStar/shareCard'//财富师名片
 import severIntro from '@/pages/severStar/severIntro'//服务之星介绍
 import severAppoint from '@/pages/severStar/severAppoint'//预约财富服务
-import appSuccess from '@/pages/severStar/appSuccess'//预约成功
+import appoSuccess from '@/pages/severStar/appoSuccess'//预约成功
 
 Vue.use(Router)
 
@@ -360,13 +360,13 @@ export default new Router({
     },
     ,
     {
-      path: '/appSuccess',
-      name: 'appSuccess',
+      path: '/appoSuccess',
+      name: 'appoSuccess',
       meta: {
         title: '预约成功',
         keepAlive: false // 不需要缓存
       },
-      component: appSuccess//使用这个组件
+      component: appoSuccess//使用这个组件
     },
   ],
   scrollBehavior (to, from, savedPosition) {

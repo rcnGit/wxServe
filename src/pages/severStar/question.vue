@@ -9,7 +9,7 @@
         :data-index="index"></div>
         <span>{{rating}}星</span>
     </div><br>
-    <div style="width: 9.493333rem;height: 0.026667rem;background: #F5F5F5;margin-bottom: 0.5rem;"></div>
+    <div style="width: 9.493333rem;height: 0.026667rem;background: #F5F5F5;margin-bottom: 0.5rem;margin-left: .50666rem;"></div>
     <p class="Q_ques">2、您的专属理财经理熟悉本公司产品，并且可以有针对性的为您推荐适合您的理财产品。</p>
     <div class="star-phone" @click.stop="clickRating2">
       <div
@@ -19,7 +19,7 @@
         :data-index="index"></div>
         <span>{{rating2}}星</span>
     </div>
-    <div style="width: 9.493333rem;height: 0.026667rem;background: #F5F5F5;margin-bottom: 0.5rem;"></div>
+    <div style="width: 9.493333rem;height: 0.026667rem;background: #F5F5F5;margin-bottom: 0.5rem;margin-left: .50666rem;"></div>
     <p class="Q_ques">3、您的理财经理态度积极友好，主动为您提供产品的投后信息，公司相关信息传达的及时性等。</p>
     <div class="star-phone" @click.stop="clickRating3">
       <div
@@ -29,7 +29,7 @@
         :data-index="index"></div>
         <span>{{rating3}}星</span>
     </div><br>
-    <div style="width: 9.493333rem;height: 0.026667rem;background: #F5F5F5;margin-bottom: 0.5rem;"></div>
+    <div style="width: 9.493333rem;height: 0.026667rem;background: #F5F5F5;margin-bottom: 0.5rem;margin-left: .50666rem;"></div>
     <p class="Q_ques">4、您的理财经理注重倾听您的意见并能及时帮您反馈解决。</p>
     <div class="star-phone" @click.stop="clickRating4">
       <div
@@ -39,14 +39,26 @@
         :data-index="index"></div>
         <span>{{rating4}}星</span>
     </div>
-    <div style="width: 9.493333rem;height: 0.026667rem;background: #F5F5F5;margin-bottom: 0.5rem;"></div>
+    <div style="width: 9.493333rem;height: 0.026667rem;background: #F5F5F5;margin-bottom: 0.5rem;margin-left: .50666rem;"></div>
     <div>
-      <p class="Q_ques">5、请选择以下符合你财富师的标签（可多选）</p>
-      <p v-for="(item, index) in card" class="card" @click="selectCard($event,index)" :index="item.cardcon" :class="item.selected?'active':''">{{item.cardcon}}</p>
+      <p class="Q_ques" style="margin-bottom: .13rem;">5、请选择以下符合你财富师的标签（可多选）</p>
+      <div class="card_term">
+       <p v-for="(item, index) in card" class="card" @click="selectCard($event,index)" :index="item.cardcon" :class="item.selected?'active':''">{{item.cardcon}}</p>
+     </div>
     </div>
-    <div class="btn_bottom" style="display: block;">
+    <div class="btn_bottom2" style="display: block;">
 			<span class="saveImg buttons" @click='submits'>提交并推荐服务之星{{businessName}}</span>
-        </div>
+    </div>
+    <div class="shade" v-show="isShareshow">
+      <img src='./img/point.png' class="point">
+      <p class="shade-text">点击此处发送给朋友<br>或分享到朋友圈</p>
+      <p class="shade-btn" @click='kown_btn'>我知道了</p>
+    </div>
+    <div class="shade" v-show="isSharesuccess">
+        <img src='./img/light.png' class="light">
+        <p class="share-text">您已为财富师{{businessName}}<span style="color:#ffdf80;">点亮服务之星</span></p>
+        <p class="share-btn" @click='jumpSever'>我知道了</p>
+    </div>
   </div>
 </template>
 
@@ -54,6 +66,9 @@
 <script >
 import wx from 'weixin-js-sdk';
 import axios from 'axios'
+import { Indicator } from 'mint-ui';
+import { MessageBox } from 'mint-ui';
+import { Toast } from 'mint-ui';
 export default {
   props: {
     starNum: {
@@ -79,6 +94,8 @@ export default {
   },
   data () {
     return {
+      isShareshow: false,
+      isSharesuccess: false,
       businessName:'',
       isCard:'',
       tag:'',
@@ -248,6 +265,8 @@ export default {
         
         var shareTxt = this.businessName+'财富师'+cardShare+'。是我心中的'+this.shareText+'的财富师。'
         console.log(shareTxt)
+        this.Share()
+        this.asyncSDKConifg(shareTxt)
         // var that=this;
         // axios({
         //     method:'get',
@@ -260,6 +279,7 @@ export default {
         //     var retCode=res.data.retCode;
         //     if(retCode == '0'){
         //         //去转发
+        //          that.Share()
         //         return;
         //     }else{
                 
@@ -269,27 +289,59 @@ export default {
       }
       
   },
-  Share:function() {
-      var shareData = '?userId='+this.userId+'&id='+this.id+'&shareText='  //分享不带channel
-      let ua = navigator.userAgent.toLowerCase();
-      //android终端
-      let isAndroid = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1;  　　//ios终端
-      let isiOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); 
-      if(false) {//isWeixinBrowser()//判断是不是微信
-          
-      }else{
-      if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
-          //ios
-          //this.ShowPop = !this.ShowPop;
-          //this.ShowDark = !this.ShowDark;
-          this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(location.href.split('?')[0]+shareData)
-      } else if (/(Android)/i.test(navigator.userAgent)) {
-          //android
-          this.shareLink = location.href.split('?')[0]+shareData
-      }
-      }
-
+  kown_btn:function(){
+    this.isShareshow = false;
+    $('html,body').css({'overflow-y':'unset'})
   },
+  jumpSever:function(){
+    this.$router.push({   //服务之星页
+        path:'/severStar',
+        name:'severStar',
+        query:{
+            userId: this.$route.query.userId
+        }
+    })
+  },
+  Share:function() {
+    let ua = navigator.userAgent.toLowerCase();
+    //android终端
+    let isAndroid = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1;  　　//ios终端
+    let isiOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); 
+    if ((/micromessenger/i).test(ua)) {//isWeixinBrowser()//判断是不是微信  
+        this.isShareshow = true;
+        $('html,body').css({'overflow':'hidden','height':'100%'})
+    }else{
+        if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
+            //ios
+           // var assignWealth_str='';
+           // window.webkit.messageHandlers.AppModel.postMessage({body: 'objc:///assignWealth:'+str});
+        } else if (/(Android)/i.test(navigator.userAgent)) {
+            //android
+          //  var assignWealth_str='';
+          //  window.AndroidFunction.assignWealth(str);
+        }
+    }
+  },
+  wxshare:function() {
+    let ua = navigator.userAgent.toLowerCase();
+    //android终端
+    let isAndroid = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1;  　　//ios终端
+    let isiOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); 
+    if(false) {//isWeixinBrowser()//判断是不是微信
+        
+    }else{
+    if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
+        //ios
+        //this.ShowPop = !this.ShowPop;
+        //this.ShowDark = !this.ShowDark;
+        this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(this.Host+'weixin-h5/index.html#/severStar?userId='+this.$route.query.userId+'&userName='+this.businessName)
+    } else if (/(Android)/i.test(navigator.userAgent)) {
+        //android
+        this.shareLink = this.Host+'weixin-h5/index.html#/severStar?userId='+this.$route.query.userId+'&userName='+encodeURIComponent(this.businessName)
+    }
+    }
+
+},
   async asyncSDKConifg (shareDesc) {
       const meatTitle = this.$route.meta.title
       let that = this
@@ -316,6 +368,7 @@ export default {
               success: function() {
                   // 用户确认分享后执行的回调函数
                   //alert('成功');
+                  that.isSharesuccess = true
               },
               cancel: function() {
                   // 用户取消分享后执行的回调函数
@@ -329,6 +382,7 @@ export default {
               imgUrl: 'http://file0.datangwealth.com/g1/M00/16/50/rBAeX1ybKCiAEKkxAADvNDguF4c858.png?filename=share.png', // 分享图标
               success: function() {
                   // 用户确认分享后执行的回调函数
+                  that.isSharesuccess = true
               },
               cancel: function() {
                   // 用户取消分享后执行的回调函数
@@ -361,8 +415,10 @@ export default {
     }
      
     if(!this.$route.query.userName == false){
-      this.businessName = decodeURIComponent(that.$route.query.userName);
+      this.businessName = decodeURIComponent(this.$route.query.userName);
     }
+    this.wxshare()
+    this.GasyncSDKConifg()
   }
 }
 </script>
@@ -371,15 +427,16 @@ export default {
 .star-phone {
   position: relative;
   display: inline-block;
-  line-height: 26px;
+  line-height: .533333rem;
   -webkit-tap-highlight-color:transparent;
-  padding: .16rem 0 .533333rem;
+  margin: .16rem 0 .5rem .533333rem;;
 }
 .star-item {
   display: inline-block;
-  width: 40px;
-  height: 26px;
-  background-image: url('img/star.png'); 
+  width: .9rem;
+  height: .533333rem;
+  background-image: url('img/star.png');
+  background-size: .533333rem 1.066667rem;
   background-clip: content-box;
   background-position: center 0;
   background-repeat: repeat-y;
@@ -391,51 +448,124 @@ export default {
   padding-right: 0;
 }
 .star-active {
-  background-position: center 26px;
+  background-position: center .53rem;
 }
 .question{
-  padding: .4rem .533333rem;
+  padding-top: .4rem;
   text-align: left;
 }  
 .question .card{
-  width: 25%;
+  width: 1.866667rem;
+  height: .586667rem;
   float: left;
+  color: #767676;
+  font-size: .32rem;
+  border: 1px solid #DFDFDF;
+  background: #F5F5F5;
+  text-align: center;
+  border-radius: .35rem;
+  line-height: .586rem;
+  margin: .32rem .106667rem 0;
 }
-.btn_bottom{
-    position: fixed;
+.btn_bottom2{
+    /* position: fixed;
     bottom: 0;
-    left: 0;
+    left: 0; */
     width: 100%;
     height: 1.8rem;
     box-sizing: border-box;
     background: #fff;
-    padding-top: 0.1rem;
+    padding-top: 0.6rem;
+    text-align: center;
 }
 .buttons {
     display: inline-block;
     width: 8.213333rem;
-    height: 1.626667rem;
+    height: 1.506667rem;
     background: url(img/btn@2x.png) no-repeat;
     background-size: 8.213333rem 1.626667rem;
     color: #ffffff;
     text-align: center;
-    line-height: 1.626rem;
+    line-height: 1.46rem;
     font-weight: 500;
     font-size: .4rem;
     padding-top: .04rem;
-}
-.active{
-  color: #f00;
 }
 .Q_ques{
   font-size: .373333rem;
   color: #404040;
   line-height: .56rem;
   word-spacing: .266667rem;
+  padding-left: 0.533333rem;
+}
+.card_term{
+  padding-left: 0.58rem;
+  overflow: hidden;
 }
 .star-phone span{
   color: #999;
   font-size: .32rem;
+}
+.question .active{
+  color: #EB5353;
+  border: 1px solid #FFBFBF;
+  background: #FEF6F6;
+}
+.shade{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+  top: 0;
+  background: rgba(0,0,0,0.6);
+}
+.shade-text{
+  color: #fff;
+  font-size: .533333rem;
+  line-height: .8rem;
+  text-align: center;
+  padding-top: .346667rem;
+}
+.shade-btn{
+  width: 5.493333rem;
+  height: 1.013333rem;
+  border: .026667rem solid #fff;
+  color: #fff;
+  font-size: .4rem;
+  line-height: 1.013333rem;
+  border-radius: 1.066667rem;
+  text-align: center;
+  margin: 2.4rem auto;
+}
+.point{
+  width: 2.64rem;
+  margin: .9rem 0 0 6.73333rem;
+}
+.light{
+  width: 8.72rem;
+  margin: 4.4rem 0 0 .72rem;
+}
+.share-text{
+  position: absolute;
+  top: 6.4rem;
+  left: 2.53rem;
+  color: #fff;
+  font-size: .346667rem;
+  text-align: center;
+}
+.share-btn{
+  width: 3.466667rem;
+  height: .853333rem;
+  background: #fff2f2;
+  border: .026667rem solid #fff;
+  color: #c90320;
+  font-size: .346667rem;
+  line-height: .853333rem;
+  border-radius: 1.066667rem;
+  text-align: center;
+  position: absolute;
+  top: 10.8rem;
+  left: 3.4rem;
 }
 </style>
 
