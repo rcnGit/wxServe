@@ -77,7 +77,7 @@ export default new Router({
       name: 'toSignNewCust',
       meta: {
         title: '活动报名',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: toSignNewCust//使用这个组件
     },
@@ -86,7 +86,7 @@ export default new Router({
       name: 'faceMsg',
       meta: {
         title: '身份认证',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: faceMsg//使用这个组件---客户福利个人报名
     },{
@@ -94,7 +94,7 @@ export default new Router({
       name: 'pushW',
       meta: {
         title: '活动报名成功',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: pushW//使用这个组件
     },
@@ -103,7 +103,7 @@ export default new Router({
       name: 'activeCheckin',
       meta: {
         title: '活动签到',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: activeCheckin//使用这个组件---客户福利个人报名
     },{
@@ -111,7 +111,7 @@ export default new Router({
       name: 'SuccCheckin',
       meta: {
         title: '活动签到成功',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: SuccCheckin//使用这个组件
     },
@@ -120,7 +120,7 @@ export default new Router({
       name: 'kefuSign',
       meta: {
         title: '活动报名',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: kefuSign//使用这个组件
     },
@@ -129,7 +129,7 @@ export default new Router({
       name: 'signSuc',
       meta: {
         title: '报名成功',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: signSuc//使用这个组件
     },
@@ -138,7 +138,7 @@ export default new Router({
       name: 'propertyList',
       meta: {
         title: '我的资产',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: propertyList//使用这个组件
     },
@@ -147,7 +147,7 @@ export default new Router({
       name: 'minActive',
       meta: {
         title: '我的活动',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: minActive//使用这个组件
     },
@@ -165,7 +165,7 @@ export default new Router({
       name: 'postDetail',
       meta: {
         title: '信息披露详情',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: postDetail//使用这个组件
     },
@@ -174,7 +174,7 @@ export default new Router({
       name: 'appointW',
       meta: {
         title: '指定财富师',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: appointW//使用这个组件onlineApply
     },
@@ -192,7 +192,7 @@ export default new Router({
       name: 'onlineApply',
       meta: {
         title: '在线申请财富师',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: onlineApply//使用这个组件
     },
@@ -201,7 +201,7 @@ export default new Router({
       name: 'changephone',
       meta: {
         title: '修改手机号',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: changephone//使用这个组件
     },
@@ -210,7 +210,7 @@ export default new Router({
       name: 'bdphone',
       meta: {
         title: '绑定手机号',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: bdphone//使用这个组件
     },
@@ -219,7 +219,7 @@ export default new Router({
       name: 'applysuc',
       meta: {
         title: '财富师申请成功',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: applysuc//使用这个组件
     },
@@ -228,7 +228,7 @@ export default new Router({
       name: 'wealthCardD',
       meta: {
         title: '财富师名片',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: wealthCardD//使用这个组件
     },
@@ -237,7 +237,7 @@ export default new Router({
       name: 'wchoose',
       meta: {
         title: '财富师',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: wchoose//使用这个组件
     },
@@ -246,7 +246,7 @@ export default new Router({
       name: 'PrivateAsset',
       meta: {
         title: '我的私募',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: PrivateAsset//使用这个组件
     },
@@ -255,7 +255,7 @@ export default new Router({
       name: 'PublicAsset',
       meta: {
         title: '我的公募',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: PublicAsset//使用这个组件
     },
@@ -264,7 +264,7 @@ export default new Router({
       name: 'SecuritiesAsset',
       meta: {
         title: '我的资管理财',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: SecuritiesAsset//使用这个组件
     },
@@ -273,7 +273,7 @@ export default new Router({
       name: 'cityList',
       meta: {
         title: '活动城市选择',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: cityList//使用这个组件
     },
@@ -282,7 +282,7 @@ export default new Router({
       name: 'faceSuccess',
       meta: {
         title: '身份认证',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: faceSuccess//使用这个组件
     },
@@ -291,7 +291,7 @@ export default new Router({
       name: 'addServe',
       meta: {
         title: '增值服务',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: addServe//使用这个组件
     },
@@ -300,7 +300,7 @@ export default new Router({
       name: 'wealthCard',
       meta: {
         title: '',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: wealthCard//使用这个组件
     },{
@@ -308,7 +308,7 @@ export default new Router({
       name: 'designatedW',
       meta: {
         title: '',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: designatedW//使用这个组件
     },
@@ -317,7 +317,7 @@ export default new Router({
       name: 'severStar',
       meta: {
         title: '服务之星',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: severStar//使用这个组件
     },
@@ -326,7 +326,7 @@ export default new Router({
       name: 'question',
       meta: {
         title: '点亮服务之星',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: question//使用这个组件
     },
@@ -335,7 +335,7 @@ export default new Router({
       name: 'shareCard',
       meta: {
         title: '',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: shareCard//使用这个组件
     },
@@ -344,7 +344,7 @@ export default new Router({
       name: 'severIntro',
       meta: {
         title: '服务之星介绍',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: severIntro//使用这个组件
     },
@@ -354,7 +354,7 @@ export default new Router({
       name: 'severAppoint',
       meta: {
         title: '预约财富服务',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: severAppoint//使用这个组件
     },
@@ -364,7 +364,7 @@ export default new Router({
       name: 'appoSuccess',
       meta: {
         title: '预约成功',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: appoSuccess//使用这个组件
     },

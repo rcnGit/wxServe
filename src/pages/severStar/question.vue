@@ -47,7 +47,7 @@
      </div>
     </div>
     <div class="btn_bottom2" style="display: block;">
-			<span class="saveImg buttons" @click='submits'>提交并推荐服务之星{{businessName}}</span>
+			<span class="saveImg buttons1" @click='submits'>提交并推荐服务之星{{businessName}}</span>
     </div>
     <div class="shade" v-show="isShareshow">
       <img src='./img/point.png' class="point">
@@ -102,6 +102,8 @@ export default {
       arr: [],
       ratArr: [],
       shareText:'',
+      shareDesc:'',  
+      backUrl: encodeURIComponent(location.href.split('#')[0]),//微信分享
       rating: this.defaultRating, // 用于控制点亮星星的个数
       rating2: this.defaultRating, // 用于控制点亮星星的个数
       rating3: this.defaultRating, // 用于控制点亮星星的个数
@@ -263,10 +265,10 @@ export default {
         console.log(this.shareText)
         alert('axios')
         
-        var shareTxt = this.businessName+'财富师'+cardShare+'。是我心中的'+this.shareText+'的财富师。'
-        console.log(shareTxt)
+        this.shareDesc = this.businessName+'财富师'+cardShare+'。是我心中的'+this.shareText+'的财富师。'
+        alert(this.shareDesc)
         this.Share()
-        this.asyncSDKConifg(shareTxt)
+        this.asyncSDKConifg(this.shareDesc)
         // var that=this;
         // axios({
         //     method:'get',
@@ -337,7 +339,7 @@ export default {
         this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(this.Host+'weixin-h5/index.html#/severStar?userId='+this.$route.query.userId+'&userName='+this.businessName)
     } else if (/(Android)/i.test(navigator.userAgent)) {
         //android
-        this.shareLink = this.Host+'weixin-h5/index.html#/severStar?userId='+this.$route.query.userId+'&userName='+encodeURIComponent(this.businessName)
+        this.shareLink =this.Host+'weixin-h5/index.html#/severStar?userId='+this.$route.query.userId+'&userName='+encodeURIComponent(this.businessName)
     }
     }
 
@@ -418,7 +420,8 @@ export default {
       this.businessName = decodeURIComponent(this.$route.query.userName);
     }
     this.wxshare()
-    this.GasyncSDKConifg()
+    this.asyncSDKConifg('中国私人银行服务的领航者，诚邀您开启财富之旅')
+    
   }
 }
 </script>
@@ -478,7 +481,7 @@ export default {
     padding-top: 0.6rem;
     text-align: center;
 }
-.buttons {
+.buttons1 {
     display: inline-block;
     width: 8.213333rem;
     height: 1.506667rem;
