@@ -210,68 +210,97 @@ export default {
                         //取消按钮
                     })
                     return;
-                }else if(retCode == '-5'){
-                  //  var tgPhone=res.data.tgPhone;
-               // MessageBox(' ','手机号与已实名的手机号不一致');
-                that.trafficStatistics('018')//自定义埋点
-                // var message = '尊敬的客户，您当前绑定手机号与实名信息绑定手机号（尾号'+tgPhone+'）不一致，请更换一致后再进行身份认证。<br>PS：若想更换实名信息绑定手机号请去'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">大唐财富APP</a>'+'更换'
-                //         MessageBox.confirm('', {
-                //             message: message,
-                //             title: '',
-                //             showConfirmButton:true,
-                //             confirmButtonClass:'confirmButton',
-                //             confirmButtonText:'去更换',
-                //         }).then(action => {
-                //             if(action == 'confirm'){
-                //                 that.$router.push({
-                //                     path:'/changephone',
-                //                     name:'changephone',
-                //                     query:{
-                //                         changeForm:'faceMsg',
-                //                         //returnUrl:that.$route.query.returnUrl,
-                //                         returnUrl:that.faceUrl
-                //                     }
-                //                 })
-                //             }
-                //         }).catch(() => {
-                            
-                //         })
-                var message = '该实名信息已开通大唐账户，且绑定的手机号与当前账号所绑定的不一致。需重新绑定手机号后继续身份认证。';      
-                    MessageBox.confirm('', {
-                        message: message,
-                        title: '',
-                        showCancelButton:false,
-                        confirmButtonText:'我知道了',
-                    }).then(action => {
-                        if(action == 'confirm'){
-                            that.$router.push({
-                                path:'/bdphone',
-                                name:'bdphone',
-                                query:{
-                                    name: that.param.idCardName,
-                                    idNo: that.param.idCardNo,
-                                    returnUrl:that.ReturnUrl,
-                                    bdfrom:'faceMsg',
-                                    type: '1'
-                                }
-                            })
-                            
-                        }
-                    }).catch(() => {
-                        //取消按钮
-                    })
-                    return;
-                }else if(retCode == '-6'){
+                    }else if(retCode == '-5'){
+                    //  var tgPhone=res.data.tgPhone;
+                // MessageBox(' ','手机号与已实名的手机号不一致');
                     that.trafficStatistics('018')//自定义埋点
-                    var message = '您当前账户绑定的手机号已绑定其他实名信息，请更换手机号后重新认证。'
+                    // var message = '尊敬的客户，您当前绑定手机号与实名信息绑定手机号（尾号'+tgPhone+'）不一致，请更换一致后再进行身份认证。<br>PS：若想更换实名信息绑定手机号请去'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">大唐财富APP</a>'+'更换'
+                    //         MessageBox.confirm('', {
+                    //             message: message,
+                    //             title: '',
+                    //             showConfirmButton:true,
+                    //             confirmButtonClass:'confirmButton',
+                    //             confirmButtonText:'去更换',
+                    //         }).then(action => {
+                    //             if(action == 'confirm'){
+                    //                 that.$router.push({
+                    //                     path:'/changephone',
+                    //                     name:'changephone',
+                    //                     query:{
+                    //                         changeForm:'faceMsg',
+                    //                         //returnUrl:that.$route.query.returnUrl,
+                    //                         returnUrl:that.faceUrl
+                    //                     }
+                    //                 })
+                    //             }
+                    //         }).catch(() => {
+                                
+                    //         })
+                    var message = '该实名信息已开通大唐账户，且绑定的手机号与当前账号所绑定的不一致。需重新绑定手机号后继续身份认证。';      
                         MessageBox.confirm('', {
                             message: message,
                             title: '',
-                            showConfirmButton:true,
-                            confirmButtonClass:'confirmButton',
-                            confirmButtonText:'去更换',
+                            showCancelButton:false,
+                            confirmButtonText:'我知道了',
                         }).then(action => {
                             if(action == 'confirm'){
+                                that.$router.push({
+                                    path:'/bdphone',
+                                    name:'bdphone',
+                                    query:{
+                                        name: that.param.idCardName,
+                                        idNo: that.param.idCardNo,
+                                        returnUrl:that.ReturnUrl,
+                                        bdfrom:'faceMsg',
+                                        type: '1'
+                                    }
+                                })
+                                
+                            }
+                        }).catch(() => {
+                            //取消按钮
+                        })
+                        return;
+                    }else if(retCode == '-6'){
+                        that.trafficStatistics('018')//自定义埋点
+                        /*
+                        var message = '您当前账户绑定的手机号已绑定其他实名信息，请更换手机号后重新认证。'
+                            MessageBox.confirm('', {
+                                message: message,
+                                title: '',
+                                showConfirmButton:true,
+                                confirmButtonClass:'confirmButton',
+                                confirmButtonText:'去更换',
+                            }).then(action => {
+                                if(action == 'confirm'){
+                                    that.$router.push({
+                                        path:'/changephone',
+                                        name:'changephone',
+                                        query:{
+                                            changeForm:'faceMsg',
+                                            //returnUrl:that.$route.query.returnUrl,
+                                            returnUrl:that.faceUrl
+                                        }
+                                    })
+                                }
+                            }).catch(() => {
+                                
+                            })*/
+                            var Tel = res.data.phone
+                            var mtel = Tel.substr(0, 3) + '****' + Tel.substr(7); 
+                            var message = '您的绑定手机号'+mtel+'在大唐财富平台已进行账户身份认证，且与您当前输入的身份信息不一致，请重新输入身份信息或更改绑定手机号。'
+                            MessageBox.confirm('', {
+                                message: message,
+                                title: '',
+                                confirmButtonText:'重新输入',
+                                cancelButtonText:'更换手机号',
+                                closeOnClickModal: false
+                            }).then(action => {
+                                if(action == 'confirm'){
+                                    
+                                }
+                            }).catch(err => {
+                            if (err == 'cancel') {     //取消的回调
                                 that.$router.push({
                                     path:'/changephone',
                                     name:'changephone',
@@ -282,11 +311,9 @@ export default {
                                     }
                                 })
                             }
-                        }).catch(() => {
-                            
-                        })
-                    return;
-                }else{
+                        })//
+                        return;
+                    }else{
                     that.token=res.data.data.token;
                     var bizId=res.data.data.bizId;
                     setCookie('bizId',bizId);

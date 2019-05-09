@@ -7,9 +7,8 @@
         :key="index"
         :class="isRating(index)"
         :data-index="index"></div>
-        <span>{{rating}}星</span>
-    </div><br>
-    <div style="width: 9.493333rem;height: 0.026667rem;background: #F5F5F5;margin-bottom: 0.5rem;margin-left: .50666rem;"></div>
+    </div><span class="star-text">{{rating}}星</span>
+    <div style="width: 9.493333rem;height: 0.026667rem;background: #f6f6f6;margin-bottom: 0.5rem;margin-left: .50666rem;"></div>
     <p class="Q_ques">2、您的专属理财经理熟悉本公司产品，并且可以有针对性的为您推荐适合您的理财产品。</p>
     <div class="star-phone" @click.stop="clickRating2">
       <div
@@ -17,9 +16,8 @@
         :key="index"
         :class="isRating2(index)"
         :data-index="index"></div>
-        <span>{{rating2}}星</span>
-    </div>
-    <div style="width: 9.493333rem;height: 0.026667rem;background: #F5F5F5;margin-bottom: 0.5rem;margin-left: .50666rem;"></div>
+    </div> <span class="star-text">{{rating2}}星</span>
+    <div style="width: 9.493333rem;height: 0.026667rem;background: #f6f6f6;margin-bottom: 0.5rem;margin-left: .50666rem;"></div>
     <p class="Q_ques">3、您的理财经理态度积极友好，主动为您提供产品的投后信息，公司相关信息传达的及时性等。</p>
     <div class="star-phone" @click.stop="clickRating3">
       <div
@@ -27,9 +25,9 @@
         :key="index"
         :class="isRating3(index)"
         :data-index="index"></div>
-        <span>{{rating3}}星</span>
-    </div><br>
-    <div style="width: 9.493333rem;height: 0.026667rem;background: #F5F5F5;margin-bottom: 0.5rem;margin-left: .50666rem;"></div>
+        
+    </div><span class="star-text">{{rating3}}星</span>
+    <div style="width: 9.493333rem;height: 0.026667rem;background: #f6f6f6;margin-bottom: 0.5rem;margin-left: .50666rem;"></div>
     <p class="Q_ques">4、您的理财经理注重倾听您的意见并能及时帮您反馈解决。</p>
     <div class="star-phone" @click.stop="clickRating4">
       <div
@@ -37,19 +35,19 @@
         :key="index"
         :class="isRating4(index)"
         :data-index="index"></div>
-        <span>{{rating4}}星</span>
-    </div>
-    <div style="width: 9.493333rem;height: 0.026667rem;background: #F5F5F5;margin-bottom: 0.5rem;margin-left: .50666rem;"></div>
+        
+    </div><span class="star-text">{{rating4}}星</span>
+    <div style="width: 9.493333rem;height: 0.026667rem;background: #f6f6f6;margin-bottom: 0.5rem;margin-left: .50666rem;"></div>
     <div>
       <p class="Q_ques" style="margin-bottom: .13rem;">5、请选择以下符合你财富师的标签（可多选）</p>
       <div class="card_term">
-       <p v-for="(item, index) in card" class="card" @click="selectCard($event,index)" :index="item.cardcon" :class="item.selected?'active':''">{{item.cardcon}}</p>
+       <p v-for="(item, index) in card" class="card" @click="selectCard($event,index)" :index="item.dictValue" :class="item.flag?'active':''">{{item.dictValue}}</p>
      </div>
     </div>
     <div class="btn_bottom2" style="display: block;">
-			<span class="saveImg buttons1" @click='submits'>提交并推荐服务之星{{businessName}}</span>
+			<span class="buttons1" @click='submits'>提交并点亮服务之星{{businessName}}</span>
     </div>
-    <div class="shade" v-show="isShareshow">
+    <div class="shade" v-show="isShareshow" @touchmove.prevent.stop>
       <img src='./img/point.png' class="point">
       <p class="shade-text">点击此处发送给朋友<br>或分享到朋友圈</p>
       <p class="shade-btn" @click='kown_btn'>我知道了</p>
@@ -69,6 +67,7 @@ import axios from 'axios'
 import { Indicator } from 'mint-ui';
 import { MessageBox } from 'mint-ui';
 import { Toast } from 'mint-ui';
+import { getCookie,setCookie } from '@/common/js/cookie.js'
 export default {
   props: {
     starNum: {
@@ -97,6 +96,8 @@ export default {
       isShareshow: false,
       isSharesuccess: false,
       businessName:'',
+      userId:'',
+      idNo:'',
       isCard:'',
       tag:'',
       arr: [],
@@ -108,20 +109,20 @@ export default {
       rating2: this.defaultRating, // 用于控制点亮星星的个数
       rating3: this.defaultRating, // 用于控制点亮星星的个数
       rating4: this.defaultRating, // 用于控制点亮星星的个数
-      card: [
-          {cardcon:"专业胜任",selected: false},
-          {cardcon:"认真负责",selected: false},
-          {cardcon:"积极热情",selected: false},
-          {cardcon:"合规展业",selected: false},
-          {cardcon:"服务细致",selected: false},
-          {cardcon:"反馈及时",selected: false},
-          {cardcon:"态度端正",selected: false},
-          {cardcon:"谦和可亲",selected: false},
-          {cardcon:"配置高手",selected: false},
-          {cardcon:"关怀备至",selected: false},
-          {cardcon:"眼光独到",selected: false},
-          {cardcon:"人脉达人",selected: false},
-        ],
+      card: [],
+      lables: [],
+      appStr:{
+        title:'大唐财富点亮服务之星',
+        msg:'',
+        shareUrl:'',
+        type: false,
+        isNeedNotice:true
+      },
+      tgUserId:'',
+      userCard:{
+        userId:'',
+        idNo:''
+      }
     }
   },
   methods: {
@@ -152,6 +153,8 @@ export default {
       this.$emit('starMarkChange', mark, this.outIndex)
       console.log(this.rating)
       localStorage.setItem("rating",this.rating);
+      localStorage.setItem("userId",this.userId);
+      localStorage.setItem("idNo",this.idNo);
     },
     clickRating2 (ev) {
       if (this.readOnly) {
@@ -162,6 +165,8 @@ export default {
       this.$emit('starMarkChange', mark, this.outIndex)
       console.log(this.rating2)
       localStorage.setItem("rating2",this.rating2);
+      localStorage.setItem("userId",this.userId);
+      localStorage.setItem("idNo",this.idNo);
     },
     clickRating3 (ev) {
       if (this.readOnly) {
@@ -173,6 +178,8 @@ export default {
       this.$emit('starMarkChange', mark, this.outIndex)
       console.log(this.rating3)
       localStorage.setItem("rating3",this.rating3);
+      localStorage.setItem("userId",this.userId);
+      localStorage.setItem("idNo",this.idNo);
     },
     clickRating4 (ev) {
       if (this.readOnly) {
@@ -183,13 +190,15 @@ export default {
       this.$emit('starMarkChange', mark, this.outIndex)
       console.log(this.rating4)
       localStorage.setItem("rating4",this.rating4);
+      localStorage.setItem("userId",this.userId);
+      localStorage.setItem("idNo",this.idNo);
     },
     selectCard (index,item){
       var index=event.currentTarget.getAttribute('index');//绑定事件的元素
-      if(this.card[item].selected == false){
-        this.card[item].selected = true
+      if(this.card[item].flag == false){
+        this.card[item].flag = true
       }else{
-        this.card[item].selected = false
+        this.card[item].flag = false
       }
       this.tag += index+','
       //console.log(this.tag.substr(0,this.tag.length-1))
@@ -199,30 +208,38 @@ export default {
       this.arr.pop()
      // this.arr = this.unique(this.arr)
      console.log(this.arr)
-      console.log(this.card.selected)
+      console.log(this.card.flag)
     //  console.log(this.arr.slice(0,2))
      localStorage.setItem("tag",JSON.stringify(this.card));
+     localStorage.setItem("userId",this.userId);
+     localStorage.setItem("idNo",this.idNo);
     },
     submits:function(){
       var arrCard = []
+      var arrLable = []
       var cardShare
       this.card.forEach((item, index) =>{
-         // console.log(item.cardcon);
-          if(item.selected == true){
-            //console.log(this.card[index].cardcon);
-            arrCard.push(this.card[index].cardcon)
-            var arrCard2 = arrCard.slice(0,2)
+         // console.log(item.dictValue);
+          if(item.flag == true){
+            //var arrCard2 = arrCard.slice(0,2)
+            //console.log(this.card[index].dictValue);
+            arrCard.push(this.card[index].dictValue)
+            arrLable.push(this.card[index].dictCode)
             if(!arrCard[1] == false){
-              cardShare = arrCard2[0]+arrCard[1]
+              cardShare = arrCard[0]+'、'+arrCard[1]
             }else{
-              cardShare = arrCard2[0]
+              cardShare = arrCard[0]
             }
-            
-            //console.log(arrCard.slice(0,2));
           }
         });
+        this.lables = arrLable.join(',')
+        console.log(this.lables);
       if(this.rating == 0 || this.rating2 == 0 || this.rating3 == 0 || this.rating4 == 0 || arrCard.length ==0){
-        alert('去选择')
+        Toast({
+            message: '请完成全部题目',
+            position: 'center',
+            duration: 3000
+        });
       }else{
         this.ratArr = []
         this.ratArr.push(this.rating)
@@ -240,7 +257,7 @@ export default {
                 maxIndex = i;
              }
          }
-         console.log(maxIndex)
+        // console.log(maxIndex)
          var txt
          switch(maxIndex)
          {
@@ -248,83 +265,330 @@ export default {
             txt = '专业技能高超'
             break;
             case 1:
-            txt = '了解产品，专长配资'
+            txt = '投顾能力极强'
             break;
             case 2:
-            txt = '热情主动，服务周到'
+            txt = '投后服务到位'
             break;
             case 3:
-            txt = '用心聆听，及时反馈'
+            txt = '用心聆听、及时解决问题'
             break;
           }
         if(maxValue == 5){
-          this.shareText = txt+'5星'
+          this.shareText = txt+'的5星'
         }else{
-          this.shareText = txt+'优秀'
+          this.shareText = txt+'的优秀'
         }
-        console.log(this.shareText)
-        alert('axios')
+       // console.log(cardShare)
         
-        this.shareDesc = this.businessName+'财富师'+cardShare+'。是我心中的'+this.shareText+'的财富师。'
-        alert(this.shareDesc)
-        this.Share()
-        this.asyncSDKConifg(this.shareDesc)
-        // var that=this;
-        // axios({
-        //     method:'get',
-        //     url:'/wxservice/wxMemberInfo/getFaceResult',
-        //     params: that.faceparam
-        // })
-        // .then(function(res){
-        //     Indicator.close();
-        //     console.log(res.data)
-        //     var retCode=res.data.retCode;
-        //     if(retCode == '0'){
-        //         //去转发
-        //          that.Share()
-        //         return;
-        //     }else{
-                
-        //         return;
-        //     }
-        // })
+        this.shareDesc = '财富师'+this.businessName+cardShare+'，是我心中'+this.shareText+'财富师。'
+        //alert(this.shareDesc)
+       // this.Share()
+      
+       
+       var that=this;
+       // console.log(that.userId+'...'+that.idNo+'...'+that.rating+'...'+that.rating2+'...'+that.rating3+'...'+that.rating4+'...'+that.lables)
+        if(that.$route.query.source == 'wx'){
+           that.getsubmit()
+        }else{
+          that.getsubmitapp()
+        }
       }
       
   },
+  getsubmit:function(){
+   // this.appStr.msg = this.shareDesc
+   // this.appStr.shareUrl = this.Host+'weixin-h5/index.html#/severStar?userId='+this.userId+'&tgUserId='+this.tgUserId+'&ifcard=1'+'&shareDesc='+encodeURIComponent(this.shareDesc)
+    this.wxshare('1')
+    var that=this;
+        console.log(that.userId+'...'+that.idNo+'...'+that.rating+'...'+that.rating2+'...'+that.rating3+'...'+that.rating4+'...'+that.lables)
+        axios({
+            method:'get',
+            url:'/wxservice/wxMemberInfo/saveQuestionnaireRecord',
+            params:{
+              flag: 1,
+              dtNo: that.userId,
+              idNo: that.idNo,
+              problem1Score: that.rating,
+              problem2Score: that.rating2,
+              problem3Score: that.rating3,
+              problem4Score: that.rating4,
+              lables: that.lables
+            }
+        })
+        .then(function(res){
+            Indicator.close();
+            console.log(res.data)
+            var retCode=res.data.retCode;
+            var retMsg=res.data.retMsg;
+            if(retCode == '0' || retCode == '-9'){
+              //去转发
+              that.Share()
+              that.asyncSDKConifg(that.shareDesc,'1')
+              return;
+            }else if(retCode == 400){
+             var serbackUrl = that.Host+'wxservice/wxMemberInfo/saveQuestionnaireRecord'
+             window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=question_'+that.userId+','+that.idNo+','+that.tgUserId+'#wechat_redirect';
+            }else{
+              // MessageBox('提示','系统异常');
+              Toast({
+                  message: retMsg,
+                  position: 'center',
+                  duration: 3000
+              });
+            }
+        })
+  },
+  getsubmitapp:function(){
+    this.appStr.msg = this.shareDesc
+    this.appStr.shareUrl = this.Host+'weixin-h5/index.html#/severStar?userId='+this.userId+'&tgUserId='+this.tgUserId+'&ifcard=1&source=wx&shareDesc='+encodeURIComponent(this.shareDesc)
+  // alert(this.appStr.shareUrl)
+    this.wxshare('1')
+    var that=this;
+        console.log(that.userId+'...'+that.idNo+'...'+that.rating+'...'+that.rating2+'...'+that.rating3+'...'+that.rating4+'...'+that.lables)
+        axios({
+            method:'get',
+            url:'/wxservice/wxexternal?opName=saveTGQuestionnaireRecord',
+            params:{
+              flag: 1,
+              dtNo: that.userId,
+              idNo: that.idNo,
+              problem1Score: that.rating,
+              problem2Score: that.rating2,
+              problem3Score: that.rating3,
+              problem4Score: that.rating4,
+              lables: that.lables
+            }
+        })
+        .then(function(res){
+            Indicator.close();
+            console.log(res.data)
+            var retCode=res.data.retCode;
+            var retMsg=res.data.retMsg;
+            if(retCode == '0' || retCode == '-9'){
+
+              //去转发
+              that.Share()
+            //  that.asyncSDKConifg(that.shareDesc,'1')
+              return;
+            }else{
+              // MessageBox('提示','系统异常');
+              Toast({
+                  message: retMsg,
+                  position: 'center',
+                  duration: 3000
+              });
+            }
+        })
+  },
   kown_btn:function(){
     this.isShareshow = false;
-    $('html,body').css({'overflow-y':'unset'})
+   // $('html,body').css({'overflow-y':'unset'})
   },
   jumpSever:function(){
-    this.$router.push({   //服务之星页
-        path:'/severStar',
-        name:'severStar',
-        query:{
-            userId: this.$route.query.userId
+    this.$router.go(-1)
+    /*
+    if(!this.$route.query.source == false){
+      this.$router.go(-1)
+    }else{
+    let ua = navigator.userAgent.toLowerCase();
+    //android终端
+    let isAndroid = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1;  　　//ios终端
+    let isiOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); 
+    if ((/micromessenger/i).test(ua)) {//isWeixinBrowser()//判断是不是微信 
+        return
+    }else{
+        if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
+            //ios
+            //   this.$router.push({   //服务之星页
+            //     path:'/severStar',
+            //     name:'severStar',
+            //     query:{
+            //       // userId: this.$route.query.userId,
+            //       // idNo: this.$route.query.idNo
+            //       tgUserId: this.$route.query.tgUserId,
+            //       client:this.$route.query.client,
+            //       versionNo:this.$route.query.versionNo
+            //     }
+            // })
+            this.$router.go(-1)
+        } else if (/(Android)/i.test(navigator.userAgent)) {
+            //android
+            this.$router.go(-1)
+        }
+    }
+    }*/
+    
+  },
+  getCarddata:function(id){
+    let that = this;
+   // alert(that.userId+'.....'+that.idNo)
+    Indicator.open();
+    axios({
+        method:'get',
+        url:'/wxservice/wxMemberInfo/getServerStar',//获取客户信息
+        params: {
+          dtNo: that.userId,
+          idNo: that.idNo,
         }
     })
+    .then(function(res) {//成功之后
+        console.log(res.data)
+        Indicator.close();
+        var retCode=res.data.retCode;
+        var retMsg=res.data.retMsg;
+        if(retCode==0){
+          if(id == '1'){
+            that.tgUserId= res.data.data.userId
+            that.wxshare()
+            that.asyncSDKConifg('中国私人银行服务的领航者，诚邀您开启财富之旅','0')
+          }else{
+            console.log(res.data.data.lableList)
+            that.card = res.data.data.lableList
+          }
+        }else if(retCode == 400){
+            var serbackUrl = that.Host+'wxservice/wxMemberInfo/getServerStar'
+            window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=question_'+that.userId+','+that.idNo+','+that.tgUserId+'#wechat_redirect';
+        }else{
+            MessageBox(' ',retMsg);
+        }
+    });
   },
+  getCarddataAPP:function(id){
+    let that = this;
+    //alert(that.userId+'.....'+that.idNo)
+    Indicator.open();
+    axios({
+        method:'get',
+        url:'/wxservice/wxexternal?opName=getTGServerStar',//获取客户信息
+        params: {
+          dtNo: that.userId,
+          idNo: that.idNo,
+        }
+    })
+    .then(function(res) {//成功之后
+        console.log(res.data)
+        Indicator.close();
+        var retCode=res.data.retCode;
+        var retMsg=res.data.retMsg;
+        if(retCode==0){
+          if(id == '1'){
+            that.tgUserId= res.data.data.userId
+          }else{
+            console.log(res.data.data.lableList)
+            that.card = res.data.data.lableList
+          }
+          
+        }else{
+            MessageBox(' ',retMsg);
+        }
+    });
+  },
+  getbusinessName:function(){ 
+    let that = this;
+    Indicator.open();
+    var param=Base64.encode('{"userId":"'+that.userId+'"}');//that.user.userId
+    axios({
+        method:'get',
+        url:'/wxservice/wxexternal?opName=getTCmycard&versionNo=30',//获取客户信息
+        params:{
+            param:param,
+            osFlag:'3'
+        }
+    })
+    .then(function(res) {//成功之后
+        Indicator.close();
+        console.log(res.data)
+        var retCode=res.data.retCode;
+        var retMsg=res.data.retMsg;
+        if(retCode == 0){
+          //  var data=Base64.decode(res.data);
+            // data=jQuery.parseJSON(data)
+            var data=res.data
+            that.businessName = data.userName; //对方财富师的名字
+        }else if(retCode == "-2"){
+            Toast({
+                message: retMsg,
+                position: 'center',
+                duration: 3000
+            });
+        }else if(retCode == 400){
+            var serbackUrl = that.Host+'wxservice/wxexternal?opName=getTCmycard&versionNo=30'
+            window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=question_'+that.userId+','+that.idNo+','+that.tgUserId+'#wechat_redirect';
+        }
+    })
+},
+getId:function(){
+    let that = this;
+    axios({
+        method:'get',
+        url:'/wxservice/wxservice?opName=getUserInfo',//获取用户信息
+        params: {
+          //  backUrl: that.paramurl
+        }
+    })
+    .then(function(res){
+        // Indicator.close();
+        var retCode=res.data.retCode;
+        var Data = res.data
+        console.log(Data)
+        if(retCode=='0'){
+            that.tgUserId= res.data.userInfo.id 
+          //  alert(that.tgUserId+'605GETID')  
+        }else if(retCode=='-1'){//系统异常
+            //MessageBox('提示', '系统异常');
+            Toast({
+                message: '系统异常',
+                position: 'center',
+                duration: 3000
+            });
+        }
+        else if(retCode == 400){
+            var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
+            window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=question_'+that.userId+','+that.idNo+','+that.tgUserId+'#wechat_redirect';
+        } 
+    })
+},
   Share:function() {
     let ua = navigator.userAgent.toLowerCase();
     //android终端
     let isAndroid = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1;  　　//ios终端
     let isiOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); 
-    if ((/micromessenger/i).test(ua)) {//isWeixinBrowser()//判断是不是微信  
+    if ((/micromessenger/i).test(ua)) {//isWeixinBrowser()//判断是不是微信 
         this.isShareshow = true;
-        $('html,body').css({'overflow':'hidden','height':'100%'})
+       // $('html,body').css({'overflow':'hidden','height':'100%'})
+        return
     }else{
+        var str = JSON.stringify(this.appStr);
+       // alert(str)
+        console.log(str)
         if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
             //ios
-           // var assignWealth_str='';
-           // window.webkit.messageHandlers.AppModel.postMessage({body: 'objc:///assignWealth:'+str});
+           window.webkit.messageHandlers.AppModel.postMessage({body: 'objc:///share:'+str});
         } else if (/(Android)/i.test(navigator.userAgent)) {
             //android
-          //  var assignWealth_str='';
-          //  window.AndroidFunction.assignWealth(str);
+          window.AndroidFunctionSetting.share(str);
         }
     }
   },
-  wxshare:function() {
+  ShareLight:function() {
+    let ua = navigator.userAgent.toLowerCase();
+    //android终端
+    let isAndroid = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1;  　　//ios终端
+    let isiOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); 
+    if ((/micromessenger/i).test(ua)) {//isWeixinBrowser()//判断是不是微信 
+        return
+    }else{
+        if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
+            //ios
+           window.webkit.messageHandlers.AppModel.postMessage({body: 'objc:///serveStarLight:'+true});  //服务之星点亮
+        } else if (/(Android)/i.test(navigator.userAgent)) {
+            //android
+          window.AndroidFunctionSetting.serveStarLight(true);
+        }
+    }
+  },
+  wxshare:function(type) {
     let ua = navigator.userAgent.toLowerCase();
     //android终端
     let isAndroid = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1;  　　//ios终端
@@ -336,15 +600,24 @@ export default {
         //ios
         //this.ShowPop = !this.ShowPop;
         //this.ShowDark = !this.ShowDark;
-        this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(this.Host+'weixin-h5/index.html#/severStar?userId='+this.$route.query.userId+'&userName='+this.businessName)
+        if(type == '1'){
+          this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(this.Host+'weixin-h5/index.html#/severStar?userId='+this.userId+'&tgUserId='+this.tgUserId+'&ifcard=1&source=wx'+'&shareDesc='+this.shareDesc)
+        }else{
+          this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(this.Host+'weixin-h5/index.html#/severStar?userId='+this.userId+'&tgUserId='+this.tgUserId+'&ifcard=1&source=wx')
+        }
+        
     } else if (/(Android)/i.test(navigator.userAgent)) {
         //android
-        this.shareLink =this.Host+'weixin-h5/index.html#/severStar?userId='+this.$route.query.userId+'&userName='+encodeURIComponent(this.businessName)
+        if(type == '1'){
+         this.shareLink =this.Host+'weixin-h5/index.html#/severStar?userId='+this.userId+'&tgUserId='+this.tgUserId+'&ifcard=1&source=wx'+'&shareDesc='+encodeURIComponent(this.shareDesc)
+        }else{
+          this.shareLink =this.Host+'weixin-h5/index.html#/severStar?userId='+this.userId+'&tgUserId='+this.tgUserId+'&ifcard=1&source=wx'
+        }
     }
     }
 
 },
-  async asyncSDKConifg (shareDesc) {
+  async asyncSDKConifg (shareDesc,result) {
       const meatTitle = this.$route.meta.title
       let that = this
       axios.get('/wxservice/core/getJSSDKConfigure.mm?pageUrl='+that.backUrl)
@@ -370,7 +643,11 @@ export default {
               success: function() {
                   // 用户确认分享后执行的回调函数
                   //alert('成功');
-                  that.isSharesuccess = true
+                  if(result == '1'){
+                    that.shareResultWX(1)
+                  }
+                  
+                  //that.isSharesuccess = true
               },
               cancel: function() {
                   // 用户取消分享后执行的回调函数
@@ -384,7 +661,10 @@ export default {
               imgUrl: 'http://file0.datangwealth.com/g1/M00/16/50/rBAeX1ybKCiAEKkxAADvNDguF4c858.png?filename=share.png', // 分享图标
               success: function() {
                   // 用户确认分享后执行的回调函数
-                  that.isSharesuccess = true
+                  if(result == '1'){
+                    that.shareResultWX(1)
+                  }
+                  //that.isSharesuccess = true
               },
               cancel: function() {
                   // 用户取消分享后执行的回调函数
@@ -396,31 +676,148 @@ export default {
       wx.error(function(res){//通过error接口处理失败验证
           // config信息验证失败会执行error函数
       });
+    },
+   //wx分享成功后回调
+shareResultWX:function(shareType){
+  //  alert(shareType+'===shareType')
+    if(shareType == '1'){ //shareType: 1:分享成功  2:分享失败  3：用户取消
+      if(this.isShareshow == true){
+        this.isShareshow = false
+      }
+      this.isSharesuccess = true
+      let that=this;
+    axios({
+        method:'get',
+        url:'/wxservice/wxMemberInfo/saveQuestionnaireRecord',
+        params:{
+          dtNo: that.userId,
+          idNo: that.idNo,
+          flag: 2
+        }
+    })
+    .then(function(res){
+        Indicator.close();
+        console.log(res.data)
+        var retCode=res.data.retCode;
+        var retMsg=res.data.retMsg;
+       // alert(retCode)
+        if(retCode == '0'){
+  
+        }
+    })
+    }
+  }, 
+//原生分享成功后回调
+shareResultCallBack:function(shareType){
+    //alert(shareType+'===shareType')
+    if(shareType == '1'){ //shareType: 1:分享成功  2:分享失败  3：用户取消
+      if(this.isShareshow == true){
+        this.isShareshow = false
+      }
+      this.isSharesuccess = true
+      let that=this;
+    axios({
+        method:'get',
+        url:'/wxservice/wxexternal?opName=saveTGQuestionnaireRecord',
+        params:{
+          dtNo: that.userId,
+          idNo: that.idNo,
+          flag: 2
+        }
+    })
+    .then(function(res){
+        Indicator.close();
+        console.log(res.data)
+        var retCode=res.data.retCode;
+        var retMsg=res.data.retMsg;
+        if(retCode == '0'){
+            
+            that.ShareLight() //服务之星点亮原生
+        }
+    })
     }
   },
+  },
+  mounted:function(){    
+       // 将subscanQRCallBack方法绑定到window下面，提供给外部调用
+       window['shareResult'] = (result) => {
+        // alert('shareResult')
+         this.shareResultCallBack(result)
+       }
+   },
   created(){
-    if(!localStorage.getItem('rating') == false){
-      this.rating = localStorage.getItem('rating')
+    if(!this.$route.query.actId==false){ //重定向后
+        var wxstr =this.$route.query.actId
+        this.userId=wxstr.split(",")[0];
+        this.idNo=wxstr.split(",")[1];
+      //  this.tgUserId=wxstr.split(",")[2];
+    }else{
+      this.userId = this.$route.query.userId
+      this.idNo = this.$route.query.idNo
+     // this.tgUserId=this.$route.query.tgUserId
     }
-    if(!localStorage.getItem('rating2') == false){
-      this.rating2 = localStorage.getItem('rating2')
+    if(this.$route.query.source == 'wx'){
+      this.getCarddata('1') //获取用户id
+    }else{
+      this.getCarddataAPP('1')
     }
-    if(!localStorage.getItem('rating3') == false){
-      this.rating3 = localStorage.getItem('rating3')
+    if(localStorage.getItem('userId') == this.userId){
+      if(localStorage.getItem('idNo') == this.idNo){
+        if(!localStorage.getItem('rating') == false){
+          this.rating = localStorage.getItem('rating')
+        }
+        if(!localStorage.getItem('rating2') == false){
+          this.rating2 = localStorage.getItem('rating2')
+        }
+        if(!localStorage.getItem('rating3') == false){
+          this.rating3 = localStorage.getItem('rating3')
+        }
+        if(!localStorage.getItem('rating4') == false){
+          this.rating4 = localStorage.getItem('rating4')
+        }
+        if(!localStorage.getItem('tag') == false){
+          this.card = JSON.parse(localStorage.getItem('tag'))
+          console.log(this.card)
+        }else{ 
+          if(this.$route.query.source != 'wx'){
+            this.getCarddataAPP()
+          }else{
+            this.getCarddata()      
+          }  
+        }
+      }else{
+        localStorage.removeItem('tag');
+        localStorage.removeItem('rating4');
+        localStorage.removeItem('rating3');
+        localStorage.removeItem('rating2');
+        localStorage.removeItem('rating')
+        localStorage.removeItem('userId')
+        localStorage.removeItem('idNo')
+        if(this.$route.query.source != 'wx'){
+          this.getCarddataAPP()
+        }else{
+          this.getCarddata()      
+        } 
+      }
+    }else{
+      localStorage.removeItem('tag');
+      localStorage.removeItem('rating4');
+      localStorage.removeItem('rating3');
+      localStorage.removeItem('rating2');
+      localStorage.removeItem('rating')
+      localStorage.removeItem('userId')
+      localStorage.removeItem('idNo')
+      if(this.$route.query.source != 'wx'){
+        this.getCarddataAPP()
+      }else{
+        this.getCarddata()      
+      } 
     }
-    if(!localStorage.getItem('rating4') == false){
-      this.rating4 = localStorage.getItem('rating4')
-    }
-    if(!localStorage.getItem('tag') == false){
-      this.card = JSON.parse(localStorage.getItem('tag'))
-      console.log(this.card)
-    }
+    
      
-    if(!this.$route.query.userName == false){
-      this.businessName = decodeURIComponent(this.$route.query.userName);
-    }
-    this.wxshare()
-    this.asyncSDKConifg('中国私人银行服务的领航者，诚邀您开启财富之旅')
+    
+    this.getbusinessName()
+    
     
   }
 }
@@ -451,7 +848,7 @@ export default {
   padding-right: 0;
 }
 .star-active {
-  background-position: center .53rem;
+  background-position: center .5333333rem;
 }
 .question{
   padding-top: .4rem;
@@ -505,6 +902,11 @@ export default {
   padding-left: 0.58rem;
   overflow: hidden;
 }
+.star-text{
+  color: #999;
+  margin-left: .1rem;
+  line-height: .6rem;
+}
 .star-phone span{
   color: #999;
   font-size: .32rem;
@@ -546,11 +948,11 @@ export default {
 }
 .light{
   width: 8.72rem;
-  margin: 4.4rem 0 0 .72rem;
+  margin: 4rem 0 0 .72rem;
 }
 .share-text{
   position: absolute;
-  top: 6.4rem;
+  top: 6rem;
   left: 2.53rem;
   color: #fff;
   font-size: .346667rem;
@@ -567,7 +969,7 @@ export default {
   border-radius: 1.066667rem;
   text-align: center;
   position: absolute;
-  top: 10.8rem;
+  top: 10.4rem;
   left: 3.4rem;
 }
 </style>

@@ -352,7 +352,7 @@ export default {
                 if(that.ipNo==''||that.ipNo==undefined||that.param.phone==null){
                     that.$refs.phWarn.style.display='block';
                 // that.$refs.ph.style='border-bottom:0.5px solid #df1e1d!important'
-                    that.phWarn='请输入手机号';
+                    that.phWarn='请输入手机号码';
                     return;
                     
                 }else if(!isValidMobile(that.ipNo)){

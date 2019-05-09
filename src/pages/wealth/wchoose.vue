@@ -53,7 +53,7 @@ export default {
                     path:'/faceMsg',
                     name:'faceMsg',
                     query:{
-                        returnUrl:that.Host+'weixin-h5/index.html#/appointW'
+                        returnUrl:that.Host+'weixin-h5/index.html#/appointW?reform='+that.$route.query.reform,
                     }
                 })
             }else{//已认证
@@ -61,7 +61,7 @@ export default {
                     path:'/appointW',
                     name:'appointW',
                     query:{
-                        
+                        reform: that.$route.query.reform
                     }
                 })
             }

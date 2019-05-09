@@ -39,6 +39,7 @@ import severIntro from '@/pages/severStar/severIntro'//服务之星介绍
 import severAppoint from '@/pages/severStar/severAppoint'//预约财富服务
 import appoSuccess from '@/pages/severStar/appoSuccess'//预约成功
 
+import manwei from '@/pages/active/manwei'
 Vue.use(Router)
 
 export default new Router({
@@ -50,7 +51,7 @@ export default new Router({
       name: 'active',
       meta: {
         title: '尊享活动',
-        keepAlive: true // 首次不需要被缓存
+        keepAlive: true // 首次不需要被缓存 true// 需要被缓存false // 不需要缓存
       },
       component: active
     },
@@ -59,7 +60,7 @@ export default new Router({
       name: 'provinceList',
       meta: {
         title: '省份选择',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: provinceList//使用这个组件
     },
@@ -68,7 +69,7 @@ export default new Router({
       name: 'activeDetail',
       meta: {
         title: '活动详情',
-        keepAlive: false // 不需要缓存
+        keepAlive: true // 不需要缓存
       },
       component: activeDetail//使用这个组件
     },
@@ -348,25 +349,32 @@ export default new Router({
       },
       component: severIntro//使用这个组件
     },
-    ,
     {
       path: '/severAppoint',
       name: 'severAppoint',
       meta: {
-        title: '预约财富服务',
+        title: '为TA点亮服务之星',
         keepAlive: true // 不需要缓存
       },
       component: severAppoint//使用这个组件
     },
-    ,
     {
       path: '/appoSuccess',
       name: 'appoSuccess',
       meta: {
-        title: '预约成功',
+        title: '点亮成功',
         keepAlive: true // 不需要缓存
       },
       component: appoSuccess//使用这个组件
+    },
+    {
+      path: '/manwei',
+      name: 'manwei',
+      meta: {
+        title: '2019盛唐年会',
+        keepAlive: true // 不需要缓存
+      },
+      component: manwei//使用这个组件
     },
   ],
   scrollBehavior (to, from, savedPosition) {

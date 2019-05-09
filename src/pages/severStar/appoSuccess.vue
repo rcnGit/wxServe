@@ -1,22 +1,16 @@
 <template>
-    <div class="faceSuccess">
-        <div class="" v-show="successShow">
-            <img src='./img/yuesuccess.png' class='ztw'/>
-            <div class="Review" >
-                <p class='p1'>恭喜您，身份认证成功</p>
-                
-            </div>
+    <div class="appoSuccess">
+        <div class="yuesuccess" >
+            <img src='./img/yuesuccess.png' class='yuesucc_img'/>
+            <p class='yue_p1'>点亮成功</p>
+            <p class='yue_p2'>财富师{{userName}}感谢您的点亮</p>
         </div>
-        <div class="" v-show="failShow">
-            <!-- <img src='./img/facefail.png' class='ztw2'/> -->
+        <div class="yueCode" >
             <div class="Review" >
-                <p class='p1'>身份认证失败</p>
-                <p class='fail_text'>人脸识别身份认证失败，请重试</p>
-                <p class='fail_text'>若无法完成人脸识别可下载大唐财富APP</p>
-                <p class='fail_text'>通过绑卡完成身份认证后报名活动</p>
+                <p class='yueCode_p1'>扫码指定专属财富师，TA将为您奉上全年资产配置报告</p>
+                <img :src='yuecodeImg' class='yueCode_img'/>
+                <p class='yueCode_text'>长按扫码并关注服务号</p>
             </div>
-            <mt-button type="danger" size="large" class='sure' @click='tofacemsg()'>重新认证</mt-button>
-            <mt-button type="danger" size="large" class='downapp' @click='todownApp()'>下载大唐财富APP</mt-button>
         </div>
 
     </div>
@@ -26,136 +20,112 @@ import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
 import { MessageBox } from 'mint-ui';
 import { Toast } from 'mint-ui';
 import { Indicator } from 'mint-ui';
-import { getCookie,setCookie } from '@/common/js/cookie.js'
 import axios from 'axios';
 export default {
     name:'appoSuccess',
     component:{Button,MessageBox,Toast,Indicator},
         data:function(){
         return{
-            failShow: false,
-            successShow: false,
-            faceparam:{
-                bizId: '',
-                phone:''
-            },
+            userName:'',
             loadObj:{
                 text: '加载中...',
                 spinnerType:'triple-bounce'
-            }
+            },
+            yuecodeImg:'',
+            mobile:''
         }
     },
     created(){
-       // Indicator.open(this.loadObj);
-       // this.getfaceId()
+        this.userName = decodeURIComponent(this.$route.query.userName)
+        this.userId = this.$route.query.userId
+        this.getErweima()
     },
     methods: {
-        getfaceId:function(){
-            this.faceparam.phone = this.$route.query.phone
+        getErweima:function(){
             var that=this;
+             Indicator.open();
+            // alert(that.userId+','+that.userName+','+that.$route.query.mobile)
             axios({
                 method:'get',
-                url:'/wxservice/wxMemberInfo/getFaceResult',
-                params: that.faceparam
+                url:'/wxservice/wxexternal?opName=cSignSQRCode',//获取临时二维码接口
+                params: {
+                    param:{
+                       // actId:that.actId,
+                        sign:'2',//指定财富师关注
+                    // ghT:that.userName+'（工号'+that.ghT+'）'+that.mobile,
+                        ghT:that.userId+','+that.userName+','+that.$route.query.mobile+',2,2',
+                    }
+                }
             })
-            .then(function(res){
-                Indicator.close();
+            .then(function(res) {
+                 Indicator.close();
+                 console.log(res)
                 var retCode=res.data.retCode;
-                // var returnUrl = that.$route.query.returnUrl;
-                if(retCode == '0'){
-                    that.trafficStatistics('019')
-                    that.successShow = true
-                    setTimeout(function(){
-                        WeixinJSBridge.call('closeWindow');
-                    },3000);
-                    return;
+                if(retCode==0){
+                    //获取二维码成功
+                    var url=res.data.url;
+                    //that.popupVisible=true;//出现弹框
+                    that.yuecodeImg=url;
                 }else{
-                    that.trafficStatistics('020')
-                    that.failShow = true
-                    // var message = '人脸识别身份认证失败，请重试。若无法完成人脸识别身份认证可'+'<a class="xiazai" href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf">【下载大唐财富app】</a>'+'，通过绑卡完成身份认证后报名活动。'
-                    // MessageBox('', message).then(action => {
-                    //     if(action == 'confirm'){
-                    //             //跳转财富师名片页面
-                    //         that.$router.push({
-                    //             path:'/faceMsg',
-                    //             name:'faceMsg',
-                    //             query:{
-                    //             returnUrl:returnUrl,
-                    //             }
-                    //         })
-                    //     }
-                    // }).catch(() => {
-                        
-                    // })
-                    return;
+                   
                 }
-            })
+            })//
         },
-        tofacemsg:function(){
-            this.$router.push({
-                path:'/faceMsg',
-                name:'faceMsg',
-                query:{
-                    returnUrl:this.Host+'weixin-h5/index.html#/faceSuccess'
-                }
-            })
-        },
-        todownApp:function(){
-            window.location.href="https://interface.tdyhfund.com/launcher/download.html?channel=app&name=dtcf"
-        }
-    }
+    },    
+    mounted:function(){
+        $('.appoSuccess').css({"min-height":document.body.scrollHeight})
+    },
 
 }
 </script>
 <style>
-.ztw{
-    width: 2.793333rem;
-    margin-top: 4.053333rem;
+.appoSuccess{
+    background: #F9F9F9;
+}
+.yuesuccess{
+    border-bottom: .266667rem solid #F9F9F9;
+    border-top: .266667rem solid #F9F9F9;
+    background: #fff;
+}
+.yuesucc_img{
+    width: 2.493333rem;
+    margin-top: 1.333333rem;
     margin-bottom: 30px;
 
 }
-.ztw2{
-    width: 2.493333rem;
-    margin-top: 2.53333rem;
-    margin-bottom: .3333rem;
-
-}
-.p1{
-    font-size: .4rem;
-    color:#333;
+.yue_p1{
+    font-size: .426667rem;
+    color:#363636;
     line-height: .586667rem;
-    font-weight: 700;
+    margin-bottom: .52rem;
+}
+.yue_p2{
+    font-size: .346667rem;
+    color:#999;
+    line-height: .48rem;
     margin-bottom: .77rem;
 }
-.p2{
-    font-size: 13px;
-    color:rgb(53,55,57);
-    line-height: 35px;
+.yueCode_p1{
+    color: #636363;
+    font-size: .373333rem;
+    padding-top: 1.093333rem;
 }
-.fail_text{
+.yueCode{
+    height: 7.84rem;
+    background: url(./img/yuesuccbg.png) no-repeat;
+    background-size: 10rem 7.84rem;
+}
+.yueCode_img{
+    width: 3.5rem;
+    height: 3.5rem;
+    /* border: .026667rem solid #FFB8B8; */
+    margin-top: .7rem;
+}
+.yueCode_text{
     font-size: .346667rem;
-    color: #707070;
-    line-height: .64rem;
-}
-.p4{
-    font-size: 13px;
-    color:rgb(53,55,57);
-    line-height: 22px;
-    padding: 0 40px;
-    text-align: left;
-}
-.progress{
-    color: #08c;
-}
-.sure{
-    width:90%;
-    margin: 2.173333rem auto 0;
-}
-.downapp{
-    margin-top: .493333rem;
-    background: #fff!important;
-    border: 1px solid #df1e1d!important;
-    color: #df1e1d!important;
+    color:#999;
+    line-height: .48rem;
+    padding-top: .72rem;
 }
 </style>
     

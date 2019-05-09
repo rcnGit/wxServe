@@ -579,7 +579,7 @@ export default {
                             }
                         })
                     }else if(retCode == 12){
-                        var message = '是否指定'+that.param.businessName+'为您的专属财富师？您可指定一名服务理财师，并拥有更换权力。'
+                        var message = '是否指定'+that.param.businessName+'为您的专属财富师？您可指定一名专属财富师，并拥有更换权力。'
                         MessageBox.confirm('', {
                             message: message,
                             title: '',

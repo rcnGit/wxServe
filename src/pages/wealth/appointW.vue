@@ -351,12 +351,17 @@ export default {
                     var userInfo=res.data.userInfo;
                     that.msg2=userInfo.realName;
                     if(userInfo.belongBusiness!=''&&userInfo.belongBusiness!=null&&userInfo.belongBusiness!=undefined){
-                        var urlCan='{"userId":"'+userInfo.belongBusiness+'","sourceModule":"2","channel":"2"}'
-                        urlCan = Base64.encode(urlCan);	
-                        //打开我的财富师名片
-                        window.location.href=that.tgHost+'?paramCan='+urlCan
-                       //  window.location.href=that.tgHost+'?userId='+userInfo.belongBusiness;
-                      //  window.location.href=that.Host+'weixin-h5/index.html#/wealthCard?userId='+userInfo.belongBusiness+'&sourceModule=2&channel=2'
+                      // alert(that.$route.query.reform) 
+                      if(!that.$route.query.reform == false){ //如果是服务之星跳转服务之星
+                            window.location.href=that.Host+'weixin-h5/index.html#/severStar?source=wx'
+                        }else{
+                            var urlCan='{"userId":"'+userInfo.belongBusiness+'","sourceModule":"2","channel":"2"}'
+                            urlCan = Base64.encode(urlCan);	
+                            //打开我的财富师名片
+                            window.location.href=that.tgHost+'?paramCan='+urlCan
+                            //  window.location.href=that.tgHost+'?userId='+userInfo.belongBusiness;
+                            //  window.location.href=that.Host+'weixin-h5/index.html#/wealthCard?userId='+userInfo.belongBusiness+'&sourceModule=2&channel=2'
+                        }
                     }
                 }
                 else if(retCode == 400){
@@ -583,12 +588,17 @@ export default {
                             //alert('userId='+that.tguserId+'&productCode='+that.productCode)
                             window.location.href=that.tgHostSer+'/exchange_infor.html?userId='+that.tguserId+'&productCode='+that.productCode+'&source=2'
                         }else{
-                            var urlCan='{"userId":"'+that.param.dtNo+'","sourceModule":"2","channel":"2"}'
-                            urlCan = Base64.encode(urlCan);	
-                            //打开我的财富师名片
-                            window.location.href=that.tgHost+'?paramCan='+urlCan
-                            //window.location.href=that.tgHost+'?userId='+that.param.dtNo+'&sourceModule=2&channel=2';
-                           // window.location.href=that.Host+'weixin-h5/index.html#/wealthCard?userId='+that.param.dtNo+'&sourceModule=2&channel=2&mobile_switch='
+                            if(!that.$route.query.reform == false){//如果是服务之星跳转服务之星
+                                window.location.href=that.Host+'weixin-h5/index.html#/severStar?source=wx'
+                            }else{
+                                var urlCan='{"userId":"'+that.param.dtNo+'","sourceModule":"2","channel":"2"}'
+                                urlCan = Base64.encode(urlCan);	
+                                //打开我的财富师名片
+                                window.location.href=that.tgHost+'?paramCan='+urlCan
+                                //window.location.href=that.tgHost+'?userId='+that.param.dtNo+'&sourceModule=2&channel=2';
+                                // window.location.href=that.Host+'weixin-h5/index.html#/wealthCard?userId='+that.param.dtNo+'&sourceModule=2&channel=2&mobile_switch='
+                            }
+                            
                         }
                         
                       }else{//取消
@@ -694,6 +704,12 @@ export default {
     width:100%;
     height:100%;
 }
+#appointW .inpBox input{
+    padding-left: 22%;
+}
+#appointW .next{
+    margin: .9rem auto .6rem;
+}
 .mint-popup{
     width:100%;
     background:none;
@@ -711,6 +727,10 @@ export default {
     height:35px;
     margin-top:5px;
     line-height:1rem;
+}
+#appointW .sendM{
+    margin-top: 0;
+    margin-bottom: .3rem;
 }
 .applyLine{
     width:100%;

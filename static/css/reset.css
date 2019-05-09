@@ -163,15 +163,16 @@
 }
 .mint-msgbox-content{
     text-align: center!important;
-    border-bottom:1px solid #efefef!important;
+    border-bottom:1px solid #f6f6f6!important;
     padding-bottom:.7rem!important;
-    padding-top:1.1rem!important;
+    padding-top:0.94rem!important;
 }
 .mint-msgbox-cancel{
     font-size: .426667rem!important;
+    border-color: #f6f6f6!important;
 }
 .mint-msgbox{
-    width: 7.2rem!important;
+    width: 8rem!important;
     /* height:3.73rem; */
     border-radius:0.16rem!important;
 }
@@ -186,7 +187,7 @@
 }
 .mint-msgbox-btns{
     line-height: .4rem!important;
-    padding: .05rem 0 .05rem!important;
+    padding: 0rem 0 !important;
     height: auto!important;
 }
 .mint-msgbox-btn{
@@ -197,4 +198,7 @@
 }
 .mint-toast-text{
     line-height: 20px;
+}
+.mint-indicator-wrapper{
+    z-index:9999
 }

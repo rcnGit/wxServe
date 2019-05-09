@@ -14,7 +14,7 @@
                     ></object>
                 </div> -->
         <div class="btn_bottom" style="display: block;">
-			<span class="saveImg buttons" @click='appointW'>指定服务</span>
+			<span class="buttons" @click='appointW'>指定服务</span>
         </div>
         <!-- 底部   框 -->
         <mt-popup v-model="popupVisible" position="center" pop-transition="popup-fade">
@@ -26,6 +26,7 @@
                 </div>
             </div> <!--pop_contant -->
         </mt-popup>
+        <div id="modal" v-show="ishowModal"></div>
     </div>
 </template>
 <script>
@@ -41,6 +42,7 @@ export default {
     name:'wealthCard',
     data:function(){
         return{
+            ishowModal:false,
             wealthSrc:'',
             wname:'***',
             gh:'***',
@@ -199,9 +201,9 @@ export default {
                 //ios
                 //this.ShowPop = !this.ShowPop;
                 //this.ShowDark = !this.ShowDark;
-                $('#iframe1').css({"width":"10rem","min-height":"14rem"})
+                $('#iframe1').css({"width":"10rem","min-height":"14.8rem"})
                 $('#iframe1').attr('scrolling','no')
-                $('.scroll-wrapper').css({"min-height":"15rem"})
+                $('.scroll-wrapper').css({"min-height":"15.8rem"})
                 this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(location.href.split('?')[0]+shareData)
             } else if (/(Android)/i.test(navigator.userAgent)) {
                 //android
@@ -267,6 +269,7 @@ export default {
     mounted:function(){
        // Indicator.open();　
         if(!this.$route.query.dtName == false){
+            this.ishowModal = true
             this.trafficStatistics('025')//自定义埋点已有专属财富师
             var message = '您已有专属财富师'+this.$route.query.dtName+'，不可重复指定。';      
             MessageBox.confirm('', {
@@ -274,10 +277,12 @@ export default {
                 title: '',
                 showCancelButton:false,
                 confirmButtonText:'我知道了',
+                closeOnClickModal: false
             }).then(action => {
                 if(action == 'confirm'){
+                    this.ishowModal = false
                     this.$router.push({
-                        query:merge(that.$route.query,{'dtName':''})
+                        query:merge(this.$route.query,{'dtName':''})
                     })
                 }
             }).catch(() => {
@@ -309,31 +314,41 @@ export default {
 }
 </script>
 <style>
-.btn_bottom{
+.wealthCardD .btn_bottom{
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 1.8rem;
+    height: 1.973333rem;
     box-sizing: border-box;
     background: #fff;
-    padding-top: 0.1rem;
+    padding: 0;
 }
-.buttons {
+.wealthCardD .buttons {
     display: inline-block;
-    width: 8.213333rem;
-    height: 1.626667rem;
+    width: 10rem;
+    height: 1.973333rem;
     background: url(img/btn@2x.png) no-repeat;
-    background-size: 8.213333rem 1.626667rem;
+    background-size: 10rem 1.973333rem;
     color: #ffffff;
     text-align: center;
-    line-height: 1.626rem;
+    line-height: 1.972rem;
     font-weight: 500;
     font-size: .4rem;
-    padding-top: .04rem;
+     padding-top: .04rem;
+    border-radius: 0;
 }
 .xiazai{
     color:#4a90e2;
+ }
+ #modal{
+    width: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    opacity: .5;
+    background: #000;
  }
 </style>
 
