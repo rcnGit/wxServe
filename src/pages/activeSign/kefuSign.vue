@@ -510,20 +510,124 @@ export default {
                     title: ''
                 }).then(action => {
                     if(action == 'confirm'){
-                        that.kefuAxio(); 
+                        that.valiW()// 效验指定财富师
+                       // that.kefuAxio(); 
                         window.scroll(0,0);
                     }
                 }).catch(() => {
                     return;
                 })//
             
-        },//signup
-        kefuAxio:function(){
+        },
+        valiW:function(){
+            Indicator.open();
+            var that=this;
+            axios({
+            method:'get',
+            url:'/wxservice/wxMemberInfo/checkWealther',//指定之前校验财富师
+            params:{
+                dtNo: 'DT'+that.gh,
+                dtName: that.param.businessName,
+            },
+        })
+        .then(function(res) {//成功之后
+            //Indicator.close();
+              var retCode=res.data.retCode;
+              var retMsg=res.data.retMsg;
+               console.log(res.data);
+               var data=res.data.data;
+              if(retCode==0){//效验成功 指定财富师
+               var dtgh = 'DT'+that.gh
+                that.zhiding(dtgh,that.param.businessName,0)//指定财富师
+              }else if(retCode==-4){//已绑定线下财富师
+                Indicator.close();
+                var message = '您已与财富师'+data.dtName+'建立绑定关系，请确认是否同步财富师信息。如需更换其他财富师请先联系客服解绑'
+                MessageBox.confirm('', {
+                    message: message,
+                    title: '',
+                    confirmButtonText:'确定',
+                    cancelButtonText:'取消',
+                    closeOnClickModal: false
+                }).then(action => {
+                    if(action == 'confirm'){
+                        Indicator.open();
+                        that.zhiding(data.dtNo,data.dtName,4) //指定线下财富师
+                    }
+                }).catch(err => {
+                    if (err == 'cancel') {     //取消的回调
+                        
+                    }
+                })
+              }
+            //   else if(retCode==-2){//未认证，跳转人脸识别页面,实名了才能到此报名页
+                   
+            //   }
+              else if(retCode==-5){
+                Indicator.close();
+                  MessageBox('','财富师姓名或工号输入有误');
+              }else if(retCode==-6){
+                Indicator.close();
+                  MessageBox('','财富师已离职');
+              }else if(retCode==-3){
+                Indicator.close();
+                  MessageBox('','您已绑定财富师');
+              }else if(retCode==-1){
+                 // MessageBox('提示','系统错误');
+                 Indicator.close();
+                  Toast({
+                        message: '系统错误',
+                        position: 'center',
+                        duration: 3000
+                    });
+                  
+              }
+              
+              
+        });
+        },
+        zhiding:function(gh,ghName,id){
+           // Indicator.open();
+            var that=this;
+            axios({
+                method:'get',
+                url:'/wxservice/wxMemberInfo/bindWealther',//客户确认指定财富师
+                params:{
+                    dtNo: gh,
+                    dtName: ghName
+                },
+            })
+            .then(function(res) {//成功之后
+               // Indicator.close();
+                var retCode=res.data.retCode;
+                var retMsg=res.data.retMsg;
+                console.log(res.data);
+                var data=res.data.data;
+                if(retCode==0){//指定成功    报名
+                    that.kefuAxio(gh,ghName,id)
+                }else if(retCode==-1){
+                   // MessageBox('提示', '系统异常');
+                   Indicator.close();
+                    Toast({
+                        message: '系统异常',
+                        position: 'center',
+                        duration: 3000
+                    });
+                }
+                
+            });
+        },
+        //signup
+        kefuAxio:function(gh,ghName,id){
             Indicator.open();
             this.trafficStatistics('007')//自定义埋点客服报名
             var that=this;
-            //that.param.belongBusiness='DT'+that.param.belongBusiness;
-            that.param.belongBusiness='DT'+that.gh;
+            if(id == 4){
+                that.param.belongBusiness = gh;
+                that.param.businessName = ghName
+            }else{
+                //that.param.belongBusiness='DT'+that.param.belongBusiness;
+                that.param.belongBusiness='DT'+that.gh;
+            }         
             axios({
                 method:'get',
                 url:'/wxservice/wxservice?opName=toSignUp',

@@ -69,10 +69,13 @@
            <div class='pop_wealth2' ref='pop_wealth2' style="display:none">
                <img v-bind:src='srcImg2' class='wimg' v-if="headimgShow2"/>
                <img src='./img/w.png' class='wimg' v-else/>
-               <p class="dtname">{{dtName2}}</p>
-               <p style="font-size:0.374rem;color:#333;">您已线下指定了专属财富师</p>
-               <div style='margin-top:15%;'>
-                    <mt-button type="danger" size="large" class=''@click='closeB()' style='width:5.49rem!important;margin-top:0px!important;'>确定</mt-button>
+               <p class="dtname" style="font-size:0.4rem;color:#333;">{{dtName2}}</p>
+               <p style="font-size:0.374rem;color:#333;padding: 0 .4rem;line-height: .44rem;">您已与财富师{{dtName2}}建立绑定关系，请确认是否同步财富师信息。如需更换其他财富师请先联系客服解绑</p>
+               <div style='margin-top:9%;'>
+                    <mt-button type="danger" size="large" class=''@click='zhiding()' style='width:5.49rem!important;margin-top:0px!important;'>确定</mt-button>
+                </div>
+                <div style='margin-top:5%;'>
+                    <mt-button type="danger"@click='closeB()' size="large" class='' style='background:#fff!important;color:#df1e1d;border:1px solid #df1e1d!important;width:5.49rem!important;margin-top:0px!important;'>取消</mt-button>
                 </div>
            </div>
          </mt-popup>
@@ -530,6 +533,8 @@ export default {
                     that.headimgShow2 = false
                 }
                 that.dtName2=data.dtName;
+                that.param.dtNo=data.dtNo;
+                that.param.dtName=data.dtName;
                 that.popupVisible=true;
               }else if(retCode==-2){//未认证，跳转人脸识别页面
                    that.$router.push({
@@ -561,7 +566,6 @@ export default {
         zhiding:function(){
             Indicator.open();
             var that=this;
-            console.log(that.param);
             axios({
                 method:'get',
                 url:'/wxservice/wxMemberInfo/bindWealther',//客户确认指定财富师
