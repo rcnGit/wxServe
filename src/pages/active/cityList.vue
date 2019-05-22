@@ -537,7 +537,7 @@ export default {
           query:{
             city: cityName,
             code: cityCode,
-            comefrom:this.comefrom,//是否糖罐进入
+            comefrom:this.$route.query.comefrom,//是否糖罐进入
            // phone:this.routerPhone,
            // phone2:this.routerPhone2,
            // msgCode:this.msgCode
@@ -615,7 +615,8 @@ export default {
   font-size: 14px;
 }
 .hotcity{
-    padding: .4rem .533333rem;
+    /* padding: .4rem .533333rem; */
+    padding: .4rem 5%;
     background: #F0F0F0;
 }
 .hotcity .city_ul{
@@ -623,9 +624,11 @@ export default {
 }
 .hotcity .city_li{
     float: left;
-    width: 2.71667rem;
+    /* width: 2.71667rem; */
+    width: 30.3%;
     height:  2.133333rem;
-    margin: .326667rem .316667rem 0 0;
+    /* margin: .326667rem .316667rem 0 0; */
+    margin: .326667rem 3.3% 0 0;
     padding: .186667rem 0 0 .253333rem;
     border-radius: .06rem;
 }

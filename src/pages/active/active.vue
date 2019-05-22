@@ -4,7 +4,7 @@
           <div class="act_h_left">
               <!-- <router-link to='/cityList'><span>{{pcity}}</span><img src='./img/upBtn_img@2x.png'/>
               </router-link> -->
-              <div @click="toCity"><span>{{pcity}}</span><img src='./img/upBtn_img@2x.png'/>
+              <div @click="toCity()"><span>{{pcity}}</span><img src='./img/upBtn_img@2x.png'/>
               </div>
           </div>
           <div class="act_h_right">
@@ -102,7 +102,7 @@ export default {
           path:'/cityList',
           name:'cityList',
           query:{
-            comefrom:this.param.comefrom,//是否糖罐进入
+            comefrom:this.$route.query.comefrom,//是否糖罐进入
           }
         })
     },

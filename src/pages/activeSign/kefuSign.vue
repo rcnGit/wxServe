@@ -570,7 +570,7 @@ export default {
                   MessageBox('','财富师已离职');
               }else if(retCode==-3){
                 Indicator.close();
-                  MessageBox('','您已绑定财富师');
+                  MessageBox('','您已指定专属财富师”');
               }else if(retCode==-1){
                  // MessageBox('提示','系统错误');
                  Indicator.close();

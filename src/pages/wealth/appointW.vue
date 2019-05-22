@@ -549,7 +549,7 @@ export default {
               }else if(retCode==-6){
                   MessageBox('','财富师已离职');
               }else if(retCode==-3){
-                  MessageBox('','您已绑定财富师');
+                  MessageBox('','您已指定专属财富师”');
               }else if(retCode==-1){
                  // MessageBox('提示','系统错误');
                   Toast({
@@ -583,7 +583,7 @@ export default {
                     if(!that.$route.query.dtNo == false){
                         that.trafficStatistics('027')//自定义埋点从名片指定的财富师
                     }
-                   MessageBox('', '指定财富师成功').then(action => {
+                   MessageBox('', '指定专属财富师成功').then(action => {
                       if(action == 'confirm'){
                         if(wxfrom == 'wxser' || that.$route.query.appointForm == 'wxser'){
                             WeixinJSBridge.call('closeWindow');

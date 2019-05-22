@@ -21,7 +21,7 @@
                                 <p class="caption">从业年限</p>
                         </div>
                         <div class="assetSize">
-                            <p class="asset"><span class="assetText">{{transactAmount}}</span>万元</p>
+                            <p class="asset"><span class="assetText">{{transactAmount}}</span>{{unit}}</p>
                             <p class="caption">顾问资产规模</p>
                         </div>
                         <p class="capacityLab">能力标签</p>
@@ -194,8 +194,8 @@ export default {
             workYears:'',
             isshowlabel:false,
             labelListArr:[],
-            transactAmount:'',
-            jobLevelName:'',
+            transactAmount:'',//资产规模
+            unit:'万元',
             shoWealthStory:false,
             wealthStory:'',
             showIntroduce:false,
@@ -259,7 +259,18 @@ export default {
                     }else{
                         that.mobiles = data.mobile
                     }
-                    
+                   // data.levelSwitch = 0
+                    if(data.levelSwitch == '0'){//levelSwitch 职级开关：0关;1开
+                        that.jobLevelName= ''
+                    }else{
+                        that.jobLevelName= data.jobLevelName 
+                    }
+                    if(data.fundSwitch == '0'){//fundSwitch 顾问资产规模开关:0开;1关
+                        that.transactAmount = '****'
+                        that.unit = ''
+                    }else{
+                        that.transactAmount = data.transactAmount
+                    }
                     if(!data.photo == false){
                         that.showShareimg = true
                         that.shareImg = data.photo
@@ -270,7 +281,7 @@ export default {
                         that.introduce= data.introduce//个人简介
                     }
                     
-                    that.jobLevelName= data.obLevelName//级别
+                   // that.jobLevelName= data.obLevelName//级别
                     that.servicecontent= data.serviceContent//服务内容
                     that.detailedInfo= data.detailedInfo//0有详细信息，1没有
                     if(!data.email == false){
@@ -287,8 +298,7 @@ export default {
                     if(!data.place == false){
                         that.place = data.place //地址
                     }
-                    that.transactAmount = data.transactAmount
-                    that.jobLevelName= data.jobLevelName 
+                    
                     if(!data.capacityLabChn == false){
                         var capacityLab =data.capacityLabChn
                         that.isshowLab = true

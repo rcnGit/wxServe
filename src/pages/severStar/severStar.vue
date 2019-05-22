@@ -15,7 +15,7 @@
         </div>
         <div class="btn_Bottom1" v-else >
             <span class="Buttons" @click='openQuestion' v-if="noLight" style="line-height: 1.45rem">为{{businessName}}点亮服务之星</span>
-            <span class="Buttons" @click='tuijian' v-else style="line-height: 1.45rem">点亮服务之星</span>
+            <span class="Buttons" @click='tuijian' v-else style="line-height: 1.45rem">转发邀请好友助力</span>
         </div>
         </div>
         <!-- 底部   框 -->
