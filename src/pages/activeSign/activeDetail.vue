@@ -131,7 +131,8 @@ export default {
             serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxservice?opName=getUserInfo'),//接口
             paramurl: location.href.split('?')[0],
             token:'',
-            comefrom:''
+            comefrom:'',
+            ifCard:''
         }
        
     },
@@ -460,13 +461,16 @@ export default {
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg; 
                 if(retCode == 0){
+                    
                     if(!that.ghT==false){//对方有财富师
                         //that.businesscardShow=true
-                        if(that.ghT != "undefined"){
-                            that.headimgShow = true;
-                            that.getPhoto()
+                        if(that.ghT.indexOf(",")>-1){
+                        }else{
+                            if(that.ghT != "undefined"){
+                                that.headimgShow = true;
+                                that.getPhoto()
+                            }
                         }
-                        
                     }else{
                       //  that.ghT = res.data.userInfo.belongBusiness
                         //that.businesscardShow=false;
@@ -511,7 +515,7 @@ export default {
                         return;
                     }else{
                             var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=activeDetail_'+that.actId+','+that.ghT+','+that.actName+','+that.$route.query.ifCard+','+that.$route.query.comefrom+'#wechat_redirect';
+                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=activeDetail_'+that.actId+','+that.actName+','+that.ifCard+','+that.$route.query.comefrom+','+that.ghT+'#wechat_redirect';
                     }                   
                 }
                 else{
@@ -531,10 +535,20 @@ export default {
                 //ios
                 //this.ShowPop = !this.ShowPop;
                 //this.ShowDark = !this.ShowDark;
-                this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href+'&ifCard=1&ghT='+mygh)
+                if(mygh.length>9){
+                    this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href+'&ghT='+mygh)
+                }else{
+                    this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href+'&ifCard=1&ghT='+mygh)
+                }
+                
             } else if (/(Android)/i.test(navigator.userAgent)) {
                 //android
-                this.shareLink = location.href.split('?')[0]+'?ifCard=1&ghT='+mygh+'&actId='+this.actId+'&actName='+encodeURIComponent(this.actName)
+                if(mygh.length>9){
+                    this.shareLink = location.href.split('?')[0]+'?ghT='+mygh+'&actId='+this.actId+'&actName='+encodeURIComponent(this.actName)
+                }else{
+                    this.shareLink = location.href.split('?')[0]+'?ifCard=1&ghT='+mygh+'&actId='+this.actId+'&actName='+encodeURIComponent(this.actName)
+                }
+                
             }
             }
     
@@ -542,6 +556,7 @@ export default {
         getPhoto:function(){ 
             let that = this;
             Indicator.open();
+            
             var param=Base64.encode('{"userId":"'+that.ghT+'"}');//that.user.userId
             axios({
                 method:'get',
@@ -737,15 +752,29 @@ export default {
         //alert(that.$route.query.actId+'===='+that.actId)
         if(!that.$route.query.ghT==false){
             that.ghT=that.$route.query.ghT;
+            if(that.ghT.toString().length>9){
+                that.ghT = that.ghT.toString().substr(that.ghT.toString().length-9,that.ghT.toString().length); //二次分享多拼参数截取
+            }
         }else{
-            that.ghT=wxstr.split(",")[1];
+            
+            if(that.$route.query.ghT == ''){
+                that.ghT=that.$route.query.ghT; 
+               
+            }else{
+                if(wxstr.split(",").length>5){
+                    that.ghT=wxstr.split(",")[5];
+                }else{
+                    that.ghT=wxstr.split(",")[4];
+                } 
+            }
+            
+            
         }
-        
         var actName =that.$route.query.actName;
         if(!that.$route.query.actName==false){
             that.actName=decodeURIComponent(that.$route.query.actName);
         }else{
-            that.actName=decodeURIComponent(wxstr.split(",")[2]);
+            that.actName=decodeURIComponent(wxstr.split(",")[1]);
         }
         that.param.activeId=actId;
         if(!actId == true){ 
@@ -768,16 +797,17 @@ export default {
 
 
         if(!that.$route.query.ifCard==false){
-            var ifCard=that.$route.query.ifCard;
+            that.ifCard=that.$route.query.ifCard;
         }else{
-            var ifCard=wxstr.split(",")[3];
+            that.ifCard=wxstr.split(",")[2];
         }
         
-         if(ifCard!=''&&ifCard!=undefined){
-             console.log('ifCard==='+ifCard);
-             if(ifCard==1){
+         if(that.ifCard!=''&&that.ifCard!=undefined){
+             console.log('ifCard==='+that.ifCard);
+             that.ifCard = that.ifCard.toString().substr(that.ifCard.toString().length-1,that.ifCard.toString().length)
+             if(that.ifCard==1){
                  //that.$refs.card.style.display='flex';
-                 if(that.ghT == '' || that.ghT ==undefined || that.ghT =='undefined'){
+                 if(that.ghT == '' || that.ghT ==undefined || that.ghT =='undefined'|| that.ghT.indexOf(",")>-1){
                     that.businesscardShow=false
                  }else{
                     that.businesscardShow=true
@@ -789,7 +819,7 @@ export default {
         if(!that.$route.query.comefrom==false){
             that.comefrom=that.$route.query.comefrom;
         }else{
-            that.comefrom=wxstr.split(",")[4];
+            that.comefrom=wxstr.split(",")[3];
         }
             
         
