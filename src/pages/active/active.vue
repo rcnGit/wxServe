@@ -310,7 +310,7 @@ export default {
   width: 100%;
   box-sizing: border-box;
   padding: .36667rem .173333rem .1633333rem;
-  line-height: 1rem; 
+  line-height: 1.05rem; 
   display:flex; /*父元素声明弹性盒*/
   position: fixed;
   top: 0;
@@ -358,7 +358,7 @@ export default {
   background:#fff;
   border-radius:30px;
   height: 100%;
-  padding: 0rem .4rem 0rem .266667rem;
+  padding: 0.025rem .4rem 0rem .266667rem;
   box-sizing: border-box;
   font-size: 0.37rem;
   color:rgb(57,66,89);
@@ -385,7 +385,7 @@ font-size: 0.37rem;
 .search_img{
   width:0.45rem;
   position: absolute;
-  top:0.25rem;
+  top:0.27rem;
   right:14px;
 }
 #active_content{

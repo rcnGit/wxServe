@@ -1,9 +1,13 @@
 <template>
     <div class='propertyList fColorFFF' style='min-height:430px;background: #fff;'>
         <div class='headContent'>
+                <div @click="openEye" class="open_sel" v-show='showEyes'>
+                    <img src="./img/eye.png" v-if="eyeShow" class='eye'/>
+                    <img src='./img/hideye.png' class='eye' v-else/> 
+                </div>
                 <p class='fSize13 pp1' style="padding-top:0.78rem;">总金额（元）</p>
-                <p class='pp2'>{{totalAsset}}</p> <!--在数字上加逗号 -->
-                <p class='p3'>待确认：{{privateToConfirmAsset}}（元）</p><!--在数字上加逗号 -->
+                <p class='pp2' v-if="showAsset">{{totalAsset}}</p><p class='pp2' v-else>*****</p> <!--在数字上加逗号 -->
+                <p class='p3' v-if="showAsset">待确认：{{privateToConfirmAsset}}（元）</p><p class='p3' v-else>待确认：*****</p><!--在数字上加逗号 -->
                 <div style='display:none;'>
                     <div class='floatLeft w50 inc_box' style='border-right:0.5px solid #efefef;'>
                         <p class='fSize13'>最新收益（元）</p>
@@ -21,6 +25,18 @@
                  <mt-button type="danger" size="large" class='next' @click='downApp ()' style="margin-top:0.72222rem;">去投资</mt-button>
          </div>
         <div class='proContent proper_list' ref='contant' style='display:none;'>
+            <div class='proDemo' >
+                <div class='proTop'>
+                    <!-- <img  class='floatLeft' src='./img/gLogo.png' /> -->
+                    <span class='floatLeft bigP'>唐掌柜</span>
+                    <!-- <span class='floatRight xindate'>更新日期：<em>{{publicDate}}</em></span> -->
+                </div>
+                <div style='clear:both'></div>
+                <div class='proBot'>
+                    <span class='floatLeft smP'><span class="jin_one">金额（元）</span><br><em class="smp-number money_a" v-if="showAsset">{{tangTotalAsset}}</em><em class="smp-number money_a" v-else>*****</em></span>
+                    <span class='floatRight shouyi'><span class="jin_one">最新收益（{{tangDate}}）</span><br><em :class='tangC' style="line-height:0.7rem;" v-if="showAsset">{{tangYestIncome}}</em><em :class='tangC' style="line-height:0.7rem;" v-else>*****</em></span>
+                </div>
+            </div>  <!-- proDemo -->
             <div class='proDemo' @click="jumpPrivate">
                 <div class='proTop'>
                     <!-- <img  class='floatLeft'src='./img/sLogo.png'/> -->
@@ -28,7 +44,7 @@
                 </div>
                 <div style='clear:both'></div>
                 <div class='proBot'>
-                    <span class='floatLeft smP'><span class="jin_one">金额（元）</span><br><em class="smp-number money_a">{{privateTotalAsset}}</em></span>
+                    <span class='floatLeft smP'><span class="jin_one">金额（元）</span><br><em class="smp-number money_a" v-if="showAsset">{{privateTotalAsset}}</em><em class="smp-number money_a" v-else>*****</em></span>
                 </div>
             </div>  <!-- proDemo -->
              <div class='proDemo'  @click="jumpPublic">
@@ -39,8 +55,8 @@
                 </div>
                 <div style='clear:both'></div>
                 <div class='proBot'>
-                    <span class='floatLeft smP'><span class="jin_one">金额（元）</span><br><em class="smp-number money_a">{{publicTotalAsset}}</em></span>
-                    <span class='floatRight shouyi'><span class="jin_one">最新收益（{{publicDate}}）</span><br><em :class='gC' style="line-height:0.7rem;">{{publicYestIncome}}</em></span>
+                    <span class='floatLeft smP'><span class="jin_one">金额（元）</span><br><em class="smp-number money_a" v-if="showAsset">{{publicTotalAsset}}</em><em class="smp-number money_a" v-else>*****</em></span>
+                    <span class='floatRight shouyi'><span class="jin_one">最新收益（{{publicDate}}）</span><br><em :class='gC' style="line-height:0.7rem;" v-if="showAsset">{{publicYestIncome}}</em><em :class='gC' style="line-height:0.7rem;" v-else>*****</em></span>
                 </div>
             </div>  <!-- proDemo -->
              <div class='proDemo' @click="jumpSecurities">
@@ -51,8 +67,8 @@
                 </div>
                 <div style='clear:both'></div>
                 <div class='proBot'>
-                    <span class='floatLeft smP'><span class="jin_one">金额（元）</span><br><em class="smp-number money_a">{{securitiesTotalAsset}}</em></span>
-                    <span class='floatRight shouyi'><span class="jin_one">最新收益（{{securitiesDate}}）</span><br><em :class='ziC' style="line-height:0.7rem;">{{securitiesYestIncome}}</em></span>
+                    <span class='floatLeft smP'><span class="jin_one">金额（元）</span><br><em class="smp-number money_a" v-if="showAsset">{{securitiesTotalAsset}}</em><em class="smp-number money_a" v-else>*****</em></span>
+                    <span class='floatRight shouyi'><span class="jin_one">最新收益（{{securitiesDate}}）</span><br><em :class='ziC' style="line-height:0.7rem;" v-if="showAsset">{{securitiesYestIncome}}</em><em :class='ziC' style="line-height:0.7rem;" v-else>*****</em></span>
                 </div>
             </div>  <!-- proDemo -->
         </div>
@@ -78,7 +94,10 @@ export default {
     name:'propertyList',
     data:function(){
         return{
+            eyeShow:'',
             showBottom:true,
+            showEyes:false,
+            showAsset:'',
             loadObj:{
                 text: '加载中...',
                 spinnerType: 'triple-bounce'
@@ -90,6 +109,7 @@ export default {
             },
             gC:'red',
             ziC:'red',
+            tangC:'red',
             totalAsset:'--',//总资产
             privateTotalAsset:'',//私募总资产
             privateToConfirmAsset:'--',//私募待确认
@@ -101,6 +121,10 @@ export default {
             securitiesAddIncome:'',//资管类总收益
             publicDate:'',         //公募更新日期
             securitiesDate:'',//资管更新日期
+            tangTotalAsset:'',//唐掌柜总资产
+		    tangYestIncome:'',//唐掌柜最新收益
+            tangAddIncome:'',//唐掌柜总收益
+            tangDate:'',     //唐掌柜更新时间 
             serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxMemberInfo/getUserAsset'),//接口
             paramurl: location.href.split('?')[0]
         }
@@ -115,6 +139,39 @@ export default {
                         returnUrl:this.Host+'weixin-h5/index.html#/propertyList'
                     }
                 })
+        },
+        openEye:function(){
+            this.eyeShow = !this.eyeShow
+            if(this.eyeShow == false){
+                this.showAsset = false
+            }else{
+                this.showAsset = true
+            }
+            var that=this;
+           //  Indicator.open();
+                axios({
+                    method:'get',
+                    url:'/wxservice/wxMemberInfo/changeAssetVisibleFlag'
+                })
+                .then(function(res) {//成功之后
+                  //  Indicator.close();
+                    var retCode=res.data.retCode;
+                    var retMsg=res.data.retMsg;
+                    if(retCode==0){
+                        console.log(res.data)
+                       // that.getList()
+                    }else if(retCode==-1){//系统异常
+                        Toast({
+                            message: '系统异常',
+                            position: 'center',
+                            duration: 3000
+                        });
+                    }else if(retCode == 400){
+                        var serbackUrl = that.Host+'wxservice/wxMemberInfo/changeAssetVisibleFlag';
+                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=propertyList#wechat_redirect';
+                    }
+                   
+                });
         },
         getfaceId:function(){
             Indicator.open();
@@ -249,11 +306,13 @@ export default {
                     }
                 })
                 .then(function(res) {//成功之后
+                    console.log(res.data)
                     Indicator.close();
                     var retCode=res.data.retCode;
                     var retMsg=res.data.retMsg;
                     if(retCode==-2){//未身份认证
                         that.totalAsset='--';
+                        that.showAsset = true
                         that.$refs.wz.style.display='block';
                         return;
                     }else if(retCode==-1){//系统异常
@@ -265,10 +324,20 @@ export default {
                         });
                     }else if(retCode == 400){
                         var serbackUrl = that.Host+'wxservice/wxMemberInfo/getUserAsset?v='+(new Date()).getTime();
-                      window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=propertyList#wechat_redirect';
-                    }var d=res.data.data;
-                   // that.totalAsset=d.totalAsset)//总资产
-                     that.totalAsset=d.totalAsset //总资产
+                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=propertyList#wechat_redirect';
+                    }
+                    var d=res.data.data;
+                    if(retCode==0){
+                        that.showEyes=true
+                        if(res.data.assetVisibleFlag == 0){ //客户资产是否可见0不可见 1可见
+                            that.eyeShow=false
+                            that.showAsset = false
+                        }else{
+                            that.eyeShow=true
+                            that.showAsset = true
+                        }
+                    }
+                    that.totalAsset=d.totalAsset //总资产
                     that.privateTotalAsset=d.privateTotalAsset//私募总资产
                     //that.privateToConfirmAsset=d.privateToConfirmAsset//私募待确认
                     that.privateToConfirmAsset=d.toConfirmAsset//私募待确认
@@ -282,16 +351,30 @@ export default {
                     that.publicAddIncome=d.publicAddIncome//公募总收益
                     that.securitiesTotalAsset=d.securitiesTotalAsset//资管类总资产
                     if(d.securitiesYestIncome<0){
-                            that.zic='green';
+                            that.ziC='green';
                     }
                     that.securitiesYestIncome=d.securitiesYestIncome//资管类最新收益
                     that.securitiesAddIncome=d.securitiesAddIncome//资管类总收益
-
+                    if(d.tangYestIncome<0){
+                            that.tangC='green';
+                    }
+                    that.tangTotalAsset = d.tangTotalAsset//唐掌柜总资产
+		            that.tangYestIncome=d.tangYestIncome//唐掌柜最新收益
+                    that.tangAddIncome=d.tangAddIncome //唐掌柜总收益
+                    
 
                     if(that.totalAsset=='0.00'&&that.privateToConfirmAsset=='0.00'){
                         that.$refs.contant.style.display='none';
                         that.$refs.nodata.style.display='block';
                         that.showBottom = true
+                        //that.showAsset = true
+                        if(res.data.assetVisibleFlag == 0){ //客户资产是否可见0不可见 1可见
+                            that.eyeShow=false
+                            that.showAsset = false
+                        }else{
+                            that.eyeShow=true
+                            that.showAsset = true
+                        }
                         return;
                     }else{
                         that.$refs.contant.style.display='block';
@@ -305,9 +388,12 @@ export default {
                     if(d.securitiesDate==''){
                         d.securitiesDate='--';
                     }
+                    if(d.tangDate==''){
+                        d.tangDate='--';
+                    }
                     that.publicDate=d.publicDate//公募更新日期
                     that.securitiesDate=d.securitiesDate//资管更新日期
-                    
+                    that.tangDate=d.tangDate    //唐掌柜更新时间 
                    
                    
                 });
@@ -401,9 +487,17 @@ export default {
     color:#4a90e2;
 }
 .comfooter{
-     position: fixed;
-     bottom: 0;
- }
+    position: fixed;
+    bottom: 0;
+}
+.open_sel{
+    position: absolute;
+    right: 1rem;
+    top: .74rem;
+}
+.open_sel img{
+    width: .533333rem;
+}
 </style>
 
 

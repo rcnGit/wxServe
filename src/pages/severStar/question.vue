@@ -115,8 +115,8 @@ export default {
         title:'大唐财富点亮服务之星',
         msg:'',
         shareUrl:'',
-        type: false,
-        isNeedNotice:true
+        type: false,//文案是否可编辑 true：可编辑，false：不可编辑
+        isNeedNotice:true //分享完成后是否需要通知H5：true：需要，false：不需要
       },
       tgUserId:'',
       userCard:{

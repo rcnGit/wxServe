@@ -89,7 +89,7 @@ import { Popup } from 'mint-ui';
 import { MessageBox } from 'mint-ui';//提示框
 import { Toast } from 'mint-ui';
 import { Button } from 'mint-ui';//引入mint-ui的button组件文件包
-import { isValidName } from '@/common/js/extends.js';//引入正则
+import { isValidName2 } from '@/common/js/extends.js';//引入正则
 import {handleClipboard } from '@/common/js/clipboard.js'//vue 复制功能
 import clip from '@/common/js/clipboard.js'//vue 复制功能
 import { getCookie,setCookie } from '@/common/js/cookie.js'
@@ -422,7 +422,7 @@ export default {
         },
         wNameFn:function(){
             var that=this;
-            if(isValidName(that.wName)){
+            if(isValidName2(that.wName)){
                 that.$refs.warnName.style.display='block';
                 that.warnName='请输入正确的姓名';
                // that.$refs.wName.style='border-bottom:0.5px solid #df1e1d!important';
@@ -463,7 +463,7 @@ export default {
                 this.warnName='请输入财富师姓名';
                // this.$refs.wName.style='border-bottom:0.5px solid #df1e1d!important';
                  return;
-            }else if(isValidName(this.wName)){
+            }else if(isValidName2(this.wName)){
                 console.log('请输入正确的财富师姓名');
                 this.$refs.warnName.style.display='block';
                 this.warnName='请输入正确的姓名';

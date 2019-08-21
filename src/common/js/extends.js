@@ -48,6 +48,10 @@ export function isValidInt (number) {
 export function isValidName (name) {
   return /[，\s_'’‘\"”“|\\~#$@￥%^&*!。;\/<>\?？]/.test(name)
 }
+// 姓名的校验指定财富师不可输入数字
+export function isValidName2 (name) {
+  return /[，\s_'’‘\"”“|\\~#$@￥%^&*!。;\/<>\?？0-9]/.test(name)
+}
 //工号的校验
 export function isValidEmpNo (number) {
   return /^[0-9]{7}$/.test(number)

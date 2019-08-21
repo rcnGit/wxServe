@@ -7,7 +7,7 @@
                 <img src='../wealth/img/w.png' v-else/>
             </div>
             <div class='bus_C'>
-                <p class='position_name'>财富师{{shareName}}</p>
+                <p class='position_name'>{{shareName}}</p>
                 <p class='Invitation'>邀您参加大唐财富尊享活动</p>
             </div>
             <div class='bus_R' @click="toBusiness()"><img src='./img/rightBtn_img@2x.png'/></div>
@@ -132,7 +132,14 @@ export default {
             paramurl: location.href.split('?')[0],
             token:'',
             comefrom:'',
-            ifCard:''
+            ifCard:'',
+            openId:'',
+            recordId:'',
+            twoLevelOpenId:'',
+            readingTime:20,
+            memberName:'',
+            memberIdNo:'',
+            readId:''
         }
        
     },
@@ -461,7 +468,23 @@ export default {
                 var retCode=res.data.retCode;
                 var retMsg=res.data.retMsg; 
                 if(retCode == 0){
-                    
+                    if(that.ifCard == 2){//tc-wx-wx
+                        that.twoLevelOpenId = res.data.userInfo.openId;
+                    }else{
+                        that.openId = res.data.userInfo.openId;
+                    }
+                    console.log(that.openId)
+                    if(that.comefrom=='tangchao'){
+                        if(!that.recordId == false){
+                            that.getUserdynamicListWX(10,1)
+                            setInterval(function(){
+                                if(!that.readId == false){
+                                    that.updateUserDynamicRecord(that.readingTime)
+                                }
+                            },20000);
+                        }
+                    }
+                    /*
                     if(!that.ghT==false){//对方有财富师
                         //that.businesscardShow=true
                         if(that.ghT.indexOf(",")>-1){
@@ -475,8 +498,23 @@ export default {
                       //  that.ghT = res.data.userInfo.belongBusiness
                         //that.businesscardShow=false;
                         that.headimgShow = false;
+                    }*/
+                    if(!res.data.userInfo.businessName==false){//我的财富师
+                        that.headimgShow = true;
+                        that.ghT = res.data.userInfo.belongBusiness;
+                        that.getPhoto(1)
+                    }else{
+                        if(!that.ghT==false){//对方有财富师
+                            //that.businesscardShow=true
+                            if(that.ghT.indexOf(",")>-1){
+                            }else{
+                                if(that.ghT != "undefined" && that.ghT != "null"){
+                                    that.headimgShow = true;
+                                    that.getPhoto()
+                                }
+                            }
+                        } 
                     }
-
                     that.getData();
                     that.subscribe=res.data.userInfo.subscribe;//是否关注
                     
@@ -487,16 +525,25 @@ export default {
                     that.paramOnly.phone=res.data.userInfo.phone;
                     that.paramOnly.businessName=res.data.userInfo.businessName
                     that.paramOnly.belongBusiness=res.data.userInfo.belongBusiness
-                    if(!res.data.userInfo.businessName==false){//我的财富师
-                        that.businessName = '财富师'+res.data.userInfo.businessName
+                  //  if(!res.data.userInfo.businessName==false){//我的财富师
+                      //  that.businessName = '财富师'+res.data.userInfo.businessName
                         // that.businesscardShow = true
                         that.belongBusiness = res.data.userInfo.belongBusiness
-                        var actname = that.businessName+'邀请您参加'+that.actName
+                        var actname = '我邀请您参加'+that.actName
                         var busname = '大唐财富尊享活动'+that.actName+'即将举办，机会难得，邀请你一起参加';
-                        var mygh = res.data.userInfo.belongBusiness
+                        var mygh
+                        if(!res.data.userInfo.belongBusiness == false){
+                            mygh = res.data.userInfo.belongBusiness
+                        }else{
+                            if(!that.ghT == false){
+                                mygh = that.ghT
+                            }
+                        }
+                        console.log(1)
                         that.Share(mygh)
+                        console.log(2)
                         that.asyncSDKConifg(actname,busname)
-                    }else{
+                  /*  }else{
                         that.Share('')
                         //that.photoT= res.data.userInfo.headImgUrl;
                         if(!res.data.userInfo.nickName==false){
@@ -507,15 +554,15 @@ export default {
                         }else{
                             var nickName = ''
                         }
-                    } 
+                    } */
                     return;
                 }
                 else if(retCode == 400){
                     if(that.param.comefrom =='tangguan'){
                         return;
                     }else{
-                            var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=activeDetail_'+that.actId+','+that.actName+','+that.ifCard+','+that.$route.query.comefrom+','+that.ghT+'#wechat_redirect';
+                        var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
+                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=activeDetail_'+that.actId+','+that.actName+','+that.ifCard+','+that.comefrom+','+that.recordId+','+Base64.encode(that.openId)+','+that.ghT+'#wechat_redirect';
                     }                   
                 }
                 else{
@@ -535,25 +582,62 @@ export default {
                 //ios
                 //this.ShowPop = !this.ShowPop;
                 //this.ShowDark = !this.ShowDark;
-                if(mygh.length>9){
-                    this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href+'&ghT='+mygh)
+                if(!this.recordId == false){
+                    if(!mygh == false){
+                        if(mygh.length>9){
+                            this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href+'&ghT='+mygh)
+                        }else{
+                            if(this.ifCard==2){
+                                this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href+'&ghT='+mygh)
+                            }else{
+                                this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href+'&ifCard=2&ghT='+mygh+'&openid='+this.openId)
+                            }
+                            
+                        }
+                    }else{
+                        this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href)
+                    }
                 }else{
-                    this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href+'&ifCard=1&ghT='+mygh)
+                    if(!mygh == false){
+                        if(mygh.length>9){
+                            this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href+'&ghT='+mygh)
+                        }else{
+                            this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href+'&ifCard=1&ghT='+mygh)
+                        }
+                    }else{
+                        this.shareLink = this.Host+'weixin-h5/static/html/redirect.html?app3Redirect=' + encodeURIComponent(window.location.href+'&ifCard=1')
+                    }
                 }
+                
                 
             } else if (/(Android)/i.test(navigator.userAgent)) {
                 //android
-                if(mygh.length>9){
-                    this.shareLink = location.href.split('?')[0]+'?ghT='+mygh+'&actId='+this.actId+'&actName='+encodeURIComponent(this.actName)
+                if(!this.recordId == false){
+                    if(!mygh == false){
+                        if(mygh.length>9){
+                            this.shareLink = location.href.split('?')[0]+'?ghT='+mygh+'&actId='+this.actId+'&actName='+encodeURIComponent(this.actName)
+                        }else{
+                            this.shareLink = location.href.split('?')[0]+'?ifCard=2&ghT='+mygh+'&actId='+this.actId+'&actName='+encodeURIComponent(this.actName)+'&openid='+this.openId+'&recordId='+this.recordId+'&comefrom='+this.comefrom
+                        }
+                    }else{
+                        this.shareLink = location.href.split('?')[0]+'?ifCard=2&actId='+this.actId+'&actName='+encodeURIComponent(this.actName)+'&openid='+this.openId+'&recordId='+this.recordId+'&comefrom='+this.comefrom
+                    }
                 }else{
-                    this.shareLink = location.href.split('?')[0]+'?ifCard=1&ghT='+mygh+'&actId='+this.actId+'&actName='+encodeURIComponent(this.actName)
+                    if(!mygh == false){
+                        if(mygh.length>9){
+                            this.shareLink = location.href.split('?')[0]+'?ghT='+mygh+'&actId='+this.actId+'&actName='+encodeURIComponent(this.actName)
+                        }else{
+                            this.shareLink = location.href.split('?')[0]+'?ifCard=1&ghT='+mygh+'&actId='+this.actId+'&actName='+encodeURIComponent(this.actName)
+                        } 
+                    }else{
+                        this.shareLink = location.href.split('?')[0]+'?ifCard=1&actId='+this.actId+'&actName='+encodeURIComponent(this.actName)
+                    }
                 }
-                
             }
             }
     
         },
-        getPhoto:function(){ 
+        getPhoto:function(id){ 
             let that = this;
             Indicator.open();
             
@@ -583,7 +667,11 @@ export default {
                     }else{
                         that.headimgShow=false;
                     }
-                    that.shareName=that.busNameT;//对方的财富师名字
+                    if(id==1){
+                        that.shareName='我的专属财富师'+that.busNameT;//
+                    }else{
+                        that.shareName='财富师'+that.busNameT+'期待为您服务' ;//对方的财富师名字
+                    }
                     // that.userphone = res.data.userInfo.userphone
                 }else if(retCode == "-2"){
                     Toast({
@@ -673,6 +761,109 @@ export default {
             }   
             //
         },
+        getData_app:function(){
+            Indicator.open();
+            let that = this;
+            var param=Base64.encode('{"userId":"'+that.$route.query.userId+'"}');//that.user.userId
+            axios({
+                method:'get',
+                url:'/tgweb/app/ctp/CallApiServlet?api=query_user_info',//糖罐
+                params:{
+                    param:param,
+                    osFlag:'3'
+                }
+            })
+            .then(function(res){
+                Indicator.close();
+                var data=Base64.decode(res.data);
+                data=jQuery.parseJSON(data);
+                console.log(data)
+                that.memberName =  data.userName
+                that.memberIdNo = data.idCardNo
+                that.getUserdynamicListAPP(10)
+                setInterval(function(){
+                    if(!that.readId == false){
+                        that.updateUserDynamicRecord(that.readingTime)
+                    }
+                },20000);
+            })
+        },
+        getUserdynamicListAPP(time){
+            let that = this;
+            var Data = "{'operationType':'0','recordId':'"+that.recordId+"','source':'1','readingTime':'"+time+"','flag':'1','memberName':'"+that.memberName+"','memberIdNo':'"+that.memberIdNo+"'}";
+            console.log(Data)
+            var param=Base64.encode(Data);
+            axios({
+                method:'get',
+                url:'/tcapi/WealthApiController/getUserdynamicList',//客户动态
+                params:{
+                    param:param,
+                    osFlag:'3'
+                }
+            })
+            .then(function(res) {//成功之后
+                var data=Base64.decode(res.data);
+                data=jQuery.parseJSON(data);
+                console.log(data)
+                var retCode=data.retCode;
+                if(retCode == 0){
+                    that.readId = data.id
+                }
+            
+            })
+        },
+        getUserdynamicListWX(time,flag){
+            let that = this;
+            var Data = "{'operationType':'0','recordId':'"+that.recordId+"','source':'2','readingTime':'"+time+"','flag':'"+flag+"','openId':'"+that.openId+"','twoLevelOpenId':'"+that.twoLevelOpenId+"'}";
+           // alert(Data)
+            var param=Base64.encode(Data);
+            axios({
+                method:'get',
+                url:'/tcapi/WealthApiController/getUserdynamicList',//客户动态
+                params:{
+                    param:param,
+                    osFlag:'3'
+                    // operationType: '0',// 操作类型：0:活动 1:产品2:图文连接 3:图文4:报名活动,5:指定财富师
+                    // recordId:'',//记录id
+                    // source:'2',//来源渠道（1:糖罐,2:微信）
+                    // readingTime:that.readingTime,//浏览时长，浏览完后必传
+                    // flag:'2',//阅读和转发标识（阅读时传1，分享时传2）
+                    // openId: that.openId,//渠道为2时必传
+                    // twoLevelOpenId: ''//渠道为2且二次转发时必传
+                }
+            })
+            .then(function(res) {//成功之后
+                 var data=Base64.decode(res.data);
+                data=jQuery.parseJSON(data);
+                console.log(data)
+                var retCode=data.retCode;
+                if(retCode == 0){
+                    that.readId = data.id
+                }
+            })
+        },
+        updateUserDynamicRecord(time){
+            let that = this;
+            var Data = "{'id':'"+that.readId+"','readingTime':'"+time+"'}";
+            //alert(Data)
+            var param=Base64.encode(Data);
+            axios({
+                method:'get',
+                url:'/tcapi/WealthApiController/updateUserDynamicRecord',//更新微信轨迹阅读时间
+                params:{
+                    param:param,
+                    osFlag:'3'
+                }
+            })
+            .then(function(res) {//成功之后
+                 var data=Base64.decode(res.data);
+                data=jQuery.parseJSON(data);
+                console.log(data)
+                that.readingTime = that.readingTime+20
+                // var retCode=data.retCode;
+            
+            })
+        },
         async asyncSDKConifg (actName,businessName,mygh) {
             let that = this;
             axios.get('/wxservice/core/getJSSDKConfigure.mm?pageUrl='+that.backUrl)
@@ -699,7 +890,9 @@ export default {
                         dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
                         success: function() {
                             // 用户确认分享后执行的回调函数
-                            //('chenggong')
+                            if(!that.recordId == false && that.recordId!='undefined'){
+                                that.getUserdynamicListWX(10,2)
+                            }
                         },
                         cancel: function() {
                             // 用户取消分享后执行的回调函数
@@ -714,6 +907,9 @@ export default {
                             imgUrl: 'http://file0.datangwealth.com/g1/M00/16/50/rBAeX1ybKCiAEKkxAADvNDguF4c858.png?filename=share.png', // 分享图标
                             success: function() {
                                 // 用户确认分享后执行的回调函数
+                                if(!that.recordId == false && that.recordId!='undefined'){
+                                    that.getUserdynamicListWX(10,2)
+                                }
                             },
                             cancel: function() {
                                 // 用户取消分享后执行的回调函数
@@ -738,13 +934,7 @@ export default {
         }
         
         document.body.scrollTop = document.documentElement.scrollTop = 0;//回到顶部；
-        var bizId=decodeURIComponent(getCookie("bizId"));
-        that.faceparam.bizId = bizId;
-         if(!that.$route.query.faceResult == false||bizId==null){
-            that.getfaceId();
-         }else{
-             that.authentic()//获取客户信息
-         }
+       
 
         var wxstr =decodeURIComponent(that.$route.query.actId); 
         var actId=wxstr.split(",")[0];
@@ -756,15 +946,14 @@ export default {
                 that.ghT = that.ghT.toString().substr(that.ghT.toString().length-9,that.ghT.toString().length); //二次分享多拼参数截取
             }
         }else{
-            
             if(that.$route.query.ghT == ''){
                 that.ghT=that.$route.query.ghT; 
                
             }else{
-                if(wxstr.split(",").length>5){
-                    that.ghT=wxstr.split(",")[5];
+                if(wxstr.split(",").length>7){
+                    that.ghT=wxstr.split(",")[7];
                 }else{
-                    that.ghT=wxstr.split(",")[4];
+                    that.ghT=wxstr.split(",")[6];
                 } 
             }
             
@@ -805,7 +994,7 @@ export default {
          if(that.ifCard!=''&&that.ifCard!=undefined){
              console.log('ifCard==='+that.ifCard);
              that.ifCard = that.ifCard.toString().substr(that.ifCard.toString().length-1,that.ifCard.toString().length)
-             if(that.ifCard==1){
+             if(that.ifCard==1 || that.ifCard==2){
                  //that.$refs.card.style.display='flex';
                  if(that.ghT == '' || that.ghT ==undefined || that.ghT =='undefined'|| that.ghT.indexOf(",")>-1){
                     that.businesscardShow=false
@@ -821,9 +1010,58 @@ export default {
         }else{
             that.comefrom=wxstr.split(",")[3];
         }
+        if(that.$route.query.comefrom=='tangguan'){
+            if(!that.$route.query.recordId == false){
+                that.getData_app()//获取糖罐的姓名身份证
+            }
+        }
+        if(!that.$route.query.recordId==false || !that.$route.query.dynamicFlag==false){//微信轨迹
+            if(!that.$route.query.recordId==false){
+                that.recordId=that.$route.query.recordId;
+            }else{
+                that.recordId=that.$route.query.dynamicFlag;
+            }
+        }else{
+            that.recordId=wxstr.split(",")[4];
+        }
+        
+        if(that.ifCard==2){
+            if(!that.recordId == false){
+                if(!that.$route.query.openid==false){
+                    that.openId=that.$route.query.openid;
+                }else{
+                    that.openId=Base64.decode(wxstr.split(",")[5]);
+                }
+                // alert(that.openId)
+                // if(that.openId.toString().length>28){
+                //     that.openId = that.openId.toString().substr(0,28); //二次分享多拼参数截取
+                //     alert(that.openId)
+                // }
+            }
+        }
+        var bizId=decodeURIComponent(getCookie("bizId"));
+        that.faceparam.bizId = bizId;
+        if(!that.$route.query.faceResult == false||bizId==null){
+            that.getfaceId();
+        }else{
+            that.authentic()//获取客户信息
+        }
+       /*     
+        if(!that.$route.query.sharefrom==false){//微信轨迹
+            that.sharefrom=that.$route.query.sharefrom;
+        }else{
+            that.sharefrom=wxstr.split(",")[5];
+        }
+        if(!that.sharefrom == false){
+            if(that.sharefrom == 'C1' && that.comefrom=='tangchao'){//tc-wx
+                that.getUserdynamicListWX()
+            }
+            if(that.sharefrom == 'C1' && that.comefrom=='tangguan'){//tc-tg
+                that.getUserdynamicListAPP()
+            }
             
-        
-        
+            //tc-wx-wx二次
+        }*/
         
     },
     beforeRouteLeave(to, from, next) {

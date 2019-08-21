@@ -2,20 +2,20 @@
     <div id='kefuSign'>
         <div class='content'>
             <div class='tip'>
-                <span>联系电话录入后将做加密处理，保证您的信息安全</span>
+                <span>手机号录入后将做加密处理，保证您的信息安全</span>
               <!-- <img src='./img/left_img@2x.png' class='left_img'/>   -->
             </div>
             <div class='inpBox'>
-                    <input type='text' class='' v-model="param.realName" :disabled="isDisabled" ref="realName"/>
+                    <input type='text' class='' v-model="param.realName" :disabled="isDisabled" ref="realName" placeholder="请输入姓名"/>
                     <p class='warn' ref='warnName' v-show='true'>{{warnName}}</p>
                     <span>姓名</span>
                      <!-- <img src='./img/card_img@2x.png' class='clear' style='right:33%;'/>  -->
                  </div>
                 <div class='inpBox'>
                         <input type='hidden' class=''style='padding-right:100px;'maxlength='11' v-model="param.phone" ref='phone' />
-                        <input type='tel'  class=''style='padding-right:100px;'maxlength='11' v-model="phone2" ref='phone2' :disabled="isDisabled2" placeholder="请输入联系人电话"/>
+                        <input type='tel'  class=''style='padding-right:100px;'maxlength='11' v-model="phone2" ref='phone2' :disabled="isDisabled2" placeholder="请输入手机号"/>
                     <p class='warn' ref='warnPhone' v-show='true'>{{warnPhone}}</p>
-                    <span>电话</span>
+                    <span>手机号</span>
                     <span class='inpRchoose fSize13' style='color:#4a90e2;' @click='tishi_changeP()' v-show='isShow'>变更手机号>></span>
                  </div> <!--inpBox-->
                   <div class='inpBox' v-show="yanzhengmaIsShow">
@@ -27,7 +27,7 @@
                  <div class='inpBox'>
                     <input type='text' class='' v-model="param.businessName" :disabled="isDisabled3" ref='businessName' placeholder="请输入财富师姓名" @blur.prevent="changeCount($event)"/>
                     <p class='warn' ref='warnbusinessName' v-show='true'>{{warnbusinessName}}</p>
-                    <span>财富师</span>
+                    <span>财富师姓名</span>
                   </div> <!--inpBox-->
                   <div class='inpBox'>
                     <input type='tel' class='' v-model="gh" :disabled="isDisabled4" ref='belongBusiness'placeholder="请输入财富师工号" maxlength="7" @blur.prevent="changeCount($event)"/>
@@ -52,7 +52,7 @@ import { Toast } from 'mint-ui';
 import getcode from '../wealth/getcode';
 import axios from 'axios'
 import { getCookie,setCookie } from '@/common/js/cookie.js'
-import { isValidMobile, isValidxincode, isValidverifycode, isValidName, isValidEmpNo } from '@/common/js/extends.js'
+import { isValidMobile, isValidxincode, isValidverifycode, isValidName, isValidEmpNo,isValidName2 } from '@/common/js/extends.js'
 import merge from 'webpack-merge'
 export default {
     name:'kefuSign',
@@ -216,10 +216,10 @@ export default {
                         that.ghT = res.data.userInfo.belongBusiness;
                     }else{
                         if(!that.ghT == false){
-                            if(that.ghT != "undefined"){
-                            that.gh=that.ghT.substr(2,7);
-                            that.getPhoto()
-                         }
+                            if(that.ghT != "undefined" && that.ghT != "null"){
+                                that.gh=that.ghT.substr(2,7);
+                                that.getPhoto()
+                            }
                         }
                         
                     }
@@ -369,7 +369,7 @@ export default {
             }
         },//验证联系人姓名
         businessNameFn:function(){
-            if(isValidName(this.param.businessName) || this.param.businessName == ""){
+            if(isValidName2(this.param.businessName) || this.param.businessName == ""){
                 this.$refs.warnbusinessName.style.display='block';
                 this.warnbusinessName='请输入正确的财富师姓名';
                 //this.$refs.businessName.style='border-bottom:0.5px solid #df1e1d!important';
