@@ -51,10 +51,15 @@ export default {
             const meatTitle = this.$route.meta.title
            const backUrl = encodeURIComponent(location.href.split('#')[0])
            if(!paramUrl == false){
-                var sharelink = location.href.split('?')[0]+'?source=wx'
+                if(paramUrl=='wz'){
+                    var sharelink = location.href
+                }else{
+                    var sharelink = location.href.split('?')[0]+'?source=wx'
+                }
            }else{
                 var sharelink = location.href.split('?')[0]
            }
+           
             axios.get('/wxservice/core/getJSSDKConfigure.mm?pageUrl='+backUrl)
                 .then(function (res) {
                    // console.log(res)
