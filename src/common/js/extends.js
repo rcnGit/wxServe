@@ -52,9 +52,18 @@ export function isValidName (name) {
 export function isValidName2 (name) {
   return /[，\s_'’‘\"”“|\\~#$@￥%^&*!。;\/<>\?？0-9]/.test(name)
 }
+// 注册页面姓名校验
+export function isValidName3 (name) {
+  return  /^[a-zA-Z\u4e00-\u9fa5]{2,30}$/.test(name)
+}
+
 //工号的校验
 export function isValidEmpNo (number) {
   return /^[0-9]{7}$/.test(number)
+}
+//注册工号的校验
+export function isValidEmpNo2 (number) {
+  return /^1[0-9]{6}$/.test(number)
 }
 /**
  *  格式化时间

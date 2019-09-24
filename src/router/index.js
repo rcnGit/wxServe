@@ -38,6 +38,8 @@ import shareCard from '@/pages/severStar/shareCard'//财富师名片
 import severIntro from '@/pages/severStar/severIntro'//服务之星介绍
 import severAppoint from '@/pages/severStar/severAppoint'//预约财富服务
 import appoSuccess from '@/pages/severStar/appoSuccess'//预约成功
+import newRegiste from '@/pages/activeSign/newRegiste'//异业获客新用户注册
+import newRegSucc from '@/pages/activeSign/newRegSucc'//异业获客新用户注册成功
 
 import manwei from '@/pages/active/manwei'
 Vue.use(Router)
@@ -375,6 +377,24 @@ export default new Router({
         keepAlive: true // 不需要缓存
       },
       component: manwei//使用这个组件
+    },
+    {
+      path: '/newRegiste',
+      name: 'newRegiste',
+      meta: {
+        title: '注册会员',
+        keepAlive: true // 不需要缓存
+      },
+      component: newRegiste//使用这个组件
+    },
+    {
+      path: '/newRegSucc',
+      name: 'newRegSucc',
+      meta: {
+        title: '注册会员',
+        keepAlive: true // 不需要缓存
+      },
+      component: newRegSucc//使用这个组件
     },
   ],
   scrollBehavior (to, from, savedPosition) {

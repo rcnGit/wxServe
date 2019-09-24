@@ -375,14 +375,27 @@ export default {
         }else{
             //window.location.href=this.Host+'weixin-h5/index.html#/activeDetail?actId='+id+'&actName='+actName+'&comefrom=tangguan';
             //return;
-            var sendstr= '{"title":"活动详情","activeId":"'+oaActId+'"}'; 				
-           // alert(sendstr)
-            if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
-                //ios
-                window.webkit.messageHandlers.AppModel.postMessage({body: 'objc:///jumpActive:'+sendstr});
-            } else if (/(Android)/i.test(navigator.userAgent)) {
-                //android
-                window.AndroidFunction.jumpActive(sendstr);
+            if(!this.$route.query.areaId == false || !this.$route.query.groupId == false){//tcapp
+              var sendstr= '{"title":"活动详情","activeId":"'+oaActId+'"}'; 				
+            // alert(sendstr)
+              if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
+                  //ios
+                  window.webkit.messageHandlers.AppModel.postMessage({body: 'objc:///jumpActive:'+sendstr});
+              } else if (/(Android)/i.test(navigator.userAgent)) {
+                  //android
+                  window.AndroidFunction.jumpActive(sendstr);
+              }
+            }else{//tgapp
+              var that=this;
+              that.$router.push({
+                  path:'/activeDetail',
+                  name:'activeDetail',
+                  query:{
+                    actId: oaActId,
+                    actName : ActName,
+                    comefrom:that.param.comefrom,//是否糖罐进入
+                  }
+                })
             }
         }
     },
@@ -394,6 +407,14 @@ export default {
       if(!name == false){}else{
         name=''
       }
+      let officeId
+      if(!that.$route.query.areaId == false){
+        officeId=that.$route.query.areaId
+        that.groupId=officeId
+      }else{
+        officeId=that.groupId
+      }
+      console.log(that.groupId)
         that.ifSearch=true;
         Indicator.open(that.loadObj);
         if(that.selected == '1'){
@@ -404,7 +425,7 @@ export default {
               actName:name,
               comefrom:that.param.comefrom,
               actStatus: '0',//根据时间筛选活动状态 0即将举办 1举办中 2已举办
-              officeId: that.groupId,  //业务部门id
+              officeId: officeId,  //业务部门id
             }
             if(that.pcity == '全国'){
               that.getData(1,'sou');
@@ -419,7 +440,7 @@ export default {
               actName:name,
               comefrom:that.param.comefrom,
               actStatus: '1',//根据时间筛选活动状态 0即将举办 1举办中 2已举办
-              officeId: that.groupId,  //业务部门id
+              officeId: officeId,  //业务部门id
             }
             if(that.pcity == '全国'){
               that.getData2(1,'sou');
@@ -434,7 +455,7 @@ export default {
               actName:name,
               comefrom:that.param.comefrom,
               actStatus: '2',//根据时间筛选活动状态 0即将举办 1举办中 2已举办
-              officeId: that.groupId,  //业务部门id
+              officeId: officeId,  //业务部门id
             }
             if(that.pcity == '全国'){
               that.getData3(1,'sou');
@@ -566,16 +587,28 @@ export default {
                   that.noActive1='暂无活动';
                   that.showCheck1=false
                   that.isShow=true;
-                  that.haveno == true
+                  that.haveno = true
+                }else{
+                  if(that.haveno == true){
+                    that.noActive1='暂无活动';
+                    that.showCheck1=false
+                    that.isShow=true;
+                  }else{
+                    that.noActive1='暂未搜索到相关结果';
+                    that.showCheck1=true
+                    that.isShow=true;
+                  }
+                }
+              }else{
+                if(that.haveno == true){
+                  that.noActive1='暂无活动';
+                  that.showCheck1=false
+                  that.isShow=true;
                 }else{
                   that.noActive1='暂未搜索到相关结果';
                   that.showCheck1=true
                   that.isShow=true;
                 }
-              }else{
-                that.noActive1='暂未搜索到相关结果';
-                  that.showCheck1=true
-                  that.isShow=true;
               }
               if(that.haveno == true){
                 that.noActive1='暂无活动';

@@ -139,7 +139,8 @@ export default {
             readingTime:20,
             memberName:'',
             memberIdNo:'',
-            readId:''
+            readId:'',
+            type:'',//异业获客
         }
        
     },
@@ -403,9 +404,21 @@ export default {
                             that.isShow=false;
                             return;
                         }
-                       
+                        that.type = obj.contentValue;//活动内容21代表异业获客
+                        if(that.type == '21'){//异业获客活动
+                            if(res.data.actCanSignUp==1){//that.actStatusCode == '进行中' || that.actStatusCode == '延期中'
+                                that.isShow = true
+                                that.actStatus= '注册会员';
+                                return
+                            }else{
+                                that.isShow = true;
+                                that.actStatus= '已结束';
+                                that.isDisabled = true;
+                                return
+                            }
+                        }
+                        //普通活动类
                         if(res.data.actCanSignUp==1){//that.actStatusCode == '进行中' || that.actStatusCode == '延期中'
-                           
                             if(res.data.canSignUp == '0'){
                                 that.isShow = true
                                 that.actStatus= '我要报名';
@@ -429,6 +442,9 @@ export default {
         getErweima:function(){
             var that=this;
              Indicator.open();
+             if(that.businesscardShow == false){
+                that.ghT =''
+             }
             axios({
                 method:'get',
                 url:'/wxservice/wxexternal?opName=cSignSQRCode',//获取客户信息
@@ -692,6 +708,10 @@ export default {
                 return;
             }
             that.paramOnly.activityType=that.activityType;
+            if(that.type == '21'){
+                that.Registion()//校验用户是否实名、或注册、或指定专属
+                return
+            }
             if(that.activityType == 'YX'){
                 if(!that.realName || !that.userphone || !that.belongBusiness){//有姓名说明已经实名
                     that.$router.push({
@@ -864,6 +884,39 @@ export default {
             
             })
         },
+        Registion(){
+            let that = this;
+            axios({
+                method:'get',
+                url:'/wxservice/wxMemberInfo/isNewCustomer',//校验用户是否实名、或注册、或指定专属
+                params: {
+                }
+            })
+            .then(function(res) {//成功之后
+                Indicator.close();
+                console.log(res.data)
+                var retCode=res.data.retCode;
+                var retMsg=res.data.retMsg; 
+                if(retCode == 0){//新客户
+                    that.actName=encodeURIComponent(that.actName);
+                    that.$router.push({
+                        path: '/newRegiste',
+                        name: 'newRegiste',
+                        query:{
+                            activeId: that.actId,
+                            actName: that.actName,
+                            isReviewSignup: that.isReviewSignup,
+                        }
+                    })
+                }else if(retCode == 1){//非新客户
+                    Toast({
+                        message: '该活动仅限新用户参加',
+                        position: 'center',
+                        duration: 3000
+                    });
+                }
+            })
+        },
         async asyncSDKConifg (actName,businessName,mygh) {
             let that = this;
             axios.get('/wxservice/core/getJSSDKConfigure.mm?pageUrl='+that.backUrl)
@@ -996,7 +1049,7 @@ export default {
              that.ifCard = that.ifCard.toString().substr(that.ifCard.toString().length-1,that.ifCard.toString().length)
              if(that.ifCard==1 || that.ifCard==2){
                  //that.$refs.card.style.display='flex';
-                 if(that.ghT == '' || that.ghT ==undefined || that.ghT =='undefined'|| that.ghT.indexOf(",")>-1){
+                 if(that.ghT == '' || that.ghT ==undefined || that.ghT =='undefined'|| that.ghT.indexOf(",")>-1 || that.ghT ==null|| that.ghT =='null'){
                     that.businesscardShow=false
                  }else{
                     that.businesscardShow=true
