@@ -55,16 +55,27 @@ export default {
                 backUrl: location.href.split('?')[0],
                 phone:''
             },
-            state:''
+            state:'',
+            reportId:'',
+            activityType:'',
+            userId:'',//报告介绍页糖巢分享的带名片
+            fswitch:'',//是否显示名片:0是显示，1是不显示
         }
     },
     components:{getcode,MessageBox,Button,comfooter},
     created:function(){
         var that=this;
         if(!that.$route.query.actId==false){ //重定向后 
-            that.bdfrom=that.$route.query.actId;
+            var wxstr = that.$route.query.actId; 
+            that.bdfrom=wxstr.split(",")[0];
+            that.reportId=wxstr.split(",")[1];
+            that.userId =wxstr.split(",")[2];
+            that.fswitch =wxstr.split(",")[3];
         }else{
             that.bdfrom =that.$route.query.bdfrom;
+            that.reportId =that.$route.query.reportId;
+            that.userId =that.$route.query.userId;
+            that.fswitch =that.$route.query.fswitch;
         }  
     },
     mounted:function(){
@@ -118,7 +129,7 @@ export default {
                     });
                 }else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                  window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=bdphone_wxser#wechat_redirect';
+                  window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=bdphone_'+that.bdfrom+','+that.reportId+','+that.userId+','+that.fswitch+'#wechat_redirect';
                 }
             })
         },
@@ -227,6 +238,13 @@ export default {
                 that.iptype = '1'
                 that.idCardNo = that.$route.query.idNo
             }
+            if(!that.bdfrom == false){
+                that.activityType=1
+            }
+            if(!that.reportId == false){
+            }else{
+                that.reportId=''
+            }
             Indicator.open();
             axios({
                 method:'get',
@@ -236,7 +254,9 @@ export default {
                     msgCode:that.msgCode,//短信验证码
                     backUrl:that.paramurl,
                     type: that.iptype, //0，默认，1验证标记
-                    idCardNo: that.idCardNo   //人脸识别到绑定手机号的身份证号
+                    idCardNo: that.idCardNo,   //人脸识别到绑定手机号的身份证号
+                    activityType:that.activityType, //从大类的传1//客户来源-活动类型 1-大类资产 (大类资产需求添加,统计转换率用)
+                    reportId:that.reportId,
                 }
             })
             .then(function(res) {//成功之后
@@ -284,26 +304,47 @@ export default {
                       if(action == 'confirm'){
                          if(wxfrom == 'wxser' || that.bdfrom == 'wxser'){
                             WeixinJSBridge.call('closeWindow');
-                         }
-                         that.$router.push({
-                                path:'/'+that.bdfrom,
-                                name:that.bdfrom,
-                                query:{
-                                   // clickSource: that.$route.query.clickSource,
-                                }
-                            })
-                         
+                         }else if(wxfrom == '1' || that.bdfrom == '1'){
+                            window.location.href=that.Host+'weixin-h5/DTCF/html/report/tgconfig_report_Intro.html?bdfrom=1'
+                         }else if(wxfrom == '2' || that.bdfrom == '2'){
+                            window.location.href=that.Host+'weixin-h5/DTCF/html/report/question.html?bdfrom=2'
+                        }else if(wxfrom == '3' || that.bdfrom == '3'){
+                            window.location.href=that.Host+'weixin-h5/DTCF/html/report/configurationReport.html?bdfrom=3&reportId='+that.reportId
+                        }else if(wxfrom == '4' ||that.bdfrom == '4'){
+                            window.location.href=that.Host+'weixin-h5/DTCF/html/report/myReport.html?bdfrom=4'
+                        }else if(wxfrom == '5' ||that.bdfrom == '5'){
+                            window.location.href=that.Host+'weixin-h5/DTCFS/html/report/shareReportHome.html?bdfrom=5&userId='+that.userId+'&forward_switch='+that.fswitch
+                        }else{
+                            that.$router.push({
+                                    path:'/'+that.bdfrom,
+                                    name:that.bdfrom,
+                                    query:{
+                                    // clickSource: that.$route.query.clickSource,
+                                    }
+                                })
+                        }
                        }else{//取消
                             if(wxfrom == 'wxser' || that.bdfrom == 'wxser'){
-                            WeixinJSBridge.call('closeWindow');
-                         }
-                         that.$router.push({
-                                path:'/'+that.bdfrom,
-                                name:that.bdfrom,
-                                query:{
-                                   // clickSource: that.$route.query.clickSource,
-                                }
-                            })
+                                WeixinJSBridge.call('closeWindow');
+                            }else if(wxfrom == '1' || that.bdfrom == '1'){
+                                window.location.href=that.Host+'weixin-h5/DTCF/html/report/tgconfig_report_Intro.html?bdfrom=1'
+                            }else if(wxfrom == '2' || that.bdfrom == '2'){
+                                window.location.href=that.Host+'weixin-h5/DTCF/html/report/question.html?bdfrom=2'
+                            }else if(wxfrom == '3' || that.bdfrom == '3'){
+                                window.location.href=that.Host+'weixin-h5/DTCF/html/report/configurationReport.html?bdfrom=3&reportId='+that.reportId
+                            }else if(wxfrom == '4' ||that.bdfrom == '4'){
+                                window.location.href=that.Host+'weixin-h5/DTCF/html/report/myReport.html?bdfrom=4'
+                            }else if(wxfrom == '5' ||that.bdfrom == '5'){
+                                window.location.href=that.Host+'weixin-h5/DTCFS/html/report/shareReportHome.html?bdfrom=5&userId='+that.userId+'&forward_switch='+that.fswitch
+                            }else{
+                                that.$router.push({
+                                    path:'/'+that.bdfrom,
+                                    name:that.bdfrom,
+                                    query:{
+                                    // clickSource: that.$route.query.clickSource,
+                                    }
+                                })
+                            }
                       }
                   });
                 }else if(retCode=='-2'){//验证码不正确
@@ -320,7 +361,7 @@ export default {
                     });
                 }else if(retCode == 400){
                    var serbackUrl = that.Host+'wxservice/wxMemberInfo/changeMobile'
-                   window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=bdphone#wechat_redirect';
+                   window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=bdphone_'+that.bdfrom+','+that.reportId+','+that.userId+','+that.fswitch+'#wechat_redirect';
                 }else if(retCode=='-1'){
                    // MessageBox('提示','系统异常');
                     Toast({
@@ -363,7 +404,12 @@ export default {
             if(id == '1'){
                 var idCardNo=memId
                 var idCardName=memName
-                var canshu=that.Host+'weixin-h5/index.html#/bdphone?bdfrom='+that.bdfrom+'&name='+encodeURIComponent(idCardName)+'&idNo='+idCardNo+'&faceResult=1'
+                if(that.bdfrom == 3){
+                    var canshu=that.Host+'weixin-h5/index.html#/bdphone?bdfrom='+that.bdfrom+'&name='+encodeURIComponent(idCardName)+'&idNo='+idCardNo+'&faceResult=1&reportId='+that.reportId 
+                }else{
+                    var canshu=that.Host+'weixin-h5/index.html#/bdphone?bdfrom='+that.bdfrom+'&name='+encodeURIComponent(idCardName)+'&idNo='+idCardNo+'&faceResult=1'
+                }
+               
             }else{
                 var idCardNo=that.$route.query.idNo
                 var idCardName=decodeURIComponent(that.$route.query.name)
@@ -388,7 +434,7 @@ export default {
                 var retCode=res.data.retCode;
                  if(retCode == 400){
                      var serbackUrl = that.Host+'wxservice/wxMemberInfo/getFaceToken'
-                     window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=state=bdphone#wechat_redirect';
+                     window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_base&state=bdphone#wechat_redirect';
                  }else if(retCode == '-2'){
                      MessageBox(' ','身份证不合法');
                      return;
@@ -498,7 +544,12 @@ export default {
                                 var idCardNo=that.$route.query.idNo
                                 var idCardName=decodeURIComponent(that.$route.query.name)
                                 var type = that.$route.query.tp
-                                var canshu=that.Host+'weixin-h5/index.html#/bdphone?bdfrom='+that.bdfrom+'&idNo='+idCardNo+'&name='+encodeURIComponent(that.$route.query.name)+'&tp='+type
+                                if(that.bdfrom == 3){
+                                    var canshu=that.Host+'weixin-h5/index.html#/bdphone?bdfrom='+that.bdfrom+'&idNo='+idCardNo+'&name='+encodeURIComponent(that.$route.query.name)+'&tp='+type+'&reportId='+that.reportId 
+                                }else{
+                                    var canshu=that.Host+'weixin-h5/index.html#/bdphone?bdfrom='+that.bdfrom+'&idNo='+idCardNo+'&name='+encodeURIComponent(that.$route.query.name)+'&tp='+type
+                                }
+                                
                                 that.getface(idCardNo,idCardName,canshu,type)
                             }
                         }).catch(err => {

@@ -22,8 +22,8 @@
              <mt-button type="danger" size="large" class='next' @click='appW()'style='width:7.6rem;height:1.06rem;'>确认</mt-button>
              <div class='sendM' @click='sendWX()'>不清楚工号，给财富师发微信/短信索取工号&nbsp;&nbsp;></div>
          </div> <!--content-->
-         <div style='width:100%;height:10px;background:#f9f9f9;'></div>
-         <div class='content' style='padding:0;'>
+         <div style='width:100%;height:10px;background:#f9f9f9;' v-show="showApplyline"></div>
+         <div class='content' style='padding:0;' v-show="showApplyline">
              <div class='applyLine'>
                  <p>若无心仪财富师可联系客服为您推荐财富师</p>
                  <mt-button type="danger" size="large" class='next' @click='onlineApplyV()' style='background:#fff!important;color:#df1e1d;border:1px solid #df1e1d!important;width:50%!important;margin-top:20px!important;height:1rem!important;'>在线申请</mt-button>
@@ -121,7 +121,8 @@ export default {
             param:{
                 dtNo:'',
                 dtName:'',
-                mobile:""//财富师手机号
+                mobile:"",//财富师手机号
+                activityType:""
             },
             faceparam:{
                 bizId: '',
@@ -136,8 +137,18 @@ export default {
             paramurl: location.href.split('?')[0],
             source: '',
             tguserId: '',
-            productCode: ''
-
+            productCode: '',
+            showApplyline: true,//从认购进入的不展示在线申请
+            ren:'',
+            comefrom:'',
+            actId2:'',
+            proType:'',
+            prodId:'',
+            prodCode:'',
+            seriesId:'',
+            reportId:'',
+            userId:'',//报告介绍页糖巢分享的带名片
+            fswitch:'',//是否显示名片:0是显示，1是不显示
         }
         
     },
@@ -156,14 +167,50 @@ export default {
                 this.tguserId=wxstr.split(",")[0];
                 this.productCode=wxstr.split(",")[1];
                 this.source=wxstr.split(",")[2];
+                this.ren=wxstr.split(",")[3];
+                if(this.ren == 'phoneIndexWealth'|| this.ren == 'yuYueWealth'){
+                    this.showApplyline = false
+                    this.actId2=wxstr.split(",")[5];
+                    if(this.ren == 'phoneIndexWealth'){
+                        this.comefrom=wxstr.split(",")[4];
+                    }
+                    if(this.ren == 'yuYueWealth'){
+                        this.proType=wxstr.split(",")[6];
+                        this.prodId=wxstr.split(",")[7];
+                        this.prodCode=wxstr.split(",")[8];
+                        this.seriesId=wxstr.split(",")[9];
+                    }
+                }
+                this.bdfrom=wxstr.split(",")[4];//大类
+                this.reportId=wxstr.split(",")[5];//大类
+                this.userId =wxstr.split(",")[6];//大类
+                this.fswitch =wxstr.split(",")[7];//大类
                 this.getuserName();//获取用户姓名
             }else{
                 this.tguserId=this.$route.query.userId
                 this.productCode=this.$route.query.productCode
                 this.source=this.$route.query.source
+                this.ren=this.$route.query.ren
+                this.bdfrom =this.$route.query.bdfrom;//大类
+                this.reportId =this.$route.query.reportId;
+                this.userId =this.$route.query.RuserId;
+                this.fswitch =this.$route.query.fswitch;
+                if(this.ren == 'phoneIndexWealth'|| this.ren == 'yuYueWealth'){
+                    this.showApplyline = false
+                    this.actId2=this.$route.query.actId2
+                    if(this.ren == 'phoneIndexWealth'){
+                        this.comefrom=this.$route.query.comefrom
+                    }
+                    if(this.ren == 'yuYueWealth'){
+                        this.proType=this.$route.query.proType
+                        this.prodId=this.$route.query.prodId
+                        this.prodCode=this.$route.query.prodCode
+                        this.seriesId=this.$route.query.seriesId
+                    }
+                }
                 this.getuserName();//获取用户姓名
             } 
-        } 
+        }
     },
     mounted:function(){
         Indicator.open(this.loadObj);
@@ -369,7 +416,12 @@ export default {
                 }
                 else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                  window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=appointW_'+that.$route.query.userId+','+that.$route.query.productCode+','+that.$route.query.source+'#wechat_redirect';
+                    if(!that.$route.query.ren==false){
+                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=appointW_'+that.$route.query.userId+','+that.$route.query.productCode+','+that.$route.query.source+','+that.ren+','+that.comefrom+','+that.actId2+','+that.proType+','+that.prodId+','+that.prodCode+','+that.seriesId+'#wechat_redirect';
+                    }else{
+                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=appointW_'+that.$route.query.userId+','+that.$route.query.productCode+','+that.$route.query.source+','+that.ren+','+that.bdfrom+','+that.reportId+','+that.userId+','+that.fswitch+'#wechat_redirect';
+                    }
+                  
                 }
                 else{
                   // MessageBox('提示',retMsg);
@@ -537,11 +589,16 @@ export default {
                 that.param.dtName=data.dtName;
                 that.popupVisible=true;
               }else if(retCode==-2){//未认证，跳转人脸识别页面
+                if(!that.bdfrom == false){
+                    var reUrl = that.Host+'weixin-h5/index.html#/appointW?bdfrom='+that.bdfrom
+                }else{
+                    var reUrl = that.Host+'weixin-h5/index.html#/appointW'
+                }
                    that.$router.push({
                     path:'/faceMsg',
                     name:'faceMsg',
                     query:{
-                        returnUrl:that.Host+'weixin-h5/index.html#/appointW'
+                        returnUrl:reUrl
                     }
                     })
               }else if(retCode==-5){
@@ -566,6 +623,9 @@ export default {
         zhiding:function(){
             Indicator.open();
             var that=this;
+            if(!that.bdfrom == false){
+                that.param.activityType=1  //客户来源-活动类型 1-大类资产 (大类资产需求添加,统计转换率用)
+            }
             axios({
                 method:'get',
                 url:'/wxservice/wxMemberInfo/bindWealther',//客户确认指定财富师
@@ -591,6 +651,23 @@ export default {
                             //跳到增值服务兑换信息页
                             //alert('userId='+that.tguserId+'&productCode='+that.productCode)
                             window.location.href=that.tgHostSer+'/exchange_infor.html?userId='+that.tguserId+'&productCode='+that.productCode+'&source=2'
+                        }else if(that.ren == 'phoneIndexWealth'|| that.ren == 'yuYueWealth'){
+                            if(that.ren == 'phoneIndexWealth'){
+                                top.location.href=that.Host+'weixin-h5/Seven_an/phone_index.html?comefrom'+that.comefrom+'&actId='+that.actId2
+                            }
+                            if(that.ren == 'yuYueWealth'){
+                                top.location.href=that.Host+'weixin-h5/Seven_an/phone_yuyue.html?actId='+that.actId2+'&proType='+that.proType+'&prodId='+that.prodId+'&prodCode='+that.prodCode+'&seriesId='+that.seriesId
+                            }
+                        }else if(that.bdfrom=='1'){
+                            window.location.href=that.Host+'weixin-h5/DTCF/html/report/tgconfig_report_Intro.html?bdfrom=1'
+                        }else if(that.bdfrom == '2'){
+                            window.location.href=that.Host+'weixin-h5/DTCF/html/report/question.html?bdfrom=2'
+                        }else if(that.bdfrom == '3'){
+                            window.location.href=that.Host+'weixin-h5/DTCF/html/report/configurationReport.html?bdfrom=3&reportId='+that.reportId
+                        }else if(that.bdfrom == '4'){
+                            window.location.href=that.Host+'weixin-h5/DTCF/html/report/myReport.html?bdfrom=4'
+                        }else if(that.bdfrom == '5'){
+                            window.location.href=that.Host+'weixin-h5/DTCFS/html/report/shareReportHome.html?bdfrom=5&userId='+that.userId+'&forward_switch='+that.fswitch
                         }else{
                             if(!that.$route.query.reform == false){//如果是服务之星跳转服务之星
                                 window.location.href=that.Host+'weixin-h5/index.html#/severStar?source=wx'

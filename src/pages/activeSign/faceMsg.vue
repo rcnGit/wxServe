@@ -40,13 +40,18 @@ export default {
             idCardNo:'',//身份证号
             idCardName:'',//身份证姓名
             returnUrl:'',//人脸识别后返回的Url
-            backUrl: location.href.split('?')[0]
+            backUrl: location.href.split('?')[0],
+            activityTyp:'', //客户来源-活动类型 1-大类资产 (大类资产需求添加,统计转换率用)
            },
            faceUrl:'',
            namewarn:'',
            token:'',
            serbackUrl: encodeURIComponent(window.location.host+'/wxservice/wxMemberInfo/getFaceToken'),
-           ReturnUrl:''
+           ReturnUrl:'',
+           reportId:'',
+           activityType:'',
+           userId:'',//报告介绍页糖巢分享的带名片
+           fswitch:'',//是否显示名片:0是显示，1是不显示
        }
    },
     components:{Button,axios,Toast},//使用mint-ui的button的组件
@@ -89,7 +94,7 @@ export default {
                     var return_url = that.Host+'weixin-h5/index.html#/faceSuccess'
                     setCookie('facefrom',return_url);
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=faceMsg#wechat_redirect';
+                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=faceMsg_'+that.bdfrom+','+that.reportId+','+that.userId+','+that.fswitch+'#wechat_redirect';
                 }
             })
         },
@@ -160,6 +165,20 @@ export default {
             if(!that.param.idCardName == false){
                 that.ReturnUrl = that.param.returnUrl
                 that.param.returnUrl = that.param.returnUrl+'&idNo='+that.param.idCardNo+'&name='+encodeURIComponent(that.param.idCardName)  
+            }
+            if(that.bdfrom == '1'){
+                that.param.returnUrl=that.Host+'weixin-h5/DTCF/html/report/tgconfig_report_Intro.html?faceResult=1&bdfrom=1'
+            }else if(that.bdfrom == '2'){
+                that.param.returnUrl=that.Host+'weixin-h5/DTCF/html/report/question.html?faceResult=1&bdfrom=2'
+            }else if(that.bdfrom == '3'){
+                that.param.returnUrl=that.Host+'weixin-h5/DTCF/html/report/configurationReport.html?faceResult=1&bdfrom=3&reportId='+that.reportId
+            }else if(that.bdfrom == '4'){
+                that.param.returnUrl=that.Host+'weixin-h5/DTCF/html/report/myReport.html?faceResult=1&bdfrom=4'
+            }else if(that.bdfrom == '5'){
+                that.param.returnUrl=that.Host+'weixin-h5/DTCFS/html/report/shareReportHome.html?faceResult=1&bdfrom=5&userId='+that.userId+'&forward_switch='+that.fswitch
+            }
+            if(!that.bdfrom == false){
+                that.param.activityType=1
             }
        // alert(that.param.returnUrl)
             Indicator.open();
@@ -241,7 +260,7 @@ export default {
                             message: message,
                             title: '',
                             showCancelButton:false,
-                            confirmButtonText:'我知道了',
+                            confirmButtonText:'下一步',
                         }).then(action => {
                             if(action == 'confirm'){
                                 that.$router.push({
@@ -324,6 +343,18 @@ export default {
         }
     },
     created:function(){
+        if(!this.$route.query.actId==false){ //重定向后 
+            var wxstr = this.$route.query.actId; 
+            this.bdfrom=wxstr.split(",")[0];
+            this.reportId=wxstr.split(",")[1];
+            this.userId =wxstr.split(",")[2];
+            this.fswitch =wxstr.split(",")[3];
+        }else{
+            this.bdfrom =this.$route.query.bdfrom;
+            this.reportId =this.$route.query.reportId;
+            this.userId =this.$route.query.userId;
+            this.fswitch =this.$route.query.fswitch;
+        }
        // if(this.$route.query.chForm == 'fromWxser'){//变更手机号过来不用getdata      
        // }else{
             this.getData()
