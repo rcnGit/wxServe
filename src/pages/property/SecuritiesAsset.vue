@@ -3,7 +3,7 @@
         <div class='headContent2'>
                 <p class='fSize13 pp1'>总金额（元）</p>
                 <p class='pp2'>{{totalAsset}}</p> <!--在数字上加逗号 -->
-                <p class='p3'>待确认：{{publicToConfirmAsset}}（元）</p><!--在数字上加逗号 -->
+                <p class='p3'>买入待确认：{{publicToConfirmAsset}}（元）<img src='./img/wenhao.png' class='wenhao' @click="toTishi()"/></p><!--在数字上加逗号 -->
                 <div style="overflow:hidden;padding-top: .6rem">
                     <div class='floatLeft w50 inc_box shouyi_left'>
                         <p class='fSize13'>日收益（元）</p>
@@ -19,14 +19,15 @@
             <div class="proDemo" v-for="(item,index) in inforList" :index='index' style="padding: .373333rem .386667rem;">
                 <div class='proTop' style="padding-left:0;">
                     <!-- <img  class='floatLeft' src='./img/gLogo.png' /> -->
-                    <span class='floatLeft bigP' style="padding-left:0;">{{item.fundName}} <span class='xindate'> {{item.fundCode}}</span></span>
-                    
+                    <span class='floatLeft bigP' style="padding-left:0;">{{item.fundname}}<em class='typeEm' v-if="item.producttype==2">私募类</em><em class='typeEm' v-else>公募类</em></span>
+                    <!-- <span class='xindate'> {{item.fundcode}}</span> -->
                 </div>
                 <div style='clear:both'></div>
-                <div class='proBot asset_con'>
-                    <span class='floatLeft smP'><span  class="jin_one" >金额（元）</span><br><em class="smp-number money_a">{{item.fundAsset}}</em></span>
-                    <span class='floatRight shouyi rishouyi'><span  class="jin_one">持仓收益（元）</span><br><em class="money_b red" >{{item.addIncome.replace(',', '')>=0?item.addIncome:kong}}</em><em class="money_b green" >{{item.addIncome.replace(',', '')<0?item.addIncome:kong}}</em></span>
-                    <span class='floatRight shouyi '><span  class="jin_one">日收益<span>{{item.yesIncomeDate}}</span>（元）</span><br><em class="money_b red" >{{item.yestIncome.replace(',', '')>=0?item.yestIncome:kong}}</em><em class="money_b green" >{{item.yestIncome.replace(',', '')<0?item.yestIncome:kong}}</em></span>
+                 <div class='proBot asset_con'><!--floatLeft floatRight-->
+                    <span class='col-3'><span  class="jin_one" >{{item.assetTitle}}</span><br><em class="smp-number money_a">{{item.assetStr}}</em></span>
+                    <span class='col-3'><span  class="jin_one">{{item.redeemappdayTitle}}</span><br><em class="money_b" >{{item.redeemappday}}</em></span>
+                    <span class='col-3' v-if="item.producttype==2"><span  class="jin_one">{{item.yestincomeTitle}}</span><br><em class="money_b red" >{{item.yestincome>=0?item.yestincomeStr:kong}}</em><em class="money_b green" >{{item.yestincome<0?item.yestincomeStr:kong}}</em></span>
+                    <span class='col-3' v-else><span  class="jin_one">{{item.achievementCompareTitle}}</span><br><em class="money_b" >{{item.achievementCompare}}</em></span>
                 </div>
             </div>    
         </div>
@@ -41,6 +42,12 @@
         <mt-button type="danger" size="large" class='next' @click='rz()' style='margin-top:1.4rem;'>去人脸识别身份认证</mt-button>
         </div>
         <!-- <comfooter></comfooter> -->
+        <div class='tishi_Cover' v-show='if_tishi'>
+            <div class='tishiBox'>
+                <h3>资管理财待确认<img src='./img/tishiClose.png' class='tishiClose' @click="tishiClose()"/></h3>
+                <div>已成功提交申请，待产品管理人确认份额后将计入总资产。</div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
@@ -55,6 +62,7 @@ export default {
     name:'SecuritiesAsset',
     data:function(){
         return{
+            if_tishi:false,//是否显示提示
             loadObj:{
                 text: '加载中...',
                 spinnerType: 'triple-bounce'
@@ -88,6 +96,12 @@ export default {
     },
     components:{Button,axios,Indicator,MessageBox,comfooter},//使用mint-ui的button的组件
     methods:{
+        tishiClose:function(){
+            this.if_tishi=false;
+        },
+        toTishi:function(){
+            this.if_tishi=true;
+        },
         rz:function(){//去身份认证
             this.$router.push({
                     path:'/faceMsg',
@@ -105,7 +119,7 @@ export default {
                     url:'/wxservice/wxMemberInfo/getUserSecuritiesAsset'
                 })
                 .then(function(res) {//成功之后
-                    console.log(res)
+                    console.log(res.data)
                     Indicator.close();
                     var retCode=res.data.retCode;
                     var retMsg=res.data.retMsg;
@@ -125,11 +139,11 @@ export default {
                       window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=SecuritiesAsset#wechat_redirect';
                     }else if(retCode==0){
                         var d=res.data.data;
-                        that.totalAsset=d.securitiesTotalAsset  //总资产
-                        that.publicToConfirmAsset=d.securitiesToConfirmAsset //公募待确认资产
+                        that.totalAsset=d.totalIncomeStr  //总资产
+                        that.publicToConfirmAsset=d.waitConfirmAssetStr //公募待确认资产
                         
-                        that.publicYestIncome = d.securitiesYestIncome  //公募最新总收益
-                        that.publicAddIncome=d.securitiesAddIncome  //公募累计总收益
+                        that.publicYestIncome = d.totalYestincomeStr  //公募最新总收益
+                        that.publicAddIncome=d.totalIncomeStr  //公募累计总收益
                         if(d.prodAssetList != ''){
                             that.inforList = d.prodAssetList //资产列表
                             that.showSecurities = false
@@ -304,7 +318,9 @@ export default {
         }
     },
     created:function(){
-        this.GasyncSDKConifg()
+        this.GasyncSDKConifg();
+         this.getList();
+         return;
         if(!this.$route.query.faceResult == false){
              //var bizId=localStorage.getItem('bizId');
             var bizId=decodeURIComponent(getCookie("bizId"));
@@ -335,6 +351,21 @@ export default {
     height: 5.733333rem;
     background:url(./img/puil_bg.png) no-repeat center;
     background-size: 100%;
+}
+.col-3{
+    width:33.3%;
+    float: left;
+    text-align: center;
+}
+.typeEm{
+    font-size: .32rem;
+    border:1px solid#DF1E1D;
+    padding:0 0.2rem;
+    position: relative;
+    top: -0.1rem;
+    left: 0.3rem;
+    color:#DF1E1D;
+    border-radius: 4px;
 }
 </style>
 

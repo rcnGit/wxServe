@@ -7,7 +7,7 @@
                 </div>
                 <p class='fSize13 pp1' style="padding-top:0.78rem;">总金额（元）</p>
                 <p class='pp2' v-if="showAsset">{{totalAsset}}</p><p class='pp2' v-else>*****</p> <!--在数字上加逗号 -->
-                <p class='p3' v-if="showAsset">待确认：{{privateToConfirmAsset}}（元）</p><p class='p3' v-else>待确认：*****</p><!--在数字上加逗号 -->
+                <p class='p3' v-if="showAsset">待确认：{{privateToConfirmAsset}}（元）<img src='./img/wenhao.png' class='wenhao' @click="toTishi()"/></p><p class='p3' v-else>待确认：*****<img src='./img/wenhao.png' class='wenhao' @click="toTishi()"/></p><!--在数字上加逗号 -->
                 <div style='display:none;'>
                     <div class='floatLeft w50 inc_box' style='border-right:0.5px solid #efefef;'>
                         <p class='fSize13'>最新收益（元）</p>
@@ -79,6 +79,12 @@
         </div>
         <comfooter v-if="showBottom"></comfooter>
         <div class="comfooter_a" v-else style="margin-top:0.6rem;padding-bottom: 0.34rem"><comfooter></comfooter></div>
+        <div class='tishi_Cover' v-show='if_tishi'>
+            <div class='tishiBox'>
+                <h3>待确认<img src='./img/tishiClose.png' class='tishiClose' @click="tishiClose()"/></h3>
+                <div>已成功提交申请，待产品成立/管理人确认份额后将计入总资产。包含：私募买入待确认+公募买入待确认+资管买入待确认</div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
@@ -95,6 +101,7 @@ export default {
     data:function(){
         return{
             eyeShow:'',
+            if_tishi:false,//是否显示提示
             showBottom:true,
             showEyes:false,
             showAsset:'',
@@ -131,6 +138,12 @@ export default {
     },
     components:{Button,axios,Indicator,MessageBox,comfooter},//使用mint-ui的button的组件
     methods:{
+        tishiClose:function(){
+            this.if_tishi=false;
+        },
+        toTishi:function(){
+            this.if_tishi=true;
+        },
         rz:function(){//去身份认证
             this.$router.push({
                     path:'/faceMsg',
@@ -458,6 +471,7 @@ export default {
 </script>
 <style>
 @import 'propetry.css'; /* 引入toSign.css文件*/
+
 .green{
     color:rgb(11,124,10);
 }
