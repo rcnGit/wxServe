@@ -52,6 +52,7 @@ export default {
            activityType:'',
            userId:'',//报告介绍页糖巢分享的带名片
            fswitch:'',//是否显示名片:0是显示，1是不显示
+           rePhone:'',
        }
    },
     components:{Button,axios,Toast},//使用mint-ui的button的组件
@@ -94,7 +95,7 @@ export default {
                     var return_url = that.Host+'weixin-h5/index.html#/faceSuccess'
                     setCookie('facefrom',return_url);
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=faceMsg_'+that.bdfrom+','+that.reportId+','+that.userId+','+that.fswitch+'#wechat_redirect';
+                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=faceMsg_'+that.bdfrom+','+that.reportId+','+that.userId+','+that.fswitch+','+that.rePhone+'#wechat_redirect';
                 }
             })
         },
@@ -163,24 +164,39 @@ export default {
             console.log(this.param)
             var that=this;
             if(!that.param.idCardName == false){
-                that.ReturnUrl = that.param.returnUrl
-                that.param.returnUrl = that.param.returnUrl+'&idNo='+that.param.idCardNo+'&name='+encodeURIComponent(that.param.idCardName)  
-            }
-            if(that.bdfrom == '1'){
-                that.param.returnUrl=that.Host+'weixin-h5/DTCF/html/report/tgconfig_report_Intro.html?faceResult=1&bdfrom=1'
-            }else if(that.bdfrom == '2'){
-                that.param.returnUrl=that.Host+'weixin-h5/DTCF/html/report/question.html?faceResult=1&bdfrom=2'
-            }else if(that.bdfrom == '3'){
-                that.param.returnUrl=that.Host+'weixin-h5/DTCF/html/report/configurationReport.html?faceResult=1&bdfrom=3&reportId='+that.reportId
-            }else if(that.bdfrom == '4'){
-                that.param.returnUrl=that.Host+'weixin-h5/DTCF/html/report/myReport.html?faceResult=1&bdfrom=4'
-            }else if(that.bdfrom == '5'){
-                that.param.returnUrl=that.Host+'weixin-h5/DTCFS/html/report/shareReportHome.html?faceResult=1&bdfrom=5&userId='+that.userId+'&forward_switch='+that.fswitch
+                if(!that.bdfrom == false){
+                    if(that.bdfrom == '1'){
+                        that.param.returnUrl=that.Host+'weixin-h5/DTCF/html/report/tgconfig_report_Intro.html?faceResult=1&bdfrom=1&idNo='+that.param.idCardNo+'&name='+encodeURIComponent(that.param.idCardName)
+                    }else if(that.bdfrom == '2'){
+                        that.param.returnUrl=that.Host+'weixin-h5/DTCF/html/report/question.html?faceResult=1&bdfrom=2&idNo='+that.param.idCardNo+'&name='+encodeURIComponent(that.param.idCardName)
+                    }else if(that.bdfrom == '3'){
+                        that.param.returnUrl=that.Host+'weixin-h5/DTCF/html/report/configurationReport.html?faceResult=1&bdfrom=3&reportId='+that.reportId+'&idNo='+that.param.idCardNo+'&name='+encodeURIComponent(that.param.idCardName)
+                    }else if(that.bdfrom == '4'){
+                        that.param.returnUrl=that.Host+'weixin-h5/DTCF/html/report/myReport.html?faceResult=1&bdfrom=4&idNo='+that.param.idCardNo+'&name='+encodeURIComponent(that.param.idCardName)
+                    }else if(that.bdfrom == '5'){
+                        that.param.returnUrl=that.Host+'weixin-h5/DTCFS/html/report/shareReportHome.html?faceResult=1&bdfrom=5&userId='+that.userId+'&forward_switch='+that.fswitch+'&idNo='+that.param.idCardNo+'&name='+encodeURIComponent(that.param.idCardName)
+                    } 
+                }else{
+                    that.ReturnUrl = that.param.returnUrl
+                    that.param.returnUrl = that.param.returnUrl+'&idNo='+that.param.idCardNo+'&name='+encodeURIComponent(that.param.idCardName)  
+                }
+            }else{
+                if(that.bdfrom == '1'){
+                    that.param.returnUrl=that.Host+'weixin-h5/DTCF/html/report/tgconfig_report_Intro.html?faceResult=1&bdfrom=1'
+                }else if(that.bdfrom == '2'){
+                    that.param.returnUrl=that.Host+'weixin-h5/DTCF/html/report/question.html?faceResult=1&bdfrom=2'
+                }else if(that.bdfrom == '3'){
+                    that.param.returnUrl=that.Host+'weixin-h5/DTCF/html/report/configurationReport.html?faceResult=1&bdfrom=3&reportId='+that.reportId
+                }else if(that.bdfrom == '4'){
+                    that.param.returnUrl=that.Host+'weixin-h5/DTCF/html/report/myReport.html?faceResult=1&bdfrom=4'
+                }else if(that.bdfrom == '5'){
+                    that.param.returnUrl=that.Host+'weixin-h5/DTCFS/html/report/shareReportHome.html?faceResult=1&bdfrom=5&userId='+that.userId+'&forward_switch='+that.fswitch
+                }
             }
             if(!that.bdfrom == false){
                 that.param.activityType=1
             }
-       // alert(that.param.returnUrl)
+           // alert(that.param.returnUrl)
             Indicator.open();
             axios({
                 method:'get',
@@ -271,6 +287,11 @@ export default {
                                         idNo: that.param.idCardNo,
                                         returnUrl:that.ReturnUrl,
                                         bdfrom:'faceMsg',
+                                        bdfrom1: that.bdfrom,
+                                        fswitch:that.fswitch,
+                                        userId:that.userId,
+                                        reportId:that.reportId,
+                                        rePhone:that.rePhone,//报告微信来的手机号
                                         type: '1'
                                     }
                                 })
@@ -349,11 +370,13 @@ export default {
             this.reportId=wxstr.split(",")[1];
             this.userId =wxstr.split(",")[2];
             this.fswitch =wxstr.split(",")[3];
+            this.rePhone=wxstr.split(",")[4];
         }else{
             this.bdfrom =this.$route.query.bdfrom;
             this.reportId =this.$route.query.reportId;
             this.userId =this.$route.query.userId;
             this.fswitch =this.$route.query.fswitch;
+            this.rePhone=this.$route.query.rePhone;
         }
        // if(this.$route.query.chForm == 'fromWxser'){//变更手机号过来不用getdata      
        // }else{

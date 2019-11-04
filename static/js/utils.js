@@ -7,7 +7,7 @@ import { Toast } from 'mint-ui';
 
 export default {
     install(Vue, options) {
-      //  Vue.prototype.Host='https://interface.tdyhfund.com/'
+       // Vue.prototype.Host='https://interface.tdyhfund.com/'
         Vue.prototype.Host="http://weixin-test-interface.tdyhfund.com/"
        // Vue.prototype.APPID='wx42b6456eeafbe956'  //生产
        Vue.prototype.APPID='wx1f686b130ea97432'

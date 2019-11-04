@@ -314,14 +314,31 @@ export default {
                             window.location.href=that.Host+'weixin-h5/DTCF/html/report/myReport.html?bdfrom=4'
                         }else if(wxfrom == '5' ||that.bdfrom == '5'){
                             window.location.href=that.Host+'weixin-h5/DTCFS/html/report/shareReportHome.html?bdfrom=5&userId='+that.userId+'&forward_switch='+that.fswitch
+                        }else if(wxfrom == '6' ||that.bdfrom == '6'){
+                            window.location.href=that.Host+'weixin-h5/DTCF/html/report/myReport.html'
                         }else{
-                            that.$router.push({
+                            if(!that.$route.query.bdfrom1 == false){
+                                that.$router.push({
+                                    path:'/'+that.bdfrom,
+                                    name:that.bdfrom,
+                                    query:{
+                                    // clickSource: that.$route.query.clickSource,
+                                     bdfrom: that.$route.query.bdfrom1,
+                                     fswitch:that.fswitch,
+                                     userId:that.userId,
+                                     reportId:that.reportId
+                                    }
+                                })
+                            }else{
+                                that.$router.push({
                                     path:'/'+that.bdfrom,
                                     name:that.bdfrom,
                                     query:{
                                     // clickSource: that.$route.query.clickSource,
                                     }
                                 })
+                            }
+                            
                         }
                        }else{//取消
                             if(wxfrom == 'wxser' || that.bdfrom == 'wxser'){
@@ -336,14 +353,30 @@ export default {
                                 window.location.href=that.Host+'weixin-h5/DTCF/html/report/myReport.html?bdfrom=4'
                             }else if(wxfrom == '5' ||that.bdfrom == '5'){
                                 window.location.href=that.Host+'weixin-h5/DTCFS/html/report/shareReportHome.html?bdfrom=5&userId='+that.userId+'&forward_switch='+that.fswitch
+                            }else if(wxfrom == '6' ||that.bdfrom == '6'){
+                                window.location.href=that.Host+'weixin-h5/DTCF/html/report/myReport.html'
                             }else{
-                                that.$router.push({
-                                    path:'/'+that.bdfrom,
-                                    name:that.bdfrom,
-                                    query:{
-                                    // clickSource: that.$route.query.clickSource,
-                                    }
-                                })
+                                if(!that.$route.query.bdfrom1 == false){
+                                    that.$router.push({
+                                        path:'/'+that.bdfrom,
+                                        name:that.bdfrom,
+                                        query:{
+                                        // clickSource: that.$route.query.clickSource,
+                                        bdfrom: that.$route.query.bdfrom1,
+                                        fswitch:that.fswitch,
+                                        userId:that.userId,
+                                        reportId:that.reportId
+                                        }
+                                    })
+                                }else{
+                                    that.$router.push({
+                                        path:'/'+that.bdfrom,
+                                        name:that.bdfrom,
+                                        query:{
+                                        // clickSource: that.$route.query.clickSource,
+                                        }
+                                    })
+                                }
                             }
                       }
                   });
@@ -413,7 +446,22 @@ export default {
             }else{
                 var idCardNo=that.$route.query.idNo
                 var idCardName=decodeURIComponent(that.$route.query.name)
-                var canshu=that.$route.query.returnUrl+'&phone='+that.ipNo+'&name='+encodeURIComponent(that.$route.query.name)+'&idNo='+idCardNo+'&tp='+that.type
+                if(!that.$route.query.bdfrom1 == false){
+                    if(that.$route.query.bdfrom1 == '1'){
+                        var canshu=that.Host+'weixin-h5/DTCF/html/report/tgconfig_report_Intro.html?faceResult=1&bdfrom=1&phone='+that.ipNo+'&name='+encodeURIComponent(that.$route.query.name)+'&idNo='+idCardNo+'&tp='+that.type
+                    }else if(that.$route.query.bdfrom1 == '2'){
+                        var canshu=that.Host+'weixin-h5/DTCF/html/report/question.html?faceResult=1&bdfrom=2&phone='+that.ipNo+'&name='+encodeURIComponent(that.$route.query.name)+'&idNo='+idCardNo+'&tp='+that.type
+                    }else if(that.$route.query.bdfrom1 == '3'){
+                        var canshu=that.Host+'weixin-h5/DTCF/html/report/configurationReport.html?faceResult=1&bdfrom=3&reportId='+that.reportId+'&phone='+that.ipNo+'&name='+encodeURIComponent(that.$route.query.name)+'&idNo='+idCardNo+'&tp='+that.type+'&rePhone='+that.$route.query.rePhone
+                    }else if(that.$route.query.bdfrom1 == '4'){
+                        var canshu=that.Host+'weixin-h5/DTCF/html/report/myReport.html?faceResult=1&bdfrom=4&phone='+that.ipNo+'&name='+encodeURIComponent(that.$route.query.name)+'&idNo='+idCardNo+'&tp='+that.type
+                    }else if(that.$route.query.bdfrom1 == '5'){
+                        var canshu=that.Host+'weixin-h5/DTCFS/html/report/shareReportHome.html?faceResult=1&bdfrom=5&userId='+that.userId+'&forward_switch='+that.fswitch+'&phone='+that.ipNo+'&name='+encodeURIComponent(that.$route.query.name)+'&idNo='+idCardNo+'&tp='+that.type
+                    } 
+                }else{
+                    var canshu=that.$route.query.returnUrl+'&phone='+that.ipNo+'&name='+encodeURIComponent(that.$route.query.name)+'&idNo='+idCardNo+'&tp='+that.type
+                }
+                
             }
             Indicator.open();
            // alert(canshu)
@@ -490,14 +538,27 @@ export default {
                         if(action == 'confirm'){
                             if(that.bdfrom == 'wxser'){//自动回复直接打开
                                 WeixinJSBridge.call('closeWindow');//关闭当前页面
+                            }else if( that.bdfrom == '1'){
+                                window.location.href=that.Host+'weixin-h5/DTCF/html/report/tgconfig_report_Intro.html?bdfrom=1'
+                            }else if( that.bdfrom == '2'){
+                                window.location.href=that.Host+'weixin-h5/DTCF/html/report/question.html?bdfrom=2'
+                            }else if( that.bdfrom == '3'){
+                                window.location.href=that.Host+'weixin-h5/DTCF/html/report/configurationReport.html?bdfrom=3&reportId='+that.reportId
+                            }else if(that.bdfrom == '4'){
+                                window.location.href=that.Host+'weixin-h5/DTCF/html/report/myReport.html?bdfrom=4'
+                            }else if(that.bdfrom == '5'){
+                                window.location.href=that.Host+'weixin-h5/DTCFS/html/report/shareReportHome.html?bdfrom=5&userId='+that.userId+'&forward_switch='+that.fswitch
+                            }else if(wxfrom == '6' ||that.bdfrom == '6'){
+                                window.location.href=that.Host+'weixin-h5/DTCF/html/report/myReport.html'
+                            }else{
+                                that.$router.push({
+                                    path:'/'+that.bdfrom,
+                                    name:that.bdfrom,
+                                    query:{
+                                        clickSource: that.$route.query.clickSource,
+                                    }
+                                })
                             }
-                            that.$router.push({
-                                path:'/'+that.bdfrom,
-                                name:that.bdfrom,
-                                query:{
-                                    clickSource: that.$route.query.clickSource,
-                                }
-                            })
                             
                         }
                     }).catch(() => {
