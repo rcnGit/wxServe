@@ -11,7 +11,7 @@ import faceMsg from '@/pages/activeSign/faceMsg'//人脸识别，录身份信息
 import pushW from '@/pages/activeSign/pushW'//客服报名有财富师的跳转页面
 import kefuSign from '@/pages/activeSign/kefuSign'//客户福利（客服）个人报名
 import signSuc from '@/pages/activeSign/signSuc'
-import propertyList from '@/pages/property/propertyList'
+import propertyList from '@/pages/property/propertyList'//我的资产
 import appointW from '@/pages/wealth/appointW'//指定财富师页面
 import getcode from '@/pages/wealth/getcode'//指定财富师页面
 import onlineApply from '@/pages/wealth/onlineApply'//指定财富师页面
@@ -40,6 +40,9 @@ import severAppoint from '@/pages/severStar/severAppoint'//预约财富服务
 import appoSuccess from '@/pages/severStar/appoSuccess'//预约成功
 import newRegiste from '@/pages/activeSign/newRegiste'//异业获客新用户注册
 import newRegSucc from '@/pages/activeSign/newRegSucc'//异业获客新用户注册成功
+
+import productSearch from '@/pages/productSearch/productSearch'//产品真实性搜索
+import productSearchResult from '@/pages/productSearch/productSearchResult'//产品真实性搜索
 
 import manwei from '@/pages/active/manwei'
 Vue.use(Router)
@@ -395,6 +398,24 @@ export default new Router({
         keepAlive: true // 不需要缓存
       },
       component: newRegSucc//使用这个组件
+    },
+    {
+      path: '/productSearch',
+      name: 'productSearch',
+      meta: {
+        title: '产品搜索',
+        keepAlive: true // 不需要缓存
+      },
+      component: productSearch//使用这个组件
+    }, 
+    {
+      path: '/productSearchResult',
+      name: 'productSearchResult',
+      meta: {
+        title: '产品搜索',
+        keepAlive: true // 不需要缓存
+      },
+      component: productSearchResult//使用这个组件
     },
   ],
   scrollBehavior (to, from, savedPosition) {

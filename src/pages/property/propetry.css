@@ -166,3 +166,53 @@ em{
     color:#757575;
     margin-top:.373333rem;
 }
+
+.wenhao{
+    width: 0.45rem;
+    margin-left: 0.2rem;
+    vertical-align: bottom;
+}
+.tishi_Cover{
+    width:100%;
+    height:100%;
+    position: fixed;
+    background-color:rgba(0,0,0,0.4);
+    top:0;
+    left:0;
+}
+.tishiBox{
+    width:7.2rem;
+    height:4.213333rem;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 6px 12px rgba(0,0,0,0.16);
+    border-radius:.16rem;
+    position: absolute;
+    top:50%;
+    left:50%;
+    margin-top:-2.1rem;
+    margin-left:-3.6rem;
+    font-size:.346667rem;
+    font-family:PingFang SC;
+    line-height:.56rem;
+    color:rgba(59,59,59,1);
+    
+}
+.tishiBox div{
+    box-sizing: border-box;
+    padding: .693333rem .453333rem;
+}
+.tishiBox h3{
+    height: 1.146667rem;
+    border-bottom: 1px solid#F6F6F6;
+    color:#3B3B3B;
+    font-size: .4rem;
+    font-weight:bold;
+    line-height: 1.146667rem;
+
+}
+.tishiClose{
+    position: absolute;
+    top:-1rem;
+    right:0rem;
+    width:.8rem;
+}

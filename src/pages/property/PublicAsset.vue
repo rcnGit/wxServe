@@ -3,7 +3,7 @@
         <div class='headContent2'>
                 <p class='fSize13 pp1'>总金额（元）</p>
                 <p class='pp2'>{{totalAsset}}</p> <!--在数字上加逗号 -->
-                <p class='p3'>待确认：{{publicToConfirmAsset}}（元）</p><!--在数字上加逗号 -->
+                <p class='p3'>待确认：{{publicToConfirmAsset}}（元）<img src='./img/wenhao.png' class='wenhao' @click="toTishi()"/></p><!--在数字上加逗号 -->
                 <div style="overflow:hidden;padding-top: .6rem">
                     <div class='floatLeft w50 inc_box shouyi_left'>
                         <p class='fSize13'>日收益（元）</p>
@@ -41,6 +41,12 @@
         <mt-button type="danger" size="large" class='next' @click='rz()' style='margin-top:1.4rem;'>去人脸识别身份认证</mt-button>
         </div>
         <!-- <comfooter></comfooter> -->
+        <div class='tishi_Cover' v-show='if_tishi'>
+            <div class='tishiBox'>
+                <h3>公募待确认<img src='./img/tishiClose.png' class='tishiClose' @click="tishiClose()"/></h3>
+                <div>已成功提交申请，待基金管理人确认份额后将计入总资产</div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
@@ -55,6 +61,7 @@ export default {
     name:'PublicAsset',
     data:function(){
         return{
+             if_tishi:false,//是否显示提示
             loadObj:{
                 text: '加载中...',
                 spinnerType: 'triple-bounce'
@@ -88,6 +95,12 @@ export default {
     },
     components:{Button,axios,Indicator,MessageBox,comfooter},//使用mint-ui的button的组件
     methods:{
+        tishiClose:function(){
+            this.if_tishi=false;
+        },
+        toTishi:function(){
+            this.if_tishi=true;
+        },
         getcolor:function(value){
             if(value.substring(0,1) == '-'){
                 this.gC='green'
