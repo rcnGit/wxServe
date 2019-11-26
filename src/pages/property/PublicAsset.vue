@@ -47,6 +47,14 @@
                 <div>已成功提交申请，待基金管理人确认份额后将计入总资产</div>
             </div>
         </div>
+        <div v-if="showBottom" class="Bottom">
+            <P class="p1_bot">基金销售服务由北京唐鼎耀华基金销售有限公司提供</P>
+            <P class="p2_bot">收益数据仅供参考，实际收益以基金公司计算为准</P>
+        </div>
+        <div class="Bottom2" v-else style="margin-top:0.6rem;padding-bottom: 0.34rem">
+            <P class="p1_bot">基金销售服务由北京唐鼎耀华基金销售有限公司提供</P>
+            <P class="p2_bot">收益数据仅供参考，实际收益以基金公司计算为准</P>
+        </div>
     </div>
 </template>
 <script>
@@ -61,7 +69,8 @@ export default {
     name:'PublicAsset',
     data:function(){
         return{
-             if_tishi:false,//是否显示提示
+            showBottom:true,
+            if_tishi:false,//是否显示提示
             loadObj:{
                 text: '加载中...',
                 spinnerType: 'triple-bounce'
@@ -156,8 +165,14 @@ export default {
                         if(d.prodAssetList != ''){
                             that.inforList = d.prodAssetList //资产列表
                             that.showPublic = false
+                            if(d.prodAssetList.length>3){
+                                that.showBottom = false
+                            }else{
+                                that.showBottom = true
+                            }
                         }else{
                             that.showPublic = true;
+                            that.showBottom = true
                         }
                         
                     }

@@ -44,6 +44,8 @@ import newRegSucc from '@/pages/activeSign/newRegSucc'//异业获客新用户注
 import productSearch from '@/pages/productSearch/productSearch'//产品真实性搜索
 import productSearchResult from '@/pages/productSearch/productSearchResult'//产品真实性搜索
 
+import tangShop from '@/pages/tangShopkeeper/tangShop'//唐掌柜
+
 import manwei from '@/pages/active/manwei'
 Vue.use(Router)
 
@@ -416,6 +418,15 @@ export default new Router({
         keepAlive: true // 不需要缓存
       },
       component: productSearchResult//使用这个组件
+    },
+    {
+      path: '/tangShop',
+      name: 'tangShop',
+      meta: {
+        title: '唐掌柜',
+        keepAlive: true // 不需要缓存
+      },
+      component: tangShop//使用这个组件
     },
   ],
   scrollBehavior (to, from, savedPosition) {

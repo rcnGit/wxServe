@@ -149,6 +149,7 @@ export default {
             reportId:'',
             userId:'',//报告介绍页糖巢分享的带名片
             fswitch:'',//是否显示名片:0是显示，1是不显示
+            paramCan:'',//私募定融定投和家族来源用的参数
         }
         
     },
@@ -185,6 +186,7 @@ export default {
                 this.reportId=wxstr.split(",")[5];//大类
                 this.userId =wxstr.split(",")[6];//大类
                 this.fswitch =wxstr.split(",")[7];//大类
+                this.paramCan=wxstr.split(",")[8];//家族，定融定投
                 this.getuserName();//获取用户姓名
             }else{
                 this.tguserId=this.$route.query.userId
@@ -195,6 +197,7 @@ export default {
                 this.reportId =this.$route.query.reportId;
                 this.userId =this.$route.query.RuserId;
                 this.fswitch =this.$route.query.fswitch;
+                this.paramCan=this.$route.query.paramCan;
                 if(this.ren == 'phoneIndexWealth'|| this.ren == 'yuYueWealth'){
                     this.showApplyline = false
                     this.actId2=this.$route.query.actId2
@@ -419,7 +422,7 @@ export default {
                     if(!that.$route.query.ren==false){
                         window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=appointW_'+that.$route.query.userId+','+that.$route.query.productCode+','+that.$route.query.source+','+that.ren+','+that.comefrom+','+that.actId2+','+that.proType+','+that.prodId+','+that.prodCode+','+that.seriesId+'#wechat_redirect';
                     }else{
-                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=appointW_'+that.$route.query.userId+','+that.$route.query.productCode+','+that.$route.query.source+','+that.ren+','+that.bdfrom+','+that.reportId+','+that.userId+','+that.fswitch+'#wechat_redirect';
+                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=appointW_'+that.$route.query.userId+','+that.$route.query.productCode+','+that.$route.query.source+','+that.ren+','+that.bdfrom+','+that.reportId+','+that.userId+','+that.fswitch+','+that.paramCan+'#wechat_redirect';
                     }
                   
                 }
@@ -623,7 +626,7 @@ export default {
         zhiding:function(){
             Indicator.open();
             var that=this;
-            if(!that.bdfrom == false){
+            if(that.bdfrom < 6){
                 that.param.activityType=1  //客户来源-活动类型 1-大类资产 (大类资产需求添加,统计转换率用)
             }
             axios({
@@ -668,6 +671,10 @@ export default {
                             window.location.href=that.Host+'weixin-h5/DTCF/html/report/myReport.html?bdfrom=4'
                         }else if(that.bdfrom == '5'){
                             window.location.href=that.Host+'weixin-h5/DTCFS/html/report/shareReportHome.html?bdfrom=5&userId='+that.userId+'&forward_switch='+that.fswitch
+                        }else if(that.bdfrom == '6'){
+                            window.location.href=that.TGhost+'/dthtml/HTML5/DTCFS/html/Buy_product_details/private_placement.html?shareFlag=1&paramCan='+that.paramCan
+                        }else if(that.bdfrom == '7'){
+                            window.location.href=that.TGhost+'/dthtml/HTML5/DTCF/html/privateRefactoring/private_product.html?shareFlag=1&paramCan='+that.paramCan
                         }else{
                             if(!that.$route.query.reform == false){//如果是服务之星跳转服务之星
                                 window.location.href=that.Host+'weixin-h5/index.html#/severStar?source=wx'

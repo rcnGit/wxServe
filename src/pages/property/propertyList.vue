@@ -25,8 +25,8 @@
                  <mt-button type="danger" size="large" class='next' @click='downApp ()' style="margin-top:0.72222rem;">去投资</mt-button>
          </div>
         <div class='proContent proper_list' ref='contant' style='display:none;'>
-            <div class='proDemo' >
-                <div class='proTop'>
+            <div class='proDemo' @click="jumpTang">
+                <div class='proTop' >
                     <!-- <img  class='floatLeft' src='./img/gLogo.png' /> -->
                     <span class='floatLeft bigP'>唐掌柜</span>
                     <!-- <span class='floatRight xindate'>更新日期：<em>{{publicDate}}</em></span> -->
@@ -451,6 +451,12 @@ export default {
             this.$router.push({
                 path:'/SecuritiesAsset',
                 name:'SecuritiesAsset'
+            }) 
+        },
+        jumpTang:function() {
+            this.$router.push({
+                path:'/tangShop',
+                name:'tangShop'
             }) 
         }
     },

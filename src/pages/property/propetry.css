@@ -107,12 +107,14 @@ em{
     border: .024rem solid #DF1E1D;
     color: #DF1E1D;
     text-align: center;
-    padding: .023rem .216667rem 0rem;
-    margin-top: -.14rem;
+    padding: .025rem .216667rem 0rem;
+    /* margin-top: -.14rem; */
     border-radius: .08rem;
     margin-left: .4rem;
     line-height: 1;
     font-size: .266667rem;
+    position: relative;
+    top: -.045rem;
 }
 .money_a{
     color: #333;
@@ -179,15 +181,16 @@ em{
     background-color:rgba(0,0,0,0.4);
     top:0;
     left:0;
+    z-index: 9;
 }
 .tishiBox{
     width:7.2rem;
-    height:4.213333rem;
+    /* height:4.213333rem; */
     background:rgba(255,255,255,1);
     box-shadow:0px 6px 12px rgba(0,0,0,0.16);
     border-radius:.16rem;
     position: absolute;
-    top:50%;
+    top:45%;
     left:50%;
     margin-top:-2.1rem;
     margin-left:-3.6rem;
@@ -200,6 +203,7 @@ em{
 .tishiBox div{
     box-sizing: border-box;
     padding: .693333rem .453333rem;
+    text-align: justify;
 }
 .tishiBox h3{
     height: 1.146667rem;
@@ -207,7 +211,7 @@ em{
     color:#3B3B3B;
     font-size: .4rem;
     font-weight:bold;
-    line-height: 1.146667rem;
+    line-height: 1.27rem;
 
 }
 .tishiClose{

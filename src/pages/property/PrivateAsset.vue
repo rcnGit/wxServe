@@ -17,18 +17,18 @@
         </div>
         <div class='proContent privateCon_list'>   
             <div class="proDemo" v-for="(item,index) in inforList" :index='index'>
-                    <div class='proTop'>
-                        <!-- <img  class='floatLeft' src='./img/gLogo.png' /> -->
-                        <!-- <span class='floatLeft bigP' style="overflow: hidden;"><span style="width: 86%;display: block;float: left;">{{item.proName}}</span><span class=' TypeValue' style="white-space: pre;width: 12%;margin-left: 0;line-height: 1rem">{{item.proTypeValue}}</span></span> -->
-                        <span class='floatLeft bigP' style=""><span style="">{{item.proName}}</span><span class=' TypeValue' style="white-space: pre;">{{item.proTypeValue}}</span></span>
-                        <!-- <span class='floatLeft xindate TypeValue'>{{item.proTypeValue}}</span> -->
-                    </div>
-                    <div style='clear:both'></div>
-                    <div class='proBot private_list' style="width:9.1rem">
-                        <span class='floatLeft smP'><span class="jin_one">金额（元）</span><br><em class="smp-number money_a">{{item.busiAmount}}</em></span>
-                        <span class='floatRight shouyi'><span class="jin_one">最新净值（{{item.navDate}}）</span><br><em class="money_a">{{item.nav}}</em></span>
-                    </div>
-                </div> 
+                <div class='proTop'>
+                    <!-- <img  class='floatLeft' src='./img/gLogo.png' /> -->
+                    <!-- <span class='floatLeft bigP' style="overflow: hidden;"><span style="width: 86%;display: block;float: left;">{{item.proName}}</span><span class=' TypeValue' style="white-space: pre;width: 12%;margin-left: 0;line-height: 1rem">{{item.proTypeValue}}</span></span> -->
+                    <span class='floatLeft bigP' style=""><span style="">{{item.proName}}</span><span class=' TypeValue' style="white-space: pre;">{{item.proTypeValue}}</span></span>
+                    <!-- <span class='floatLeft xindate TypeValue'>{{item.proTypeValue}}</span> -->
+                </div>
+                <div style='clear:both'></div>
+                <div class='proBot private_list' style="width:9.1rem">
+                    <span class='floatLeft smP'><span class="jin_one">金额（元）</span><br><em class="smp-number money_a">{{item.busiAmount}}</em></span>
+                    <span class='floatRight shouyi'><span class="jin_one">最新净值（{{item.navDate}}）</span><br><em class="money_a">{{item.nav}}</em></span>
+                </div>
+            </div> 
         </div>
         <div class='noData asset_nodata' v-show="showPrivate">
             <img src='./img/noprop.png'/>

@@ -394,6 +394,7 @@ export default {
                         that.paramOnly.isReviewSignup = res.data.itemList[0].isReviewSignup;
                         var obj=res.data.itemList[0];
                         that.actName=obj.actName;
+                        that.param.actName=obj.actName;
                         that.paramOnly.actName=obj.actName;
                         that.beginTime=obj.beginTime;
                         that.endTime=obj.endTime;
@@ -432,7 +433,20 @@ export default {
                             that.actStatus= '已结束报名';
                             that.isDisabled = true;
                         }
-                        
+                        var actname = '我邀请您参加'+that.actName
+                        var busname = '大唐财富尊享活动'+that.actName+'即将举办，机会难得，邀请你一起参加';
+                        var mygh
+                        if(!that.belongBusiness == false){
+                            mygh = that.belongBusiness
+                        }else{
+                            if(!that.ghT == false){
+                                mygh = that.ghT
+                            }
+                        }
+                        console.log(1)
+                        that.Share(mygh)
+                        console.log(2)
+                        that.asyncSDKConifg(actname,busname)
                     }
                     
                 }
@@ -545,7 +559,7 @@ export default {
                       //  that.businessName = '财富师'+res.data.userInfo.businessName
                         // that.businesscardShow = true
                         that.belongBusiness = res.data.userInfo.belongBusiness
-                        var actname = '我邀请您参加'+that.actName
+                       /* var actname = '我邀请您参加'+that.actName
                         var busname = '大唐财富尊享活动'+that.actName+'即将举办，机会难得，邀请你一起参加';
                         var mygh
                         if(!res.data.userInfo.belongBusiness == false){
@@ -558,7 +572,7 @@ export default {
                         console.log(1)
                         that.Share(mygh)
                         console.log(2)
-                        that.asyncSDKConifg(actname,busname)
+                        that.asyncSDKConifg(actname,busname)*/
                   /*  }else{
                         that.Share('')
                         //that.photoT= res.data.userInfo.headImgUrl;
@@ -578,7 +592,7 @@ export default {
                         return;
                     }else{
                         var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=activeDetail_'+that.actId+','+that.actName+','+that.ifCard+','+that.comefrom+','+that.recordId+','+Base64.encode(that.openId)+','+that.ghT+'#wechat_redirect';
+                        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=activeDetail_'+that.actId+','+that.ifCard+','+that.comefrom+','+that.recordId+','+Base64.encode(that.openId)+','+that.ghT+'#wechat_redirect';
                     }                   
                 }
                 else{
@@ -1004,20 +1018,20 @@ export default {
                
             }else{
                 if(wxstr.split(",").length>7){
-                    that.ghT=wxstr.split(",")[7];
-                }else{
                     that.ghT=wxstr.split(",")[6];
+                }else{
+                    that.ghT=wxstr.split(",")[5];
                 } 
             }
             
             
         }
-        var actName =that.$route.query.actName;
+        /*var actName =that.$route.query.actName;
         if(!that.$route.query.actName==false){
             that.actName=decodeURIComponent(that.$route.query.actName);
         }else{
             that.actName=decodeURIComponent(wxstr.split(",")[1]);
-        }
+        }*/
         that.param.activeId=actId;
         if(!actId == true){ 
             var Activiy = localStorage.getItem('activiy')
@@ -1030,9 +1044,9 @@ export default {
 
         if(actId!=''&&actId!=undefined){
             that.param.activeId=actId;
-            that.param.actName=actName;
+          //  that.param.actName=actName;
             that.paramOnly.activeId=actId;
-            that.paramOnly.actName=actName;
+           // that.paramOnly.actName=actName;
            // that.getData();
         }
        // that.actId = that.$route.query.actId
@@ -1041,7 +1055,7 @@ export default {
         if(!that.$route.query.ifCard==false){
             that.ifCard=that.$route.query.ifCard;
         }else{
-            that.ifCard=wxstr.split(",")[2];
+            that.ifCard=wxstr.split(",")[1];
         }
         
          if(that.ifCard!=''&&that.ifCard!=undefined){
@@ -1061,7 +1075,7 @@ export default {
         if(!that.$route.query.comefrom==false){
             that.comefrom=that.$route.query.comefrom;
         }else{
-            that.comefrom=wxstr.split(",")[3];
+            that.comefrom=wxstr.split(",")[2];
         }
         if(that.$route.query.comefrom=='tangguan'){
             if(!that.$route.query.recordId == false){
@@ -1075,7 +1089,7 @@ export default {
                 that.recordId=that.$route.query.dynamicFlag;
             }
         }else{
-            that.recordId=wxstr.split(",")[4];
+            that.recordId=wxstr.split(",")[3];
         }
         
         if(that.ifCard==2){
@@ -1083,7 +1097,7 @@ export default {
                 if(!that.$route.query.openid==false){
                     that.openId=that.$route.query.openid;
                 }else{
-                    that.openId=Base64.decode(wxstr.split(",")[5]);
+                    that.openId=Base64.decode(wxstr.split(",")[4]);
                 }
                 // alert(that.openId)
                 // if(that.openId.toString().length>28){

@@ -1,11 +1,11 @@
 <template>
     <div class='productSearch'>
             <div class='ps_1'>
-                <p class='ps_p1'>搜索产品</p>
+                <p class='ps_p1'>搜索高端理财产品</p>
                 <p class='ps_p2'>验证产品是否由大唐财富体系下公司销售或提供服务</p>
             </div>
             <div class='ps_2'>
-                <input  name='' v-model='inputValue' placeholder="请输入产品名称或代码"/>
+                <input  name='' v-model='inputValue' placeholder="请输入完整的产品名称或代码"/>
                 <img src='./img/sou.png' class='ps_sou' @click="toResult()"/>
             </div>
             <div class='ps_3'><img src='./img/tishi.png' class='ps_tishi'/><span class='ps_3_sp'>不支持模糊搜索，只有输入<span style='color:#EF2727;'>完整的</span>产品名称、代码才能搜索出正确的结果哦~</span></div>
@@ -14,7 +14,7 @@
             <div class='pop_contant pop_contant_A' ref='pop_contant'>
                 <div class='popImgBox_A'>
                     <img :src='erweimaUrl' style='width:180px;height:180px;display: block;margin:94px auto 10px;'/>
-                    <p style='color:#333;font-size:14px;text-align:center;margin: 24px auto 8px;'>长按二维码</p>
+                    <p style='color:#333;font-size:14px;text-align:center;margin: .9rem auto .1rem'>长按二维码</p>
                     <p style='color:#333;font-size:14px;text-align:center;'>关注大唐财富服务号后完成报名</p>
                 </div>
             </div> <!--pop_contant -->
@@ -41,7 +41,7 @@ export default{
         return{
             clientHeight:'',//浏览器窗口的高
             inputValue:'',//输入框的文字
-            subscribe:'1',//是否关注
+            subscribe:'',//是否关注
             erweimaUrl:'',//关注二维码的链接
             popupVisible:false,//弹框
             paramurl: location.href.split('?')[0],
@@ -61,7 +61,7 @@ export default{
                         path:'/productSearchResult',
                         name:'productSearchResult',
                         query:{
-                        inputValue:that.inputValue,
+                            keywords:that.inputValue,
                         }
                     })
                 }
@@ -85,12 +85,10 @@ export default{
                 if(retCode == 0){
                     that.subscribe=res.data.userInfo.subscribe;//是否关注
                  
-                }
-                else if(retCode == 400){
+                }else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=productSearch_#wechat_redirect';         
-                }
-                else{
+                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=productSearch#wechat_redirect';         
+                }else{
                     MessageBox('', retMsg); 
                 }
             })
@@ -106,7 +104,7 @@ export default{
                 url:'/wxservice/wxexternal?opName=cPrdSearchSQRCode',//获取二维码
                 params: {
                     param:{
-                         keywords:that.inputValue,
+                        keywords:that.inputValue,
                     }
                 }
             })
@@ -133,8 +131,8 @@ export default{
           
     },
     created(){
-        var that=this;
-       // that.authentic(); 
+       this.authentic(); 
+       this.GasyncSDKConifg()
     }
 }
 </script>
@@ -142,7 +140,7 @@ export default{
 <style>
 .productSearch{
     width:100%;
-    min-height:15rem;
+    min-height:16.3rem;
     background:url(./img/bg.png) no-repeat fixed;
     background-size: cover;
     background-position-y:bottom;
@@ -166,10 +164,10 @@ export default{
     font-family:PingFang SC;
     font-weight:400;
     color:rgba(42,42,42,1);
-    margin-top: .12rem;
+    margin-top: .2rem;
 }
 .ps_2{
-    margin-top:1.253333rem;
+    margin-top:1.53333rem;
     position: relative;
 }
 .ps_2 input{
@@ -184,6 +182,16 @@ export default{
     padding-left:.266667rem;
     padding-right:1rem;
     outline: none;
+    box-shadow: none;
+    outline-color: invert ;
+	outline-style: none ;
+	outline-width: 0px ;
+	text-shadow: none ;
+	-webkit-appearance: none ;
+	-webkit-user-select: text ;
+	outline-color: transparent ;
+    box-shadow: none;
+    opacity: 1;
 }
 
 .ps_2 input::-webkit-input-placeholder{

@@ -48,6 +48,14 @@
                 <div>已成功提交申请，待产品管理人确认份额后将计入总资产。</div>
             </div>
         </div>
+        <div v-if="showBottom" class="Bottom">
+            <P class="p1_bot">基金销售服务由北京唐鼎耀华基金销售有限公司提供</P>
+            <P class="p2_bot">收益数据仅供参考，实际收益以基金公司计算为准</P>
+        </div>
+        <div class="Bottom2" v-else style="margin-top:0.6rem;padding-bottom: 0.34rem">
+            <P class="p1_bot">基金销售服务由北京唐鼎耀华基金销售有限公司提供</P>
+            <P class="p2_bot">收益数据仅供参考，实际收益以基金公司计算为准</P>
+        </div>
     </div>
 </template>
 <script>
@@ -62,6 +70,7 @@ export default {
     name:'SecuritiesAsset',
     data:function(){
         return{
+            showBottom:true,
             if_tishi:false,//是否显示提示
             loadObj:{
                 text: '加载中...',
@@ -139,7 +148,7 @@ export default {
                       window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=SecuritiesAsset#wechat_redirect';
                     }else if(retCode==0){
                         var d=res.data.data;
-                        that.totalAsset=d.totalIncomeStr  //总资产
+                        that.totalAsset=d.totalAssetStr  //总资产
                         that.publicToConfirmAsset=d.waitConfirmAssetStr //公募待确认资产
                         
                         that.publicYestIncome = d.totalYestincomeStr  //公募最新总收益
@@ -147,8 +156,14 @@ export default {
                         if(d.prodAssetList != ''){
                             that.inforList = d.prodAssetList //资产列表
                             that.showSecurities = false
+                            if(d.prodAssetList.length>3){
+                                that.showBottom = false
+                            }else{
+                                that.showBottom = true
+                            }
                         }else{
                             that.showSecurities = true;
+                            that.showBottom = true
                         }
 
                     }
@@ -327,7 +342,7 @@ export default {
             this.faceparam.bizId = bizId;           
             this.getfaceId();
         }else{
-             this.getList();
+            this.getList();
         }
     }
 
@@ -362,10 +377,28 @@ export default {
     border:1px solid#DF1E1D;
     padding:0 0.2rem;
     position: relative;
-    top: -0.1rem;
+    top: -0.03rem;
     left: 0.3rem;
     color:#DF1E1D;
     border-radius: 4px;
+}
+.Bottom{
+    width: 100%;
+    background:#fff;
+    position: fixed;
+    bottom: 0;
+}
+.p1_bot{
+    font-size: .266667rem;
+    line-height: .426667rem;
+    color:rgba(175,175,175,1);
+    margin-bottom: .133333rem;
+}
+.p2_bot{
+    font-size: .32rem;
+    line-height: .426667rem;
+    color:#999999;
+    margin-bottom: .4rem
 }
 </style>
 

@@ -326,7 +326,8 @@ export default {
                                      bdfrom: that.$route.query.bdfrom1,
                                      fswitch:that.fswitch,
                                      userId:that.userId,
-                                     reportId:that.reportId
+                                     reportId:that.reportId,
+                                     paramCan:that.$route.query.paramCan
                                     }
                                 })
                             }else{
@@ -361,11 +362,12 @@ export default {
                                         path:'/'+that.bdfrom,
                                         name:that.bdfrom,
                                         query:{
-                                        // clickSource: that.$route.query.clickSource,
-                                        bdfrom: that.$route.query.bdfrom1,
-                                        fswitch:that.fswitch,
-                                        userId:that.userId,
-                                        reportId:that.reportId
+                                            // clickSource: that.$route.query.clickSource,
+                                            bdfrom: that.$route.query.bdfrom1,
+                                            fswitch:that.fswitch,
+                                            userId:that.userId,
+                                            reportId:that.reportId,
+                                            paramCan:that.$route.query.paramCan
                                         }
                                     })
                                 }else{
@@ -457,6 +459,10 @@ export default {
                         var canshu=that.Host+'weixin-h5/DTCF/html/report/myReport.html?faceResult=1&bdfrom=4&phone='+that.ipNo+'&name='+encodeURIComponent(that.$route.query.name)+'&idNo='+idCardNo+'&tp='+that.type
                     }else if(that.$route.query.bdfrom1 == '5'){
                         var canshu=that.Host+'weixin-h5/DTCFS/html/report/shareReportHome.html?faceResult=1&bdfrom=5&userId='+that.userId+'&forward_switch='+that.fswitch+'&phone='+that.ipNo+'&name='+encodeURIComponent(that.$route.query.name)+'&idNo='+idCardNo+'&tp='+that.type
+                    }else if(that.$route.query.bdfrom1 == '6'){
+                        var canshu=that.TGhost+'/dthtml/HTML5/DTCFS/html/Buy_product_details/private_placement.html?faceResult=1&bdfrom=6&shareFlag=1&paramCan='+that.paramCan+'&phone='+that.ipNo+'&name='+encodeURIComponent(that.$route.query.name)+'&idNo='+idCardNo+'&tp='+that.type
+                    }else if(that.$route.query.bdfrom1 == '7'){
+                        var canshu=that.TGhost+'/dthtml/HTML5/DTCFS/html/privateRefactoring/private_product.html?faceResult=1&bdfrom=7&shareFlag=1&paramCan='+that.paramCan+'&phone='+that.ipNo+'&name='+encodeURIComponent(that.$route.query.name)+'&idNo='+idCardNo+'&tp='+that.type
                     } 
                 }else{
                     var canshu=that.$route.query.returnUrl+'&phone='+that.ipNo+'&name='+encodeURIComponent(that.$route.query.name)+'&idNo='+idCardNo+'&tp='+that.type

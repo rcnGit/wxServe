@@ -203,11 +203,44 @@ export default {
                 }
                 else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=toSignNewCust_'+that.param.activeId+','+that.ghT+','+that.param.actName+','+that.param.activityType+','+that.param.isReviewSignup+'#wechat_redirect';
+                window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=toSignNewCust_'+that.param.activeId+','+that.ghT+','+that.param.activityType+','+that.param.isReviewSignup+'#wechat_redirect';
             }
                 else{
                     MessageBox(' ',retMsg);
                 }
+            });
+        },
+        getactName:function(){
+            let that = this;
+            axios({
+                method:'get',
+                url:'/wxservice/wxservice?opName=getactiveinfo',//调取活动列表和详情的接口
+                params: {
+                    param:{
+                        activeId: that.param.activeId,
+                        actName:'',
+                        pageNo:1,
+                        comefrom:'',
+                    },
+                }
+            })
+            .then(function(res) {//成功之后
+                Indicator.close();
+                console.log(res.data)
+                var retCode=res.data.retCode;
+                var retMsg=res.data.retMsg;
+                if(retCode!=0){
+                    MessageBox('   ', '系统错误');
+                }else if(retCode == 0){
+                    if(res.data.itemList.length<=0){
+                    }else{
+                        var obj=res.data.itemList[0];
+                        that.param.actName=obj.actName;
+                        that.beginTime=obj.beginTime;
+                        that.location=obj.location;
+                    }
+                }
+                
             });
         },
         getPhoto:function(){ 
@@ -465,7 +498,7 @@ export default {
            
         },
         toSignUp:function(){
-
+            console.log(this.param.actName)
             var that=this;
             that.phoneFn();
             that.realnameFn();
@@ -998,10 +1031,10 @@ export default {
             var wxstr =decodeURIComponent(this.$route.query.actId); 
             this.param.activeId=wxstr.split(",")[0];
             this.ghT=wxstr.split(",")[1];
-            this.param.isReviewSignup = wxstr.split(",")[4];
-            this.param.activityType = wxstr.split(",")[3];
-            this.param.actName = decodeURIComponent(wxstr.split(",")[2]);
-            
+            this.param.isReviewSignup = wxstr.split(",")[3];
+            this.param.activityType = wxstr.split(",")[2];
+           // this.param.actName = decodeURIComponent(wxstr.split(",")[2]);
+            this.getactName()
         }
         
     },
