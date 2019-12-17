@@ -6,7 +6,7 @@
  * 检测手机号是否正确
  */
 export function isValidMobile (mobile) {
-  return /^1[34578]\d{9}$/.test(mobile)
+  return /^1\d{10}$/.test(mobile)
 }
 
 /**

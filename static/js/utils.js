@@ -7,18 +7,18 @@ import { Toast } from 'mint-ui';
 
 export default {
     install(Vue, options) {
-       // Vue.prototype.Host='https://interface.tdyhfund.com/'
-        Vue.prototype.Host="https://weixin-test-interface.tdyhfund.com/"
-     //   Vue.prototype.APPID='wx42b6456eeafbe956'  //生产
-       Vue.prototype.APPID='wx1f686b130ea97432'
+        Vue.prototype.Host='https://interface.tdyhfund.com/'
+      //  Vue.prototype.Host="https://weixin-test-interface.tdyhfund.com/"
+        Vue.prototype.APPID='wx42b6456eeafbe956'  //生产
+      // Vue.prototype.APPID='wx1f686b130ea97432'
        // Vue.prototype.tgHost="http://172.16.8.54/DTCFS/html/shared_card.html" 
-        Vue.prototype.tgHost="https://weixin-test-interface.tdyhfund.com/dthtml/HTML5/DTCFS/html/shared_card.html"
-       // Vue.prototype.tgHost='https://interface.tdyhfund.com/dthtml/HTML5/DTCFS/html/shared_card.html'   //糖罐app财富师名片页
-       Vue.prototype.tgHostSer = 'https://weixin-test-interface.tdyhfund.com/dthtml/HTML5/DTCF/html/valueAddedServices'  //糖罐app增值服务页
-      // Vue.prototype.tgHostSer = 'https://interface.tdyhfund.com/dthtml/HTML5/DTCF/html/valueAddedServices'  //糖罐app增值服务页
+      //  Vue.prototype.tgHost="https://weixin-test-interface.tdyhfund.com/dthtml/HTML5/DTCFS/html/shared_card.html"
+        Vue.prototype.tgHost='https://interface.tdyhfund.com/dthtml/HTML5/DTCFS/html/shared_card.html'   //糖罐app财富师名片页
+      // Vue.prototype.tgHostSer = 'https://weixin-test-interface.tdyhfund.com/dthtml/HTML5/DTCF/html/valueAddedServices'  //糖罐app增值服务页
+       Vue.prototype.tgHostSer = 'https://interface.tdyhfund.com/dthtml/HTML5/DTCF/html/valueAddedServices'  //糖罐app增值服务页
       //  Vue.prototype.TGhost="https://test-interface.tdyhfund.com:8443"
-        Vue.prototype.TGhost="https://weixin-test-interface.tdyhfund.com"
-       // Vue.prototype.TGhost="https://interface.tdyhfund.com"
+       // Vue.prototype.TGhost="https://weixin-test-interface.tdyhfund.com"
+        Vue.prototype.TGhost="https://interface.tdyhfund.com"
         Vue.prototype.formatDuring = function (mss) {//时间格式化
             var days = parseInt(mss / (1000 * 60 * 60 * 24));
             var hours = parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));

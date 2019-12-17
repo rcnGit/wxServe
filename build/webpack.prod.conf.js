@@ -135,7 +135,7 @@ if (config.build.productionGzip) {
         config.build.productionGzipExtensions.join('|') +
         ')$'
       ),
-      threshold: 10240,
+      threshold: 2048,//2k
       minRatio: 0.8
     })
   )
