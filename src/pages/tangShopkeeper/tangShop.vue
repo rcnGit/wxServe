@@ -32,7 +32,30 @@
         <img class="TangBanner" src="./img/TangBanner.png" @click="toIntro">
         <div class="get-top">
             <span class="redline"></span>
-            <p class="get-toptxt">可直接购买公募产品</p>
+            <p class="get-toptxt">可直接购买以下产品</p>
+        </div>
+        <div class="PrivatePro" v-for="(item,index) in PrivateList" :index='index' @click="toPrivateDetail(item.fundCode,item.prodType)">
+            <div class="public_card" v-if='item.prodType == "S"'>私募</div>
+            <div class="public_card" v-else>资管</div>
+            <p class="s_name"><span class="s_name_p">{{item.fundName}}</span></p>
+            <div style="overflow: hidden;">
+                <div class="sim_left">
+                    <p class="gm_left_top Red" v-if="cut(item.json1.value)>=0">{{cut(item.json1.value)}}<span class="gm_top_let">%</span></p>
+                    <p class="gm_left_top Green" v-else>{{cut(item.json1.value)}}<span class="gm_top_let">%</span></p>
+                    <p class="gm_left_bot">{{item.json1.title}}</p>
+                </div>
+                <div class="sim_right" v-if='item.prodType == "X"'>
+                    <p class="gm_right_top">{{item.json2.title}}</p>
+                    <p class="gm_right_bot">{{item.json2.value}}</p>
+                </div>
+                <div class="sim_right simuR" v-else style="width: 60%;">
+                    <ul class="sim_card">
+                        <li v-for="(item,index) in toArray(item.tag)" :index='index'>{{item}}</li>
+                        <li class="dzht" v-show="item.contType!=0">电子合同</li>
+                    </ul>
+                    <p class="gm_right_bot">{{item.json2.title}}:<span>{{item.json2.value}}</span> | {{item.json3.title}}:<span>{{item.json3.value}}</span></p>
+                </div>
+            </div>
         </div>
         <div class="publicPro" v-for="(item,index) in publicList" :index='index' @click="toPublicDetail(item.fundCode)">
             <div class="public_card">公募</div>
@@ -103,6 +126,7 @@ export default {
             paramurl: location.href.split('?')[0],
             qiRate:'',
             publicList:[],
+            PrivateList:[],
             isHoldPosition:'',
             TzgfundSumNet:'',//【七日年化】
         }
@@ -146,6 +170,9 @@ export default {
         toIntro:function(){
            this.haveBonds=true
         },
+        toArray:function(tag){
+            return tag.split(",")
+        },
         getUserInfo:function(){
             let that = this;
             axios({
@@ -170,7 +197,7 @@ export default {
                     
                 }else if(retCode == 400){
                     var serbackUrl = that.Host+'wxservice/wxservice?opName=getUserInfo'
-                    window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=tangShop#wechat_redirect';         
+                   window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+that.APPID+'&redirect_uri='+serbackUrl+'&response_type=code&scope=snsapi_userinfo&state=tangShop#wechat_redirect';         
                 }else{
                     MessageBox('', retMsg); 
                 }
@@ -199,7 +226,7 @@ export default {
                 }else{
                    
                 }
-                })//
+                })
         },
         getList:function(){
              var that=this;
@@ -207,8 +234,7 @@ export default {
                 axios({
                     method:'get',
                     url:'/wxservice/wxMemberInfo/getUserAsset',
-                    params: {
-                    }
+                    params: {}
                 })
                 .then(function(res) {//成功之后
                     console.log(res.data)
@@ -232,6 +258,7 @@ export default {
                         if(that.isHoldPosition == 'Y'){   //是否有持仓 Y-有  N-无
                             that.haveBonds = false
                             that.getTzgAssetInfo()//获取唐掌柜资产详情
+                            that.getProductPrivate()//私募列表
                             that.getProductPublic()//公募列表
                         }else{
                             that.haveBonds = true
@@ -312,6 +339,37 @@ export default {
                     
                 });
         },
+        getProductPrivate:function(){
+             var that=this;
+             var param=Base64.encode('{"fundType":"4"}');
+             Indicator.open();
+                axios({
+                    method:'get',
+                    url:'/olmgweb/tgApi/getProductPrivate',//产品推荐-私募中台1.2
+                    params: {
+                        param:param,
+                        osFlag:'3'
+                    }
+                })
+                .then(function(res) {//成功之后
+                    var data=Base64.decode(res.data);
+                    data=jQuery.parseJSON(data);
+                    console.log(data)
+                    Indicator.close();
+                    var retCode=data.retCode;
+                    var retMsg=data.retMsg;
+                    if(retCode == 0){
+                        that.PrivateList = data.itemList
+                    }else if(retCode==-1){//系统异常
+                        Toast({
+                            message: '系统异常',
+                            position: 'center',
+                            duration: 3000
+                        });
+                    }
+                    
+                });
+        },
         getProductPublic:function(){
              var that=this;
              var param=Base64.encode('{"fundType":"6"}');
@@ -364,6 +422,17 @@ export default {
             var urlCan = '{"fundCode":"'+fundCode+'"}';
 				urlCan = Base64.encode(urlCan);	
 			window.location.href=this.TGhost+'/dthtml/HTML5/DTCF/html/public_product_Revision/fund_details.html?paramCan='+urlCan+'&shareFlag=1'
+        },
+        toPrivateDetail:function(fundCode,prodType){  
+            if(prodType == 'S'){
+                var urlCan = '{"prodCode":"'+fundCode+'","source":"wx"}';
+				urlCan = Base64.encode(urlCan);
+                window.location.href=this.TGhost+'/dthtml/HTML5/DTCF/html/privateRefactoring/private_product.html?paramCan='+urlCan+'&shareFlag=1'
+            }else if(prodType == 'X'){
+                var urlCan = '{"fundCode":"'+fundCode+'","source":"wx"}';
+				urlCan = Base64.encode(urlCan);
+                window.location.href=this.TGhost+'/dthtml/HTML5/DTCF/html/littleSet/littleSet.html?paramCan='+urlCan+'&shareFlag=1'
+            }		
         }
     },
     created:function(){
@@ -381,12 +450,12 @@ export default {
 .noBonds .rate{font-size: 1.2rem;}
 .noBonds .description{font-size: .346667rem;font-weight:normal;padding-top: .2rem;}
 .openBtn{
-    width:100%;height: 1.546667rem;
+    width:100%;height: 1.52rem;
     position: fixed;
     bottom: 0;
     background: #DF3F3F;
     color: #fff;
-    font-size: .453333rem;
+    font-size: .44rem;
     font-weight: 500;
     line-height: 1.546667rem;
 }
@@ -464,22 +533,24 @@ export default {
     color: #2A2A2A;
     font-size: .373333rem;
     line-height: .486667rem;
-    /* font-weight: 600; */
+    font-weight: 600;
     padding-left: .24rem;
 }
-.publicPro{
-    width: 9.6rem;
-    height: 3.04rem;
+.publicPro,.PrivatePro{
+    width: 9.466667rem;
+    height: 100%;
     background: url(./img/productBg.png) no-repeat;
-    background-size: 9.6rem 3.04rem;
+    /* background-size: 9.466667rem 2.773333rem; */
+    background-size: 100% 100%;
     border-radius: .106667rem;
-    margin: -.1rem .2rem 0rem .163333rem;
-    padding: .5rem .666667rem .3rem;
+    margin: 0rem .2rem 0.2rem .24rem;
+    padding: .5rem .3rem .3rem .666667rem;
     position: relative;
 }
 .s_name{
     text-align: left;
     position: relative;
+    width: 80%;
 }
 .s_name_p{
     font-size: .373333rem;
@@ -505,7 +576,7 @@ export default {
 .gm_left_top{
     font-size: .64rem;
     font-weight:500;
-    padding-top: .3rem;
+    padding-top: .25rem;
 }
 .gm_left_bot{
     font-size: .293333rem;
@@ -513,6 +584,7 @@ export default {
     line-height: .426667rem;
     color:rgba(122,122,122,1);
     padding-top: .1rem;
+    padding-bottom: .1rem;
 }
 .Red{
     color:#EF2727;
@@ -526,12 +598,12 @@ export default {
     width:28%;
 }
 .gm_right_top{
-    font-size: .48rem;
+    font-size: .426667rem;;
     color:rgba(152,106,60,1);
-    padding-top: .32rem;
+    padding-top: .4rem;
 }
 .gm_right_bot{
-    font-size: .453333rem;
+    font-size: .373333rem;
     color:rgba(122,122,122,1);
     padding-top: .14rem;
 }
@@ -543,8 +615,8 @@ export default {
     color:rgba(255,255,255,1);
     background:rgba(225,28,28,1);
     position: absolute;
-    right: .22rem;
-    top: .19rem;
+    right: .16rem;
+    top: .09rem;
     border-radius: 0 .2rem 0 .2rem;
     padding-top: .02rem;
 }
@@ -564,6 +636,41 @@ export default {
     padding: 0!important;
     width:100%;
     overflow: hidden
+}
+.sim_card{
+    overflow: hidden;
+    padding-top: .4rem;
+}
+.sim_card li {
+    float: left;
+    padding: .08rem .1rem .03rem;
+    color: #BC8E8B;
+    font-size: .24rem;
+    border: 0.8px solid #BC8E8B;
+    border-radius: .053333rem;
+    margin-right: .106667rem;
+}
+.simuR .gm_right_bot{
+    font-size: .293333rem;
+    font-weight: 400;
+    line-height: .586667rem;
+    padding-top: .12rem;
+}
+.simuR::after {
+    content: "";
+    width: .026667rem;
+    height: 1.146667rem;
+    background: #F6F6F6;
+    position: absolute;
+    top: 1.1rem;
+    left: 37%;
+}
+.sim_card li.dzht{
+	color: #8698AA;
+	border:0.8px solid #8698AA;
+}
+.gm_right_bot span{
+    color: #333;
 }
 </style>
 

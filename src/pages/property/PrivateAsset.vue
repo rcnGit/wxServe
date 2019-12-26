@@ -26,7 +26,7 @@
                 <div style='clear:both'></div>
                 <div class='proBot private_list' style="width:9.1rem">
                     <span class='floatLeft smP'><span class="jin_one">金额（元）</span><br><em class="smp-number money_a">{{item.busiAmount}}</em></span>
-                    <span class='floatRight shouyi'><span class="jin_one">最新净值（{{item.navDate}}）</span><br><em class="money_a">{{item.nav}}</em></span>
+                    <span class='floatRight shouyi'><span class="jin_one">最新净值（{{item.navDate}}）</span><br><em class="money_a">{{strCut(item.nav)}}</em></span>
                 </div>
             </div> 
         </div>
@@ -93,6 +93,9 @@ export default {
     },
     components:{Button,axios,Indicator,MessageBox,comfooter},//使用mint-ui的button的组件
     methods:{
+        strCut:function(str){
+            return str.substring(0,str.indexOf(".")+5)
+        },
         tishiClose:function(){
             this.if_tishi=false;
         },
